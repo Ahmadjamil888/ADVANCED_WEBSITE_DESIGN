@@ -17,26 +17,27 @@ interface StatsProps {
 export default function Stats({
   items = [
     {
-      label: "used by",
-      value: Math.round(siteConfig.stats.figma / 100) / 10,
-      suffix: "k",
-      description: "designers on Figma Community",
-    },
-    {
       label: "over",
-      value: siteConfig.stats.github,
-      description: "clones and forks of the template on Github",
+      value: siteConfig.stats.projects,
+      suffix: "+",
+      description: "AI projects successfully delivered",
     },
     {
-      label: "already",
-      value: Math.round(siteConfig.stats.cli / 100) / 10,
-      suffix: "k",
-      description: "installations with shadcn/ui CLI",
+      label: "trusted by",
+      value: siteConfig.stats.clients,
+      suffix: "+",
+      description: "satisfied clients worldwide",
     },
     {
-      label: "includes",
-      value: siteConfig.stats.sections,
-      description: "blocks and sections",
+      label: "deployed",
+      value: siteConfig.stats.aiModels,
+      suffix: "+",
+      description: "machine learning models in production",
+    },
+    {
+      label: "maintaining",
+      value: siteConfig.stats.satisfaction,
+      description: "client satisfaction rate",
     },
   ],
   className,

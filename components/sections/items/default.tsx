@@ -1,12 +1,12 @@
 import {
-  BlocksIcon,
-  EclipseIcon,
-  FastForwardIcon,
-  LanguagesIcon,
-  MonitorSmartphoneIcon,
-  RocketIcon,
-  ScanFaceIcon,
-  SquarePenIcon,
+  BrainCircuitIcon,
+  CodeIcon,
+  DatabaseIcon,
+  GlobeIcon,
+  BotIcon,
+  ZapIcon,
+  BarChart3Icon,
+  ShieldCheckIcon,
 } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -26,50 +26,47 @@ interface ItemsProps {
 }
 
 export default function Items({
-  title = "Everything you need. Nothing you don't.",
+  title = "Comprehensive AI & Web Development Solutions",
   items = [
     {
-      title: "Accessibility first",
-      description: "Fully WCAG 2.0 compliant, made with best a11y practices",
-      icon: <ScanFaceIcon className="size-5 stroke-1" />,
+      title: "AI & Machine Learning",
+      description: "Custom ML models, predictive analytics, and intelligent automation",
+      icon: <BrainCircuitIcon className="size-5 stroke-1" />,
     },
     {
-      title: "Responsive design",
-      description: "Looks and works great on any device and screen size",
-      icon: <MonitorSmartphoneIcon className="size-5 stroke-1" />,
+      title: "Next.js Development",
+      description: "Modern, fast, and scalable web applications with React",
+      icon: <CodeIcon className="size-5 stroke-1" />,
     },
     {
-      title: "Light and dark mode",
-      description:
-        "Seamless switching between color schemes, 6 themes included",
-      icon: <EclipseIcon className="size-5 stroke-1" />,
+      title: "Deep Learning",
+      description: "Advanced neural networks for complex pattern recognition",
+      icon: <DatabaseIcon className="size-5 stroke-1" />,
     },
     {
-      title: "Easy to customize",
-      description: "Flexible options to match your product or brand",
-      icon: <BlocksIcon className="size-5 stroke-1" />,
+      title: "Web Applications",
+      description: "Full-stack solutions optimized for performance and UX",
+      icon: <GlobeIcon className="size-5 stroke-1" />,
     },
     {
-      title: "Top-level performance",
-      description: "Made for lightning-fast load times and smooth interactions",
-      icon: <FastForwardIcon className="size-5 stroke-1" />,
+      title: "AI Chatbots",
+      description: "Intelligent conversational AI for customer engagement",
+      icon: <BotIcon className="size-5 stroke-1" />,
     },
     {
-      title: "Production ready",
-      description: "Thoroughly tested and launch-prepared",
-      icon: <RocketIcon className="size-5 stroke-1" />,
+      title: "Performance Optimization",
+      description: "Lightning-fast applications with cutting-edge techniques",
+      icon: <ZapIcon className="size-5 stroke-1" />,
     },
     {
-      title: "Made for localisation",
-      description:
-        "Easy to implement support for multiple languages and regions",
-      icon: <LanguagesIcon className="size-5 stroke-1" />,
+      title: "Data Analytics",
+      description: "Transform your data into actionable business insights",
+      icon: <BarChart3Icon className="size-5 stroke-1" />,
     },
     {
-      title: "CMS friendly",
-      description:
-        "Built to work with your any headless content management system",
-      icon: <SquarePenIcon className="size-5 stroke-1" />,
+      title: "Enterprise Security",
+      description: "Robust security measures for mission-critical applications",
+      icon: <ShieldCheckIcon className="size-5 stroke-1" />,
     },
   ],
   className,

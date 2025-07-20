@@ -48,76 +48,77 @@ interface NavigationProps {
 export default function Navigation({
   menuItems = [
     {
-      title: "Getting started",
-      content: "default",
+      title: "Services",
+      content: "services",
     },
     {
-      title: "Components",
-      content: "components",
-    },
-    {
-      title: "Documentation",
+      title: "About",
       isLink: true,
-      href: siteConfig.url,
+      href: "/about",
+    },
+    {
+      title: "Contact",
+      isLink: true,
+      href: "/contact",
     },
   ],
   components = [
     {
-      title: "Alert Dialog",
-      href: "/docs/primitives/alert-dialog",
+      title: "AI & Machine Learning",
+      href: "/services/ai-machine-learning",
       description:
-        "A modal dialog that interrupts the user with important content and expects a response.",
+        "Custom ML models, predictive analytics, and intelligent automation solutions.",
     },
     {
-      title: "Hover Card",
-      href: "/docs/primitives/hover-card",
+      title: "Next.js Development",
+      href: "/services/nextjs-development",
       description:
-        "For sighted users to preview content available behind a link.",
+        "Modern, fast, and scalable web applications built with React and Next.js.",
     },
     {
-      title: "Progress",
-      href: "/docs/primitives/progress",
+      title: "Full-Stack Development",
+      href: "/services/fullstack-web-development",
       description:
-        "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+        "Complete web solutions from frontend to backend with modern technologies.",
     },
     {
-      title: "Scroll-area",
-      href: "/docs/primitives/scroll-area",
-      description: "Visually or semantically separates content.",
+      title: "Deep Learning",
+      href: "/services/deep-learning",
+      description:
+        "Advanced neural networks for complex pattern recognition and decision making.",
     },
     {
-      title: "Tabs",
-      href: "/docs/primitives/tabs",
-      description:
-        "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+      title: "AI Chatbots",
+      href: "/services/ai-chatbots",
+      description: "Intelligent conversational AI systems for customer engagement.",
     },
     {
-      title: "Tooltip",
-      href: "/docs/primitives/tooltip",
+      title: "AI Consulting",
+      href: "/services/ai-consulting",
       description:
-        "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+        "Strategic AI consulting to help identify opportunities and implement solutions.",
     },
   ],
-  logo = <LaunchUI />,
-  logoTitle = "Launch UI",
-  logoDescription = "Landing page template built with React, Shadcn/ui and Tailwind that you can copy/paste into your project.",
-  logoHref = siteConfig.url,
+  logo = <div className="size-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">ZX</div>,
+  logoTitle = "Zehan X Technologies",
+  logoDescription = "Leading AI and web development company specializing in Next.js, deep learning, and machine learning solutions.",
+  logoHref = "/",
   introItems = [
     {
-      title: "Introduction",
-      href: siteConfig.url,
+      title: "Our Mission",
+      href: "/about",
       description:
-        "Re-usable components built using Radix UI and Tailwind CSS.",
+        "Transforming businesses with cutting-edge AI and web technologies.",
     },
     {
-      title: "Installation",
-      href: siteConfig.url,
-      description: "How to install dependencies and structure your app.",
+      title: "Get Started",
+      href: "#contact",
+      description: "Contact us to discuss your AI and web development needs.",
     },
     {
-      title: "Typography",
-      href: siteConfig.url,
-      description: "Styles for headings, paragraphs, lists...etc",
+      title: "Learn More",
+      href: "/about",
+      description: "Discover how we can help accelerate your digital transformation.",
     },
   ],
 }: NavigationProps) {
@@ -160,7 +161,7 @@ export default function Navigation({
                         </ListItem>
                       ))}
                     </ul>
-                  ) : item.content === "components" ? (
+                  ) : item.content === "services" ? (
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                       {components.map((component) => (
                         <ListItem

@@ -30,8 +30,8 @@ interface HeroProps {
 }
 
 export default function Hero({
-  title = "Give your big idea the design it deserves",
-  description = "Professionally designed blocks and templates built with React, Shadcn/ui and Tailwind that will help your product stand out.",
+  title = "Transform Your Business with AI & Next.js Development",
+  description = "Zehan X Technologies delivers cutting-edge AI solutions, machine learning models, and modern web applications that drive innovation and accelerate your digital transformation.",
   mockup = (
     <Screenshot
       srcLight="/app-light.png"
@@ -45,9 +45,9 @@ export default function Hero({
   badge = (
     <Badge variant="outline" className="animate-appear">
       <span className="text-muted-foreground">
-        New version of Launch UI is out!
+        AI-Powered Solutions Available Now!
       </span>
-      <a href={siteConfig.getStartedUrl} className="flex items-center gap-1">
+      <a href="/contact" className="flex items-center gap-1">
         Get started
         <ArrowRightIcon className="size-3" />
       </a>
@@ -55,15 +55,14 @@ export default function Hero({
   ),
   buttons = [
     {
-      href: siteConfig.getStartedUrl,
+      href: "/contact",
       text: "Get Started",
       variant: "default",
     },
     {
-      href: siteConfig.links.github,
-      text: "Github",
+      href: "/about",
+      text: "About Us",
       variant: "glow",
-      icon: <Github className="mr-2 size-4" />,
     },
   ],
   className,

@@ -33,37 +33,48 @@ interface FooterProps {
 }
 
 export default function FooterSection({
-  logo = <LaunchUI />,
-  name = "Launch UI",
+  logo = <div className="text-lg font-bold tracking-wider text-white" style={{ 
+    fontFamily: 'monospace, "Courier New", Courier',
+    textShadow: '0 0 10px rgba(255,255,255,0.5)',
+    letterSpacing: '0.2em'
+  }}>ZEHAN X</div>,
+  name = "",
   columns = [
     {
-      title: "Product",
+      title: "Services",
       links: [
-        { text: "Changelog", href: siteConfig.url },
-        { text: "Documentation", href: siteConfig.url },
+        { text: "AI & Machine Learning", href: "/services/ai-machine-learning" },
+        { text: "Next.js Development", href: "/services/nextjs-development" },
+        { text: "Full-Stack Development", href: "/services/fullstack-web-development" },
+        { text: "Deep Learning", href: "/services/deep-learning" },
+        { text: "AI Chatbots", href: "/services/ai-chatbots" },
+        { text: "AI Consulting", href: "/services/ai-consulting" },
       ],
     },
     {
       title: "Company",
       links: [
-        { text: "About", href: siteConfig.url },
-        { text: "Careers", href: siteConfig.url },
-        { text: "Blog", href: siteConfig.url },
+        { text: "About Us", href: "/about" },
+        { text: "All Services", href: "/services" },
+        { text: "Contact", href: "/contact" },
+        { text: "Data Analytics", href: "/services/data-analytics" },
+        { text: "Enterprise Solutions", href: "/services/enterprise-solutions" },
       ],
     },
     {
-      title: "Contact",
+      title: "Connect",
       links: [
-        { text: "Discord", href: siteConfig.url },
-        { text: "Twitter", href: siteConfig.url },
-        { text: "Github", href: siteConfig.links.github },
+        { text: "Email Us", href: "mailto:shazabjamildhami@gmail.com" },
+        { text: "Twitter", href: siteConfig.links.twitter },
+        { text: "GitHub", href: siteConfig.links.github },
+        { text: "LinkedIn", href: "https://linkedin.com/company/zehanx" },
       ],
     },
   ],
-  copyright = "© 2025 Mikołaj Dobrucki. All rights reserved",
+  copyright = "© 2025 Zehan X Technologies. All rights reserved.",
   policies = [
-    { text: "Privacy Policy", href: siteConfig.url },
-    { text: "Terms of Service", href: siteConfig.url },
+    { text: "Privacy Policy", href: "/privacy" },
+    { text: "Terms of Service", href: "/terms" },
   ],
   showModeToggle = true,
   className,

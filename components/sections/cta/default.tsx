@@ -1,9 +1,14 @@
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useState } from "react";
+import { Mail, Send, CheckCircle } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 import { Button, type ButtonProps } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Textarea } from "../../ui/textarea";
 import Glow from "../../ui/glow";
 import { Section } from "../../ui/section";
 
@@ -22,12 +27,17 @@ interface CTAProps {
 }
 
 export default function CTA({
-  title = "Start building",
+  title = "Ready to Transform Your Business with AI?",
   buttons = [
     {
-      href: siteConfig.getStartedUrl,
-      text: "Get Started",
+      href: "/contact",
+      text: "Get Started Today",
       variant: "default",
+    },
+    {
+      href: "/about",
+      text: "Learn More",
+      variant: "outline",
     },
   ],
   className,

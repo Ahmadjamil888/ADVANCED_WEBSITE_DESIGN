@@ -1,6 +1,7 @@
 import "@/app/globals.css";
 
 import type { Metadata } from "next";
+import { ClerkProvider } from '@clerk/nextjs';
 
 import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { inter } from "@/lib/fonts";
@@ -12,28 +13,53 @@ export const metadata: Metadata = {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
   },
-  metadataBase: new URL(siteConfig.getStartedUrl),
+  metadataBase: new URL(siteConfig.url),
   description: siteConfig.description,
   keywords: [
-    "Landing page template",
-    "Components",
-    "Shadcn",
-    "Next.js",
-    "React",
-    "Tailwind CSS",
-    "Radix UI",
+    "AI development company",
+    "Machine Learning services",
+    "Deep Learning solutions",
+    "Next.js development agency",
+    "Full-stack web development",
+    "AI consulting services",
+    "Artificial Intelligence solutions",
+    "Custom AI models",
+    "React development",
+    "TypeScript development",
+    "AI chatbot development",
+    "Data analytics services",
+    "Enterprise AI solutions",
+    "Predictive analytics",
+    "Computer vision",
+    "Natural language processing",
+    "AI automation",
+    "Business intelligence",
+    "Zehan X Technologies",
+    "Professional AI services"
   ],
   authors: [
     {
-      name: "Mikolaj Dobrucki",
-      url: "https://mikolajdobrucki.com",
+      name: "Zehan X Technologies",
+      url: "https://zehanx.com",
     },
   ],
-  creator: "mikolajdobrucki",
+  creator: "Zehan X Technologies",
+  publisher: "Zehan X Technologies",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteConfig.getStartedUrl,
+    url: siteConfig.url,
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
@@ -42,7 +68,8 @@ export const metadata: Metadata = {
         url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: siteConfig.name,
+        alt: `${siteConfig.name} - AI and Web Development Company`,
+        type: "image/jpeg",
       },
     ],
   },
@@ -51,11 +78,21 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    creator: "@mikolajdobrucki",
+    creator: "@zehanxtech",
+    site: "@zehanxtech",
   },
   icons: {
-    icon: "/favicon.svg",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" },
+    ],
+    shortcut: "/favicon.ico",
+  },
+  alternates: {
+    canonical: siteConfig.url,
   },
 };
 
@@ -64,11 +101,76 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Zehan X Technologies",
+    "url": "https://zehanx.com",
+    "logo": "https://zehanx.com/og.jpg",
+    "description": siteConfig.description,
+    "email": "shazabjamildhami@gmail.com",
+    "foundingDate": "2024",
+    "industry": "Artificial Intelligence and Web Development",
+    "numberOfEmployees": "10-50",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "Global",
+      "addressRegion": "Remote"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+1-XXX-XXX-XXXX",
+      "contactType": "customer service",
+      "email": "shazabjamildhami@gmail.com",
+      "availableLanguage": "English"
+    },
+    "sameAs": [
+      "https://twitter.com/zehanxtech",
+      "https://github.com/zehanx",
+      "https://linkedin.com/company/zehanx"
+    ],
+    "services": [
+      {
+        "@type": "Service",
+        "name": "AI & Machine Learning Development",
+        "description": "Custom AI solutions, predictive analytics, and intelligent automation"
+      },
+      {
+        "@type": "Service", 
+        "name": "Next.js Development",
+        "description": "Modern, fast, and scalable web applications built with Next.js"
+      },
+      {
+        "@type": "Service",
+        "name": "Full-Stack Web Development", 
+        "description": "Complete web solutions from frontend to backend"
+      },
+      {
+        "@type": "Service",
+        "name": "Deep Learning Solutions",
+        "description": "Advanced neural networks for complex pattern recognition"
+      }
+    ]
+  };
+
   return (
-    <html lang="en" style={{ colorScheme: "dark" }} className="dark">
-      <body className={`${inter.className} bg-background antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" style={{ colorScheme: "dark" }} className="dark">
+        <head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link rel="dns-prefetch" href="https://api.clerk.com" />
+          <meta name="theme-color" content="#000000" />
+          <meta name="msapplication-TileColor" content="#000000" />
+        </head>
+        <body className={`${inter.className} bg-background antialiased`}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

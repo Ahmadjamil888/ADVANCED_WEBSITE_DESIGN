@@ -1,11 +1,39 @@
-# 🚀 Launch UI – Next.js Website Components Template
+# 🤖 Zehan X Technologies - AI & Web Development Company
 
-A comprehensive collection of production-ready website components built with Next.js, Shadcn/ui, and Tailwind CSS. Perfect for developers looking to quickly build modern, responsive websites with the power of shadcn/ui components.
+A professional, modern website for Zehan X Technologies, showcasing AI and web development services. Built with Next.js, Shadcn/ui, and Tailwind CSS, featuring contact forms and email integration.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-blue)](https://tailwindcss.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![shadcn/ui](https://img.shields.io/badge/shadcn/ui-latest-black)](https://ui.shadcn.com/)
+
+## 🎯 Features
+
+- **Professional Design**: Clean, modern design that maintains professionalism
+- **Futuristic Branding**: "ZEHAN X" logo with futuristic monospace font styling
+- **Real Authentication**: Clerk authentication with sign-in/sign-up functionality
+- **Complete Service Pages**: Individual pages for each service with detailed information
+- **Contact System**: Dedicated contact page with email integration to shazabjamildhami@gmail.com
+- **Full Navigation**: Real links to all pages (Home, About, Services, Contact)
+- **Responsive Design**: Works perfectly on all devices
+- **SEO Optimized**: Meta tags and structure optimized for search engines
+
+## 📄 Pages Structure
+
+- **Home** (`/`) - Main landing page with hero, services overview, stats, FAQ, and CTA
+- **About** (`/about`) - Company information, mission, values, and team details
+- **Services** (`/services`) - Overview of all services with links to individual service pages
+- **Contact** (`/contact`) - Dedicated contact form and company contact information
+
+### Individual Service Pages:
+- **AI & Machine Learning** (`/services/ai-machine-learning`)
+- **Next.js Development** (`/services/nextjs-development`) 
+- **Full-Stack Web Development** (`/services/fullstack-web-development`)
+- **Deep Learning** (`/services/deep-learning`)
+- **AI Chatbots** (`/services/ai-chatbots`)
+- **AI Consulting** (`/services/ai-consulting`)
+- **Data Analytics** (`/services/data-analytics`)
+- **Enterprise Solutions** (`/services/enterprise-solutions`)
 
 <img src="https://launchuicomponents.com/preview.gif" alt="Launch UI components mockups" />
 
@@ -21,17 +49,36 @@ A comprehensive collection of production-ready website components built with Nex
 npm install
 ```
 
-2. Start the development server:
+2. Set up environment variables:
+```bash
+cp .env.local.example .env.local
+```
+Edit `.env.local` and add your credentials:
+- `GMAIL_USER`: Your Gmail address (shazabjamildhami@gmail.com)
+- `GMAIL_APP_PASSWORD`: Your Gmail App Password (generate from Google Account settings)
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key
+- `CLERK_SECRET_KEY`: Your Clerk secret key
+
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) to view your site
+4. Open [http://localhost:3000](http://localhost:3000) to view your site
 
-## 📚 Resources
+## 🔐 Clerk Authentication Setup
 
-- [Live Preview](https://launchuicomponents.com/preview)
-- [Documentation](https://www.launchuicomponents.com/docs/getting-started/introduction)
+1. Create a Clerk account at [clerk.com](https://clerk.com)
+2. Create a new application in your Clerk dashboard
+3. Copy your API keys from the Clerk dashboard
+4. Add them to your `.env.local` file
+
+## 📧 Email Setup
+
+To receive contact form emails, you need to:
+1. Enable 2-factor authentication on your Gmail account
+2. Generate an App Password in Google Account settings
+3. Add the App Password to your `.env.local` file
 
 ## ✨ Features
 

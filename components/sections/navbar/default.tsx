@@ -1,10 +1,10 @@
 import { Menu } from "lucide-react";
 import { ReactNode } from "react";
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-import LaunchUI from "../../logos/launch-ui";
 import { Button, type ButtonProps } from "../../ui/button";
 import {
   Navbar as NavbarComponent,
@@ -40,23 +40,16 @@ interface NavbarProps {
 }
 
 export default function Navbar({
-  logo = <LaunchUI />,
-  name = "Launch UI",
-  homeUrl = siteConfig.url,
+  logo = null,
+  name = "ZEHAN X",
+  homeUrl = "/",
   mobileLinks = [
-    { text: "Getting Started", href: siteConfig.url },
-    { text: "Components", href: siteConfig.url },
-    { text: "Documentation", href: siteConfig.url },
+    { text: "Home", href: "/" },
+    { text: "About", href: "/about" },
+    { text: "Services", href: "/services" },
+    { text: "Contact", href: "/contact" },
   ],
-  actions = [
-    { text: "Sign in", href: siteConfig.url, isButton: false },
-    {
-      text: "Get Started",
-      href: siteConfig.url,
-      isButton: true,
-      variant: "default",
-    },
-  ],
+  actions = [],
   showNavigation = true,
   customNavigation,
   className,
@@ -69,7 +62,12 @@ export default function Navbar({
           <NavbarLeft>
             <a
               href={homeUrl}
-              className="flex items-center gap-2 text-xl font-bold"
+              className="flex items-center gap-2 text-xl font-bold tracking-wider text-white"
+              style={{ 
+                fontFamily: 'monospace, "Courier New", Courier',
+                textShadow: '0 0 10px rgba(255,255,255,0.5)',
+                letterSpacing: '0.2em'
+              }}
             >
               {logo}
               {name}
@@ -77,29 +75,21 @@ export default function Navbar({
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
           <NavbarRight>
-            {actions.map((action, index) =>
-              action.isButton ? (
-                <Button
-                  key={index}
-                  variant={action.variant || "default"}
-                  asChild
-                >
-                  <a href={action.href}>
-                    {action.icon}
-                    {action.text}
-                    {action.iconRight}
-                  </a>
+            <SignedOut>
+              <SignInButton>
+                <Button variant="ghost" size="sm">
+                  Sign In
                 </Button>
-              ) : (
-                <a
-                  key={index}
-                  href={action.href}
-                  className="hidden text-sm md:block"
-                >
-                  {action.text}
-                </a>
-              ),
-            )}
+              </SignInButton>
+              <SignUpButton>
+                <Button variant="default" size="sm">
+                  Get started
+                </Button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
             <Sheet>
               <SheetTrigger asChild>
                 <Button

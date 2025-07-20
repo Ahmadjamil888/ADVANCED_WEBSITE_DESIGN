@@ -24,121 +24,95 @@ interface FAQProps {
 }
 
 export default function FAQ({
-  title = "Questions and Answers",
+  title = "Frequently Asked Questions",
   items = [
     {
-      question:
-        "Why building a great landing page is critical for your business?",
+      question: "What AI services does Zehan X Technologies offer?",
       answer: (
         <>
           <p className="text-muted-foreground mb-4 max-w-[640px] text-balance">
-            In today&apos;s AI-driven world, standing out is harder than ever.
-            While anyone can build a product, a professional landing page makes
-            the difference between success and failure.
+            We offer comprehensive AI solutions including custom machine learning models, 
+            deep learning systems, computer vision, natural language processing, AI chatbots, 
+            and predictive analytics.
           </p>
           <p className="text-muted-foreground mb-4 max-w-[640px] text-balance">
-            Launch UI helps you ship faster without compromising on quality.
+            Our team specializes in building intelligent applications that solve real business problems.
           </p>
         </>
       ),
     },
     {
-      question: "Why use Launch UI instead of a no-code tool?",
+      question: "How can AI benefit my business?",
       answer: (
         <>
           <p className="text-muted-foreground mb-4 max-w-[600px]">
-            No-code tools lock you into their ecosystem with recurring fees and
-            limited control. They often come with performance issues and make it
-            difficult to integrate with your product.
+            AI can automate repetitive tasks, provide data-driven insights, improve customer 
+            experiences through personalization, and enhance decision-making processes.
           </p>
           <p className="text-muted-foreground mb-4 max-w-[600px]">
-            You can&apos;t even change your hosting provider and basic things
-            like web analytics come as extra costs and paid add-ons.
-          </p>
-          <p className="text-muted-foreground mb-4 max-w-[600px]">
-            What might seem like a convenient solution today could paint you
-            into a corner tomorrow, limiting your ability to scale and adapt.
-            Launch UI gives you full control of your code while maintaining
-            professional quality.
+            It can also reduce operational costs and create new revenue opportunities. 
+            We help identify the best AI applications for your specific industry and business needs.
           </p>
         </>
       ),
     },
     {
-      question:
-        "How Launch UI is different from other components libraries and templates?",
+      question: "Do you specialize in Next.js development?",
       answer: (
         <>
           <p className="text-muted-foreground mb-4 max-w-[580px]">
-            Launch UI stands out with premium design quality and delightful
-            touches of custom animations and illustrations.
+            Yes! We specialize in Next.js development and modern React applications. 
+            We build fast, scalable, and SEO-optimized web applications.
           </p>
           <p className="text-muted-foreground mb-4 max-w-[580px]">
-            All components are carefully crafted to help position your product
-            as a professional tool, avoiding the generic template look.
-          </p>
-          <p className="text-muted-foreground mb-4 max-w-[640px] text-balance">
-            Unlike many libraries that rely on outdated CSS practices and old
-            dependencies, Launch UI is built with modern technologies and best
-            practices in mind.
+            Our expertise includes App Router, Server Components, and advanced optimization 
+            techniques to deliver exceptional performance.
           </p>
         </>
       ),
     },
     {
-      question: 'Why exactly does it mean that "The code is yours"?',
+      question: "How long does it take to develop an AI solution?",
       answer: (
         <>
           <p className="text-muted-foreground mb-4 max-w-[580px]">
-            The basic version of Launch UI is open-source and free forever,
-            under a do-whatever-you-want license.
+            Project timelines vary based on complexity and requirements. Simple AI integrations 
+            might take 2-4 weeks, while custom machine learning models can take 2-6 months.
           </p>
           <p className="text-muted-foreground mb-4 max-w-[580px]">
-            The pro version that contains more components and options is a
-            one-time purchase that gives you lifetime access to all current and
-            future content. Use it for unlimited personal and commercial
-            projects - no recurring fees or restrictions.
-          </p>
-          <p className="text-muted-foreground mb-4 max-w-[580px]">
-            For complete details about licensing and usage rights, check out{" "}
-            <Link href="/pricing" className="text-foreground underline">
-              the pricing page
-            </Link>
-            .
+            We provide detailed project timelines during our initial consultation and keep 
+            you updated throughout the development process.
           </p>
         </>
       ),
     },
     {
-      question: "Are Figma files included?",
+      question: "Do you provide ongoing support and maintenance?",
       answer: (
         <p className="text-muted-foreground mb-4 max-w-[580px]">
-          Yes! The complete Launch UI template is available for free on the{" "}
-          <Link
-            href="https://www.figma.com/community/file/1420131743903900629/launch-ui-landing-page-components-ui-kit"
-            className="text-foreground underline"
-          >
-            Figma community
-          </Link>
-          .
+          Absolutely! We offer comprehensive support packages including model monitoring, 
+          performance optimization, updates, bug fixes, and feature enhancements. 
+          Our team ensures your AI solutions continue to perform optimally.
         </p>
       ),
     },
     {
-      question: "Can I get a discount?",
+      question: "How do I get started with Zehan X Technologies?",
       answer: (
         <>
           <p className="text-muted-foreground mb-4 max-w-[580px]">
-            Actually, yes! I&apos;m always acively looking for beta testers of
-            new features. If you are interested in exchanging feedback for a
-            discount, please contact me via{" "}
+            Getting started is easy! Simply contact us through our contact form or email us directly. 
+            We'll schedule a consultation to discuss your project requirements and provide a detailed proposal.
+          </p>
+          <p className="text-muted-foreground mb-4 max-w-[580px]">
+            Contact us at{" "}
             <a
               href={siteConfig.links.email}
               className="underline underline-offset-2"
             >
-              email
+              {siteConfig.links.email.replace('mailto:', '')}
             </a>
-            .
+            {" "}to begin your AI transformation journey.
           </p>
         </>
       ),
