@@ -1,7 +1,6 @@
 import "@/app/globals.css";
 
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs';
 
 import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { inter } from "@/lib/fonts";
@@ -154,23 +153,20 @@ export default function RootLayout({
   };
 
   return (
-    <ClerkProvider>
-      <html lang="en" style={{ colorScheme: "dark" }} className="dark">
-        <head>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-          />
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link rel="dns-prefetch" href="https://api.clerk.com" />
-          <meta name="theme-color" content="#000000" />
-          <meta name="msapplication-TileColor" content="#000000" />
-        </head>
-        <body className={`${inter.className} bg-background antialiased`}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" style={{ colorScheme: "dark" }} className="dark">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="msapplication-TileColor" content="#000000" />
+      </head>
+      <body className={`${inter.className} bg-background antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
   );
 }

@@ -1,6 +1,5 @@
 import { Menu } from "lucide-react";
 import { ReactNode } from "react";
-import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 
 import { cn } from "@/lib/utils";
@@ -74,21 +73,12 @@ export default function Navbar({
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
           <NavbarRight>
-            <SignedOut>
-              <SignInButton>
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-              </SignInButton>
-              <SignUpButton>
-                <Button variant="default" size="sm">
-                  Get started
-                </Button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+            <Button variant="ghost" size="sm" asChild>
+              <a href="/auth/signin">Sign In</a>
+            </Button>
+            <Button variant="default" size="sm" asChild>
+              <a href="/contact">Get started</a>
+            </Button>
             <Sheet>
               <SheetTrigger asChild>
                 <Button
