@@ -40,7 +40,7 @@ export default function SubscriptionForm() {
       } else {
         setError(result.message || "Something went wrong");
       }
-    } catch (err) {
+    } catch {
       setError("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);

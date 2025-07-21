@@ -1,7 +1,7 @@
 import { ArrowRightIcon, BrainCircuit, Code, Zap } from "lucide-react";
 import { ReactNode } from "react";
 
-import { siteConfig } from "@/config/site";
+
 import { cn } from "@/lib/utils";
 
 import { Badge } from "../../ui/badge";

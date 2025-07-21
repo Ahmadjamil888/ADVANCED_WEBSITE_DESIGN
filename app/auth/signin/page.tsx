@@ -35,7 +35,7 @@ export default function SignIn() {
       } else {
         router.push("/dashboard");
       }
-    } catch (err) {
+    } catch {
       setError("Something went wrong");
     } finally {
       setIsLoading(false);

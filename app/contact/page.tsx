@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Send, CheckCircle, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Send, CheckCircle, MapPin, Clock } from "lucide-react";
 import Navbar from "@/components/sections/navbar/default";
 import Footer from "@/components/sections/footer/default";
 
@@ -43,7 +43,7 @@ export default function Contact() {
       } else {
         setError(result.message || "Something went wrong");
       }
-    } catch (err) {
+    } catch {
       setError("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);

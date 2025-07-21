@@ -2,7 +2,7 @@ import { Menu } from "lucide-react";
 import { ReactNode } from "react";
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
-import { siteConfig } from "@/config/site";
+
 import { cn } from "@/lib/utils";
 
 import { Button, type ButtonProps } from "../../ui/button";
@@ -41,7 +41,7 @@ interface NavbarProps {
 
 export default function Navbar({
   logo = null,
-  name = "ZEHAN X",
+  name = "ZEHANX",
   homeUrl = "/",
   mobileLinks = [
     { text: "Home", href: "/" },
@@ -49,7 +49,6 @@ export default function Navbar({
     { text: "Services", href: "/services" },
     { text: "Contact", href: "/contact" },
   ],
-  actions = [],
   showNavigation = true,
   customNavigation,
   className,
