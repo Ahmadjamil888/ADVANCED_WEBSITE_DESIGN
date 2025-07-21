@@ -21,91 +21,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // OPTION 1: Using EmailJS (Free service - No server setup needed)
-    // This will send emails directly from the frontend using EmailJS service
-    
-    // OPTION 2: Using Resend (Free tier: 3000 emails/month)
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const response = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: 'contact@zehanx.com', // You'll need to verify this domain with Resend
-            to: ['shazabjamildhami@gmail.com'],
-            reply_to: email,
-            subject: `New Contact Form Submission from ${name} - Zehan X Technologies`,
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-                <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
-                  New Contact Form Submission - Zehan X Technologies
-                </h2>
-                
-                <div style="margin: 20px 0;">
-                  <h3 style="color: #555; margin-bottom: 15px;">Contact Details:</h3>
-                  <table style="width: 100%; border-collapse: collapse;">
-                    <tr style="background-color: #f8f9fa;">
-                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%;">Name:</td>
-                      <td style="padding: 10px; border: 1px solid #ddd;">${name}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
-                      <td style="padding: 10px; border: 1px solid #ddd;"><a href="mailto:${email}">${email}</a></td>
-                    </tr>
-                    ${company ? `
-                    <tr style="background-color: #f8f9fa;">
-                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Company:</td>
-                      <td style="padding: 10px; border: 1px solid #ddd;">${company}</td>
-                    </tr>
-                    ` : ''}
-                    <tr>
-                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Submitted:</td>
-                      <td style="padding: 10px; border: 1px solid #ddd;">${new Date().toLocaleString('en-US', { 
-                        timeZone: 'UTC',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })} UTC</td>
-                    </tr>
-                  </table>
-                </div>
-
-                <div style="margin: 20px 0;">
-                  <h3 style="color: #555; margin-bottom: 15px;">Message:</h3>
-                  <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; border-radius: 4px;">
-                    ${message.replace(/\n/g, '<br>')}
-                  </div>
-                </div>
-
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px;">
-                  <p>This message was sent from the Zehan X Technologies contact form.</p>
-                  <p>Reply directly to this email to respond to ${name}.</p>
-                </div>
-              </div>
-            `,
-          }),
-        })
-
-        if (response.ok) {
-          return NextResponse.json({ 
-            success: true, 
-            message: 'Message sent successfully! We\'ll get back to you within 24 hours.' 
-          })
-        } else {
-          throw new Error('Resend API failed')
-        }
-      } catch (resendError) {
-        console.error('Resend error:', resendError)
-        // Fall through to other options
-      }
-    }
-
-    // OPTION 3: Using Formspree (Free tier: 50 submissions/month)
+    // OPTION 1: Using Formspree (Free tier: 50 submissions/month)
+    // Go to https://formspree.io, create account, get your form endpoint
     if (process.env.FORMSPREE_ENDPOINT) {
       try {
         const response = await fetch(process.env.FORMSPREE_ENDPOINT, {
@@ -116,7 +33,7 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({
             email: email,
             name: name,
-            company: company,
+            company: company || 'Not provided',
             message: message,
             _replyto: email,
             _subject: `New Contact Form Submission from ${name} - Zehan X Technologies`,
@@ -133,26 +50,86 @@ export async function POST(request: NextRequest) {
         }
       } catch (formspreeError) {
         console.error('Formspree error:', formspreeError)
-        // Fall through to simple logging
+        // Fall through to logging
       }
     }
 
-    // OPTION 4: Simple logging to console and database (fallback)
-    // This logs the message and you can check server logs
+    // OPTION 2: Using Web3Forms (Free tier: 250 submissions/month)
+    // Using your Web3Forms access key
+    if (process.env.WEB3FORMS_ACCESS_KEY) {
+      try {
+        const formData = new FormData()
+        formData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY)
+        formData.append('name', name)
+        formData.append('email', email)
+        formData.append('message', message)
+        formData.append('subject', `New Contact Form Submission from ${name} - Zehan X Technologies`)
+        
+        if (company) {
+          formData.append('company', company)
+        }
+        
+        // Add custom fields for better organization
+        formData.append('from_name', 'Zehan X Technologies Contact Form')
+        formData.append('replyto', email)
+
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: formData
+        })
+
+        const result = await response.json()
+        
+        if (result.success) {
+          console.log('✅ Web3Forms submission successful:', {
+            name,
+            email,
+            company: company || 'Not provided',
+            timestamp: new Date().toISOString()
+          })
+          
+          return NextResponse.json({ 
+            success: true, 
+            message: 'Message sent successfully! We\'ll get back to you within 24 hours.' 
+          })
+        } else {
+          console.error('Web3Forms failed:', result)
+          throw new Error(`Web3Forms failed: ${result.message || 'Unknown error'}`)
+        }
+      } catch (web3formsError) {
+        console.error('Web3Forms error:', web3formsError)
+        // Fall through to logging
+      }
+    }
+
+    // FALLBACK: Simple logging to console (always works)
+    // This logs the message and you can check server logs or Vercel function logs
     console.log('=== NEW CONTACT FORM SUBMISSION ===')
+    console.log('Timestamp:', new Date().toISOString())
     console.log('Name:', name)
     console.log('Email:', email)
     console.log('Company:', company || 'Not provided')
     console.log('Message:', message)
-    console.log('Timestamp:', new Date().toISOString())
+    console.log('User Agent:', request.headers.get('user-agent'))
+    console.log('IP:', request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown')
     console.log('=====================================')
 
-    // You can also save to a database here if needed
-    // For now, we'll return success and you can check the server logs
+    // Store in a simple JSON format for easy parsing
+    const submissionData = {
+      timestamp: new Date().toISOString(),
+      name,
+      email,
+      company: company || 'Not provided',
+      message,
+      userAgent: request.headers.get('user-agent'),
+      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+    }
+    
+    console.log('JSON_SUBMISSION:', JSON.stringify(submissionData))
     
     return NextResponse.json({ 
       success: true, 
-      message: 'Message received! We\'ll get back to you within 24 hours. (Check server logs for details)' 
+      message: 'Message received successfully! We\'ll get back to you within 24 hours. Your message has been logged and we will contact you soon.' 
     })
 
   } catch (error) {

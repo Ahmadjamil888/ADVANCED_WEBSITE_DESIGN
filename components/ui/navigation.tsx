@@ -55,11 +55,6 @@ export default function Navigation({
       href: "/portfolio",
     },
     {
-      title: "Blog",
-      isLink: true,
-      href: "/blog",
-    },
-    {
       title: "Our Journey",
       isLink: true,
       href: "/journey",
