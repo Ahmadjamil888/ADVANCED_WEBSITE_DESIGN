@@ -5,6 +5,7 @@ import * as React from "react";
 import { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
+import ZehanLogo from "../logos/zehan-logo";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -47,6 +48,21 @@ export default function Navigation({
     {
       title: "Services",
       content: "services",
+    },
+    {
+      title: "Portfolio",
+      isLink: true,
+      href: "/portfolio",
+    },
+    {
+      title: "Blog",
+      isLink: true,
+      href: "/blog",
+    },
+    {
+      title: "Pricing",
+      isLink: true,
+      href: "/pricing",
     },
     {
       title: "About",
@@ -96,7 +112,7 @@ export default function Navigation({
         "Strategic AI consulting to help identify opportunities and implement solutions.",
     },
   ],
-  logo = <div className="size-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">ZX</div>,
+  logo = <ZehanLogo size="md" />,
   logoTitle = "Zehan X Technologies",
   logoDescription = "Leading AI and web development company specializing in Next.js, deep learning, and machine learning solutions.",
   logoHref = "/",

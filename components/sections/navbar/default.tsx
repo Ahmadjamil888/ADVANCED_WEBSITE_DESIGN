@@ -1,10 +1,10 @@
 import { Menu } from "lucide-react";
 import { ReactNode } from "react";
 
-
 import { cn } from "@/lib/utils";
+import ZehanLogo from "../../logos/zehan-logo";
 
-import { Button, type ButtonProps } from "../../ui/button";
+import { Button } from "../../ui/button";
 import {
   Navbar as NavbarComponent,
   NavbarLeft,
@@ -18,34 +18,27 @@ interface NavbarLink {
   href: string;
 }
 
-interface NavbarActionProps {
-  text: string;
-  href: string;
-  variant?: ButtonProps["variant"];
-  icon?: ReactNode;
-  iconRight?: ReactNode;
-  isButton?: boolean;
-}
+
 
 interface NavbarProps {
-  logo?: ReactNode;
   name?: string;
   homeUrl?: string;
   mobileLinks?: NavbarLink[];
-  actions?: NavbarActionProps[];
   showNavigation?: boolean;
   customNavigation?: ReactNode;
   className?: string;
 }
 
 export default function Navbar({
-  logo = null,
   name = "ZEHANX",
   homeUrl = "/",
   mobileLinks = [
     { text: "Home", href: "/" },
     { text: "About", href: "/about" },
     { text: "Services", href: "/services" },
+    { text: "Portfolio", href: "/portfolio" },
+    { text: "Blog", href: "/blog" },
+    { text: "Pricing", href: "/pricing" },
     { text: "Contact", href: "/contact" },
   ],
   showNavigation = true,
@@ -60,15 +53,16 @@ export default function Navbar({
           <NavbarLeft>
             <a
               href={homeUrl}
-              className="flex items-center gap-2 text-xl font-bold tracking-wider text-white"
-              style={{ 
+              className="flex items-center gap-3"
+            >
+              <ZehanLogo size="md" />
+              <span className="text-xl font-bold tracking-wider text-white" style={{ 
                 fontFamily: 'monospace, "Courier New", Courier',
                 textShadow: '0 0 10px rgba(255,255,255,0.5)',
                 letterSpacing: '0.2em'
-              }}
-            >
-              {logo}
-              {name}
+              }}>
+                {name}
+              </span>
             </a>
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
@@ -94,8 +88,9 @@ export default function Navbar({
                 <nav className="grid gap-6 text-lg font-medium">
                   <a
                     href={homeUrl}
-                    className="flex items-center gap-2 text-xl font-bold"
+                    className="flex items-center gap-3 text-xl font-bold"
                   >
+                    <ZehanLogo size="sm" />
                     <span>{name}</span>
                   </a>
                   {mobileLinks.map((link, index) => (

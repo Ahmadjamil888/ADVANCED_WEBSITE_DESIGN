@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import ZehanLogo from "../../logos/zehan-logo";
 
 
 import {
@@ -33,11 +34,7 @@ interface FooterProps {
 }
 
 export default function FooterSection({
-  logo = <div className="text-lg font-bold tracking-wider text-white" style={{ 
-    fontFamily: 'monospace, "Courier New", Courier',
-    textShadow: '0 0 10px rgba(255,255,255,0.5)',
-    letterSpacing: '0.2em'
-  }}>ZEHAN X</div>,
+  logo = <ZehanLogo size="md" />,
   name = "",
   columns = [
     {
