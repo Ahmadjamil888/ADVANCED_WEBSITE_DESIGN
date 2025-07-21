@@ -60,9 +60,9 @@ export default function Navigation({
       href: "/blog",
     },
     {
-      title: "Pricing",
+      title: "Our Journey",
       isLink: true,
-      href: "/pricing",
+      href: "/journey",
     },
     {
       title: "About",

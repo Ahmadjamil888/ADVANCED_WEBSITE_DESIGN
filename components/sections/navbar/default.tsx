@@ -38,7 +38,7 @@ export default function Navbar({
     { text: "Services", href: "/services" },
     { text: "Portfolio", href: "/portfolio" },
     { text: "Blog", href: "/blog" },
-    { text: "Pricing", href: "/pricing" },
+    { text: "Our Journey", href: "/journey" },
     { text: "Contact", href: "/contact" },
   ],
   showNavigation = true,
