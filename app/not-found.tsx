@@ -1,14 +1,11 @@
+"use client";
+
 import { Button } from '@/components/ui/button';
 import { Section } from '@/components/ui/section';
 import { Search, Home, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/sections/navbar/default';
 import Footer from '@/components/sections/footer/default';
-
-export const metadata = {
-  title: '404 - Page Not Found | Zehan X Technologies',
-  description: 'The page you are looking for could not be found. Explore our AI and web development services or contact us for assistance.',
-};
 
 export default function NotFound() {
   return (
