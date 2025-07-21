@@ -1,0 +1,35 @@
+<svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" fill="#000000" rx="20"/>
+  <g>
+    <!-- Top horizontal line -->
+    <rect
+      x="35"
+      y="45"
+      width="110"
+      height="14"
+      rx="7"
+      fill="#ffffff"
+    />
+    
+    <!-- Middle diagonal line -->
+    <rect
+      x="45"
+      y="83"
+      width="90"
+      height="14"
+      rx="7"
+      fill="#ffffff"
+      transform="rotate(-26.57 90 90)"
+    />
+    
+    <!-- Bottom horizontal line -->
+    <rect
+      x="35"
+      y="121"
+      width="110"
+      height="14"
+      rx="7"
+      fill="#ffffff"
+    />
+  </g>
+</svg>
