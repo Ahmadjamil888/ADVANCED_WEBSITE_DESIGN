@@ -9,11 +9,11 @@ import { siteConfig } from "../config/site";
 
 export const metadata: Metadata = {
   title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+    default: "Zehan X Technologies - AI & Web Development Experts",
+    template: `%s | Zehan X Technologies`,
   },
   metadataBase: new URL(siteConfig.url),
-  description: siteConfig.description,
+  description: "Expert AI & web development company. Next.js, machine learning & deep learning solutions. Transform your business with cutting-edge AI technology.",
   keywords: [
     "AI development company",
     "Machine Learning services",

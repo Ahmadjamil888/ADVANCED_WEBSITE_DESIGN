@@ -1,10 +1,10 @@
 export const siteConfig = {
   name: "Zehan X Technologies",
-  url: "https://zehanx.com",
-  getStartedUrl: "https://zehanx.com/get-started",
+  url: "https://zehanxtech-dnjj0exrw-ahmadjamil888s-projects.vercel.app",
+  getStartedUrl: "https://zehanxtech-dnjj0exrw-ahmadjamil888s-projects.vercel.app/contact",
   ogImage: "/og.jpg",
   description:
-    "Leading AI and web development company specializing in Next.js, deep learning, and machine learning solutions. Transform your business with cutting-edge AI technology.",
+    "Leading AI & web development company. Expert Next.js, machine learning & deep learning solutions. Transform your business with cutting-edge AI technology.",
   links: {
     twitter: "https://twitter.com/zehanxtech",
     github: "https://github.com/zehanx",
