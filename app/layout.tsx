@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "AI automation",
     "Business intelligence",
     "Zehan X Technologies",
-    "Professional AI services"
+    "Professional AI services",
   ],
   authors: [
     {
@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     site: "@zehanxtech",
   },
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }], // White "Z" favicon
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     apple: [{ url: "/apple-touch-icon.svg", sizes: "180x180", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
   },
@@ -119,30 +119,30 @@ export default function RootLayout({
     sameAs: [
       "https://twitter.com/zehanxtech",
       "https://github.com/zehanx",
-      "https://linkedin.com/company/zehanx"
+      "https://linkedin.com/company/zehanx",
     ],
     services: [
       {
         "@type": "Service",
         name: "AI & Machine Learning Development",
-        description: "Custom AI solutions, predictive analytics, and intelligent automation"
+        description: "Custom AI solutions, predictive analytics, and intelligent automation",
       },
       {
         "@type": "Service",
         name: "Next.js Development",
-        description: "Modern, fast, and scalable web applications built with Next.js"
+        description: "Modern, fast, and scalable web applications built with Next.js",
       },
       {
         "@type": "Service",
         name: "Full-Stack Web Development",
-        description: "Complete web solutions from frontend to backend"
+        description: "Complete web solutions from frontend to backend",
       },
       {
         "@type": "Service",
         name: "Deep Learning Solutions",
-        description: "Advanced neural networks for complex pattern recognition"
-      }
-    ]
+        description: "Advanced neural networks for complex pattern recognition",
+      },
+    ],
   };
 
   const chatbaseScript = `
@@ -186,6 +186,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="theme-color" content="#000000" />
         <meta name="msapplication-TileColor" content="#000000" />
+
+        {/* ✅ Manual favicon link to ensure it's picked up */}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" sizes="180x180" type="image/svg+xml" />
       </head>
       <body className={`${inter.className} bg-background antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
