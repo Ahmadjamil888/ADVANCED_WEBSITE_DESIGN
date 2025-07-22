@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     site: "@zehanxtech",
   },
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }], // White "Z" favicon
     apple: [{ url: "/apple-touch-icon.svg", sizes: "180x180", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
   },
@@ -107,14 +107,14 @@ export default function RootLayout({
     address: {
       "@type": "PostalAddress",
       addressCountry: "Global",
-      addressRegion: "Remote"
+      addressRegion: "Remote",
     },
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+1-XXX-XXX-XXXX",
       contactType: "customer service",
       email: "shazabjamildhami@gmail.com",
-      availableLanguage: "English"
+      availableLanguage: "English",
     },
     sameAs: [
       "https://twitter.com/zehanxtech",
@@ -177,7 +177,10 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ colorScheme: "dark" }} className="dark">
       <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <script dangerouslySetInnerHTML={{ __html: chatbaseScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
