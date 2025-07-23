@@ -12,8 +12,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Using JSON format for more reliable processing with Web3Forms
-    const web3formsData = {
+    // IMPORTANT: Web3Forms requires the access_key to be sent in the payload
+    // The email will be sent to the email associated with this access_key in your Web3Forms account
+    const payload = {
       access_key: process.env.WEB3FORMS_ACCESS_KEY,
       subject: `TEST EMAIL - Contact Form Verification`,
       from_name: 'Zehan X Technologies Website',
@@ -21,12 +22,9 @@ export async function GET(request: NextRequest) {
       email: 'test@example.com',
       message: 'This is a test message to verify the contact form is working correctly.',
       company: 'Test Company',
-      reply_to: 'test@example.com',
-      to_email: 'shazabjamildhami@gmail.com'
     };
     
-    console.log('📧 TEST: Sending to Web3Forms with access key:', process.env.WEB3FORMS_ACCESS_KEY?.substring(0, 8) + '...');
-    console.log('📧 TEST: Sending to recipient email:', 'shazabjamildhami@gmail.com');
+    console.log('📧 TEST: Sending to Web3Forms with access key:', process.env.WEB3FORMS_ACCESS_KEY);
     
     const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -34,7 +32,7 @@ export async function GET(request: NextRequest) {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(web3formsData)
+      body: JSON.stringify(payload)
     });
 
     const responseText = await response.text();
