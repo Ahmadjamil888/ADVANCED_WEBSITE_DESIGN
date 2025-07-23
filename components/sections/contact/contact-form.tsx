@@ -13,6 +13,7 @@ export default function ContactForm() {
     email: "",
     name: "",
     message: "",
+    company: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -36,7 +37,7 @@ export default function ContactForm() {
 
       if (result.success) {
         setIsSuccess(true);
-        setFormData({ email: "", name: "", message: "" });
+        setFormData({ email: "", name: "", message: "", company: "" });
       } else {
         setError(result.message || "Something went wrong");
       }
@@ -115,6 +116,16 @@ export default function ContactForm() {
                   className="w-full"
                 />
               </div>
+            </div>
+            <div>
+              <Input
+                type="text"
+                name="company"
+                placeholder="Your company (optional)"
+                value={formData.company}
+                onChange={handleChange}
+                className="w-full"
+              />
             </div>
             
             <div>

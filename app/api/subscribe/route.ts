@@ -3,6 +3,12 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const { email, name, message, company } = await request.json()
+    
+    console.log('📧 Contact form submission received:', { email, name, company, messageLength: message?.length })
+    console.log('📧 Environment variables check:', { 
+      hasWeb3FormsKey: !!process.env.WEB3FORMS_ACCESS_KEY,
+      keyFirstChars: process.env.WEB3FORMS_ACCESS_KEY ? process.env.WEB3FORMS_ACCESS_KEY.substring(0, 8) + '...' : 'missing'
+    })
 
     // Validate required fields
     if (!email || !name || !message) {
@@ -58,43 +64,63 @@ export async function POST(request: NextRequest) {
     // Using your Web3Forms access key
     if (process.env.WEB3FORMS_ACCESS_KEY) {
       try {
-        const formData = new FormData()
-        formData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY)
-        formData.append('name', name)
-        formData.append('email', email)
-        formData.append('message', message)
-        formData.append('subject', `New Contact Form Submission from ${name} - Zehan X Technologies`)
+        // Using JSON format for more reliable processing with Web3Forms
+        // Web3Forms accepts both FormData and JSON, but JSON is more reliable for server-side API calls
+        const web3formsData = {
+          access_key: process.env.WEB3FORMS_ACCESS_KEY,
+          subject: `New Contact Form Submission from ${name} - Zehan X Technologies`,
+          from_name: 'Zehan X Technologies Website',
+          name: name,
+          email: email,
+          message: message,
+          company: company || 'Not provided',
+          reply_to: email,
+          to_email: 'shazabjamildhami@gmail.com'
+        };
         
-        if (company) {
-          formData.append('company', company)
-        }
+        console.log('📧 Sending to Web3Forms with access key:', process.env.WEB3FORMS_ACCESS_KEY?.substring(0, 8) + '...');
+        console.log('📧 Sending to recipient email:', 'shazabjamildhami@gmail.com');
         
-        // Add custom fields for better organization
-        formData.append('from_name', 'Zehan X Technologies Contact Form')
-        formData.append('replyto', email)
-
         const response = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(web3formsData)
         })
 
-        const result = await response.json()
+        const responseText = await response.text();
+        let result;
+        
+        try {
+          // Try to parse as JSON
+          result = JSON.parse(responseText);
+        } catch (e) {
+          console.error('Failed to parse Web3Forms response as JSON:', responseText);
+          throw new Error(`Invalid response from Web3Forms: ${responseText.substring(0, 100)}...`);
+        }
         
         if (result.success) {
           console.log('✅ Web3Forms submission successful:', {
             name,
             email,
             company: company || 'Not provided',
-            timestamp: new Date().toISOString()
-          })
+            timestamp: new Date().toISOString(),
+            responseData: result
+          });
           
           return NextResponse.json({ 
             success: true, 
             message: 'Message sent successfully! We\'ll get back to you within 24 hours.' 
-          })
+          });
         } else {
-          console.error('Web3Forms failed:', result)
-          throw new Error(`Web3Forms failed: ${result.message || 'Unknown error'}`)
+          console.error('❌ Web3Forms submission failed:', {
+            error: result.message || 'Unknown error',
+            statusCode: response.status,
+            responseData: result
+          });
+          throw new Error(`Web3Forms failed: ${result.message || 'Unknown error'} (Status: ${response.status})`);
         }
       } catch (web3formsError) {
         console.error('Web3Forms error:', web3formsError)
