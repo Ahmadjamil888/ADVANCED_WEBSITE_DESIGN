@@ -25,7 +25,7 @@ export default function ContactForm() {
     setError("");
 
     try {
-      const response = await fetch("/api/subscribe", {
+      const response = await fetch("/api/contact-simple", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
