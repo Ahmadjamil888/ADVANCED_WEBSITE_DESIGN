@@ -180,7 +180,7 @@ Reply directly to: ${email}
         try {
           // Try to parse as JSON
           result = JSON.parse(responseText);
-        } catch (e) {
+        } catch (parseError) {
           console.error('Failed to parse Web3Forms response as JSON:', responseText);
           throw new Error(`Invalid response from Web3Forms: ${responseText.substring(0, 100)}...`);
         }
