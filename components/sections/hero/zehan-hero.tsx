@@ -45,16 +45,16 @@ export default function ZehanHero({ className }: HeroProps) {
     >
       <div className="max-w-container mx-auto flex flex-col gap-12 pt-16 sm:gap-24">
         <div className="flex flex-col items-center gap-6 text-center sm:gap-12">
-          <Badge variant="outline" className="animate-appear">
-            <BrainCircuit className="mr-2 size-4" />
-            <span className="text-muted-foreground">
+          <Badge variant="outline" className="animate-appear border-blue-500/20 bg-blue-500/10 hover-glow">
+            <BrainCircuit className="mr-2 size-4 text-blue-400" />
+            <span className="text-blue-400 font-medium">
               AI-Powered Solutions
             </span>
           </Badge>
           
-          <h1 className="animate-appear from-foreground to-foreground dark:to-muted-foreground relative z-10 inline-block bg-linear-to-r bg-clip-text text-4xl leading-tight font-semibold text-balance text-transparent drop-shadow-2xl sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
-            Transform Your Business with{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="animate-appear relative z-10 text-4xl leading-tight font-bold text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
+            <span className="text-foreground">Transform Your Business with</span>{" "}
+            <span className="text-gradient-blue block sm:inline">
               AI & Web Development
             </span>
           </h1>
@@ -71,6 +71,7 @@ export default function ZehanHero({ className }: HeroProps) {
                 key={index}
                 variant={button.variant || "default"}
                 size="lg"
+                className={button.variant === "default" ? "btn-gradient-primary hover-lift glow-blue" : "hover-lift border-border/50 hover:border-blue-500/50"}
                 asChild
               >
                 <a href={button.href}>
@@ -84,15 +85,15 @@ export default function ZehanHero({ className }: HeroProps) {
 
           {/* AI Tech Stack Icons */}
           <div className="animate-appear relative z-10 flex flex-wrap justify-center gap-8 pt-8 opacity-0 delay-500">
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-muted-foreground hover:text-blue-400 transition-colors duration-300 cursor-default">
               <BrainCircuit className="size-6" />
               <span className="text-sm font-medium">AI/ML</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-muted-foreground hover:text-green-400 transition-colors duration-300 cursor-default">
               <Code className="size-6" />
               <span className="text-sm font-medium">Next.js</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-muted-foreground hover:text-purple-400 transition-colors duration-300 cursor-default">
               <Zap className="size-6" />
               <span className="text-sm font-medium">Deep Learning</span>
             </div>

@@ -1,5 +1,12 @@
 import { Menu } from "lucide-react";
 import { ReactNode } from "react";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
 
 import { cn } from "@/lib/utils";
 import ZehanLogo from "../../logos/zehan-logo";
@@ -66,12 +73,34 @@ export default function Navbar({
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
           <NavbarRight>
-            <Button variant="ghost" size="sm" asChild>
-              <a href="/auth/signin">Sign In</a>
-            </Button>
-            <Button variant="default" size="sm" asChild>
-              <a href="/contact">Get started</a>
-            </Button>
+            <SignedOut>
+              <SignInButton>
+                <Button variant="ghost" size="sm" className="nav-item">
+                  Sign In
+                </Button>
+              </SignInButton>
+              <SignUpButton>
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="btn-gradient-primary hover-lift"
+                >
+                  Get Started
+                </Button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <Button variant="ghost" size="sm" asChild className="nav-item">
+                <a href="/contact">Contact</a>
+              </Button>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
+                  }
+                }}
+              />
+            </SignedIn>
             <Sheet>
               <SheetTrigger asChild>
                 <Button
@@ -96,11 +125,33 @@ export default function Navbar({
                     <a
                       key={index}
                       href={link.href}
-                      className="text-muted-foreground hover:text-foreground"
+                      className="text-muted-foreground hover:text-foreground transition-colors duration-200"
                     >
                       {link.text}
                     </a>
                   ))}
+                  <div className="border-t border-border/50 pt-4 mt-4">
+                    <SignedOut>
+                      <div className="flex flex-col gap-3">
+                        <SignInButton>
+                          <Button variant="ghost" className="justify-start">
+                            Sign In
+                          </Button>
+                        </SignInButton>
+                        <SignUpButton>
+                          <Button className="btn-gradient-primary justify-start">
+                            Get Started
+                          </Button>
+                        </SignUpButton>
+                      </div>
+                    </SignedOut>
+                    <SignedIn>
+                      <div className="flex items-center gap-3">
+                        <UserButton />
+                        <span className="text-sm text-muted-foreground">Account</span>
+                      </div>
+                    </SignedIn>
+                  </div>
                 </nav>
               </SheetContent>
             </Sheet>

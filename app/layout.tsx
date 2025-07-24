@@ -1,6 +1,7 @@
 import "@/app/globals.css";
 
 import type { Metadata } from "next";
+import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { inter } from "@/lib/fonts";
 import { siteConfig } from "../config/site";
@@ -192,7 +193,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.svg" sizes="180x180" type="image/svg+xml" />
       </head>
       <body className={`${inter.className} bg-background antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ClerkProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

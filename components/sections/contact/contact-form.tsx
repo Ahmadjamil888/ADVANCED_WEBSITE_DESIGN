@@ -78,11 +78,11 @@ export default function ContactForm() {
     <Section id="contact" className="py-24 bg-muted/30">
       <div className="max-w-container mx-auto">
         <div className="text-center mb-12">
-          <Badge variant="outline" className="mb-4">
-            <Mail className="mr-2 size-4" />
-            Get In Touch
+          <Badge variant="outline" className="mb-4 border-green-500/20 bg-green-500/10 hover-glow">
+            <Mail className="mr-2 size-4 text-green-400" />
+            <span className="text-green-400">Get In Touch</span>
           </Badge>
-          <h2 className="text-3xl font-bold mb-4 sm:text-5xl">
+          <h2 className="text-3xl font-bold mb-4 sm:text-5xl text-gradient-green">
             Let's Build Something Amazing Together
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -92,7 +92,8 @@ export default function ContactForm() {
         </div>
 
         <div className="max-w-lg mx-auto">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="enhanced-card p-6 rounded-lg">
+            <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Input
@@ -149,7 +150,7 @@ export default function ContactForm() {
             <Button
               type="submit"
               disabled={isSubmitting || !formData.email || !formData.name}
-              className="w-full"
+              className="w-full btn-gradient-secondary hover-lift glow-green"
               size="lg"
             >
               {isSubmitting ? (
@@ -161,7 +162,8 @@ export default function ContactForm() {
                 </>
               )}
             </Button>
-          </form>
+            </form>
+          </div>
 
           <div className="mt-8 text-center">
             <p className="text-muted-foreground text-sm">

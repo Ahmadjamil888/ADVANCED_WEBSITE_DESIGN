@@ -213,3 +213,138 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Professional enhancements */
+@layer components {
+  /* Subtle gradient backgrounds */
+  .gradient-bg {
+    background: linear-gradient(135deg, 
+      oklch(0.141 0.005 285.823) 0%, 
+      oklch(0.16 0.008 285.823) 50%, 
+      oklch(0.141 0.005 285.823) 100%);
+  }
+  
+  /* Enhanced card styling */
+  .enhanced-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Professional button gradients */
+  .btn-gradient-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    @apply hover:shadow-lg transition-all duration-300;
+  }
+  
+  .btn-gradient-secondary {
+    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    @apply hover:shadow-lg transition-all duration-300;
+  }
+  
+  /* Subtle accent borders */
+  .accent-border {
+    @apply border-l-4 border-l-blue-500/30 pl-4;
+  }
+  
+  /* Professional glow effects */
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+  }
+  
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+  }
+  
+  .glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+  }
+  
+  /* Enhanced text gradients */
+  .text-gradient-blue {
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-green {
+    background: linear-gradient(135deg, #34d399 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Professional section dividers */
+  .section-divider {
+    @apply relative;
+  }
+  
+  .section-divider::before {
+    content: '';
+    @apply absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent;
+  }
+  
+  /* Enhanced navigation */
+  .nav-item {
+    @apply relative transition-all duration-300 hover:text-blue-400;
+  }
+  
+  .nav-item::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300;
+  }
+  
+  .nav-item:hover::after {
+    @apply w-full;
+  }
+  
+  /* Professional form styling */
+  .form-field {
+    @apply relative;
+  }
+  
+  .form-field input:focus,
+  .form-field textarea:focus {
+    @apply ring-2 ring-blue-500/20 border-blue-500/50;
+  }
+  
+  /* Subtle animations */
+  .fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Professional hover effects */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10;
+  }
+}
