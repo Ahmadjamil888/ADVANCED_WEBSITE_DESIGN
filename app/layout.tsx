@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { inter } from "@/lib/fonts";
 import { siteConfig } from "../config/site";
@@ -12,7 +12,8 @@ export const metadata: Metadata = {
     template: `%s | Zehan X Technologies`,
   },
   metadataBase: new URL(siteConfig.url),
-  description: "Expert AI & web development company. Next.js, machine learning & deep learning solutions. Transform your business with cutting-edge AI technology.",
+  description:
+    "Expert AI & web development company. Next.js, machine learning & deep learning solutions. Transform your business with cutting-edge AI technology.",
   keywords: [
     "AI development company",
     "Machine Learning services",
@@ -81,7 +82,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/apple-touch-icon.svg", sizes: "180x180", type: "image/svg+xml" }],
+    apple: [
+      {
+        url: "/apple-touch-icon.svg",
+        sizes: "180x180",
+        type: "image/svg+xml",
+      },
+    ],
     shortcut: "/favicon.svg",
   },
   alternates: {
@@ -126,7 +133,8 @@ export default function RootLayout({
       {
         "@type": "Service",
         name: "AI & Machine Learning Development",
-        description: "Custom AI solutions, predictive analytics, and intelligent automation",
+        description:
+          "Custom AI solutions, predictive analytics, and intelligent automation",
       },
       {
         "@type": "Service",
@@ -178,19 +186,34 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ colorScheme: "dark" }} className="dark">
       <head>
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-6482011762315089"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <script dangerouslySetInnerHTML={{ __html: chatbaseScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <meta name="theme-color" content="#000000" />
         <meta name="msapplication-TileColor" content="#000000" />
-
-        {/* ✅ Manual favicon link to ensure it's picked up */}
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" sizes="180x180" type="image/svg+xml" />
+        <link
+          rel="icon"
+          href="/favicon.svg"
+          type="image/svg+xml"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/apple-touch-icon.svg"
+          sizes="180x180"
+          type="image/svg+xml"
+        />
       </head>
       <body className={`${inter.className} bg-background antialiased`}>
         <ClerkProvider>
