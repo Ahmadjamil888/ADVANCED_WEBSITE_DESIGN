@@ -207,14 +207,14 @@ export default function RootLayout({
       <body className={`${inter.className} bg-background antialiased`}>
         <ClerkProvider>
           <ThemeProvider>
-            {/* AdSense Ad Unit */}
+            {/* Fluid AdSense Ad Unit */}
             <ins
               className="adsbygoogle"
               style={{ display: "block" }}
+              data-ad-format="fluid"
+              data-ad-layout-key="-fb+5w+4e-db+86"
               data-ad-client="ca-pub-6482011762315089"
-              data-ad-slot="2032661532"
-              data-ad-format="auto"
-              data-full-width-responsive="true"
+              data-ad-slot="1761531930"
             />
             <script
               dangerouslySetInnerHTML={{
