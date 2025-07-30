@@ -3,7 +3,7 @@ import { Section } from "@/components/ui/section";
 import { getAllBlogPosts } from "@/lib/blog";
 import Link from "next/link";
 import { Calendar, Clock, User, ArrowRight, BrainCircuit, Code, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import Navbar from "@/components/sections/navbar/default";
 import Footer from "@/components/sections/footer/default";
 

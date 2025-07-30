@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // This is a test endpoint to verify Web3Forms is working correctly
 // Access this endpoint at /api/test-email to send a test email
@@ -41,7 +41,7 @@ export async function GET() {
     try {
       // Try to parse as JSON
       result = JSON.parse(responseText);
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse Web3Forms response as JSON:', responseText);
       return NextResponse.json(
         { success: false, message: `Invalid response from Web3Forms: ${responseText.substring(0, 100)}...` },
