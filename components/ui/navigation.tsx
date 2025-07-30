@@ -50,6 +50,11 @@ export default function Navigation({
       content: "services",
     },
     {
+      title: "Blog",
+      isLink: true,
+      href: "/blog",
+    },
+    {
       title: "Portfolio",
       isLink: true,
       href: "/portfolio",
