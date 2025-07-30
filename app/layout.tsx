@@ -186,9 +186,11 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ colorScheme: "dark" }} className="dark">
       <head>
-        <meta
-          name="google-adsense-account"
-          content="ca-pub-6482011762315089"
+        <meta name="google-adsense-account" content="ca-pub-6482011762315089" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482011762315089"
+          crossOrigin="anonymous"
         />
         <script
           type="application/ld+json"
@@ -196,28 +198,31 @@ export default function RootLayout({
         />
         <script dangerouslySetInnerHTML={{ __html: chatbaseScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="theme-color" content="#000000" />
         <meta name="msapplication-TileColor" content="#000000" />
-        <link
-          rel="icon"
-          href="/favicon.svg"
-          type="image/svg+xml"
-        />
-        <link
-          rel="apple-touch-icon"
-          href="/apple-touch-icon.svg"
-          sizes="180x180"
-          type="image/svg+xml"
-        />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" sizes="180x180" type="image/svg+xml" />
       </head>
       <body className={`${inter.className} bg-background antialiased`}>
         <ClerkProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            {/* AdSense Ad Unit */}
+            <ins
+              className="adsbygoogle"
+              style={{ display: "block" }}
+              data-ad-client="ca-pub-6482011762315089"
+              data-ad-slot="2032661532"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `(adsbygoogle = window.adsbygoogle || []).push({});`,
+              }}
+            />
+            {children}
+          </ThemeProvider>
         </ClerkProvider>
       </body>
     </html>
