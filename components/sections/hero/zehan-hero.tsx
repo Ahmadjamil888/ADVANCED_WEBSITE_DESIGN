@@ -53,8 +53,9 @@ export default function ZehanHero({ className }: HeroProps) {
             </span>
           </Badge>
           
-          <h1 className="fade-in-professional heading-professional text-gradient-primary relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
-            Transform Your Business with Professional AI & Web Development
+          <h1 className="fade-in-professional heading-professional relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
+            <span className="text-foreground">Transform Your Business with</span>{" "}
+            <span className="text-gradient-primary">Professional AI & Web Development</span>
           </h1>
           
           <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed">
