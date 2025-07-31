@@ -56,15 +56,19 @@ export default function SubscriptionForm() {
 
   if (isSuccess) {
     return (
-      <Section id="contact" className="py-24">
+      <Section id="contact" className="py-24 gradient-bg-light dark:gradient-bg-professional">
         <div className="max-w-container mx-auto text-center">
           <div className="flex flex-col items-center gap-6">
-            <CheckCircle className="size-16 text-green-500" />
-            <h2 className="text-3xl font-bold">Thank You!</h2>
-            <p className="text-muted-foreground max-w-md">
+            <CheckCircle className="size-16 text-primary glow-primary" />
+            <h2 className="text-3xl font-bold heading-professional text-gradient-primary">Thank You!</h2>
+            <p className="subheading-professional max-w-md">
               Your message has been sent successfully. We'll get back to you soon!
             </p>
-            <Button onClick={() => setIsSuccess(false)} variant="outline">
+            <Button 
+              onClick={() => setIsSuccess(false)} 
+              variant="outline"
+              className="professional-card hover-glow-professional border-primary/30 text-primary hover:border-primary/50 hover-lift-professional"
+            >
               Send Another Message
             </Button>
           </div>
@@ -74,60 +78,60 @@ export default function SubscriptionForm() {
   }
 
   return (
-    <Section id="contact" className="py-24">
+    <Section id="contact" className="py-24 gradient-bg-light dark:gradient-bg-professional">
       <div className="max-w-container mx-auto">
-        <div className="text-center mb-12">
-          <Badge variant="outline" className="mb-4">
+        <div className="text-center mb-16 section-divider-professional">
+          <Badge variant="outline" className="mb-6 badge-professional hover-glow-professional">
             <Mail className="mr-2 size-4" />
-            Get In Touch
+            Professional Consultation
           </Badge>
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Transform Your Business?
+          <h2 className="text-4xl font-bold mb-6 heading-professional text-gradient-primary">
+            Ready to Transform Your Enterprise?
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Contact us to discuss your AI and web development needs. 
-            We'll help you build intelligent solutions that drive growth.
+          <p className="subheading-professional max-w-3xl mx-auto text-lg leading-relaxed">
+            Schedule a consultation to discuss your AI and web development requirements. 
+            We'll architect intelligent solutions that deliver measurable business value and competitive advantage.
           </p>
         </div>
 
-        <div className="max-w-md mx-auto">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
+        <div className="max-w-2xl mx-auto">
+          <form onSubmit={handleSubmit} className="space-y-8 professional-card p-8">
+            <div className="form-field-professional">
               <Input
                 type="email"
                 name="email"
-                placeholder="Your email address"
+                placeholder="Your professional email address"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full"
+                className="w-full h-12 text-base border-border/60 focus:border-primary/60 rounded-lg"
               />
             </div>
             
-            <div>
+            <div className="form-field-professional">
               <Input
                 type="text"
                 name="name"
-                placeholder="Your name (optional)"
+                placeholder="Your full name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full"
+                className="w-full h-12 text-base border-border/60 focus:border-primary/60 rounded-lg"
               />
             </div>
             
-            <div>
+            <div className="form-field-professional">
               <Textarea
                 name="message"
-                placeholder="Tell us about your project..."
+                placeholder="Describe your project requirements, goals, and timeline..."
                 value={formData.message}
                 onChange={handleChange}
-                rows={4}
-                className="w-full"
+                rows={5}
+                className="w-full text-base border-border/60 focus:border-primary/60 rounded-lg resize-none"
               />
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm text-center">
+              <div className="text-destructive text-sm text-center p-3 bg-destructive/10 rounded-lg border border-destructive/20">
                 {error}
               </div>
             )}
@@ -135,14 +139,17 @@ export default function SubscriptionForm() {
             <Button
               type="submit"
               disabled={isSubmitting || !formData.email}
-              className="w-full"
+              className="w-full h-12 btn-gradient-primary text-white font-semibold text-base hover-lift-professional"
               size="lg"
             >
               {isSubmitting ? (
-                "Sending..."
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Processing Request...
+                </>
               ) : (
                 <>
-                  Send Message
+                  Schedule Consultation
                   <Send className="ml-2 size-4" />
                 </>
               )}

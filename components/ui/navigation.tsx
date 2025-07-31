@@ -155,14 +155,14 @@ export default function Navigation({
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
                           <a
-                            className="from-muted/30 to-muted/10 flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
+                            className="professional-card hover-glow-professional flex h-full w-full flex-col justify-end rounded-lg p-6 no-underline outline-hidden select-none focus:shadow-md transition-all duration-300"
                             href={logoHref}
                           >
                             {logo}
-                            <div className="mt-4 mb-2 text-lg font-medium">
+                            <div className="mt-4 mb-2 text-lg font-semibold heading-professional">
                               {logoTitle}
                             </div>
-                            <p className="text-muted-foreground text-sm leading-tight">
+                            <p className="subheading-professional text-sm leading-tight">
                               {logoDescription}
                             </p>
                           </a>
@@ -216,8 +216,8 @@ function ListItem({
           )}
           {...props}
         >
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+          <div className="text-sm leading-none font-semibold text-primary">{title}</div>
+          <p className="subheading-professional line-clamp-2 text-sm leading-snug">
             {children}
           </p>
         </a>

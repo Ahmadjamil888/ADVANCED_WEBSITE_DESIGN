@@ -40,36 +40,41 @@ export default function ZehanHero({ className }: HeroProps) {
   return (
     <Section
       className={cn(
-        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0",
+        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 gradient-bg-light dark:gradient-bg-professional",
         className,
       )}
     >
-      <div className="max-w-container mx-auto flex flex-col gap-12 pt-16 sm:gap-24">
-        <div className="flex flex-col items-center gap-6 text-center sm:gap-12">
-          <Badge variant="outline" className="animate-appear border-blue-500/20 bg-blue-500/10 hover-glow">
-            <BrainCircuit className="mr-2 size-4 text-blue-400" />
-            <span className="text-blue-400 font-medium">
-              AI-Powered Solutions
+      <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24">
+        <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
+          <Badge variant="outline" className="fade-in-professional badge-professional hover-glow-professional">
+            <BrainCircuit className="mr-2 size-4 text-primary" />
+            <span className="text-primary font-semibold">
+              Enterprise AI Solutions
             </span>
           </Badge>
           
-          <h1 className="animate-appear from-foreground to-foreground dark:to-muted-foreground relative z-10 inline-block bg-linear-to-r bg-clip-text text-4xl leading-tight font-semibold text-balance text-transparent drop-shadow-2xl sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
-            Transform Your Business with AI & Web Development
+          <h1 className="fade-in-professional heading-professional text-gradient-primary relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
+            Transform Your Business with Professional AI & Web Development
           </h1>
           
-          <p className="text-md animate-appear text-muted-foreground relative z-10 max-w-[740px] font-medium text-balance opacity-0 delay-100 sm:text-xl">
-            Zehan X Technologies specializes in cutting-edge AI solutions, Next.js development, 
-            deep learning, and machine learning. We build intelligent applications that drive innovation 
-            and accelerate your digital transformation.
+          <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed">
+            Zehan X Technologies delivers enterprise-grade AI solutions, sophisticated Next.js development, 
+            and advanced machine learning systems. We architect intelligent applications that drive measurable 
+            business outcomes and accelerate your digital transformation journey.
           </p>
           
-          <div className="animate-appear relative z-10 flex justify-center gap-4 opacity-0 delay-300">
+          <div className="fade-in-professional relative z-10 flex flex-col sm:flex-row justify-center gap-4 opacity-0 delay-300">
             {buttons.map((button, index) => (
               <Button
                 key={index}
                 variant={button.variant || "default"}
                 size="lg"
-                className={button.variant === "default" ? "btn-gradient-primary hover-lift glow-blue" : "hover-lift border-border/50 hover:border-blue-500/50"}
+                className={cn(
+                  "hover-lift-professional font-semibold px-8 py-3",
+                  button.variant === "default" 
+                    ? "btn-gradient-primary text-white shadow-lg" 
+                    : "professional-card hover-glow-professional border-primary/30 text-primary hover:border-primary/50"
+                )}
                 asChild
               >
                 <a href={button.href}>
@@ -81,46 +86,52 @@ export default function ZehanHero({ className }: HeroProps) {
             ))}
           </div>
 
-          {/* AI Tech Stack Icons */}
-          <div className="animate-appear relative z-10 flex flex-wrap justify-center gap-8 pt-8 opacity-0 delay-500">
-            <div className="flex items-center gap-2 text-muted-foreground hover:text-blue-400 transition-colors duration-300 cursor-default">
-              <BrainCircuit className="size-6" />
-              <span className="text-sm font-medium">AI/ML</span>
+          {/* Professional Tech Stack Icons */}
+          <div className="fade-in-professional relative z-10 flex flex-wrap justify-center gap-12 pt-12 opacity-0 delay-500">
+            <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all duration-300 cursor-default hover-lift-professional">
+              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                <BrainCircuit className="size-6 text-primary" />
+              </div>
+              <span className="text-sm font-semibold">AI/ML Engineering</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground hover:text-green-400 transition-colors duration-300 cursor-default">
-              <Code className="size-6" />
-              <span className="text-sm font-medium">Next.js</span>
+            <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all duration-300 cursor-default hover-lift-professional">
+              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                <Code className="size-6 text-primary" />
+              </div>
+              <span className="text-sm font-semibold">Next.js Development</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground hover:text-purple-400 transition-colors duration-300 cursor-default">
-              <Zap className="size-6" />
-              <span className="text-sm font-medium">Deep Learning</span>
+            <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all duration-300 cursor-default hover-lift-professional">
+              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                <Zap className="size-6 text-primary" />
+              </div>
+              <span className="text-sm font-semibold">Deep Learning</span>
             </div>
           </div>
 
-          {/* Video Section */}
-          <div className="relative w-full pt-12">
+          {/* Professional Video Section */}
+          <div className="relative w-full pt-16">
             <MockupFrame
-              className="animate-appear opacity-0 delay-700"
+              className="fade-in-professional opacity-0 delay-700 hover-lift-professional"
               size="small"
             >
               <Mockup
                 type="responsive"
-                className="bg-background/90 w-full rounded-xl border-0"
+                className="executive-card w-full rounded-2xl border-primary/20"
               >
                 <YouTubeVideo
                   videoId="fa8k8IQ1_X0"
-                  className="w-full"
+                  className="w-full rounded-xl"
                   autoplay={true}
                   controls={false}
                   mute={true}
                   loop={true}
-                  title="Zehan X Technologies - AI & Web Development Solutions"
+                  title="Zehan X Technologies - Professional AI & Web Development Solutions"
                 />
               </Mockup>
             </MockupFrame>
             <Glow
               variant="top"
-              className="animate-appear-zoom opacity-0 delay-1000"
+              className="fade-in-professional glow-primary opacity-0 delay-1000"
             />
           </div>
         </div>

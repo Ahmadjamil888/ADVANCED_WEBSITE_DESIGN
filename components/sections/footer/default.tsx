@@ -82,19 +82,19 @@ export default function FooterSection({
         <Footer>
           <FooterContent>
             <FooterColumn className="col-span-2 sm:col-span-3 md:col-span-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {logo}
-                <h3 className="text-xl font-bold">{name}</h3>
+                <h3 className="text-xl font-bold heading-professional text-primary">{name}</h3>
               </div>
             </FooterColumn>
             {columns.map((column, index) => (
               <FooterColumn key={index}>
-                <h3 className="text-md pt-1 font-semibold">{column.title}</h3>
+                <h3 className="text-md pt-1 font-semibold text-primary">{column.title}</h3>
                 {column.links.map((link, linkIndex) => (
                   <a
                     key={linkIndex}
                     href={link.href}
-                    className="text-muted-foreground text-sm"
+                    className="nav-item-professional text-sm transition-all duration-300"
                   >
                     {link.text}
                   </a>
