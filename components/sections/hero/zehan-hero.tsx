@@ -1,12 +1,13 @@
 import { ArrowRightIcon, BrainCircuit, Code, Zap } from "lucide-react";
 import { ReactNode } from "react";
 
-
 import { cn } from "@/lib/utils";
 
 import { Badge } from "../../ui/badge";
 import { Button, type ButtonProps } from "../../ui/button";
 import Glow from "../../ui/glow";
+import { Mockup, MockupFrame } from "../../ui/mockup";
+import YouTubeVideo from "../../ui/youtube-video";
 import { Section } from "../../ui/section";
 
 interface HeroButtonProps {
@@ -99,7 +100,27 @@ export default function ZehanHero({ className }: HeroProps) {
             </div>
           </div>
 
+          {/* Video Section */}
           <div className="relative w-full pt-12">
+            <MockupFrame
+              className="animate-appear opacity-0 delay-700"
+              size="small"
+            >
+              <Mockup
+                type="responsive"
+                className="bg-background/90 w-full rounded-xl border-0"
+              >
+                <YouTubeVideo
+                  videoId="fa8k8IQ1_X0"
+                  className="w-full"
+                  autoplay={true}
+                  controls={false}
+                  mute={true}
+                  loop={true}
+                  title="Zehan X Technologies - AI & Web Development Solutions"
+                />
+              </Mockup>
+            </MockupFrame>
             <Glow
               variant="top"
               className="animate-appear-zoom opacity-0 delay-1000"

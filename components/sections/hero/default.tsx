@@ -6,7 +6,7 @@ import { Badge } from "../../ui/badge";
 import { Button, type ButtonProps } from "../../ui/button";
 import Glow from "../../ui/glow";
 import { Mockup, MockupFrame } from "../../ui/mockup";
-import Screenshot from "../../ui/screenshot";
+import YouTubeVideo from "../../ui/youtube-video";
 import { Section } from "../../ui/section";
 
 interface HeroButtonProps {
@@ -30,13 +30,14 @@ export default function Hero({
   title = "Transform Your Business with AI & Next.js Development",
   description = "Zehan X Technologies delivers cutting-edge AI solutions, machine learning models, and modern web applications that drive innovation and accelerate your digital transformation.",
   mockup = (
-    <Screenshot
-      srcLight="/app-light.png"
-      srcDark="/app-dark.png"
-      alt="Launch UI app screenshot"
-      width={1248}
-      height={765}
+    <YouTubeVideo
+      videoId="fa8k8IQ1_X0"
       className="w-full"
+      autoplay={true}
+      controls={false}
+      mute={true}
+      loop={true}
+      title="Zehan X Technologies - AI & Web Development Solutions"
     />
   ),
   badge = (
