@@ -53,11 +53,8 @@ export default function ZehanHero({ className }: HeroProps) {
             </span>
           </Badge>
           
-          <h1 className="animate-appear relative z-10 text-4xl leading-tight font-bold text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
-            <span className="text-foreground">Transform Your Business with</span>{" "}
-            <span className="text-gradient-blue block sm:inline">
-              AI & Web Development
-            </span>
+          <h1 className="animate-appear from-foreground to-foreground dark:to-muted-foreground relative z-10 inline-block bg-linear-to-r bg-clip-text text-4xl leading-tight font-semibold text-balance text-transparent drop-shadow-2xl sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
+            Transform Your Business with AI & Web Development
           </h1>
           
           <p className="text-md animate-appear text-muted-foreground relative z-10 max-w-[740px] font-medium text-balance opacity-0 delay-100 sm:text-xl">
