@@ -40,7 +40,7 @@ export default function ZehanHero({ className }: HeroProps) {
   return (
     <Section
       className={cn(
-        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 gradient-bg-light dark:gradient-bg-professional",
+        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 bg-background",
         className,
       )}
     >

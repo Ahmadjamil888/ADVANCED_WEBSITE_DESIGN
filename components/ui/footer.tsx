@@ -6,7 +6,7 @@ function Footer({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="footer"
-      className={cn("gradient-bg-light dark:gradient-bg-professional text-foreground pt-16 pb-6 border-t border-border/30", className)}
+      className={cn("bg-background text-foreground pt-16 pb-6 border-t border-border/30", className)}
       {...props}
     />
   );

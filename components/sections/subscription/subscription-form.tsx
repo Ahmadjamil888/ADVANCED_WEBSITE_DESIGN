@@ -56,7 +56,7 @@ export default function SubscriptionForm() {
 
   if (isSuccess) {
     return (
-      <Section id="contact" className="py-24 gradient-bg-light dark:gradient-bg-professional">
+      <Section id="contact" className="py-24 bg-background">
         <div className="max-w-container mx-auto text-center">
           <div className="flex flex-col items-center gap-6">
             <CheckCircle className="size-16 text-primary glow-primary" />
@@ -78,7 +78,7 @@ export default function SubscriptionForm() {
   }
 
   return (
-    <Section id="contact" className="py-24 gradient-bg-light dark:gradient-bg-professional">
+    <Section id="contact" className="py-24 bg-background">
       <div className="max-w-container mx-auto">
         <div className="text-center mb-16 section-divider-professional">
           <Badge variant="outline" className="mb-6 badge-professional hover-glow-professional">
