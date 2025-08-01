@@ -40,11 +40,20 @@ export default function ZehanHero({ className }: HeroProps) {
   return (
     <Section
       className={cn(
-        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 bg-background",
+        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 bg-background relative",
         className,
       )}
     >
-      <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24">
+      {/* Glowing Blue Background Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/5 rounded-full blur-3xl glow-orb-1"></div>
+        <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-primary/8 rounded-full blur-2xl glow-orb-2"></div>
+        <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] bg-primary/6 rounded-full blur-2xl glow-orb-3"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[300px] bg-primary/4 rounded-full blur-3xl glow-orb-4"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-primary/2 via-transparent to-transparent"></div>
+      </div>
+      
+      <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
         <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
           <Badge variant="outline" className="fade-in-professional badge-professional hover-glow-professional">
             <BrainCircuit className="mr-2 size-4 text-primary" />
