@@ -186,12 +186,6 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ colorScheme: "dark" }} className="dark">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-6482011762315089" />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482011762315089"
-          crossOrigin="anonymous"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -207,20 +201,6 @@ export default function RootLayout({
       <body className={`${inter.className} bg-background antialiased`}>
         <ClerkProvider>
           <ThemeProvider>
-            {/* Fluid AdSense Ad Unit */}
-            <ins
-              className="adsbygoogle"
-              style={{ display: "block" }}
-              data-ad-format="fluid"
-              data-ad-layout-key="-fb+5w+4e-db+86"
-              data-ad-client="ca-pub-6482011762315089"
-              data-ad-slot="1761531930"
-            />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `(adsbygoogle = window.adsbygoogle || []).push({});`,
-              }}
-            />
             {children}
           </ThemeProvider>
         </ClerkProvider>
