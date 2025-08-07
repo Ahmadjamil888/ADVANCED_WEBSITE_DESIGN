@@ -126,7 +126,7 @@ export default function RootLayout({
     },
     sameAs: [
       "https://twitter.com/zehanxtech",
-      "https://github.com/zehanx",
+      "https://github.com/aurionsoft",
       "https://linkedin.com/company/zehanx",
     ],
     services: [
