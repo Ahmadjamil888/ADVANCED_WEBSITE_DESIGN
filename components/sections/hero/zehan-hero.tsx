@@ -26,14 +26,14 @@ interface HeroProps {
 export default function ZehanHero({ className }: HeroProps) {
   const buttons: HeroButtonProps[] = [
     {
-      href: "/contact",
-      text: "Get Started",
+      href: "/zehan",
+      text: "Try Zehan AI",
       variant: "default",
       iconRight: <ArrowRightIcon className="ml-2 size-4" />,
     },
     {
-      href: "/services",
-      text: "Our Services",
+      href: "/contact",
+      text: "Get Started",
       variant: "outline",
     },
   ];

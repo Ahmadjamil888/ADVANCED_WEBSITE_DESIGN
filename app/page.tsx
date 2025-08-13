@@ -91,7 +91,7 @@ export default function Home() {
             </div>
             
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-4">From Small Agency to AI Leaders</h3>
+              <h3 className="text-xl font-semibold mb-4">Experience Our AI Technology - Try Zehan AI!</h3>
               <p className="text-muted-foreground max-w-3xl mx-auto mb-8">
                 Zehan X Technologies began as a small web development agency and evolved into a leading 
                 AI and machine learning company. Our journey from creating simple websites to developing 
@@ -100,7 +100,14 @@ export default function Home() {
                 comprehensive digital transformation solutions for businesses worldwide.
               </p>
               
-              <div className="flex justify-center">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                <a 
+                  href="/zehan" 
+                  className="btn-gradient-primary text-white px-6 py-3 rounded-lg font-semibold hover-lift-professional transition-all duration-300 inline-flex items-center gap-2"
+                >
+                  🤖 Try Zehan AI Now
+                  <ArrowRightIcon className="size-4" />
+                </a>
                 <SocialShare />
               </div>
             </div>
