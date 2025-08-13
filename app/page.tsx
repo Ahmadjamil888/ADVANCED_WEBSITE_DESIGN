@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+
 import CTA from "../components/sections/cta/default";
 import FAQ from "../components/sections/faq/default";
 import Footer from "../components/sections/footer/default";
@@ -105,8 +106,8 @@ export default function Home() {
                   href="/zehan" 
                   className="btn-gradient-primary text-white px-6 py-3 rounded-lg font-semibold hover-lift-professional transition-all duration-300 inline-flex items-center gap-2"
                 >
-                  🤖 Try Zehan AI Now
-                  <ArrowRightIcon className="size-4" />
+                   Try Zehan AI Now
+                  <span className="text-sm">→</span>
                 </a>
                 <SocialShare />
               </div>
