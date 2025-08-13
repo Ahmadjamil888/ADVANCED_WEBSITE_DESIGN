@@ -12,17 +12,17 @@ interface Message {
   timestamp: Date;
 }
 
-// Demo responses for the AI
-const demoResponses = [
-  "That's an interesting question! As Zehan AI, I'm designed to help with various tasks and provide intelligent responses.",
-  "I'm here to demonstrate the capabilities of Zehan X Technologies' AI solutions. What would you like to know?",
-  "Great question! Our AI technology can be customized for your specific business needs and requirements.",
-  "I'm a demo version of Zehan AI. The full version can be integrated into your applications with advanced capabilities.",
-  "Thank you for trying Zehan AI! This demonstrates our expertise in artificial intelligence and machine learning.",
-  "As an AI assistant, I can help with various tasks. This is just a preview of what's possible with our technology.",
-  "Zehan X Technologies specializes in creating custom AI solutions like this one for businesses worldwide.",
-  "This chat interface showcases our ability to create intelligent, responsive AI applications for any industry."
-];
+// AI system prompt to define Zehan AI's personality and knowledge
+const SYSTEM_PROMPT = `You are Zehan AI, an advanced AI assistant created by Zehan X Technologies. You are knowledgeable about:
+
+- Artificial Intelligence and Machine Learning
+- Web Development (especially Next.js, React, TypeScript)
+- Deep Learning and Neural Networks
+- Business AI Solutions and Automation
+- Data Analytics and Predictive Modeling
+- Enterprise Software Development
+
+You should be helpful, professional, and showcase the capabilities of Zehan X Technologies. Keep responses concise but informative. Always maintain a friendly and expert tone.`;
 
 export default function ZehanAI() {
   const initialMessage: Message = {
@@ -36,6 +36,77 @@ export default function ZehanAI() {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const generateAIResponse = async (userInput: string): Promise<string> => {
+    try {
+      // Use OpenAI-compatible API (you can replace with any AI service)
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userInput }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get AI response');
+      }
+
+      const data = await response.json();
+      return data.message || "I apologize, but I'm having trouble generating a response right now. Please try again.";
+    } catch (error) {
+      console.error('AI Response Error:', error);
+      
+      // Fallback to intelligent rule-based responses
+      return generateFallbackResponse(userInput);
+    }
+  };
+
+  const generateFallbackResponse = (userInput: string): string => {
+    const input = userInput.toLowerCase();
+    
+    // Zehan X Technologies specific responses
+    if (input.includes('zehan') || input.includes('company') || input.includes('about')) {
+      return "Zehan X Technologies is a leading AI and web development company. We specialize in creating intelligent solutions using cutting-edge technologies like Next.js, React, and advanced machine learning models. Our team transforms businesses through custom AI applications and modern web development.";
+    }
+    
+    if (input.includes('ai') || input.includes('artificial intelligence') || input.includes('machine learning')) {
+      return "We offer comprehensive AI services including custom machine learning models, predictive analytics, natural language processing, computer vision, and intelligent automation systems. Our AI solutions are designed to solve real business problems and drive measurable results.";
+    }
+    
+    if (input.includes('web') || input.includes('website') || input.includes('development') || input.includes('next.js') || input.includes('react')) {
+      return "Our web development expertise includes modern frameworks like Next.js, React, and TypeScript. We build scalable, performant web applications with excellent user experiences. From simple business websites to complex enterprise applications, we deliver solutions that drive growth.";
+    }
+    
+    if (input.includes('service') || input.includes('help') || input.includes('offer')) {
+      return "We offer AI & Machine Learning solutions, Next.js development, deep learning systems, full-stack web applications, intelligent chatbots, performance optimization, data analytics, and enterprise security. Each solution is customized to meet your specific business needs.";
+    }
+    
+    if (input.includes('price') || input.includes('cost') || input.includes('pricing')) {
+      return "Our pricing is customized based on your specific requirements and project scope. We offer competitive rates for both AI development and web development services. Contact us for a detailed quote tailored to your needs.";
+    }
+    
+    if (input.includes('contact') || input.includes('reach') || input.includes('get in touch')) {
+      return "You can reach out to us through our contact page or email us directly. We're always happy to discuss your project requirements and how our AI and web development expertise can help transform your business.";
+    }
+    
+    // General AI assistant responses
+    if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
+      return "Hello! I'm Zehan AI, your intelligent assistant from Zehan X Technologies. I'm here to help you learn about our AI and web development services. What would you like to know?";
+    }
+    
+    if (input.includes('thank') || input.includes('thanks')) {
+      return "You're welcome! I'm glad I could help. If you have any more questions about our AI solutions or web development services, feel free to ask!";
+    }
+    
+    // Default intelligent response
+    return `That's an interesting question about "${userInput}". As Zehan AI, I'm designed to help with AI development, machine learning, and web development topics. Could you be more specific about what aspect you'd like to know more about? I can provide detailed information about our services, technologies, or how we can help solve your business challenges.`;
+  };
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
@@ -47,23 +118,33 @@ export default function ZehanAI() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputMessage;
     setInputMessage('');
     setIsLoading(true);
 
-    // Simulate AI processing time
-    setTimeout(() => {
-      const randomResponse = demoResponses[Math.floor(Math.random() * demoResponses.length)];
+    try {
+      const aiResponse = await generateAIResponse(currentInput);
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: randomResponse,
+        text: aiResponse,
         isUser: false,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error generating response:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: 'I apologize, but I encountered an error. Please try again or contact our support team.',
+        isUser: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1000 + Math.random() * 2000); // Random delay between 1-3 seconds
+    }
   };
 
   const handleResetChat = () => {
