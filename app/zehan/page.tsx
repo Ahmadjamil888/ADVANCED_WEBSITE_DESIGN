@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { pipeline } from '@huggingface/transformers';
+import { useState } from 'react';
 import { Send, Bot, User } from 'lucide-react';
 
 interface Message {
@@ -11,34 +10,32 @@ interface Message {
   timestamp: Date;
 }
 
-let pipe: any;
+// Demo responses for the AI
+const demoResponses = [
+  "That's an interesting question! As Zehan AI, I'm designed to help with various tasks and provide intelligent responses.",
+  "I'm here to demonstrate the capabilities of Zehan X Technologies' AI solutions. What would you like to know?",
+  "Great question! Our AI technology can be customized for your specific business needs and requirements.",
+  "I'm a demo version of Zehan AI. The full version can be integrated into your applications with advanced capabilities.",
+  "Thank you for trying Zehan AI! This demonstrates our expertise in artificial intelligence and machine learning.",
+  "As an AI assistant, I can help with various tasks. This is just a preview of what's possible with our technology.",
+  "Zehan X Technologies specializes in creating custom AI solutions like this one for businesses worldwide.",
+  "This chat interface showcases our ability to create intelligent, responsive AI applications for any industry."
+];
 
 export default function ZehanAI() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: 'Hello! I\'m Zehan AI, a demonstration of our advanced AI capabilities. Ask me anything to see how our technology works!',
+      isUser: false,
+      timestamp: new Date()
+    }
+  ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isPipelineReady, setIsPipelineReady] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        pipe = await pipeline('text-generation', 'Xenova/distilgpt2');
-        setIsPipelineReady(true);
-        // Add welcome message
-        setMessages([{
-          id: '1',
-          text: 'Hello! I\'m Zehan AI, powered by DistilGPT-2. How can I help you today?',
-          isUser: false,
-          timestamp: new Date()
-        }]);
-      } catch (error) {
-        console.error('Failed to load AI model:', error);
-      }
-    })();
-  }, []);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !isPipelineReady || isLoading) return;
+    if (!inputMessage.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -51,36 +48,20 @@ export default function ZehanAI() {
     setInputMessage('');
     setIsLoading(true);
 
-    try {
-      const output = await pipe(inputMessage, { 
-        max_length: 50,
-        temperature: 0.7,
-        do_sample: true,
-        pad_token_id: 50256
-      });
-      
-      const aiReply = output[0].generated_text;
+    // Simulate AI processing time
+    setTimeout(() => {
+      const randomResponse = demoResponses[Math.floor(Math.random() * demoResponses.length)];
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: aiReply,
+        text: randomResponse,
         isUser: false,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, aiMessage]);
-    } catch (error) {
-      console.error('Error generating response:', error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Sorry, I encountered an error. Please try again.',
-        isUser: false,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000 + Math.random() * 2000); // Random delay between 1-3 seconds
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -106,15 +87,6 @@ export default function ZehanAI() {
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {!isPipelineReady && (
-            <div className="text-center py-8">
-              <div className="inline-flex items-center gap-2 text-muted-foreground">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                Loading AI model...
-              </div>
-            </div>
-          )}
-
           {messages.map((message) => (
             <div
               key={message.id}
@@ -176,13 +148,13 @@ export default function ZehanAI() {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={isPipelineReady ? "Type your message..." : "Loading AI model..."}
-              disabled={!isPipelineReady || isLoading}
+              placeholder="Type your message..."
+              disabled={isLoading}
               className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || !isPipelineReady || isLoading}
+              disabled={!inputMessage.trim() || isLoading}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="size-4" />
