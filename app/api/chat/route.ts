@@ -41,7 +41,7 @@ function generateIntelligentResponse(userInput: string): string {
       const mathExpression = input.replace(/what\s+is\s+/, '').trim();
       const result = evaluateSimpleMath(mathExpression);
       return `The answer is ${result}. As Zehan AI, I can help with calculations and much more! I'm also here to discuss our AI and web development services. What else would you like to know?`;
-    } catch (error) {
+    } catch {
       return "I can help with basic math calculations! Try asking me something like '5 + 3' or 'what is 10 - 4'. I'm also here to discuss our AI and web development expertise.";
     }
   }

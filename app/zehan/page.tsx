@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Send, Bot, User, RotateCcw } from 'lucide-react';
+import { Send, Bot, RotateCcw } from 'lucide-react';
 import Navbar from '../../components/sections/navbar/default';
 import Footer from '../../components/sections/footer/default';
 
@@ -25,6 +25,7 @@ const SYSTEM_PROMPT = `You are Zehan AI, an advanced AI assistant created by Zeh
 You should be helpful, professional, and showcase the capabilities of Zehan X Technologies. Keep responses concise but informative. Always maintain a friendly and expert tone.`;
 
 // Global variable to store the model pipeline
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let modelPipeline: any = null;
 
 export default function ZehanAI() {
@@ -57,8 +58,8 @@ export default function ZehanAI() {
         
         setModelStatus('ready');
         console.log('AI model loaded successfully');
-      } catch (error) {
-        console.error('Failed to load AI model:', error);
+      } catch (err) {
+        console.error('Failed to load AI model:', err);
         setModelStatus('error');
       }
     };
@@ -96,8 +97,8 @@ export default function ZehanAI() {
       }
 
       return response;
-    } catch (error) {
-      console.error('AI Response Error:', error);
+    } catch (err) {
+      console.error('AI Response Error:', err);
       return generateFallbackResponse(userInput);
     }
   };
@@ -169,8 +170,8 @@ export default function ZehanAI() {
       };
 
       setMessages(prev => [...prev, aiMessage]);
-    } catch (error) {
-      console.error('Error generating response:', error);
+    } catch (err) {
+      console.error('Error generating response:', err);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: 'I apologize, but I encountered an error. Please try again or contact our support team.',
