@@ -35,9 +35,57 @@ function generateIntelligentResponse(userInput: string): string {
   
   // Advanced pattern matching for more intelligent responses
   
-  // Company and About queries
-  if (input.match(/(zehan|company|about|who are you|what is|tell me about)/)) {
-    return "I'm Zehan AI, created by Zehan X Technologies - a cutting-edge AI and web development company. We've evolved from a small web development agency into industry leaders in artificial intelligence and machine learning. Our expertise spans custom AI models, Next.js development, deep learning systems, and enterprise solutions that transform businesses worldwide.";
+  // Mathematical calculations
+  if (input.match(/^\s*\d+\s*[-+*/]\s*\d+\s*$/) || input.match(/what\s+is\s+\d+\s*[-+*/]\s*\d+/)) {
+    try {
+      const mathExpression = input.replace(/what\s+is\s+/, '').trim();
+      const result = evaluateSimpleMath(mathExpression);
+      return `The answer is ${result}. As Zehan AI, I can help with calculations and much more! I'm also here to discuss our AI and web development services. What else would you like to know?`;
+    } catch (error) {
+      return "I can help with basic math calculations! Try asking me something like '5 + 3' or 'what is 10 - 4'. I'm also here to discuss our AI and web development expertise.";
+    }
+  }
+  
+  // Technical AI/ML concepts
+  if (input.match(/supervised\s+learning/)) {
+    return "Supervised learning is a fundamental machine learning approach where algorithms learn from labeled training data to make predictions on new, unseen data. The model learns the relationship between input features and known outputs. At Zehan X Technologies, we use supervised learning for classification (predicting categories) and regression (predicting continuous values) tasks like fraud detection, price prediction, and customer segmentation.";
+  }
+  
+  if (input.match(/unsupervised\s+learning/)) {
+    return "Unsupervised learning discovers hidden patterns in data without labeled examples. It includes clustering (grouping similar data), dimensionality reduction, and anomaly detection. We use unsupervised learning for customer segmentation, recommendation systems, and identifying unusual patterns in business data.";
+  }
+  
+  if (input.match(/neural\s+network/)) {
+    return "Neural networks are computing systems inspired by biological neural networks. They consist of interconnected nodes (neurons) that process information through weighted connections. We build custom neural networks for image recognition, natural language processing, and complex pattern recognition tasks.";
+  }
+  
+  if (input.match(/deep\s+learning/)) {
+    return "Deep learning uses multi-layered neural networks to automatically learn complex patterns from data. It excels at tasks like image recognition, speech processing, and natural language understanding. Our deep learning solutions include computer vision systems, chatbots, and predictive analytics platforms.";
+  }
+  
+  if (input.match(/machine\s+learning|what.*ml/)) {
+    return "Machine Learning is a subset of AI that enables computers to learn and improve from data without being explicitly programmed. It includes supervised learning (with labeled data), unsupervised learning (finding patterns), and reinforcement learning (learning through rewards). We implement ML for predictive analytics, automation, and intelligent decision-making systems.";
+  }
+  
+  if (input.match(/artificial\s+intelligence|what.*ai/)) {
+    return "Artificial Intelligence is the simulation of human intelligence in machines. It encompasses machine learning, natural language processing, computer vision, and robotics. At Zehan X Technologies, we develop AI systems that can understand, learn, and make decisions to solve complex business problems and automate processes.";
+  }
+  
+  if (input.match(/nlp|natural\s+language/)) {
+    return "Natural Language Processing (NLP) enables computers to understand, interpret, and generate human language. It powers chatbots, sentiment analysis, language translation, and text summarization. We build NLP solutions for customer service automation, content analysis, and intelligent document processing.";
+  }
+  
+  if (input.match(/computer\s+vision/)) {
+    return "Computer Vision enables machines to interpret and understand visual information from images and videos. It's used for object detection, facial recognition, medical imaging, and quality control. Our computer vision solutions help businesses automate visual inspection, enhance security, and extract insights from visual data.";
+  }
+  
+  // Company and About queries (more specific)
+  if (input.match(/(who are you|what are you|introduce yourself)/) && !input.includes('zehan') && !input.includes('company')) {
+    return "I'm Zehan AI, an intelligent assistant created by Zehan X Technologies. I can help with technical questions, mathematical calculations, and provide information about AI, machine learning, and web development. I'm also here to discuss how our technology solutions can benefit your business. What would you like to explore?";
+  }
+  
+  if (input.match(/(zehan|company|about.*zehan|tell me about.*company)/)) {
+    return "Zehan X Technologies is a cutting-edge AI and web development company. We've evolved from a small web development agency into industry leaders in artificial intelligence and machine learning. Our expertise spans custom AI models, Next.js development, deep learning systems, and enterprise solutions that transform businesses worldwide.";
   }
   
   // AI and Machine Learning queries
@@ -97,6 +145,38 @@ function generateIntelligentResponse(userInput: string): string {
   }
   
   return `That's a thoughtful question! As Zehan AI, I'm designed to help you understand how artificial intelligence and modern web development can solve real business problems. While I'd love to provide more specific insights, could you help me understand what aspect interests you most? Are you looking for information about AI implementation, web development solutions, business transformation strategies, or something else? The more specific you are, the better I can assist you!`;
+}
+
+function evaluateSimpleMath(expression: string): number {
+  // Simple and safe math evaluation for basic operations
+  const cleanExpression = expression.replace(/\s+/g, '');
+  
+  // Only allow numbers and basic operators
+  if (!/^[\d+\-*/().]+$/.test(cleanExpression)) {
+    throw new Error('Invalid expression');
+  }
+  
+  // Basic operations
+  if (cleanExpression.includes('+')) {
+    const parts = cleanExpression.split('+');
+    return parseFloat(parts[0]) + parseFloat(parts[1]);
+  }
+  if (cleanExpression.includes('-')) {
+    const parts = cleanExpression.split('-');
+    return parseFloat(parts[0]) - parseFloat(parts[1]);
+  }
+  if (cleanExpression.includes('*')) {
+    const parts = cleanExpression.split('*');
+    return parseFloat(parts[0]) * parseFloat(parts[1]);
+  }
+  if (cleanExpression.includes('/')) {
+    const parts = cleanExpression.split('/');
+    const divisor = parseFloat(parts[1]);
+    if (divisor === 0) throw new Error('Division by zero');
+    return parseFloat(parts[0]) / divisor;
+  }
+  
+  throw new Error('Unsupported operation');
 }
 
 function extractTopics(input: string): string[] {

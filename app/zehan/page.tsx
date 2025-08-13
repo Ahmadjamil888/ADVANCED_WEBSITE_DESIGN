@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Send, Bot, User, RotateCcw } from 'lucide-react';
 import Navbar from '../../components/sections/navbar/default';
 import Footer from '../../components/sections/footer/default';
@@ -24,6 +24,9 @@ const SYSTEM_PROMPT = `You are Zehan AI, an advanced AI assistant created by Zeh
 
 You should be helpful, professional, and showcase the capabilities of Zehan X Technologies. Keep responses concise but informative. Always maintain a friendly and expert tone.`;
 
+// Global variable to store the model pipeline
+let modelPipeline: any = null;
+
 export default function ZehanAI() {
   const initialMessage: Message = {
     id: '1',
@@ -35,33 +38,66 @@ export default function ZehanAI() {
   const [messages, setMessages] = useState<Message[]>([initialMessage]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [modelStatus, setModelStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+
+  // Load the AI model
+  useEffect(() => {
+    const loadModel = async () => {
+      try {
+        setModelStatus('loading');
+        
+        // Dynamic import to avoid SSR issues
+        const { pipeline } = await import('@huggingface/transformers');
+        
+        // Load the text generation pipeline with DeepSeek-like model
+        // Using a smaller model that works in browser
+        modelPipeline = await pipeline('text-generation', 'Xenova/gpt2', {
+          device: 'webgpu', // Use WebGPU if available, fallback to CPU
+        });
+        
+        setModelStatus('ready');
+        console.log('AI model loaded successfully');
+      } catch (error) {
+        console.error('Failed to load AI model:', error);
+        setModelStatus('error');
+      }
+    };
+
+    loadModel();
+  }, []);
 
   const generateAIResponse = async (userInput: string): Promise<string> => {
     try {
-      // Use OpenAI-compatible API (you can replace with any AI service)
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: userInput }
-          ]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get AI response');
+      if (modelStatus !== 'ready' || !modelPipeline) {
+        return generateFallbackResponse(userInput);
       }
 
-      const data = await response.json();
-      return data.message || "I apologize, but I'm having trouble generating a response right now. Please try again.";
+      // Create a prompt that includes system context and user input
+      const prompt = `${SYSTEM_PROMPT}\n\nUser: ${userInput}\nZehan AI:`;
+      
+      // Generate response using the model
+      const result = await modelPipeline(prompt, {
+        max_new_tokens: 150,
+        temperature: 0.7,
+        do_sample: true,
+        repetition_penalty: 1.1,
+        pad_token_id: 50256
+      });
+
+      // Extract the generated text
+      let response = result[0].generated_text;
+      
+      // Clean up the response - remove the prompt and extract only the AI response
+      response = response.replace(prompt, '').trim();
+      
+      // If response is empty or too short, use fallback
+      if (!response || response.length < 10) {
+        return generateFallbackResponse(userInput);
+      }
+
+      return response;
     } catch (error) {
       console.error('AI Response Error:', error);
-      
-      // Fallback to intelligent rule-based responses
       return generateFallbackResponse(userInput);
     }
   };
@@ -185,6 +221,16 @@ export default function ZehanAI() {
               <p className="text-lg text-muted-foreground">How can I help you today?</p>
             </div>
 
+            {/* Model Status */}
+            {modelStatus === 'loading' && (
+              <div className="text-center mb-4">
+                <div className="inline-flex items-center gap-2 text-muted-foreground text-sm">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  Loading AI model...
+                </div>
+              </div>
+            )}
+
             {/* Input Area */}
             <div className="w-full max-w-xl mx-auto">
               <div className="relative">
@@ -193,14 +239,14 @@ export default function ZehanAI() {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Message Zehan AI"
-                  disabled={isLoading}
+                  placeholder={modelStatus === 'ready' ? "Message Zehan AI" : "Loading AI model..."}
+                  disabled={isLoading || modelStatus !== 'ready'}
                   className="w-full px-4 py-4 pr-20 bg-card border border-border rounded-2xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-base"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button
                     onClick={handleSendMessage}
-                    disabled={!inputMessage.trim() || isLoading}
+                    disabled={!inputMessage.trim() || isLoading || modelStatus !== 'ready'}
                     className="p-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <Send className="size-4" />
@@ -210,26 +256,34 @@ export default function ZehanAI() {
             </div>
 
             {/* Quick Actions */}
-            <div className="flex flex-wrap justify-center gap-2 text-sm">
-              <button
-                onClick={() => setInputMessage("Tell me about Zehan X Technologies")}
-                className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
-              >
-                About Zehanx
-              </button>
-              <button
-                onClick={() => setInputMessage("What AI services do you offer?")}
-                className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
-              >
-                AI Services
-              </button>
-              <button
-                onClick={() => setInputMessage("How can AI help my business?")}
-                className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
-              >
-                Business AI
-              </button>
-            </div>
+            {modelStatus === 'ready' && (
+              <div className="flex flex-wrap justify-center gap-2 text-sm">
+                <button
+                  onClick={() => setInputMessage("Tell me about Zehan X Technologies")}
+                  className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+                >
+                  About Zehanx
+                </button>
+                <button
+                  onClick={() => setInputMessage("What AI services do you offer?")}
+                  className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+                >
+                  AI Services
+                </button>
+                <button
+                  onClick={() => setInputMessage("How can AI help my business?")}
+                  className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+                >
+                  Business AI
+                </button>
+              </div>
+            )}
+
+            {modelStatus === 'error' && (
+              <div className="text-center text-red-500 text-sm">
+                Failed to load AI model. Using fallback responses.
+              </div>
+            )}
           </div>
         ) : (
           /* Chat Conversation View */
@@ -316,14 +370,14 @@ export default function ZehanAI() {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Message Zehan AI"
-                  disabled={isLoading}
+                  placeholder={modelStatus === 'ready' ? "Message Zehan AI" : "Loading AI model..."}
+                  disabled={isLoading || modelStatus !== 'ready'}
                   className="w-full px-4 py-4 pr-20 bg-card border border-border rounded-2xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-base"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button
                     onClick={handleSendMessage}
-                    disabled={!inputMessage.trim() || isLoading}
+                    disabled={!inputMessage.trim() || isLoading || modelStatus !== 'ready'}
                     className="p-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <Send className="size-4" />
