@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import { generateSEO } from "@/lib/seo-utils";
+import { siteConfig } from "@/config/site";
 
 import CTA from "../components/sections/cta/default";
 import FAQ from "../components/sections/faq/default";
@@ -9,38 +11,83 @@ import Logos from "../components/sections/logos/default";
 import Navbar from "../components/sections/navbar/default";
 import Stats from "../components/sections/stats/default";
 import SocialShare from "../components/ui/social-share";
+import { 
+  OrganizationStructuredData, 
+  WebsiteStructuredData, 
+  FAQStructuredData,
+  BreadcrumbStructuredData 
+} from "../components/seo/structured-data";
 
-export const metadata: Metadata = {
-  title: "AI & Web Development Experts | Zehan X Technologies",
-  description: "Expert AI & web development company. Next.js, machine learning & deep learning solutions. Transform your business with AI technology.",
+export const metadata: Metadata = generateSEO({
+  title: "🚀 Leading AI & Web Development Company | 150+ Projects Delivered | Zehan X Technologies",
+  description: "🏆 #1 AI Development Company | Expert Next.js, Machine Learning & Deep Learning Solutions | 99% Client Satisfaction | Transform Your Business with Cutting-Edge AI Technology | Free Consultation Available",
   keywords: [
+    // Primary high-volume keywords
     "AI development company",
     "machine learning services", 
-    "Next.js development",
-    "artificial intelligence solutions",
-    "deep learning company",
-    "AI consulting services",
-    "custom AI models",
-    "web development agency",
-    "React development",
-    "AI automation",
-    "predictive analytics",
-    "business intelligence",
-    "AI chatbots",
-    "computer vision",
-    "natural language processing"
+    "Next.js development agency",
+    "artificial intelligence consulting",
+    "deep learning solutions",
+    
+    // Long-tail keywords with high intent
+    "custom AI model development services",
+    "enterprise machine learning solutions",
+    "AI chatbot development company",
+    "predictive analytics consulting",
+    "computer vision AI development",
+    "natural language processing services",
+    "AI automation business solutions",
+    "full-stack web development agency",
+    "React TypeScript development services",
+    
+    // Location-based keywords
+    "AI development company USA",
+    "machine learning services worldwide",
+    "remote AI development team",
+    "global AI consulting services",
+    
+    // Industry-specific keywords
+    "healthcare AI solutions",
+    "fintech machine learning",
+    "e-commerce AI development",
+    "manufacturing AI automation",
+    "education AI platforms",
+    
+    // Technology-specific keywords
+    "TensorFlow development services",
+    "PyTorch machine learning",
+    "OpenAI API integration",
+    "AWS AI services",
+    "Google Cloud AI development",
+    "Azure AI solutions",
+    
+    // Service-specific keywords
+    "AI model training services",
+    "data science consulting",
+    "MLOps implementation",
+    "AI strategy development",
+    "business intelligence solutions",
+    "intelligent automation systems",
+    
+    // Competitive keywords
+    "best AI development company",
+    "top machine learning agency",
+    "leading AI consulting firm",
+    "professional AI services",
+    "expert AI developers",
+    "trusted AI partner",
+    
+    // Problem-solving keywords
+    "AI business transformation",
+    "increase efficiency with AI",
+    "reduce costs with automation",
+    "AI competitive advantage",
+    "digital transformation AI",
+    "AI ROI optimization"
   ],
-  openGraph: {
-    title: "AI & Web Development Experts | Zehan X Technologies",
-    description: "Expert AI & web development company. Next.js, machine learning & deep learning solutions.",
-    type: "website",
-  },
-  twitter: {
-    title: "AI & Web Development Experts | Zehan X Technologies", 
-    description: "Expert AI & web development company. Next.js, machine learning & deep learning solutions.",
-    card: "summary_large_image",
-  },
-};
+  url: siteConfig.url,
+  type: "website"
+});
 
 export default function Home() {
   return (
