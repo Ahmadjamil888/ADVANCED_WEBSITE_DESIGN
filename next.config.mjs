@@ -17,6 +17,34 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
+  // Webpack configuration to exclude heavy AI/ML packages
+  webpack: (config, { isServer }) => {
+    // Exclude heavy AI/ML packages from bundling
+    config.externals = config.externals || [];
+    if (isServer) {
+      config.externals.push(
+        'onnxruntime-node',
+        '@huggingface/transformers',
+        'transformers',
+        'torch',
+        'tensorflow'
+      );
+    }
+    
+    // Ignore Python files and directories
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: [
+        '**/node_modules/**',
+        '**/python-ai-service/**',
+        '**/*.py',
+        '**/__pycache__/**',
+      ],
+    };
+
+    return config;
+  },
+
   // Headers for better SEO and security
   async headers() {
     return [

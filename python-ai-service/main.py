@@ -16,17 +16,17 @@ tokenizer = None
 model = None
 
 def load_model():
-    """Load the DeepSeek-R1 model and tokenizer"""
+    """Load the DistilGPT-2 model and tokenizer (lightweight alternative)"""
     global tokenizer, model
     try:
-        logger.info("Loading DeepSeek-R1 model...")
-        tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1", trust_remote_code=True)
-        model = AutoModelForCausalLM.from_pretrained(
-            "deepseek-ai/DeepSeek-R1", 
-            trust_remote_code=True,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else None
-        )
+        logger.info("Loading DistilGPT-2 model...")
+        tokenizer = AutoTokenizer.from_pretrained("distilbert/distilgpt2")
+        model = AutoModelForCausalLM.from_pretrained("distilbert/distilgpt2")
+        
+        # Set pad token if not present
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+            
         logger.info("Model loaded successfully!")
         return True
     except Exception as e:
@@ -34,43 +34,42 @@ def load_model():
         return False
 
 def generate_response(user_message: str, system_prompt: str = None) -> str:
-    """Generate response using DeepSeek-R1 model"""
+    """Generate response using DistilGPT-2 model"""
     try:
-        # Prepare messages
-        messages = []
-        
+        # Create a simple prompt for DistilGPT-2
         if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
+            prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
+        else:
+            prompt = f"User: {user_message}\nAssistant:"
         
-        messages.append({"role": "user", "content": user_message})
-        
-        # Apply chat template
-        inputs = tokenizer.apply_chat_template(
-            messages,
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-        ).to(model.device)
+        # Tokenize input
+        inputs = tokenizer.encode(prompt, return_tensors="pt", max_length=512, truncation=True)
         
         # Generate response
         with torch.no_grad():
             outputs = model.generate(
-                **inputs, 
-                max_new_tokens=200,
-                temperature=0.7,
+                inputs,
+                max_new_tokens=150,
+                temperature=0.8,
                 do_sample=True,
                 pad_token_id=tokenizer.eos_token_id,
-                repetition_penalty=1.1
+                repetition_penalty=1.2,
+                no_repeat_ngram_size=3
             )
         
         # Decode response
-        response = tokenizer.decode(
-            outputs[0][inputs["input_ids"].shape[-1]:], 
-            skip_special_tokens=True
-        )
+        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
         
-        return response.strip()
+        # Extract only the assistant's response
+        if "Assistant:" in full_response:
+            response = full_response.split("Assistant:")[-1].strip()
+        else:
+            response = full_response[len(prompt):].strip()
+        
+        # Clean up the response
+        response = response.split("User:")[0].strip()  # Remove any follow-up user prompts
+        
+        return response if response else "I'm here to help! Could you please rephrase your question?"
         
     except Exception as e:
         logger.error(f"Error generating response: {str(e)}")
@@ -112,7 +111,7 @@ def chat():
         
         return jsonify({
             "response": response,
-            "model": "deepseek-ai/DeepSeek-R1",
+            "model": "distilbert/distilgpt2",
             "timestamp": str(torch.cuda.current_device()) if torch.cuda.is_available() else "cpu"
         })
         
@@ -124,7 +123,7 @@ def chat():
 def model_info():
     """Get information about the loaded model"""
     return jsonify({
-        "model_name": "deepseek-ai/DeepSeek-R1",
+        "model_name": "distilbert/distilgpt2",
         "model_loaded": model is not None,
         "tokenizer_loaded": tokenizer is not None,
         "device": str(model.device) if model else None,

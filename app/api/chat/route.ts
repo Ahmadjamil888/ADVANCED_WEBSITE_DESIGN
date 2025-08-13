@@ -18,11 +18,12 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       message: aiResponse,
+      model: 'zehan-ai-intelligent-system',
       timestamp: new Date().toISOString()
     });
     
-  } catch (error) {
-    console.error('Chat API Error:', error);
+  } catch (err) {
+    console.error('Chat API Error:', err);
     return NextResponse.json(
       { error: 'Failed to generate response' },
       { status: 500 }

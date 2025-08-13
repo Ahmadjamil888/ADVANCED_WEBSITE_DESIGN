@@ -24,9 +24,7 @@ const SYSTEM_PROMPT = `You are Zehan AI, an advanced AI assistant created by Zeh
 
 You should be helpful, professional, and showcase the capabilities of Zehan X Technologies. Keep responses concise but informative. Always maintain a friendly and expert tone.`;
 
-// Global variable to store the model pipeline
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let modelPipeline: any = null;
+// Removed unused modelPipeline variable
 
 export default function ZehanAI() {
   const initialMessage: Message = {
@@ -41,62 +39,34 @@ export default function ZehanAI() {
   const [isLoading, setIsLoading] = useState(false);
   const [modelStatus, setModelStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
-  // Load the AI model
+  // Initialize AI system (using API instead of heavy client-side model)
   useEffect(() => {
-    const loadModel = async () => {
-      try {
-        setModelStatus('loading');
-        
-        // Dynamic import to avoid SSR issues
-        const { pipeline } = await import('@huggingface/transformers');
-        
-        // Load the text generation pipeline with DeepSeek-like model
-        // Using a smaller model that works in browser
-        modelPipeline = await pipeline('text-generation', 'Xenova/gpt2', {
-          device: 'webgpu', // Use WebGPU if available, fallback to CPU
-        });
-        
-        setModelStatus('ready');
-        console.log('AI model loaded successfully');
-      } catch (err) {
-        console.error('Failed to load AI model:', err);
-        setModelStatus('error');
-      }
-    };
-
-    loadModel();
+    // Set model as ready immediately since we're using API
+    setModelStatus('ready');
   }, []);
 
   const generateAIResponse = async (userInput: string): Promise<string> => {
     try {
-      if (modelStatus !== 'ready' || !modelPipeline) {
-        return generateFallbackResponse(userInput);
-      }
-
-      // Create a prompt that includes system context and user input
-      const prompt = `${SYSTEM_PROMPT}\n\nUser: ${userInput}\nZehan AI:`;
-      
-      // Generate response using the model
-      const result = await modelPipeline(prompt, {
-        max_new_tokens: 150,
-        temperature: 0.7,
-        do_sample: true,
-        repetition_penalty: 1.1,
-        pad_token_id: 50256
+      // Use the API endpoint for AI responses
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userInput }
+          ]
+        })
       });
 
-      // Extract the generated text
-      let response = result[0].generated_text;
-      
-      // Clean up the response - remove the prompt and extract only the AI response
-      response = response.replace(prompt, '').trim();
-      
-      // If response is empty or too short, use fallback
-      if (!response || response.length < 10) {
-        return generateFallbackResponse(userInput);
+      if (!response.ok) {
+        throw new Error('Failed to get AI response');
       }
 
-      return response;
+      const data = await response.json();
+      return data.message || generateFallbackResponse(userInput);
     } catch (err) {
       console.error('AI Response Error:', err);
       return generateFallbackResponse(userInput);
@@ -194,7 +164,7 @@ export default function ZehanAI() {
     setIsLoading(false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -239,7 +209,7 @@ export default function ZehanAI() {
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   placeholder={modelStatus === 'ready' ? "Message Zehan AI" : "Loading AI model..."}
                   disabled={isLoading || modelStatus !== 'ready'}
                   className="w-full px-4 py-4 pr-20 bg-card border border-border rounded-2xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-base"
@@ -370,7 +340,7 @@ export default function ZehanAI() {
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   placeholder={modelStatus === 'ready' ? "Message Zehan AI" : "Loading AI model..."}
                   disabled={isLoading || modelStatus !== 'ready'}
                   className="w-full px-4 py-4 pr-20 bg-card border border-border rounded-2xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-base"

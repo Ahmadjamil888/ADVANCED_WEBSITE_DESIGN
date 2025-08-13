@@ -1,7 +1,8 @@
-torch>=2.0.0
-transformers>=4.36.0
+torch>=2.0.0,<2.1.0
+transformers>=4.36.0,<4.37.0
 flask>=2.3.0
 flask-cors>=4.0.0
-accelerate>=0.24.0
-sentencepiece>=0.1.99
-protobuf>=3.20.0
+# Removed heavy dependencies that were causing bundle size issues
+# accelerate>=0.24.0
+# sentencepiece>=0.1.99
+# protobuf>=3.20.0
