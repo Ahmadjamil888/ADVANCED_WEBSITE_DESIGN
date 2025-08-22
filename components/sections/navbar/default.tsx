@@ -53,8 +53,8 @@ export default function Navbar({
   className,
 }: NavbarProps) {
   return (
-    <header className={cn("sticky top-0 z-50 -mb-4 px-4 pb-4", className)}>
-      <div className="fade-bottom bg-background/15 absolute left-0 h-24 w-full backdrop-blur-lg"></div>
+    <header className={cn("sticky top-0 z-50 -mb-4 px-4 pb-3", className)}>
+      <div className="absolute inset-0 bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40"></div>
       <div className="max-w-container relative mx-auto">
         <NavbarComponent>
           <NavbarLeft>
@@ -63,11 +63,7 @@ export default function Navbar({
               className="flex items-center gap-3"
             >
               <ZehanLogo size="md" />
-              <span className="text-xl font-bold tracking-wider text-white" style={{ 
-                fontFamily: 'monospace, "Courier New", Courier',
-                textShadow: '0 0 10px rgba(255,255,255,0.5)',
-                letterSpacing: '0.2em'
-              }}>
+              <span className="text-xl font-bold tracking-tight text-foreground">
                 {name}
               </span>
             </a>
