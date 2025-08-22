@@ -341,7 +341,7 @@ export default function RootLayout({
   `;
 
   return (
-    <html lang="en" style={{ colorScheme: "light" }}>
+    <html lang="en" style={{ colorScheme: "dark" }} className="dark">
       <head>
         {/* Structured Data */}
         {structuredDataArray.map((schema, index) => (

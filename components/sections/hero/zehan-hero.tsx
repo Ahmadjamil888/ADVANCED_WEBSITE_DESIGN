@@ -4,11 +4,9 @@ import { cn } from "@/lib/utils";
 
 import { Badge } from "../../ui/badge";
 import { Button, type ButtonProps } from "../../ui/button";
-import Glow from "../../ui/glow";
 import { Mockup, MockupFrame } from "../../ui/mockup";
 import YouTubeVideo from "../../ui/youtube-video";
 import { Section } from "../../ui/section";
-import InteractiveGlow from "../../ui/interactive-glow";
 
 interface HeroButtonProps {
   href: string;
@@ -39,16 +37,14 @@ export default function ZehanHero({ className }: HeroProps) {
   return (
     <Section
       className={cn(
-        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 gradient-bg-light relative min-h-screen",
+        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 gradient-bg-professional relative min-h-screen",
         className,
       )}
     >
-      {/* Interactive Glowing Background Effect */}
-      <InteractiveGlow />
-      
+            
       <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
         <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
-          <Badge variant="outline" className="fade-in-professional badge-professional hover-glow-professional">
+          <Badge variant="outline" className="badge-professional fade-in-professional">
             <span className="text-primary font-semibold">Enterprise AI & Web Development</span>
           </Badge>
           
@@ -70,10 +66,10 @@ export default function ZehanHero({ className }: HeroProps) {
                 variant={button.variant || "default"}
                 size="lg"
                 className={cn(
-                  "hover-lift-professional font-semibold px-8 py-3",
+                  "font-semibold px-8 py-3",
                   button.variant === "default" 
-                    ? "btn-gradient-primary text-white shadow-lg" 
-                    : "professional-card hover-glow-professional border-primary/30 text-primary hover:border-primary/50"
+                    ? "btn-gradient-primary text-white" 
+                    : "professional-card border-primary/30 text-primary"
                 )}
                 asChild
               >
@@ -88,12 +84,12 @@ export default function ZehanHero({ className }: HeroProps) {
           {/* Professional Video Section */}
           <div className="relative w-full pt-16">
             <MockupFrame
-              className="fade-in-professional opacity-0 delay-700 hover-lift-professional"
+              className="fade-in-professional opacity-0 delay-700"
               size="small"
             >
               <Mockup
                 type="responsive"
-                className="executive-card w-full rounded-2xl border-primary/20"
+                className="professional-card w-full rounded-2xl border-border/40"
               >
                 <YouTubeVideo
                   videoId="fa8k8IQ1_X0"
@@ -106,11 +102,7 @@ export default function ZehanHero({ className }: HeroProps) {
                 />
               </Mockup>
             </MockupFrame>
-            <Glow
-              variant="top"
-              className="fade-in-professional glow-primary opacity-0 delay-1000"
-            />
-          </div>
+                      </div>
         </div>
       </div>
     </Section>
