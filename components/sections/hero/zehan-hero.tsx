@@ -1,4 +1,3 @@
-import { ArrowRightIcon, BrainCircuit, Code, Zap } from "lucide-react";
 import { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -29,7 +28,6 @@ export default function ZehanHero({ className }: HeroProps) {
       href: "/zehan",
       text: "Try Zehan AI",
       variant: "default",
-      iconRight: <ArrowRightIcon className="ml-2 size-4" />,
     },
     {
       href: "/contact",
@@ -51,10 +49,7 @@ export default function ZehanHero({ className }: HeroProps) {
       <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
         <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
           <Badge variant="outline" className="fade-in-professional badge-professional hover-glow-professional">
-            <BrainCircuit className="mr-2 size-4 text-primary" />
-            <span className="text-primary font-semibold">
-              Enterprise AI Solutions
-            </span>
+            <span className="text-primary font-semibold">Enterprise AI & Web Development</span>
           </Badge>
           
           <h1 className="fade-in-professional heading-professional relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
@@ -83,36 +78,13 @@ export default function ZehanHero({ className }: HeroProps) {
                 asChild
               >
                 <a href={button.href}>
-                  {button.icon}
                   {button.text}
-                  {button.iconRight}
                 </a>
               </Button>
             ))}
           </div>
 
-          {/* Professional Tech Stack Icons */}
-          <div className="fade-in-professional relative z-10 flex flex-wrap justify-center gap-12 pt-12 opacity-0 delay-500">
-            <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all duration-300 cursor-default hover-lift-professional">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                <BrainCircuit className="size-6 text-primary" />
-              </div>
-              <span className="text-sm font-semibold">AI/ML Engineering</span>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all duration-300 cursor-default hover-lift-professional">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                <Code className="size-6 text-primary" />
-              </div>
-              <span className="text-sm font-semibold">Next.js Development</span>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-all duration-300 cursor-default hover-lift-professional">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                <Zap className="size-6 text-primary" />
-              </div>
-              <span className="text-sm font-semibold">Deep Learning</span>
-            </div>
-          </div>
-
+          
           {/* Professional Video Section */}
           <div className="relative w-full pt-16">
             <MockupFrame

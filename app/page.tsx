@@ -20,15 +20,20 @@ import {
 } from "../components/seo/structured-data";
 
 export const metadata: Metadata = generateSEO({
-  title: "🚀 Leading AI & Web Development Company | 150+ Projects Delivered | Zehan X Technologies",
-  description: "🏆 #1 AI Development Company | Expert Next.js, Machine Learning & Deep Learning Solutions | 99% Client Satisfaction | Transform Your Business with Cutting-Edge AI Technology | Free Consultation Available",
+  title: "Best AI & Web Development Company | SEO-First Next.js Agency | Zehan X Technologies",
+  description: "AI development and SEO-first Next.js web development from a results-driven agency. Enterprise machine learning, deep learning, and production-grade web apps that rank and convert.",
   keywords: [
     // Primary high-volume keywords
     "AI development company",
-    "machine learning services", 
+    "web development company",
     "Next.js development agency",
+    "enterprise SEO web development",
     "artificial intelligence consulting",
     "deep learning solutions",
+    "technical SEO for Next.js",
+    "Core Web Vitals optimization",
+    "AI website development",
+    "best AI company",
     
     // Long-tail keywords with high intent
     "custom AI model development services",

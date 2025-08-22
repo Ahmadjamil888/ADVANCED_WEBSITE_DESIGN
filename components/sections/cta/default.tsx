@@ -54,9 +54,7 @@ export default function CTA({
                 asChild
               >
                 <a href={button.href}>
-                  {button.icon}
                   {button.text}
-                  {button.iconRight}
                 </a>
               </Button>
             ))}
