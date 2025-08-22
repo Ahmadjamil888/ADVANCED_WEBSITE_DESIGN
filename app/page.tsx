@@ -8,6 +8,7 @@ import Footer from "../components/sections/footer/default";
 import Hero from "../components/sections/hero/zehan-hero";
 import Items from "../components/sections/items/default";
 import Logos from "../components/sections/logos/default";
+import CompanyMarquee from "../components/sections/logos/company-marquee";
 import Navbar from "../components/sections/navbar/default";
 import Stats from "../components/sections/stats/default";
 import SocialShare from "../components/ui/social-share";
@@ -94,21 +95,25 @@ export default function Home() {
     <main className="min-h-screen w-full overflow-hidden bg-background text-foreground">
       <Navbar />
       <Hero />
+      <CompanyMarquee className="-mt-8 sm:-mt-16" />
       <Logos />
       <Items />
       <Stats />
       
       {/* SEO Content Section */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-20 bg-muted/30 section-divider-professional">
         <div className="max-w-container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              Why Choose Zehan X Technologies for AI & Web Development?
+            <h2 className="text-4xl sm:text-5xl heading-professional text-center mb-6">
+              Elevate Your Business with Expert AI & Next.js Delivery
             </h2>
+            <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+              From strategy to production, we build performant, secure and scalable solutions that deliver measurable outcomes.
+            </p>
             
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               <div>
-                <h3 className="text-xl font-semibold mb-4">Artificial Intelligence Expertise</h3>
+                <h3 className="text-2xl font-semibold mb-4">Artificial Intelligence Expertise</h3>
                 <p className="text-muted-foreground mb-4">
                   Our team specializes in cutting-edge artificial intelligence and machine learning solutions. 
                   We develop custom AI models, implement deep learning algorithms, and create intelligent 
@@ -123,7 +128,7 @@ export default function Home() {
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold mb-4">Modern Web Development</h3>
+                <h3 className="text-2xl font-semibold mb-4">Modern Web Development</h3>
                 <p className="text-muted-foreground mb-4">
                   We excel in modern web development using Next.js, React, and TypeScript. Our full-stack 
                   development approach ensures scalable, performant, and user-friendly web applications. 
@@ -139,7 +144,7 @@ export default function Home() {
             </div>
             
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-4">Experience Our AI Technology - Try Zehan AI!</h3>
+              <h3 className="text-2xl font-semibold mb-4">Experience Our AI Technology — Try Zehan AI</h3>
               <p className="text-muted-foreground max-w-3xl mx-auto mb-8">
                 Zehan X Technologies began as a small web development agency and evolved into a leading 
                 AI and machine learning company. Our journey from creating simple websites to developing 

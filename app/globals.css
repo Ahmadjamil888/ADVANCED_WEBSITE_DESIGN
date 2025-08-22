@@ -421,6 +421,12 @@
       transform: translateY(0);
     }
   }
+
+  /* Smooth marquee animation */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
   
   @keyframes floatGlow1 {
     0%, 100% {
