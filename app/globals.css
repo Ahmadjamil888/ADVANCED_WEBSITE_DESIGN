@@ -1,511 +1,286 @@
+/*
+  Custom Global Stylesheet merging existing variables and Exein sample styles.
+*/
+
 @import "tailwindcss";
 @import "../styles/utils.css";
-
 @import "tw-animate-css";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-@theme inline {
-  --color-brand: var(--brand);
-  --color-brand-foreground: var(--brand-foreground);
-  --color-light: var(--light);
-  --color-light-foreground: var(--light-foreground);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-ibm-plex-mono);
-
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-
-  --spacing-container: 1280px;
-  --spacing-container-lg: 1536px;
-
-  --shadow-md: 0 4px 6px -1px var(--shadow), 0 2px 4px -2px var(--shadow);
-  --shadow-xl: 0 20px 25px -5px var(--shadow), 0 8px 10px -6px var(--shadow);
-  --shadow-2xl: 0 25px 50px -12px var(--shadow);
-  --shadow-mockup: -12px 16px 48px var(--shadow-strong);
-
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-appear: appear 0.6s forwards ease-out;
-  --animate-appear-zoom: appear-zoom 0.6s forwards ease-out;
-
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
-  @keyframes appear {
-    0% {
-      opacity: 0;
-      transform: translateY(1rem);
-      filter: blur(0.5rem);
-    }
-    50% {
-      filter: blur(0);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-  }
-  @keyframes appear-zoom {
-    0% {
-      opacity: 0;
-      transform: scale(0.5);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-}
 
 :root {
-  /* Professional accent colors - Deep navy and sophisticated blue */
-  --brand: oklch(45% 0.15 240);
-  --brand-foreground: oklch(95% 0.02 240);
-
-  /* Professional light theme colors */
-  --background: oklch(98% 0.002 240);
-  --foreground: oklch(15% 0.01 240);
-  --card: oklch(99% 0.001 240);
-  --card-foreground: oklch(15% 0.01 240);
-  --popover: oklch(99% 0.001 240);
-  --popover-foreground: oklch(15% 0.01 240);
-  --primary: oklch(45% 0.15 240);
-  --primary-foreground: oklch(98% 0.002 240);
-  --secondary: oklch(94% 0.005 240);
-  --secondary-foreground: oklch(25% 0.01 240);
-  --muted: oklch(96% 0.003 240);
-  --muted-foreground: oklch(55% 0.02 240);
-  --accent: oklch(92% 0.008 240);
-  --accent-foreground: oklch(25% 0.01 240);
-  --destructive: oklch(55% 0.18 15);
-  --destructive-foreground: oklch(98% 0.002 15);
-  --border: oklch(88% 0.01 240);
-  --input: oklch(88% 0.01 240);
-  --ring: oklch(45% 0.15 240);
-  --chart-1: oklch(55% 0.15 240);
-  --chart-2: oklch(60% 0.12 200);
-  --chart-3: oklch(50% 0.18 280);
-  --chart-4: oklch(65% 0.14 160);
-  --chart-5: oklch(58% 0.16 320);
-  --radius: 0.75rem;
-  --sidebar: oklch(97% 0.002 240);
-  --sidebar-foreground: oklch(15% 0.01 240);
-  --sidebar-primary: oklch(45% 0.15 240);
-  --sidebar-primary-foreground: oklch(98% 0.002 240);
-  --sidebar-accent: oklch(94% 0.005 240);
-  --sidebar-accent-foreground: oklch(25% 0.01 240);
-  --sidebar-border: oklch(88% 0.01 240);
-  --sidebar-ring: oklch(45% 0.15 240);
-
-  /* Professional illustration colors */
-  --light: var(--brand);
-  --light-foreground: var(--brand-foreground);
-
-  /* Enhanced shadows for depth */
-  --shadow: rgba(15, 23, 42, 0.08);
-  --shadow-strong: rgba(15, 23, 42, 0.15);
+  --theme-black--background: #181818;
+  --theme-black--heading: #fff;
+  --theme-black--text: #e5e6eb;
+  --theme-black--invert-logo: #fff;
+  --theme-black--invert-logo-opposite: #fff;
+  --theme-black--card-background: #232323;
+  --theme-black--compliance-card-background: #232323;
+  --theme-black--compliance-card-border: #282828;
+  --theme-black--compliance-card-dot: #ff7323;
+  --colors-primary--white: #fff;
+  --colors-primary--orange: #ff7323;
+  --colors-greyscale--grey-500: #80818A;
+  --colors-greyscale--grey-100: #e5e6eb;
 }
 
-.dark {
-  /* Professional dark theme - Sophisticated navy and slate */
-  --brand: oklch(70% 0.12 240);
-  --brand-foreground: oklch(15% 0.01 240);
-
-  /* Professional dark theme colors */
-  --background: oklch(8% 0.015 240);
-  --foreground: oklch(95% 0.005 240);
-  --card: oklch(10% 0.015 240);
-  --card-foreground: oklch(95% 0.005 240);
-  --popover: oklch(10% 0.015 240);
-  --popover-foreground: oklch(95% 0.005 240);
-  --primary: oklch(70% 0.12 240);
-  --primary-foreground: oklch(8% 0.015 240);
-  --secondary: oklch(18% 0.02 240);
-  --secondary-foreground: oklch(95% 0.005 240);
-  --muted: oklch(15% 0.018 240);
-  --muted-foreground: oklch(65% 0.03 240);
-  --accent: oklch(20% 0.02 240);
-  --accent-foreground: oklch(95% 0.005 240);
-  --destructive: oklch(45% 0.15 15);
-  --destructive-foreground: oklch(95% 0.005 15);
-  --border: oklch(25% 0.025 240);
-  --input: oklch(18% 0.02 240);
-  --ring: oklch(70% 0.12 240);
-  --chart-1: oklch(65% 0.15 240);
-  --chart-2: oklch(70% 0.12 200);
-  --chart-3: oklch(60% 0.18 280);
-  --chart-4: oklch(75% 0.14 160);
-  --chart-5: oklch(68% 0.16 320);
-  --sidebar: oklch(12% 0.016 240);
-  --sidebar-foreground: oklch(95% 0.005 240);
-  --sidebar-primary: oklch(70% 0.12 240);
-  --sidebar-primary-foreground: oklch(8% 0.015 240);
-  --sidebar-accent: oklch(18% 0.02 240);
-  --sidebar-accent-foreground: oklch(95% 0.005 240);
-  --sidebar-border: oklch(25% 0.025 240);
-  --sidebar-ring: oklch(70% 0.12 240);
-
-  /* Professional dark illustration colors */
-  --light: var(--brand);
-  --light-foreground: var(--brand-foreground);
-
-  /* Enhanced dark shadows */
-  --shadow: rgba(0, 0, 0, 0.25);
-  --shadow-strong: rgba(0, 0, 0, 0.5);
+/* Exein-inspired base resets and smooth font rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body, html {
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  background: var(--theme-black--background);
+  color: var(--theme-black--text);
+  min-height: 100vh;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Core containers and layout helpers */
+.container-large {
+  width: 100vw;
+  max-width: 1440px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 3vw;
+  padding-right: 3vw;
+}
+.container-medium {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
-/* Professional enhancements */
-@layer components {
-  /* Executive gradient backgrounds */
-  .gradient-bg-professional {
-    background: linear-gradient(135deg, 
-      oklch(8% 0.015 240) 0%, 
-      oklch(12% 0.018 240) 50%, 
-      oklch(8% 0.015 240) 100%);
-  }
-  
-  .gradient-bg-light {
-    background: linear-gradient(135deg, 
-      oklch(98% 0.002 240) 0%, 
-      oklch(96% 0.005 240) 50%, 
-      oklch(98% 0.002 240) 100%);
-  }
-  
-  /* Premium card styling */
-  .professional-card {
-    @apply bg-card/95 backdrop-blur-md border border-border/60;
-    box-shadow: 
-      0 4px 6px -1px var(--shadow),
-      0 2px 4px -1px var(--shadow),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-  
-  .executive-card {
-    @apply bg-card/90 backdrop-blur-lg border border-border/40;
-    box-shadow: 
-      0 10px 15px -3px var(--shadow),
-      0 4px 6px -2px var(--shadow),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Professional button gradients */
-  .btn-gradient-primary {
-    background: linear-gradient(135deg, 
-      oklch(45% 0.15 240) 0%, 
-      oklch(50% 0.18 260) 100%);
-    @apply hover:shadow-xl transition-all duration-300 border-0;
-    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
-  }
-  
-  .btn-gradient-primary:hover {
-    background: linear-gradient(135deg, 
-      oklch(50% 0.18 240) 0%, 
-      oklch(55% 0.20 260) 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.15);
-  }
-  
-  .btn-gradient-secondary {
-    background: linear-gradient(135deg, 
-      oklch(55% 0.15 200) 0%, 
-      oklch(50% 0.18 240) 100%);
-    @apply hover:shadow-xl transition-all duration-300 border-0;
-    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Sophisticated accent elements */
-  .accent-border-professional {
-    @apply border-l-4 border-l-primary/40 pl-6;
-    position: relative;
-  }
-  
-  .accent-border-professional::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(to bottom, 
-      oklch(45% 0.15 240), 
-      oklch(50% 0.18 260));
-    border-radius: 2px;
-  }
-  
-  /* Executive glow effects */
-  .glow-primary {
-    box-shadow: 0 0 30px rgba(45, 55, 72, 0.15);
-  }
-  
-  .glow-secondary {
-    box-shadow: 0 0 30px rgba(45, 55, 72, 0.10);
-  }
-  
-  .glow-accent {
-    box-shadow: 0 0 25px rgba(45, 55, 72, 0.12);
-  }
-  
-  /* Professional text gradients */
-  .text-gradient-primary {
-    background: linear-gradient(135deg, 
-      oklch(45% 0.15 240) 0%, 
-      oklch(55% 0.18 260) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .text-gradient-secondary {
-    background: linear-gradient(135deg, 
-      oklch(55% 0.15 200) 0%, 
-      oklch(50% 0.18 240) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  /* Executive section dividers */
-  .section-divider-professional {
-    @apply relative;
-  }
-  
-  .section-divider-professional::before {
-    content: '';
-    @apply absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-px;
-    background: linear-gradient(to right, 
-      transparent, 
-      oklch(45% 0.15 240), 
-      transparent);
-  }
-  
-  /* Premium navigation */
-  .nav-item-professional {
-    @apply relative transition-all duration-300;
-    color: oklch(65% 0.03 240);
-  }
-  
-  .nav-item-professional:hover {
-    color: oklch(45% 0.15 240);
-  }
-  
-  .nav-item-professional::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300;
-    background: linear-gradient(to right, 
-      oklch(45% 0.15 240), 
-      oklch(50% 0.18 260));
-  }
-  
-  .nav-item-professional:hover::after {
-    @apply w-full;
-  }
-  
-  /* Executive form styling */
-  .form-field-professional {
-    @apply relative;
-  }
-  
-  .form-field-professional input:focus,
-  .form-field-professional textarea:focus {
-    @apply ring-2 border-primary/60;
-    ring-color: oklch(45% 0.15 240 / 0.2);
-    box-shadow: 0 0 0 3px oklch(45% 0.15 240 / 0.1);
-  }
-  
-  /* Sophisticated animations */
-  .fade-in-professional {
-    animation: fadeInProfessional 0.8s ease-out forwards;
-  }
-  
-  .slide-up-professional {
-    animation: slideUpProfessional 0.8s ease-out forwards;
-  }
-  
-  /* Glowing background animations */
-  .glow-orb-1 {
-    animation: floatGlow1 8s ease-in-out infinite;
-  }
-  
-  .glow-orb-2 {
-    animation: floatGlow2 10s ease-in-out infinite;
-  }
-  
-  .glow-orb-3 {
-    animation: floatGlow3 12s ease-in-out infinite;
-  }
-  
-  .glow-orb-4 {
-    animation: floatGlow4 14s ease-in-out infinite;
-  }
-  
-  @keyframes fadeInProfessional {
-    from {
-      opacity: 0;
-      transform: translateY(15px);
-      filter: blur(2px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-  }
-  
-  @keyframes slideUpProfessional {
-    from {
-      opacity: 0;
-      transform: translateY(25px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Smooth marquee animation */
-  @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  
-  @keyframes floatGlow1 {
-    0%, 100% {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 0.3;
-    }
-    50% {
-      transform: translate(-50%, -50%) scale(1.1);
-      opacity: 0.5;
-    }
-  }
-  
-  @keyframes floatGlow2 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-      opacity: 0.4;
-    }
-    50% {
-      transform: translate(20px, -10px) scale(1.2);
-      opacity: 0.6;
-    }
-  }
-  
-  @keyframes floatGlow3 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-      opacity: 0.3;
-    }
-    50% {
-      transform: translate(-15px, 10px) scale(1.15);
-      opacity: 0.5;
-    }
-  }
-  
-  @keyframes floatGlow4 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-      opacity: 0.2;
-    }
-    50% {
-      transform: translate(10px, -20px) scale(1.3);
-      opacity: 0.4;
-    }
-  }
-  
-  /* Executive hover effects */
-  .hover-lift-professional {
-    @apply transition-all duration-300;
-  }
-  
-  .hover-lift-professional:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px var(--shadow);
-  }
-  
-  .hover-glow-professional {
-    @apply transition-all duration-300;
-  }
-  
-  .hover-glow-professional:hover {
-    box-shadow: 0 0 30px oklch(45% 0.15 240 / 0.15);
-  }
-  
-  /* Professional badge styling */
-  .badge-professional {
-    @apply bg-primary/10 text-primary border border-primary/20;
-    backdrop-filter: blur(8px);
-  }
-  
-  /* Executive typography */
-  .heading-professional {
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
-  }
-  
-  .subheading-professional {
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    color: oklch(55% 0.02 240);
-  }
+/* Typography styles matching Exein */
+.heading-style-h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--theme-black--heading);
+  letter-spacing: -0.05em;
+  line-height: 1.1;
 }
+.heading-style-h4,
+.heading-style-h5,
+.heading-style-h6 {
+  font-weight: 600;
+  color: var(--theme-black--heading);
+}
+.heading-style-h4 {
+  font-size: 2.2rem;
+  line-height: 1.12;
+}
+.heading-style-h5 {
+  font-size: 2rem;
+  line-height: 1.16;
+}
+.heading-style-h6 {
+  font-size: 1.5rem;
+  line-height: 1.19;
+}
+.text-style-4lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.text-style-3lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.text-style-2lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Banner & Navbar */
+.banner {
+  width: 100%;
+  background: linear-gradient(90deg, #ff7323 0%, #9F3CFF 100%);
+  color: white;
+  padding: .6rem 0;
+  font-size: .95rem;
+  letter-spacing: .01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.banner_content {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.banner_button {
+  background: rgba(0,0,0,.10);
+  border-radius: 99px;
+  color: white !important;
+  padding: 0 1.2em;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .2s;
+  margin-left: 12px;
+}
+.banner_button:hover {
+  background: #fff;
+  color: #ff7323 !important;
+}
+.navbar_component {
+  background: transparent;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  transition: box-shadow .18s;
+}
+.navbar {
+  background: #232323a8;
+  border-bottom: 1px solid #282828;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,.08);
+}
+.navbar_link, .navbar-dropdown_heading {
+  color: var(--theme-black--text);
+  font-weight: 500;
+  font-size: 1.07rem;
+  padding: .9rem 1.4rem;
+  text-decoration: none;
+}
+.navbar_link:hover, .navbar_link.w--current {
+  color: var(--colors-primary--orange);
+}
+.button {
+  --button-gradient: linear-gradient(90deg, #ff7323 0%, #9F3CFF 100%);
+  background: var(--button-gradient);
+  color: white;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: .875rem 1.9rem;
+  font-size: 1.07rem;
+  transition: box-shadow .2s, background .2s;
+  box-shadow: 0 4px 28px rgba(255,115,35,.09);
+  border: none;
+}
+.button:hover {
+  background: linear-gradient(90deg, #9F3CFF 0%, #ff7323 100%);
+  box-shadow: 0 8px 32px rgba(255,115,35,.08);
+  color: #fff;
+}
+
+/* Card designs */
+.card, .home-compliance_card {
+  background: var(--theme-black--card-background);
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 16px 0 #18181822;
+  border: 1.5px solid var(--theme-black--compliance-card-border);
+  color: var(--theme-black--text);
+}
+.home-compliance_card-dot {
+  box-shadow:0 2px 4px #ff7323aa;
+  background: var(--theme-black--compliance-card-dot);
+  border-radius: 100px;
+  height: .8rem;
+  width: .8rem;
+}
+
+/* Hide elements on mobile as in Exein */
+.hide {
+  display: none !important;
+}
+@media (max-width: 991px) { .hide, .hide-tablet { display:none!important; } }
+@media (max-width: 767px) { .hide-mobile-landscape{ display:none!important; } }
+@media (max-width: 479px) { .hide-mobile{ display: none!important; } }
+
+/* Utilities for spacing/typography/balance */
+.spacing-clean { padding: 0!important; margin: 0!important; }
+.text-wrap-balance { text-wrap: balance; }
+.display-inlineblock { display: inline-block; }
+.max-width-custom-attribute { max-width: 100ch; margin: 0 auto; }
+
+/* Pattern and glow styles, for hero and section bg */
+.background-pattern {
+  opacity: 0.6;
+}
+.z-index-2 { z-index: 2; }
+.z-index-3 { z-index: 3; }
+.text-align-center { text-align: center; }
+.text-color-white { color: #fff; }
+.text-color-grey-600 { color: #80818A; }
+.text-color-grey-300 { color: #b9babc; }
+.text-color-grey-500 { color: #999; }
+
+
+/* Add styles for modern banners/cards/buttons/shadows and responsive type as in Exein's design */
+@media (max-width: 1440px) and (min-width: 992px) {
+  html { font-size: 1.1111vw; }
+}
+@media (max-width: 991px) and (min-width: 767px) {
+  html { font-size: 1.4111vw; }
+}
+
+/* Responsive adjustments for all major breakpoints and containers */
+@media screen and (max-width: 991px) { 
+  .container-large { padding-left:2vw; padding-right:2vw; }
+  .navbar_content-wrapper { height:100vh; }
+}
+@media screen and (max-width: 767px) {
+  .container-large { padding-left: 1vw; padding-right: 1vw; }
+  .is-mobile-text-align-left { text-align:left; }
+  .navbar_button-wrapper .button { padding:.875rem 1rem; }
+}
+
+/* Strong transition for focus and interactive elements */
+*[tabindex]:focus-visible, input[type="file"]:focus-visible {
+  outline: 0.125rem solid #4d65ff;
+  outline-offset: 0.125rem;
+}
+
+/* Add swipers styles as in Exein */
+.swiper-pagination {
+  position: static !important;
+}
+.swiper-pagination > .swiper-pagination-bullet {
+  outline-width: 1px;
+  outline-style: solid;
+  transition: all 350ms !important;
+  cursor: pointer !important;
+}
+
+/* Animation and fade-in */
+.fade-in-0, .fade-in-200, .fade-in-400, .fade-in-600, .fade-in-1500 { opacity:0; animation: fadein 1s forwards; }
+@keyframes fadein {to {opacity: 1;} }
+
+/* Add Exein-styled badge, tag, and blockquote for visual details */
+.secured-tag, .badge {
+  background: rgba(255, 115, 35, 0.2);
+  color: #ff7323;
+  padding:.2em 1.25em;
+  border-radius:99px;
+  font-size:.94em;
+  font-weight:600;
+  display:inline-block;
+  letter-spacing:0.05em;
+}
+
+blockquote {
+  background: #222226;
+  border-left: 4px solid #ff7323;
+  margin:2em 0;
+  padding:1.2em 2em;
+  font-style:italic;
+  color:#fff;
+  border-radius:.7em;
+  font-size: 1.22em;
+}
+
+/* SVG icon fullheight/width as in Exein */
+[class*="icon-full"] svg { width: 100% !important; height: 100% !important; }
+[class*="icon-current-color"] * { fill: currentColor !important; }
+
+/* Style for orb glow animation and backgrounds? See Exein for full glow fx in hero.
+You can complement further with more keyframes. */
+
+/* ...Further extend with more Exein component/CSS if required */
