@@ -1,11 +1,7 @@
 /*
-  Custom Global Stylesheet merging existing variables and Exein sample styles.
+  Pure CSS Global Stylesheet: No Tailwind utility classes or @apply
+  Contains design variables and modern/Exein visual system
 */
-
-@import "tailwindcss";
-@import "../styles/utils.css";
-@import "tw-animate-css";
-
 
 :root {
   --theme-black--background: #181818;
@@ -23,19 +19,17 @@
   --colors-greyscale--grey-100: #e5e6eb;
 }
 
-/* Exein-inspired base resets and smooth font rendering */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-body, html {
+html, body {
   font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
   background: var(--theme-black--background);
   color: var(--theme-black--text);
   min-height: 100vh;
 }
 
-/* Core containers and layout helpers */
 .container-large {
   width: 100vw;
   max-width: 1440px;
@@ -52,7 +46,6 @@ body, html {
   padding-right: 24px;
 }
 
-/* Typography styles matching Exein */
 .heading-style-h1 {
   font-size: 3rem;
   font-weight: 700;
@@ -97,7 +90,6 @@ body, html {
   overflow: hidden;
 }
 
-/* Banner & Navbar */
 .banner {
   width: 100%;
   background: linear-gradient(90deg, #ff7323 0%, #9F3CFF 100%);
@@ -130,6 +122,7 @@ body, html {
   background: #fff;
   color: #ff7323 !important;
 }
+
 .navbar_component {
   background: transparent;
   position: sticky;
@@ -153,8 +146,7 @@ body, html {
   color: var(--colors-primary--orange);
 }
 .button {
-  --button-gradient: linear-gradient(90deg, #ff7323 0%, #9F3CFF 100%);
-  background: var(--button-gradient);
+  background: linear-gradient(90deg, #ff7323 0%, #9F3CFF 100%);
   color: white;
   font-weight: 600;
   border-radius: 9999px;
@@ -170,7 +162,6 @@ body, html {
   color: #fff;
 }
 
-/* Card designs */
 .card, .home-compliance_card {
   background: var(--theme-black--card-background);
   border-radius: 1.5rem;
@@ -186,21 +177,16 @@ body, html {
   width: .8rem;
 }
 
-/* Hide elements on mobile as in Exein */
-.hide {
-  display: none !important;
-}
+.hide { display: none !important; }
 @media (max-width: 991px) { .hide, .hide-tablet { display:none!important; } }
 @media (max-width: 767px) { .hide-mobile-landscape{ display:none!important; } }
 @media (max-width: 479px) { .hide-mobile{ display: none!important; } }
 
-/* Utilities for spacing/typography/balance */
 .spacing-clean { padding: 0!important; margin: 0!important; }
 .text-wrap-balance { text-wrap: balance; }
 .display-inlineblock { display: inline-block; }
 .max-width-custom-attribute { max-width: 100ch; margin: 0 auto; }
 
-/* Pattern and glow styles, for hero and section bg */
 .background-pattern {
   opacity: 0.6;
 }
@@ -212,36 +198,25 @@ body, html {
 .text-color-grey-300 { color: #b9babc; }
 .text-color-grey-500 { color: #999; }
 
-
-/* Add styles for modern banners/cards/buttons/shadows and responsive type as in Exein's design */
 @media (max-width: 1440px) and (min-width: 992px) {
   html { font-size: 1.1111vw; }
 }
 @media (max-width: 991px) and (min-width: 767px) {
   html { font-size: 1.4111vw; }
-}
-
-/* Responsive adjustments for all major breakpoints and containers */
-@media screen and (max-width: 991px) { 
   .container-large { padding-left:2vw; padding-right:2vw; }
-  .navbar_content-wrapper { height:100vh; }
 }
-@media screen and (max-width: 767px) {
+@media (max-width: 767px) {
   .container-large { padding-left: 1vw; padding-right: 1vw; }
   .is-mobile-text-align-left { text-align:left; }
   .navbar_button-wrapper .button { padding:.875rem 1rem; }
 }
 
-/* Strong transition for focus and interactive elements */
 *[tabindex]:focus-visible, input[type="file"]:focus-visible {
   outline: 0.125rem solid #4d65ff;
   outline-offset: 0.125rem;
 }
 
-/* Add swipers styles as in Exein */
-.swiper-pagination {
-  position: static !important;
-}
+.swiper-pagination { position: static !important; }
 .swiper-pagination > .swiper-pagination-bullet {
   outline-width: 1px;
   outline-style: solid;
@@ -249,11 +224,9 @@ body, html {
   cursor: pointer !important;
 }
 
-/* Animation and fade-in */
 .fade-in-0, .fade-in-200, .fade-in-400, .fade-in-600, .fade-in-1500 { opacity:0; animation: fadein 1s forwards; }
-@keyframes fadein {to {opacity: 1;} }
+@keyframes fadein { to {opacity: 1;} }
 
-/* Add Exein-styled badge, tag, and blockquote for visual details */
 .secured-tag, .badge {
   background: rgba(255, 115, 35, 0.2);
   color: #ff7323;
@@ -276,11 +249,5 @@ blockquote {
   font-size: 1.22em;
 }
 
-/* SVG icon fullheight/width as in Exein */
 [class*="icon-full"] svg { width: 100% !important; height: 100% !important; }
 [class*="icon-current-color"] * { fill: currentColor !important; }
-
-/* Style for orb glow animation and backgrounds? See Exein for full glow fx in hero.
-You can complement further with more keyframes. */
-
-/* ...Further extend with more Exein component/CSS if required */
