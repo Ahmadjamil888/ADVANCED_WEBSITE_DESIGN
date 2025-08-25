@@ -97,22 +97,22 @@ export default function PricingSection({ className }: PricingSectionProps) {
     <Section
       ref={inViewRef}
       className={cn(
-        'py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden',
+        'py-20 gradient-bg-professional relative overflow-hidden',
         className
       )}
     >
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
       </div>
       
       <div ref={sectionRef} className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="pricing-title text-4xl md:text-6xl font-bold text-white mb-6">
-            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A607F2] to-purple-400">Package</span>
+          <h2 className="pricing-title text-4xl md:text-6xl font-bold text-foreground mb-6 heading-professional">
+            Choose Your <span className="text-gradient-primary">Package</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto subheading-professional">
             Tailored solutions for every business need. From startups to enterprises, we have the perfect package for you.
           </p>
         </div>
@@ -127,40 +127,40 @@ export default function PricingSection({ className }: PricingSectionProps) {
               )}
             >
               {pkg.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#A607F2] to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 btn-gradient-primary text-white px-6 py-2 rounded-full text-sm font-semibold">
                   Most Popular
                 </div>
               )}
               
               <div className={cn(
-                'bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border transition-all duration-300 transform hover:scale-105 hover:shadow-2xl h-full',
+                'professional-card rounded-2xl p-8 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl h-full hover-lift-professional',
                 pkg.popular 
-                  ? 'border-[#A607F2] shadow-lg shadow-[#A607F2]/20 hover:shadow-[#A607F2]/30' 
-                  : 'border-gray-700 hover:border-[#A607F2]/50 hover:shadow-[#A607F2]/10'
+                  ? 'border-primary shadow-lg shadow-primary/20 hover:shadow-primary/30' 
+                  : 'border-border hover:border-primary/50 hover:shadow-primary/10'
               )}>
                 <div className="text-center mb-8">
                   <div className={cn(
                     'inline-flex items-center justify-center w-16 h-16 rounded-full mb-4',
                     pkg.popular 
-                      ? 'bg-gradient-to-br from-[#A607F2] to-purple-600 text-white' 
-                      : 'bg-gray-700 text-gray-300'
+                      ? 'btn-gradient-primary text-white' 
+                      : 'bg-muted text-muted-foreground'
                   )}>
                     {pkg.icon}
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
+                  <h3 className="text-2xl font-bold text-foreground mb-2 heading-professional">{pkg.name}</h3>
                   
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-white">{pkg.price}</span>
-                    <span className="text-gray-400 ml-2">{pkg.currency}</span>
+                    <span className="text-4xl font-bold text-foreground">{pkg.price}</span>
+                    <span className="text-muted-foreground ml-2">{pkg.currency}</span>
                   </div>
                 </div>
 
                 <ul className="space-y-4 mb-8">
                   {pkg.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-[#A607F2] flex-shrink-0" />
-                      <span className="text-gray-300">{feature}</span>
+                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -169,8 +169,8 @@ export default function PricingSection({ className }: PricingSectionProps) {
                   className={cn(
                     'w-full py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105',
                     pkg.popular
-                      ? 'bg-gradient-to-r from-[#A607F2] to-purple-600 hover:from-[#8A05D1] hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
-                      : 'bg-gray-700 hover:bg-[#A607F2] text-white'
+                      ? 'btn-gradient-primary text-white shadow-lg hover:shadow-xl'
+                      : 'bg-muted hover:bg-primary text-foreground hover:text-primary-foreground'
                   )}
                   asChild
                 >
@@ -182,12 +182,12 @@ export default function PricingSection({ className }: PricingSectionProps) {
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-gray-400 mb-4">
+          <p className="text-muted-foreground mb-4 subheading-professional">
             Need something different? We create custom solutions for unique requirements.
           </p>
           <Button
             variant="outline"
-            className="border-[#A607F2] text-[#A607F2] hover:bg-[#A607F2] hover:text-white px-8 py-3 rounded-full font-semibold transition-all duration-300"
+            className="professional-card border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground px-8 py-3 rounded-full font-semibold transition-all duration-300"
             asChild
           >
             <a href="/contact">Contact Us for Custom Quote</a>

@@ -42,38 +42,38 @@ export default function TeamSection({ className }: TeamSectionProps) {
     <Section
       ref={inViewRef}
       className={cn(
-        'py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden',
+        'py-20 gradient-bg-professional relative overflow-hidden',
         className
       )}
     >
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
       </div>
       
       <div ref={sectionRef} className="max-w-6xl mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="team-title text-4xl md:text-6xl font-bold text-white mb-6">
-            Meet Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A607F2] to-purple-400">Team</span>
+          <h2 className="team-title text-4xl md:text-6xl font-bold text-foreground mb-6 heading-professional">
+            Meet Our <span className="text-gradient-primary">Team</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto subheading-professional">
             Led by visionary leadership and powered by innovative minds
           </p>
         </div>
 
         <div className="flex justify-center">
           <div className="team-card group relative">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-[#A607F2]/30 hover:border-[#A607F2]/60 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-[#A607F2]/20 max-w-md">
+            <div className="professional-card rounded-2xl p-8 border border-primary/30 hover:border-primary/60 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-primary/20 max-w-md hover-lift-professional">
               {/* Profile Image Placeholder */}
-              <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#A607F2] to-purple-600 flex items-center justify-center text-4xl font-bold text-white">
+              <div className="w-32 h-32 mx-auto mb-6 rounded-full btn-gradient-primary flex items-center justify-center text-4xl font-bold text-white">
                 AJ
               </div>
               
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-white mb-2">Ahmad Jamil</h3>
-                <p className="text-[#A607F2] font-semibold mb-4">Founder & CEO</p>
-                <p className="text-gray-300 leading-relaxed">
+                <h3 className="text-2xl font-bold text-foreground mb-2 heading-professional">Ahmad Jamil</h3>
+                <p className="text-primary font-semibold mb-4">Founder & CEO</p>
+                <p className="text-muted-foreground leading-relaxed">
                   Visionary leader driving AI innovation and business transformation. 
                   With expertise in cutting-edge technology and strategic business development, 
                   Ahmad leads our mission to revolutionize how businesses leverage artificial intelligence.
@@ -81,7 +81,7 @@ export default function TeamSection({ className }: TeamSectionProps) {
               </div>
               
               {/* Hover Effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#A607F2]/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
           </div>
         </div>
