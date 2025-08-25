@@ -9,13 +9,12 @@ import ModernHero from "../components/sections/hero/modern-hero";
 import Items from "../components/sections/items/default";
 import Logos from "../components/sections/logos/default";
 import CompanyMarquee from "../components/sections/logos/company-marquee";
-import ModernNavbar from "../components/sections/navbar/modern-navbar";
+import { Navbar, NavbarLeft, NavbarRight } from "../components/ui/navbar";
 import Stats from "../components/sections/stats/default";
 import TeamSection from "../components/sections/team/team-section";
 import PricingSection from "../components/sections/pricing/pricing-section";
 import ModernTestimonials from "../components/sections/testimonials/modern-testimonials";
 import SmoothScroll from "../components/ui/smooth-scroll";
-import CursorFollower from "../components/ui/cursor-follower";
 import SocialShare from "../components/ui/social-share";
 // Structured data imports removed as they're not currently used
 // import { 
@@ -105,8 +104,17 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full overflow-hidden bg-black text-white relative">
       <SmoothScroll />
-      <CursorFollower />
-      <ModernNavbar />
+      <Navbar className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md px-6">
+        <NavbarLeft>
+          <a href="/" className="text-xl font-bold text-white">ZEHANX</a>
+        </NavbarLeft>
+        <NavbarRight>
+          <a href="/" className="text-white hover:text-gray-300">Home</a>
+          <a href="/services" className="text-white hover:text-gray-300">Services</a>
+          <a href="/about" className="text-white hover:text-gray-300">About</a>
+          <a href="/contact" className="text-white hover:text-gray-300">Contact</a>
+        </NavbarRight>
+      </Navbar>
       <ModernHero />
       <CompanyMarquee className="-mt-8 sm:-mt-16" />
       <Logos />
@@ -119,21 +127,21 @@ export default function Home() {
       {/* SEO Content Section */}
       <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         </div>
         
         <div className="max-w-container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl sm:text-5xl font-bold text-center mb-6 text-white">
-              Elevate Your Business with Expert <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A607F2] to-purple-400">AI & Web Development</span>
+              Elevate Your Business with Expert <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">AI & Web Development</span>
             </h2>
             <p className="text-gray-300 text-center max-w-3xl mx-auto mb-12 text-lg">
               From strategy to production, we build performant, secure and scalable solutions that deliver measurable outcomes.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mb-12">
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-[#A607F2]/30">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30">
                 <h3 className="text-2xl font-semibold mb-4 text-white">Artificial Intelligence Expertise</h3>
                 <p className="text-gray-300 mb-4">
                   Our team specializes in cutting-edge artificial intelligence and machine learning solutions. 
@@ -146,7 +154,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-[#A607F2]/30">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30">
                 <h3 className="text-2xl font-semibold mb-4 text-white">Modern Web Development</h3>
                 <p className="text-gray-300 mb-4">
                   We excel in modern web development using Next.js, React, and TypeScript. Our full-stack 
@@ -163,7 +171,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <a 
                   href="/zehan" 
-                  className="bg-gradient-to-r from-[#A607F2] to-purple-600 hover:from-[#8A05D1] hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
                 >
                    Try Zehan AI Now
                   <span className="text-sm">→</span>

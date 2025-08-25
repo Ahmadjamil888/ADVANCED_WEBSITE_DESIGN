@@ -35,7 +35,7 @@ export default function AIConsulting() {
               </div>
             </div>
             <div className="relative">
-              <div className="size-64 mx-auto bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full flex items-center justify-center">
+              <div className="size-64 mx-auto bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-full flex items-center justify-center">
                 <Zap className="size-32 text-primary" />
               </div>
             </div>

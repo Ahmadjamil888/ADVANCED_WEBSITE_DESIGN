@@ -13,7 +13,7 @@ export default function SignInPage() {
             <Lock className="mr-2 size-4 text-blue-400" />
             <span className="text-blue-400">Sign In</span>
           </Badge>
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             Welcome Back
           </h1>
           <p className="text-muted-foreground">
@@ -26,7 +26,7 @@ export default function SignInPage() {
             appearance={{
               elements: {
                 formButtonPrimary: 
-                  "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0",
+                  "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0",
                 card: "bg-transparent shadow-none",
                 headerTitle: "text-foreground",
                 headerSubtitle: "text-muted-foreground",

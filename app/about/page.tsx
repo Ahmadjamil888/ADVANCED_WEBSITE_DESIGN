@@ -64,7 +64,7 @@ export default function About() {
                 </p>
               </div>
               <div className="enhanced-card p-6 rounded-lg hover-lift">
-                <Award className="size-8 text-purple-400 mb-4" />
+                <Award className="size-8 text-cyan-400 mb-4" />
                 <h3 className="font-semibold mb-2">Quality Focused</h3>
                 <p className="text-sm text-muted-foreground">
                   Enterprise-grade solutions with 99% satisfaction
@@ -85,9 +85,9 @@ export default function About() {
       {/* Values Section */}
       <Section className="py-16">
         <div className="max-w-container mx-auto text-center">
-          <Badge variant="outline" className="mb-6 border-purple-500/20 bg-purple-500/10">
-            <Award className="mr-2 size-4 text-purple-400" />
-            <span className="text-purple-400 font-medium">Our Values</span>
+          <Badge variant="outline" className="mb-6 border-cyan-500/20 bg-cyan-500/10">
+            <Award className="mr-2 size-4 text-cyan-400" />
+            <span className="text-cyan-400 font-medium">Our Values</span>
           </Badge>
           <h2 className="text-3xl font-bold mb-12 text-gradient-blue">
             What Drives Us Forward
@@ -113,9 +113,9 @@ export default function About() {
                 their unique challenges and deliver tailored solutions.
               </p>
             </div>
-            <div className="enhanced-card p-8 rounded-lg hover-lift glow-purple">
-              <div className="size-12 bg-purple-500/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Award className="size-6 text-purple-400" />
+            <div className="enhanced-card p-8 rounded-lg hover-lift glow-cyan">
+              <div className="size-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Award className="size-6 text-cyan-400" />
               </div>
               <h3 className="text-xl font-semibold mb-4">Excellence</h3>
               <p className="text-muted-foreground">
