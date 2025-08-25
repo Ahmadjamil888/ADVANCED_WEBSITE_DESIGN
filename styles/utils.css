@@ -1,18 +1,94 @@
 /* Glass effects */
 @utility glass-1 {
-  @apply border-border from-card/80 to-card/40 dark:border-border/10 dark:border-b-border/5 dark:border-t-border/20 dark:from-card/5 dark:to-card/0 border bg-linear-to-b;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(to bottom, 
+    color-mix(in srgb, var(--color-card) 80%, transparent),
+    color-mix(in srgb, var(--color-card) 40%, transparent)
+  );
+  
+  &:where(.dark, .dark *) {
+    border-color: color-mix(in srgb, var(--color-border) 10%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--color-border) 5%, transparent);
+    border-top-color: color-mix(in srgb, var(--color-border) 20%, transparent);
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-card) 5%, transparent),
+      transparent
+    );
+  }
 }
+
 @utility glass-2 {
-  @apply border-border from-card/100 to-card/80 dark:border-border/10 dark:border-b-border/5 dark:border-t-border/20 dark:from-card/10 dark:to-card/5 border bg-linear-to-b;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(to bottom, 
+    var(--color-card),
+    color-mix(in srgb, var(--color-card) 80%, transparent)
+  );
+  
+  &:where(.dark, .dark *) {
+    border-color: color-mix(in srgb, var(--color-border) 10%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--color-border) 5%, transparent);
+    border-top-color: color-mix(in srgb, var(--color-border) 20%, transparent);
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-card) 10%, transparent),
+      color-mix(in srgb, var(--color-card) 5%, transparent)
+    );
+  }
 }
+
 @utility glass-3 {
-  @apply border-border from-card/30 to-card/20 dark:border-border/10 dark:border-t-border/20 dark:border-b-border/5 dark:from-primary/5 dark:to-primary/2 border bg-linear-to-b;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(to bottom, 
+    color-mix(in srgb, var(--color-card) 30%, transparent),
+    color-mix(in srgb, var(--color-card) 20%, transparent)
+  );
+  
+  &:where(.dark, .dark *) {
+    border-color: color-mix(in srgb, var(--color-border) 10%, transparent);
+    border-top-color: color-mix(in srgb, var(--color-border) 20%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--color-border) 5%, transparent);
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-primary) 5%, transparent),
+      color-mix(in srgb, var(--color-primary) 2%, transparent)
+    );
+  }
 }
+
 @utility glass-4 {
-  @apply border-border border-b-input/90 from-card/60 to-card/20 dark:border-border/10 dark:border-t-border/30 dark:from-primary/10 dark:to-primary/5 border bg-linear-to-b dark:border-b-0;
+  border: 1px solid var(--color-border);
+  border-bottom-color: color-mix(in srgb, var(--color-input) 90%, transparent);
+  background: linear-gradient(to bottom, 
+    color-mix(in srgb, var(--color-card) 60%, transparent),
+    color-mix(in srgb, var(--color-card) 20%, transparent)
+  );
+  
+  &:where(.dark, .dark *) {
+    border-color: color-mix(in srgb, var(--color-border) 10%, transparent);
+    border-top-color: color-mix(in srgb, var(--color-border) 30%, transparent);
+    border-bottom: 0;
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-primary) 10%, transparent),
+      color-mix(in srgb, var(--color-primary) 5%, transparent)
+    );
+  }
 }
+
 @utility glass-5 {
-  @apply border-border border-b-input from-card/100 to-card/20 dark:border-border/10 dark:border-t-border/30 dark:from-primary/15 dark:to-primary/5 border bg-linear-to-b dark:border-b-0;
+  border: 1px solid var(--color-border);
+  border-bottom-color: var(--color-input);
+  background: linear-gradient(to bottom, 
+    var(--color-card),
+    color-mix(in srgb, var(--color-card) 20%, transparent)
+  );
+  
+  &:where(.dark, .dark *) {
+    border-color: color-mix(in srgb, var(--color-border) 10%, transparent);
+    border-top-color: color-mix(in srgb, var(--color-border) 30%, transparent);
+    border-bottom: 0;
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-primary) 15%, transparent),
+      color-mix(in srgb, var(--color-primary) 5%, transparent)
+    );
+  }
 }
 
 /* Fade effects */

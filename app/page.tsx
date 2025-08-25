@@ -5,12 +5,17 @@ import { siteConfig } from "@/config/site";
 import CTA from "../components/sections/cta/default";
 import FAQ from "../components/sections/faq/default";
 import Footer from "../components/sections/footer/default";
-import Hero from "../components/sections/hero/zehan-hero";
+import ModernHero from "../components/sections/hero/modern-hero";
 import Items from "../components/sections/items/default";
 import Logos from "../components/sections/logos/default";
 import CompanyMarquee from "../components/sections/logos/company-marquee";
-import Navbar from "../components/sections/navbar/default";
+import ModernNavbar from "../components/sections/navbar/modern-navbar";
 import Stats from "../components/sections/stats/default";
+import TeamSection from "../components/sections/team/team-section";
+import PricingSection from "../components/sections/pricing/pricing-section";
+import ModernTestimonials from "../components/sections/testimonials/modern-testimonials";
+import SmoothScroll from "../components/ui/smooth-scroll";
+import CursorFollower from "../components/ui/cursor-follower";
 import SocialShare from "../components/ui/social-share";
 import { 
   OrganizationStructuredData, 
@@ -97,71 +102,67 @@ export const metadata: Metadata = generateSEO({
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full overflow-hidden bg-background text-foreground">
-      <Navbar />
-      <Hero />
+    <main className="min-h-screen w-full overflow-hidden bg-black text-white relative">
+      <SmoothScroll />
+      <CursorFollower />
+      <ModernNavbar />
+      <ModernHero />
       <CompanyMarquee className="-mt-8 sm:-mt-16" />
       <Logos />
       <Items />
       <Stats />
+      <TeamSection />
+      <PricingSection />
+      <ModernTestimonials />
       
       {/* SEO Content Section */}
-      <section className="py-20 bg-muted/30 section-divider-professional">
-        <div className="max-w-container mx-auto px-4">
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A607F2] to-transparent" />
+        </div>
+        
+        <div className="max-w-container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl sm:text-5xl heading-professional text-center mb-6">
-              Elevate Your Business with Expert AI & Next.js Delivery
+            <h2 className="text-4xl sm:text-5xl font-bold text-center mb-6 text-white">
+              Elevate Your Business with Expert <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A607F2] to-purple-400">AI & Web Development</span>
             </h2>
-            <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+            <p className="text-gray-300 text-center max-w-3xl mx-auto mb-12 text-lg">
               From strategy to production, we build performant, secure and scalable solutions that deliver measurable outcomes.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mb-12">
-              <div>
-                <h3 className="text-2xl font-semibold mb-4">Artificial Intelligence Expertise</h3>
-                <p className="text-muted-foreground mb-4">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-[#A607F2]/30">
+                <h3 className="text-2xl font-semibold mb-4 text-white">Artificial Intelligence Expertise</h3>
+                <p className="text-gray-300 mb-4">
                   Our team specializes in cutting-edge artificial intelligence and machine learning solutions. 
                   We develop custom AI models, implement deep learning algorithms, and create intelligent 
-                  automation systems that transform how businesses operate. From computer vision to natural 
-                  language processing, we deliver AI solutions that drive real business value.
+                  automation systems that transform how businesses operate.
                 </p>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   Our AI services include predictive analytics, recommendation systems, chatbot development, 
-                  and automated decision-making platforms. We work with businesses across industries to 
-                  implement AI strategies that increase efficiency, reduce costs, and unlock new opportunities.
+                  and automated decision-making platforms that increase efficiency and reduce costs.
                 </p>
               </div>
               
-              <div>
-                <h3 className="text-2xl font-semibold mb-4">Modern Web Development</h3>
-                <p className="text-muted-foreground mb-4">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-[#A607F2]/30">
+                <h3 className="text-2xl font-semibold mb-4 text-white">Modern Web Development</h3>
+                <p className="text-gray-300 mb-4">
                   We excel in modern web development using Next.js, React, and TypeScript. Our full-stack 
-                  development approach ensures scalable, performant, and user-friendly web applications. 
-                  We build everything from simple business websites to complex enterprise applications 
-                  with advanced functionality and seamless user experiences.
+                  development approach ensures scalable, performant, and user-friendly web applications.
                 </p>
-                <p className="text-muted-foreground">
+                <p className="text-gray-300">
                   Our web development services include responsive design, API development, database 
-                  integration, and performance optimization. We follow industry best practices for 
-                  security, accessibility, and SEO to ensure your web presence drives business growth.
+                  integration, and performance optimization following industry best practices.
                 </p>
               </div>
             </div>
             
             <div className="text-center">
-              <h3 className="text-2xl font-semibold mb-4">Experience Our AI Technology — Try Zehan AI</h3>
-              <p className="text-muted-foreground max-w-3xl mx-auto mb-8">
-                Zehan X Technologies began as a small web development agency and evolved into a leading 
-                AI and machine learning company. Our journey from creating simple websites to developing 
-                sophisticated AI systems reflects our commitment to innovation and continuous learning. 
-                Today, we combine our web development expertise with advanced AI capabilities to deliver 
-                comprehensive digital transformation solutions for businesses worldwide.
-              </p>
-              
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <a 
                   href="/zehan" 
-                  className="btn-gradient-primary text-white px-6 py-3 rounded-lg font-semibold hover-lift-professional transition-all duration-300 inline-flex items-center gap-2"
+                  className="bg-gradient-to-r from-[#A607F2] to-purple-600 hover:from-[#8A05D1] hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
                 >
                    Try Zehan AI Now
                   <span className="text-sm">→</span>
