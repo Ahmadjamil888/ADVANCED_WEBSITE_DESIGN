@@ -17,12 +17,13 @@ import ModernTestimonials from "../components/sections/testimonials/modern-testi
 import SmoothScroll from "../components/ui/smooth-scroll";
 import CursorFollower from "../components/ui/cursor-follower";
 import SocialShare from "../components/ui/social-share";
-import { 
-  OrganizationStructuredData, 
-  WebsiteStructuredData, 
-  FAQStructuredData,
-  BreadcrumbStructuredData 
-} from "../components/seo/structured-data";
+// Structured data imports removed as they're not currently used
+// import { 
+//   OrganizationStructuredData, 
+//   WebsiteStructuredData, 
+//   FAQStructuredData,
+//   BreadcrumbStructuredData 
+// } from "../components/seo/structured-data";
 
 export const metadata: Metadata = generateSEO({
   title: "Best AI & Web Development Company | SEO-First Next.js Agency | Zehan X Technologies",

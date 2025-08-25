@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "../styles/utils.css";
 
-@theme inline {
+@theme {
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-light: var(--light);

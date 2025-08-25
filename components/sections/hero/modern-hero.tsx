@@ -23,7 +23,7 @@ interface ModernHeroProps {
 export default function ModernHero({ className }: ModernHeroProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const vantaRef = useRef<HTMLDivElement>(null);
-  const [vantaEffect, setVantaEffect] = useState<any>(null);
+  const [vantaEffect, setVantaEffect] = useState<{ destroy: () => void } | null>(null);
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -33,10 +33,10 @@ export default function ModernHero({ className }: ModernHeroProps) {
     // Initialize Vanta.js background
     const initVanta = async () => {
       if (typeof window !== 'undefined' && vantaRef.current) {
-        const VANTA = await import('vanta/dist/vanta.net.min.js');
+        const { default: VANTA } = await import('vanta/dist/vanta.net.min.js');
         const THREE = await import('three');
         
-        const effect = VANTA.default({
+        const effect = VANTA({
           el: vantaRef.current,
           THREE,
           mouseControls: true,
@@ -60,9 +60,11 @@ export default function ModernHero({ className }: ModernHeroProps) {
     initVanta();
 
     return () => {
-      if (vantaEffect) vantaEffect.destroy();
+      if (vantaEffect) {
+        vantaEffect.destroy();
+      }
     };
-  }, []);
+  }, [vantaEffect]);
 
   useEffect(() => {
     if (inView && heroRef.current) {
