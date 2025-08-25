@@ -10,7 +10,7 @@ import ModernHero from "../components/sections/hero/modern-hero";
 import Items from "../components/sections/items/default";
 import Logos from "../components/sections/logos/default";
 import CompanyMarquee from "../components/sections/logos/company-marquee";
-import { Navbar, NavbarLeft, NavbarRight } from "../components/ui/navbar";
+import ProfessionalNavbar from "../components/ui/professional-navbar";
 import Stats from "../components/sections/stats/default";
 import TeamSection from "../components/sections/team/team-section";
 import PricingSection from "../components/sections/pricing/pricing-section";
@@ -105,17 +105,9 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full overflow-hidden bg-black text-white relative">
       <SmoothScroll />
-      <Navbar className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md px-6">
-        <NavbarLeft>
-          <Link href="/" className="text-xl font-bold text-white">ZEHANX</Link>
-        </NavbarLeft>
-        <NavbarRight>
-          <Link href="/" className="text-white hover:text-gray-300">Home</Link>
-          <Link href="/services" className="text-white hover:text-gray-300">Services</Link>
-          <Link href="/about" className="text-white hover:text-gray-300">About</Link>
-          <Link href="/contact" className="text-white hover:text-gray-300">Contact</Link>
-        </NavbarRight>
-      </Navbar>
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <ProfessionalNavbar />
+      </div>
       <ModernHero />
       <CompanyMarquee className="-mt-8 sm:-mt-16" />
       <Logos />
