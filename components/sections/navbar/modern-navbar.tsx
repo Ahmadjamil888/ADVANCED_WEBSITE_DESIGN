@@ -1,11 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { gsap } from 'gsap';
 import { cn } from '@/lib/utils';
-import ZehanLogo from '../../logos/zehan-logo';
-import { Button } from '../../ui/button';
 
 interface NavbarLink {
   text: string;
@@ -31,28 +28,7 @@ export default function ModernNavbar({
   ],
   className,
 }: ModernNavbarProps) {
-  const navRef = useRef<HTMLElement>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (navRef.current) {
-      gsap.fromTo(
-        navRef.current,
-        { y: -100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: 'power2.out', delay: 0.5 }
-      );
-    }
-  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -60,82 +36,70 @@ export default function ModernNavbar({
 
   return (
     <>
-      <nav
-        ref={navRef}
-        className={cn(
-          'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300',
-          isScrolled
-            ? 'bg-black/80 backdrop-blur-md border border-[#A607F2]/30 shadow-lg shadow-[#A607F2]/20'
-            : 'bg-black/20 backdrop-blur-sm border border-white/10',
-          'rounded-full px-6 py-3 max-w-4xl w-full mx-4',
-          className
-        )}
-      >
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <a href={homeUrl} className="flex items-center gap-3 group">
-            <ZehanLogo size="sm" />
-            <span className="text-xl font-bold text-white group-hover:text-[#A607F2] transition-colors duration-300">
-              {name}
-            </span>
-          </a>
+      <nav className={cn('fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm', className)}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <a href={homeUrl} className="flex items-center">
+              <span className="text-2xl font-bold text-white">{name}</span>
+            </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {links.map((link, index) => (
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {links.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="text-white hover:text-gray-300 transition-colors duration-200 font-medium"
+                >
+                  {link.text}
+                </a>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <div className="hidden md:block">
               <a
-                key={index}
-                href={link.href}
-                className="text-white/80 hover:text-[#A607F2] transition-all duration-300 font-medium relative group"
+                href="/contact"
+                className="bg-white text-black px-6 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-200"
               >
-                {link.text}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#A607F2] to-purple-600 group-hover:w-full transition-all duration-300" />
+                Get In Touch
               </a>
-            ))}
-          </div>
+            </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
-            <Button
-              className="bg-gradient-to-r from-[#A607F2] to-purple-600 hover:from-[#8A05D1] hover:to-purple-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-              asChild
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden text-white"
             >
-              <a href="/contact">Get In Touch</a>
-            </Button>
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden text-white hover:text-[#A607F2] transition-colors duration-300"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
-          <div className="relative z-50 flex flex-col items-center justify-center h-full gap-8">
+          <div className="absolute inset-0 bg-black/90" />
+          <div className="relative z-50 flex flex-col items-center justify-center h-full space-y-8">
             {links.map((link, index) => (
               <a
                 key={index}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-2xl text-white hover:text-[#A607F2] transition-colors duration-300 font-medium"
+                className="text-2xl text-white font-medium"
               >
                 {link.text}
               </a>
             ))}
-            <Button
-              className="bg-gradient-to-r from-[#A607F2] to-purple-600 hover:from-[#8A05D1] hover:to-purple-700 text-white px-8 py-3 rounded-full font-semibold text-lg"
-              asChild
+            <a
+              href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
+              className="mt-8 bg-white text-black px-8 py-3 rounded-lg font-semibold text-lg"
             >
-              <a href="/contact">Get In Touch</a>
-            </Button>
+              Get In Touch
+            </a>
           </div>
         </div>
       )}
