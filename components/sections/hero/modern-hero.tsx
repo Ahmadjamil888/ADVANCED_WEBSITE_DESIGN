@@ -1,95 +1,110 @@
-'use client';
+import { ReactNode } from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+
+import { Badge } from "../../ui/badge";
+import { Button, type ButtonProps } from "../../ui/button";
+import { Mockup, MockupFrame } from "../../ui/mockup";
+import YouTubeVideo from "../../ui/youtube-video";
+import { Section } from "../../ui/section";
+
+interface HeroButtonProps {
+  href: string;
+  text: string;
+  variant?: ButtonProps["variant"];
+  icon?: ReactNode;
+  iconRight?: ReactNode;
+}
 
 interface ModernHeroProps {
   className?: string;
 }
 
 export default function ModernHero({ className }: ModernHeroProps) {
+  const buttons: HeroButtonProps[] = [
+    {
+      href: "/zehan",
+      text: "Try Zehan AI",
+      variant: "default",
+    },
+    {
+      href: "/contact",
+      text: "Get Started",
+      variant: "outline",
+    },
+  ];
+
   return (
-    <section 
+    <Section
       className={cn(
-        "relative min-h-screen flex items-center justify-center pt-16",
-        "bg-black",
-        className
+        "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0 gradient-bg-professional relative min-h-screen",
+        className,
       )}
     >
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Badge */}
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-sm font-medium text-gray-300">
-            <div className="w-2 h-2 bg-green-400 rounded-full" />
-            <span>AI-Powered Solutions</span>
-          </div>
-        </div>
-        
-        {/* Main Title */}
-        <h1 className="mb-6">
-          <span className="block text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight">
-            Transform Your Business
-          </span>
-          <span className="block text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-300 leading-tight">
-            with AI & Innovation
-          </span>
-        </h1>
-        
-        {/* Description */}
-        <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-          We build intelligent solutions that drive real results. From AI automation to modern web applications, 
-          we help businesses thrive in the digital age.
-        </p>
-        
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <a
-            href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors duration-200"
-          >
-            <span>Start Your Project</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </a>
+            
+      <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
+        <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
+          <Badge variant="outline" className="badge-professional fade-in-professional">
+            <span className="text-primary font-semibold">Enterprise AI & Web Development</span>
+          </Badge>
           
-          <a
-            href="/portfolio"
-            className="inline-flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/5 transition-colors duration-200"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            <span>View Our Work</span>
-          </a>
-        </div>
-        
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          {[
-            { number: "100+", label: "Projects Delivered" },
-            { number: "99%", label: "Client Satisfaction" },
-            { number: "24/7", label: "Support Available" },
-            { number: "5+", label: "Years Experience" }
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">{stat.number}</div>
-              <div className="text-sm text-gray-400">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="flex flex-col items-center gap-2 text-gray-400">
-          <span className="text-xs">Scroll to explore</span>
-          <div className="w-5 h-8 border border-gray-400 rounded-full flex justify-center">
-            <div className="w-1 h-2 bg-gray-400 rounded-full mt-2" />
+          <h1 className="fade-in-professional heading-professional relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
+            <span className="text-foreground">Transform Your Business with</span>{" "}
+            <span className="text-gradient-primary">Professional AI & Web Development</span>
+          </h1>
+          
+          <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed">
+            Zehan X Technologies delivers enterprise-grade AI solutions, sophisticated Next.js development, 
+            and advanced machine learning systems. We architect intelligent applications that drive measurable 
+            business outcomes and accelerate your digital transformation journey.
+          </p>
+          
+          <div className="fade-in-professional relative z-10 flex flex-col sm:flex-row justify-center gap-4 opacity-0 delay-300">
+            {buttons.map((button, index) => (
+              <Button
+                key={index}
+                variant={button.variant || "default"}
+                size="lg"
+                className={cn(
+                  "font-semibold px-8 py-3",
+                  button.variant === "default" 
+                    ? "btn-gradient-primary text-white" 
+                    : "professional-card border-primary/30 text-primary"
+                )}
+                asChild
+              >
+                <a href={button.href}>
+                  {button.text}
+                </a>
+              </Button>
+            ))}
           </div>
+
+          
+          {/* Professional Video Section */}
+          <div className="relative w-full pt-16">
+            <MockupFrame
+              className="fade-in-professional opacity-0 delay-700"
+              size="small"
+            >
+              <Mockup
+                type="responsive"
+                className="professional-card w-full rounded-2xl border-border/40"
+              >
+                <YouTubeVideo
+                  videoId="fa8k8IQ1_X0"
+                  className="w-full rounded-xl"
+                  autoplay={true}
+                  controls={false}
+                  mute={true}
+                  loop={true}
+                  title="Zehan X Technologies - Professional AI & Web Development Solutions"
+                />
+              </Mockup>
+            </MockupFrame>
+                      </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
