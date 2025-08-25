@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { generateSEO } from "@/lib/seo-utils";
 import { siteConfig } from "@/config/site";
 
@@ -106,13 +107,13 @@ export default function Home() {
       <SmoothScroll />
       <Navbar className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md px-6">
         <NavbarLeft>
-          <a href="/" className="text-xl font-bold text-white">ZEHANX</a>
+          <Link href="/" className="text-xl font-bold text-white">ZEHANX</Link>
         </NavbarLeft>
         <NavbarRight>
-          <a href="/" className="text-white hover:text-gray-300">Home</a>
-          <a href="/services" className="text-white hover:text-gray-300">Services</a>
-          <a href="/about" className="text-white hover:text-gray-300">About</a>
-          <a href="/contact" className="text-white hover:text-gray-300">Contact</a>
+          <Link href="/" className="text-white hover:text-gray-300">Home</Link>
+          <Link href="/services" className="text-white hover:text-gray-300">Services</Link>
+          <Link href="/about" className="text-white hover:text-gray-300">About</Link>
+          <Link href="/contact" className="text-white hover:text-gray-300">Contact</Link>
         </NavbarRight>
       </Navbar>
       <ModernHero />
