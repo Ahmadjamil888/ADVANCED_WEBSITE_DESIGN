@@ -10,7 +10,7 @@ import ModernHero from "../components/sections/hero/modern-hero";
 import Items from "../components/sections/items/default";
 import Logos from "../components/sections/logos/default";
 import CompanyMarquee from "../components/sections/logos/company-marquee";
-import ProfessionalNavbar from "../components/ui/professional-navbar";
+import Navbar from "../components/sections/navbar/default";
 import Stats from "../components/sections/stats/default";
 import AIInnovationSection from "../components/sections/corporate/ai-innovation-section";
 import EnterpriseSolutionsSection from "../components/sections/corporate/enterprise-solutions-section";
@@ -109,9 +109,7 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full overflow-hidden bg-black text-white relative">
       <SmoothScroll />
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <ProfessionalNavbar />
-      </div>
+      <Navbar />
       <ModernHero />
       <CompanyMarquee className="-mt-8 sm:-mt-16" />
       <Logos />
