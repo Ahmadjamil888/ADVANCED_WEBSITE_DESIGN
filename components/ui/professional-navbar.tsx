@@ -35,7 +35,7 @@ export default function ProfessionalNavbar() {
       isScrolled 
         ? 'bg-black/95 backdrop-blur-xl border-b border-white/10 shadow-2xl' 
         : 'bg-transparent'
-    }`}
+    }`}>
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           {/* Mobile menu button */}
