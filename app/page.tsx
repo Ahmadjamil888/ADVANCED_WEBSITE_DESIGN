@@ -30,8 +30,8 @@ import BookMeetingButton from "../components/ui/book-meeting-button";
 // } from "../components/seo/structured-data";
 
 export const metadata: Metadata = generateSEO({
-  title: "Best AI & Web Development Company | SEO-First Next.js Agency | Zehan X Technologies",
-  description: "AI development and SEO-first Next.js web development from a results-driven agency. Enterprise machine learning, deep learning, and production-grade web apps that rank and convert.",
+  title: "AI Development & Next.js Agency | Zehan X Technologies",
+  description: "Expert AI development & Next.js web solutions. Custom machine learning, enterprise apps & SEO-optimized websites that drive results.",
   keywords: [
     // Primary high-volume keywords
     "AI development company",
