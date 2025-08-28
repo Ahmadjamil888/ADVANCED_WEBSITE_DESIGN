@@ -41,24 +41,24 @@ export default function ZehanHero({ className }: HeroProps) {
         className,
       )}
     >
-            
+
       <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
         <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
           <Badge variant="outline" className="badge-professional fade-in-professional">
             <span className="text-primary font-semibold">Enterprise AI & Web Development</span>
           </Badge>
-          
+
           <h1 className="fade-in-professional heading-professional relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
             <span className="text-foreground">Transform Your Business with</span>{" "}
             <span className="text-gradient-primary">Professional AI & Web Development</span>
           </h1>
-          
+
           <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed">
-            Zehan X Technologies delivers enterprise-grade AI solutions, sophisticated Next.js development, 
-            and advanced machine learning systems. We architect intelligent applications that drive measurable 
+            Zehan X Technologies delivers enterprise-grade AI solutions, sophisticated Next.js development,
+            and advanced machine learning systems. We architect intelligent applications that drive measurable
             business outcomes and accelerate your digital transformation journey.
           </p>
-          
+
           <div className="fade-in-professional relative z-10 flex flex-col sm:flex-row justify-center gap-4 opacity-0 delay-300">
             {buttons.map((button, index) => (
               <Button
@@ -67,8 +67,8 @@ export default function ZehanHero({ className }: HeroProps) {
                 size="lg"
                 className={cn(
                   "font-semibold px-8 py-3",
-                  button.variant === "default" 
-                    ? "btn-gradient-primary text-white" 
+                  button.variant === "default"
+                    ? "btn-gradient-primary text-white"
                     : "professional-card border-primary/30 text-primary"
                 )}
                 asChild
@@ -80,7 +80,7 @@ export default function ZehanHero({ className }: HeroProps) {
             ))}
           </div>
 
-          
+
           {/* Professional Video Section */}
           <div className="relative w-full pt-16">
             <MockupFrame
@@ -102,7 +102,7 @@ export default function ZehanHero({ className }: HeroProps) {
                 />
               </Mockup>
             </MockupFrame>
-                      </div>
+          </div>
         </div>
       </div>
     </Section>

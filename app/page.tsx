@@ -12,7 +12,10 @@ import Logos from "../components/sections/logos/default";
 import CompanyMarquee from "../components/sections/logos/company-marquee";
 import ProfessionalNavbar from "../components/ui/professional-navbar";
 import Stats from "../components/sections/stats/default";
-import TeamSection from "../components/sections/team/team-section";
+import AIInnovationSection from "../components/sections/corporate/ai-innovation-section";
+import EnterpriseSolutionsSection from "../components/sections/corporate/enterprise-solutions-section";
+import DigitalTransformationSection from "../components/sections/corporate/digital-transformation-section";
+import InnovationLabSection from "../components/sections/corporate/innovation-lab-section";
 import PricingSection from "../components/sections/pricing/pricing-section";
 import ModernTestimonials from "../components/sections/testimonials/modern-testimonials";
 import SmoothScroll from "../components/ui/smooth-scroll";
@@ -113,7 +116,10 @@ export default function Home() {
       <Logos />
       <Items />
       <Stats />
-      <TeamSection />
+      <AIInnovationSection />
+      <EnterpriseSolutionsSection />
+      <DigitalTransformationSection />
+      <InnovationLabSection />
       <PricingSection />
       <ModernTestimonials />
       
