@@ -13,7 +13,7 @@ export default function ProfessionalNavbar() {
   };
 
   return (
-    <nav className="relative bg-gray-800/50 backdrop-blur-md after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">
+    <nav className="relative bg-black/90 backdrop-blur-md border-b border-gray-800 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/20">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           {/* Mobile menu button */}
@@ -44,7 +44,7 @@ export default function ProfessionalNavbar() {
               <div className="flex space-x-4">
                 <Link
                   href="/"
-                  className="rounded-md bg-gray-950/50 px-3 py-2 text-sm font-medium text-white"
+                  className="rounded-md bg-gray-900/80 px-3 py-2 text-sm font-medium text-white"
                   aria-current="page"
                 >
                   Home
@@ -105,7 +105,7 @@ export default function ProfessionalNavbar() {
             <Link
               href="/"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block rounded-md bg-gray-950/50 px-3 py-2 text-base font-medium text-white"
+              className="block rounded-md bg-gray-900/80 px-3 py-2 text-base font-medium text-white"
               aria-current="page"
             >
               Home

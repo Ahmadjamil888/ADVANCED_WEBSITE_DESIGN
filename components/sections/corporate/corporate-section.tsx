@@ -74,14 +74,14 @@ export default function CorporateSection({
         <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
       </div>
       
-      <div ref={sectionRef} className="max-w-7xl mx-auto px-4 relative z-10">
+      <div ref={sectionRef} className="max-w-full mx-auto relative z-10">
         <div className={cn(
-          "grid lg:grid-cols-2 gap-12 items-center",
+          "grid lg:grid-cols-2 gap-0 items-stretch min-h-[600px]",
           reverse && "lg:grid-flow-col-dense"
         )}>
           {/* Content Side */}
           <div className={cn(
-            "corporate-content space-y-6",
+            "corporate-content space-y-6 px-8 lg:px-16 py-16 flex flex-col justify-center",
             reverse && "lg:col-start-2"
           )}>
             <div className="space-y-4">
@@ -131,21 +131,21 @@ export default function CorporateSection({
 
           {/* Image Side */}
           <div className={cn(
-            "corporate-image relative",
+            "corporate-image relative h-full",
             reverse && "lg:col-start-1"
           )}>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative overflow-hidden h-full min-h-[600px]">
               <img 
                 src={imageUrl}
                 alt={imageAlt}
-                className="w-full h-[400px] lg:h-[500px] object-cover"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             </div>
             
             {/* Decorative Elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full blur-xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 rounded-full blur-xl" />
+            <div className="absolute top-8 right-8 w-24 h-24 bg-gradient-to-br from-primary/20 to-primary/10 blur-xl" />
+            <div className="absolute bottom-8 left-8 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 blur-xl" />
           </div>
         </div>
       </div>
