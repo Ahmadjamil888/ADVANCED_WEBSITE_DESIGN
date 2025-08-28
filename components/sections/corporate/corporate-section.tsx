@@ -1,17 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useInView } from 'react-intersection-observer';
 import { Section } from '../../ui/section';
 import { cn } from '@/lib/utils';
 import { Button } from '../../ui/button';
-import { ArrowRight, Users, Target, Zap } from 'lucide-react';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { ArrowRight } from 'lucide-react';
 
 interface CorporateSectionProps {
   className?: string;
@@ -38,31 +30,9 @@ export default function CorporateSection({
   features = [],
   reverse = false
 }: CorporateSectionProps) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { ref: inViewRef, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
-
-  useEffect(() => {
-    if (inView && sectionRef.current) {
-      const tl = gsap.timeline();
-      
-      tl.fromTo('.corporate-content', 
-        { opacity: 0, x: reverse ? 50 : -50 },
-        { opacity: 1, x: 0, duration: 0.8, ease: 'power2.out' }
-      )
-      .fromTo('.corporate-image', 
-        { opacity: 0, x: reverse ? -50 : 50 },
-        { opacity: 1, x: 0, duration: 0.8, ease: 'power2.out' },
-        '-=0.4'
-      );
-    }
-  }, [inView, reverse]);
 
   return (
     <Section
-      ref={inViewRef}
       className={cn(
         'py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden',
         className
@@ -74,14 +44,14 @@ export default function CorporateSection({
         <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
       </div>
       
-      <div ref={sectionRef} className="max-w-full mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className={cn(
-          "grid lg:grid-cols-2 gap-0 items-stretch min-h-[600px]",
+          "grid lg:grid-cols-2 gap-12 items-center",
           reverse && "lg:grid-flow-col-dense"
         )}>
           {/* Content Side */}
           <div className={cn(
-            "corporate-content space-y-6 px-8 lg:px-16 py-16 flex flex-col justify-center",
+            "space-y-6",
             reverse && "lg:col-start-2"
           )}>
             <div className="space-y-4">
@@ -131,21 +101,21 @@ export default function CorporateSection({
 
           {/* Image Side */}
           <div className={cn(
-            "corporate-image relative h-full",
+            "relative",
             reverse && "lg:col-start-1"
           )}>
-            <div className="relative overflow-hidden h-full min-h-[600px]">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img 
                 src={imageUrl}
                 alt={imageAlt}
-                className="w-full h-full object-cover"
+                className="w-full h-[400px] lg:h-[500px] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
             
             {/* Decorative Elements */}
-            <div className="absolute top-8 right-8 w-24 h-24 bg-gradient-to-br from-primary/20 to-primary/10 blur-xl" />
-            <div className="absolute bottom-8 left-8 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 blur-xl" />
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full blur-xl" />
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 rounded-full blur-xl" />
           </div>
         </div>
       </div>
