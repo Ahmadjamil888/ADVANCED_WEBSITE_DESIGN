@@ -203,7 +203,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <p className="text-muted-foreground">shazabjamildhami@gmail.com</p>
+                    <p className="text-muted-foreground">zehanxtech@gmail.com</p>
                     <p className="text-sm text-muted-foreground">We'll respond within 24 hours</p>
                   </div>
                 </div>

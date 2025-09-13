@@ -16,7 +16,7 @@ interface ItemsProps {
 }
 
 export default function Items({
-  title = "Core Services",
+  title = "AI & Creative Solutions",
   items = [
     {
       title: "AI Development Services",
@@ -27,6 +27,21 @@ export default function Items({
       title: "Next.js Development Agency",
       description: "SEO-first, high-performance web apps with server-side rendering, edge optimizations, and TypeScript.",
       href: "/services/nextjs-development",
+    },
+    {
+      title: "Graphic Design Studio",
+      description: "Creative visual solutions with AI-enhanced design workflows for brand identity, print, and digital graphics.",
+      href: "/services/graphic-design",
+    },
+    {
+      title: "Video Editing & Production",
+      description: "Professional video editing with AI-powered enhancement tools for cinematic quality and social media content.",
+      href: "/services/video-editing",
+    },
+    {
+      title: "Content Writing Services",
+      description: "AI-assisted content creation for blogs, marketing copy, and SEO-optimized materials that drive engagement.",
+      href: "/services/content-writing",
     },
     {
       title: "Deep Learning Solutions",
