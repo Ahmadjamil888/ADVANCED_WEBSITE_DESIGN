@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
-import { BrainCircuit, Code, Database, Globe, Bot, Zap, BarChart3, Shield } from "lucide-react";
+import { BrainCircuit, Code, Database, Globe, Bot, Zap, BarChart3, Shield, Palette, Video, PenTool } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/sections/navbar/default";
 import Footer from "@/components/sections/footer/default";
@@ -69,6 +69,30 @@ const services = [
     description: "Scalable, secure enterprise-grade solutions built for mission-critical business operations.",
     features: ["Enterprise Architecture", "Security Implementation", "Scalability Planning", "24/7 Support"],
     href: "/services/enterprise-solutions"
+  },
+  {
+    id: "graphic-design",
+    icon: <Palette className="size-12" />,
+    title: "Graphic Design",
+    description: "Creative visual solutions that make an impact with stunning designs for your brand.",
+    features: ["Logo Design", "Brand Identity", "Print Design", "Digital Graphics"],
+    href: "/services/graphic-design"
+  },
+  {
+    id: "video-editing",
+    icon: <Video className="size-12" />,
+    title: "Video Editing",
+    description: "Professional video editing that brings your stories to life with cinematic quality.",
+    features: ["Professional Editing", "Motion Graphics", "Color Correction", "Social Media Content"],
+    href: "/services/video-editing"
+  },
+  {
+    id: "content-writing",
+    icon: <PenTool className="size-12" />,
+    title: "Content Writing",
+    description: "Powerful words that drive results with compelling content across all platforms.",
+    features: ["Blog Writing", "SEO Content", "Social Media Copy", "Marketing Materials"],
+    href: "/services/content-writing"
   }
 ];
 
@@ -85,11 +109,11 @@ export default function Services() {
             Our Services
           </Badge>
           <h1 className="text-4xl font-bold mb-6 sm:text-6xl">
-            Comprehensive AI & Web Development Solutions
+            Comprehensive Digital Solutions & Creative Services
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From intelligent AI systems to modern web applications, we deliver 
-            cutting-edge solutions that drive innovation and business growth.
+            From intelligent AI systems to creative content, we deliver end-to-end solutions 
+            that drive innovation, engagement, and business growth across all digital platforms.
           </p>
         </div>
       </Section>
@@ -140,7 +164,7 @@ export default function Services() {
             Ready to Transform Your Business?
           </h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Let's discuss how our AI and web development services can help you achieve your goals.
+            Let's discuss how our comprehensive digital and creative services can help you achieve your goals.
           </p>
           <div className="flex justify-center gap-4">
             <Link 
