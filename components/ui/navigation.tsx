@@ -50,11 +50,6 @@ export default function Navigation({
       content: "services",
     },
     {
-      title: "Custom Orders",
-      isLink: true,
-      href: "/pricing",
-    },
-    {
       title: "Blog",
       isLink: true,
       href: "/blog",

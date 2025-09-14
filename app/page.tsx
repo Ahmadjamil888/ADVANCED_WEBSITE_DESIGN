@@ -123,17 +123,17 @@ export default function Home() {
         
         <div className="max-w-container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
-              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Creative Services</span>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white animate-fade-in-up">
+              Transform Your Vision Into <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Digital Reality</span>
             </h2>
-            <p className="text-gray-300 text-lg max-w-3xl mx-auto">
-              We offer comprehensive digital solutions that combine cutting-edge technology with creative excellence
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              From AI-powered solutions to stunning visual designs, we bring your ideas to life with cutting-edge technology and creative excellence
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* AI & Technology */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 animate-fade-in-up">
               <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
                 <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -145,63 +145,63 @@ export default function Home() {
             </div>
             
             {/* Web Development */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-green-500/50 transition-all duration-300 hover:transform hover:scale-105">
-              <div className="w-16 h-16 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500/30 transition-colors">
-                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+              <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-white">Web Development</h3>
               <p className="text-gray-300 mb-4">Modern, responsive websites and web applications built with Next.js, React, and cutting-edge technologies.</p>
-              <a href="/services/fullstack-web-development" className="text-green-400 hover:text-green-300 font-medium">Learn More →</a>
+              <a href="/services/fullstack-web-development" className="text-blue-400 hover:text-blue-300 font-medium">Learn More →</a>
             </div>
             
             {/* Digital Marketing */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-              <div className="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-500/30 transition-colors">
-                <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-white">Digital Marketing</h3>
               <p className="text-gray-300 mb-4">Strategic digital marketing campaigns that drive traffic, leads, and conversions for your business.</p>
-              <a href="/services/digital-marketing" className="text-purple-400 hover:text-purple-300 font-medium">Learn More →</a>
+              <a href="/services/digital-marketing" className="text-blue-400 hover:text-blue-300 font-medium">Learn More →</a>
             </div>
             
             {/* Video Editing */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-red-500/50 transition-all duration-300 hover:transform hover:scale-105">
-              <div className="w-16 h-16 bg-red-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-red-500/30 transition-colors">
-                <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+              <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-white">Video Editing</h3>
               <p className="text-gray-300 mb-4">Professional video production, editing, and post-production services that bring your vision to life.</p>
-              <a href="/services/video-editing" className="text-red-400 hover:text-red-300 font-medium">Learn More →</a>
+              <a href="/services/video-editing" className="text-blue-400 hover:text-blue-300 font-medium">Learn More →</a>
             </div>
             
             {/* Graphic Design */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-yellow-500/50 transition-all duration-300 hover:transform hover:scale-105">
-              <div className="w-16 h-16 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-yellow-500/30 transition-colors">
-                <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+              <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-white">Graphic Design</h3>
               <p className="text-gray-300 mb-4">Creative visual design for branding, marketing materials, and digital assets that make your brand stand out.</p>
-              <a href="/services/graphic-design" className="text-yellow-400 hover:text-yellow-300 font-medium">Learn More →</a>
+              <a href="/services/graphic-design" className="text-blue-400 hover:text-blue-300 font-medium">Learn More →</a>
             </div>
             
             {/* Content Writing */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-cyan-500/50 transition-all duration-300 hover:transform hover:scale-105">
-              <div className="w-16 h-16 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/30 transition-colors">
-                <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+              <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-white">Content Writing</h3>
               <p className="text-gray-300 mb-4">Compelling content creation for websites, blogs, and marketing materials that engage and convert.</p>
-              <a href="/services/content-writing" className="text-cyan-400 hover:text-cyan-300 font-medium">Learn More →</a>
+              <a href="/services/content-writing" className="text-blue-400 hover:text-blue-300 font-medium">Learn More →</a>
             </div>
           </div>
         </div>
@@ -222,16 +222,16 @@ export default function Home() {
         
         <div className="max-w-container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
-              Ready to Start Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Custom Project?</span>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white animate-fade-in-up">
+              Ready to Start Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 animate-pulse">Custom Project?</span>
             </h2>
-            <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-12">
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-12 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               Every project is unique. Contact us directly to discuss your specific requirements and get a personalized quote tailored to your needs.
             </p>
             
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 max-w-2xl mx-auto">
+            <div className="bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 max-w-2xl mx-auto animate-fade-in-up" style={{animationDelay: '0.4s'}}>
               <div className="flex items-center justify-center mb-6">
-                <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center animate-pulse">
                   <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -244,7 +244,7 @@ export default function Home() {
               </p>
               <a 
                 href="mailto:shazabjamildhami@gmail.com" 
-                className="inline-flex items-center justify-center rounded-md btn-gradient-primary hover-lift glow-blue px-8 py-3 text-sm font-medium text-white shadow transition-colors"
+                className="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -265,18 +265,18 @@ export default function Home() {
         
         <div className="max-w-container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
-              Meet Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Leadership Team</span>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white animate-fade-in-up">
+              Meet The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Visionaries</span>
             </h2>
-            <p className="text-gray-300 text-lg max-w-3xl mx-auto">
-              The visionaries behind Zehan X Technologies, driving innovation and excellence in every project
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              The brilliant minds behind Zehan X Technologies, transforming ideas into extraordinary digital experiences
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Ahmad Jamil - Founder & CTO */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105 text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-colors">
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 text-center animate-fade-in-up">
+              <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
                 <span className="text-2xl font-bold text-blue-400">AJ</span>
               </div>
               <h3 className="text-xl font-semibold mb-2 text-white">Ahmad Jamil</h3>
@@ -286,25 +286,25 @@ export default function Home() {
               </p>
             </div>
             
-            {/* Ahma Ibrahim - CEO & Co-founder */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-green-500/50 transition-all duration-300 hover:transform hover:scale-105 text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-green-500/30 group-hover:to-emerald-500/30 transition-colors">
-                <span className="text-2xl font-bold text-green-400">AI</span>
+            {/* Ahmad Ibrahim - CEO & Co-founder */}
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 text-center animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <span className="text-2xl font-bold text-blue-400">AI</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">Ahma Ibrahim</h3>
-              <p className="text-green-400 font-medium mb-4">CEO & Co-founder</p>
+              <h3 className="text-xl font-semibold mb-2 text-white">Ahmad Ibrahim</h3>
+              <p className="text-blue-400 font-medium mb-4">CEO & Co-founder</p>
               <p className="text-gray-300 text-sm">
                 Strategic leader overseeing business operations and driving growth in the creative technology space.
               </p>
             </div>
             
             {/* Hmail - COO & Co-founder */}
-            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105 text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-purple-500/30 group-hover:to-pink-500/30 transition-colors">
-                <span className="text-2xl font-bold text-purple-400">H</span>
+            <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 text-center animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+              <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <span className="text-2xl font-bold text-blue-400">H</span>
               </div>
               <h3 className="text-xl font-semibold mb-2 text-white">Hmail</h3>
-              <p className="text-purple-400 font-medium mb-4">COO & Co-founder</p>
+              <p className="text-blue-400 font-medium mb-4">COO & Co-founder</p>
               <p className="text-gray-300 text-sm">
                 Operations expert ensuring smooth project delivery and maintaining the highest quality standards.
               </p>
