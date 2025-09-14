@@ -16,7 +16,6 @@ import AIInnovationSection from "../components/sections/corporate/ai-innovation-
 import EnterpriseSolutionsSection from "../components/sections/corporate/enterprise-solutions-section";
 import DigitalTransformationSection from "../components/sections/corporate/digital-transformation-section";
 import InnovationLabSection from "../components/sections/corporate/innovation-lab-section";
-import PricingSection from "../components/sections/pricing/pricing-section";
 import ModernTestimonials from "../components/sections/testimonials/modern-testimonials";
 import SmoothScroll from "../components/ui/smooth-scroll";
 import SocialShare from "../components/ui/social-share";
@@ -30,8 +29,8 @@ import BookMeetingButton from "../components/ui/book-meeting-button";
 // } from "../components/seo/structured-data";
 
 export const metadata: Metadata = generateSEO({
-  title: "AI Development & Next.js Agency | Zehan X Technologies",
-  description: "Expert AI development & Next.js web solutions. Custom machine learning, enterprise apps & SEO-optimized websites that drive results.",
+  title: "Creative AI + Web Development Agency | Zehan X Technologies",
+  description: "Full-service creative agency specializing in AI solutions, web development, digital marketing, video editing, graphic design, and content writing. Transform your vision into stunning digital experiences.",
   keywords: [
     // Primary high-volume keywords
     "AI development company",
@@ -114,13 +113,205 @@ export default function Home() {
       <CompanyMarquee className="-mt-8 sm:-mt-16" />
       <Logos />
       <Items />
+      
+      {/* Creative Services Showcase */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        </div>
+        
+        <div className="max-w-container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
+              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Creative Services</span>
+            </h2>
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto">
+              We offer comprehensive digital solutions that combine cutting-edge technology with creative excellence
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* AI & Technology */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105">
+              <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-colors">
+                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">AI & Machine Learning</h3>
+              <p className="text-gray-300 mb-4">Custom AI models, chatbots, and intelligent automation systems that transform business operations.</p>
+              <a href="/services/ai-machine-learning" className="text-blue-400 hover:text-blue-300 font-medium">Learn More →</a>
+            </div>
+            
+            {/* Web Development */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-green-500/50 transition-all duration-300 hover:transform hover:scale-105">
+              <div className="w-16 h-16 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500/30 transition-colors">
+                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Web Development</h3>
+              <p className="text-gray-300 mb-4">Modern, responsive websites and web applications built with Next.js, React, and cutting-edge technologies.</p>
+              <a href="/services/fullstack-web-development" className="text-green-400 hover:text-green-300 font-medium">Learn More →</a>
+            </div>
+            
+            {/* Digital Marketing */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
+              <div className="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-500/30 transition-colors">
+                <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Digital Marketing</h3>
+              <p className="text-gray-300 mb-4">Strategic digital marketing campaigns that drive traffic, leads, and conversions for your business.</p>
+              <a href="/services/digital-marketing" className="text-purple-400 hover:text-purple-300 font-medium">Learn More →</a>
+            </div>
+            
+            {/* Video Editing */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-red-500/50 transition-all duration-300 hover:transform hover:scale-105">
+              <div className="w-16 h-16 bg-red-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-red-500/30 transition-colors">
+                <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Video Editing</h3>
+              <p className="text-gray-300 mb-4">Professional video production, editing, and post-production services that bring your vision to life.</p>
+              <a href="/services/video-editing" className="text-red-400 hover:text-red-300 font-medium">Learn More →</a>
+            </div>
+            
+            {/* Graphic Design */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-yellow-500/50 transition-all duration-300 hover:transform hover:scale-105">
+              <div className="w-16 h-16 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-yellow-500/30 transition-colors">
+                <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Graphic Design</h3>
+              <p className="text-gray-300 mb-4">Creative visual design for branding, marketing materials, and digital assets that make your brand stand out.</p>
+              <a href="/services/graphic-design" className="text-yellow-400 hover:text-yellow-300 font-medium">Learn More →</a>
+            </div>
+            
+            {/* Content Writing */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-cyan-500/50 transition-all duration-300 hover:transform hover:scale-105">
+              <div className="w-16 h-16 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/30 transition-colors">
+                <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Content Writing</h3>
+              <p className="text-gray-300 mb-4">Compelling content creation for websites, blogs, and marketing materials that engage and convert.</p>
+              <a href="/services/content-writing" className="text-cyan-400 hover:text-cyan-300 font-medium">Learn More →</a>
+            </div>
+          </div>
+        </div>
+      </section>
       <Stats />
       <AIInnovationSection />
       <EnterpriseSolutionsSection />
       <DigitalTransformationSection />
       <InnovationLabSection />
-      <PricingSection />
       <ModernTestimonials />
+      
+      {/* Custom Orders Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        </div>
+        
+        <div className="max-w-container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
+              Ready to Start Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Custom Project?</span>
+            </h2>
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto mb-12">
+              Every project is unique. Contact us directly to discuss your specific requirements and get a personalized quote tailored to your needs.
+            </p>
+            
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 max-w-2xl mx-auto">
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-semibold mb-4 text-white">Custom Orders & Consultations</h3>
+              <p className="text-gray-300 mb-6">
+                Get in touch with our team to discuss your project requirements, timeline, and budget. 
+                We'll provide a detailed proposal tailored to your specific needs.
+              </p>
+              <a 
+                href="mailto:shazabjamildhami@gmail.com" 
+                className="inline-flex items-center justify-center rounded-md btn-gradient-primary hover-lift glow-blue px-8 py-3 text-sm font-medium text-white shadow transition-colors"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Contact Us for Custom Quote
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Team Section */}
+      <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        </div>
+        
+        <div className="max-w-container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white">
+              Meet Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Leadership Team</span>
+            </h2>
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto">
+              The visionaries behind Zehan X Technologies, driving innovation and excellence in every project
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Ahmad Jamil - Founder & CTO */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105 text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-colors">
+                <span className="text-2xl font-bold text-blue-400">AJ</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-white">Ahmad Jamil</h3>
+              <p className="text-blue-400 font-medium mb-4">Founder & CTO</p>
+              <p className="text-gray-300 text-sm">
+                Visionary leader and technical architect driving innovation in AI and web development solutions.
+              </p>
+            </div>
+            
+            {/* Ahma Ibrahim - CEO & Co-founder */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-green-500/50 transition-all duration-300 hover:transform hover:scale-105 text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-green-500/30 group-hover:to-emerald-500/30 transition-colors">
+                <span className="text-2xl font-bold text-green-400">AI</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-white">Ahma Ibrahim</h3>
+              <p className="text-green-400 font-medium mb-4">CEO & Co-founder</p>
+              <p className="text-gray-300 text-sm">
+                Strategic leader overseeing business operations and driving growth in the creative technology space.
+              </p>
+            </div>
+            
+            {/* Hmail - COO & Co-founder */}
+            <div className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105 text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-purple-500/30 group-hover:to-pink-500/30 transition-colors">
+                <span className="text-2xl font-bold text-purple-400">H</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-white">Hmail</h3>
+              <p className="text-purple-400 font-medium mb-4">COO & Co-founder</p>
+              <p className="text-gray-300 text-sm">
+                Operations expert ensuring smooth project delivery and maintaining the highest quality standards.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
       
       {/* SEO Content Section */}
       <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
@@ -132,35 +323,35 @@ export default function Home() {
         <div className="max-w-container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl sm:text-5xl font-bold text-center mb-6 text-white">
-              Elevate Your Business with Expert <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">AI & Web Development</span>
+              Elevate Your Brand with Creative <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">AI & Digital Solutions</span>
             </h2>
             <p className="text-gray-300 text-center max-w-3xl mx-auto mb-12 text-lg">
-              From strategy to production, we build performant, secure and scalable solutions that deliver measurable outcomes.
+              From AI-powered applications to stunning visual designs, we create comprehensive digital experiences that captivate audiences and drive business growth.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30">
-                <h3 className="text-2xl font-semibold mb-4 text-white">Artificial Intelligence Expertise</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-white">AI & Technology Solutions</h3>
                 <p className="text-gray-300 mb-4">
-                  Our team specializes in cutting-edge artificial intelligence and machine learning solutions. 
-                  We develop custom AI models, implement deep learning algorithms, and create intelligent 
-                  automation systems that transform how businesses operate.
+                  We specialize in cutting-edge artificial intelligence, machine learning, and modern web development. 
+                  Our AI solutions include custom models, chatbots, and automation systems that transform business operations.
                 </p>
                 <p className="text-gray-300">
-                  Our AI services include predictive analytics, recommendation systems, chatbot development, 
-                  and automated decision-making platforms that increase efficiency and reduce costs.
+                  Our technology stack includes Next.js, React, TypeScript, and advanced AI frameworks, 
+                  ensuring scalable and intelligent applications that drive results.
                 </p>
               </div>
               
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-white/30">
-                <h3 className="text-2xl font-semibold mb-4 text-white">Modern Web Development</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-white">Creative & Marketing Services</h3>
                 <p className="text-gray-300 mb-4">
-                  We excel in modern web development using Next.js, React, and TypeScript. Our full-stack 
-                  development approach ensures scalable, performant, and user-friendly web applications.
+                  We provide comprehensive creative services including digital marketing, video editing, 
+                  graphic design, and content writing. Our creative team brings your brand to life with 
+                  stunning visuals and compelling content.
                 </p>
                 <p className="text-gray-300">
-                  Our web development services include responsive design, API development, database 
-                  integration, and performance optimization following industry best practices.
+                  From social media campaigns to professional video production, we create engaging 
+                  content that captivates your audience and drives meaningful engagement.
                 </p>
               </div>
             </div>
@@ -168,10 +359,13 @@ export default function Home() {
             <div className="text-center">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <a 
-                  href="/zehan" 
+                  href="mailto:shazabjamildhami@gmail.com" 
                   className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
                 >
-                   Try Zehan AI Now
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Get Custom Quote
                   <span className="text-sm">→</span>
                 </a>
                 <SocialShare />

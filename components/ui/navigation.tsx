@@ -50,6 +50,11 @@ export default function Navigation({
       content: "services",
     },
     {
+      title: "Custom Orders",
+      isLink: true,
+      href: "/pricing",
+    },
+    {
       title: "Blog",
       isLink: true,
       href: "/blog",
@@ -83,22 +88,33 @@ export default function Navigation({
         "Custom ML models, predictive analytics, and intelligent automation solutions.",
     },
     {
-      title: "Next.js Development",
-      href: "/services/nextjs-development",
-      description:
-        "Modern, fast, and scalable web applications built with React and Next.js.",
-    },
-    {
-      title: "Full-Stack Development",
+      title: "Web Development",
       href: "/services/fullstack-web-development",
       description:
-        "Complete web solutions from frontend to backend with modern technologies.",
+        "Modern, responsive websites and web applications built with cutting-edge technologies.",
     },
     {
-      title: "Deep Learning",
-      href: "/services/deep-learning",
+      title: "Digital Marketing",
+      href: "/services/digital-marketing",
       description:
-        "Advanced neural networks for complex pattern recognition and decision making.",
+        "Strategic digital marketing campaigns that drive traffic, leads, and conversions.",
+    },
+    {
+      title: "Video Editing",
+      href: "/services/video-editing",
+      description:
+        "Professional video production, editing, and post-production services.",
+    },
+    {
+      title: "Graphic Design",
+      href: "/services/graphic-design",
+      description: "Creative visual design for branding, marketing, and digital assets.",
+    },
+    {
+      title: "Content Writing",
+      href: "/services/content-writing",
+      description:
+        "Compelling content creation for websites, blogs, and marketing materials.",
     },
     {
       title: "AI Chatbots",
@@ -114,7 +130,7 @@ export default function Navigation({
   ],
   logo = <ZehanLogo size="md" />,
   logoTitle = "Zehan X Technologies",
-  logoDescription = "Leading AI and web development company specializing in Next.js, deep learning, and machine learning solutions.",
+  logoDescription = "Creative AI + Web Development Agency specializing in digital marketing, video editing, graphic design, content writing, and cutting-edge technology solutions.",
   logoHref = "/",
   introItems = [
     {
