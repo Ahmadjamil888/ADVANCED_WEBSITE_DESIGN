@@ -242,15 +242,15 @@ export default function Home() {
                 Get in touch with our team to discuss your project requirements, timeline, and budget. 
                 We'll provide a detailed proposal tailored to your specific needs.
               </p>
-              <a 
-                href="mailto:shazabjamildhami@gmail.com" 
+              <Link 
+                href="/contact" 
                 className="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Contact Us for Custom Quote
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -358,8 +358,8 @@ export default function Home() {
             
             <div className="text-center">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-                <a 
-                  href="mailto:shazabjamildhami@gmail.com" 
+                <Link 
+                  href="/contact" 
                   className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -367,7 +367,7 @@ export default function Home() {
                   </svg>
                   Get Custom Quote
                   <span className="text-sm">→</span>
-                </a>
+                </Link>
                 <SocialShare />
               </div>
             </div>

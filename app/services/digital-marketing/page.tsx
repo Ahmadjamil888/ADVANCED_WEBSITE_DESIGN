@@ -243,13 +243,13 @@ export default function DigitalMarketing() {
             Let's discuss your digital marketing goals and create a strategy that drives real results for your business.
           </p>
           <div className="flex justify-center gap-4 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
-            <a 
-              href="mailto:shazabjamildhami@gmail.com" 
+            <Link 
+              href="/contact" 
               className="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
               <Mail className="w-5 h-5 mr-2" />
               Get Custom Quote
-            </a>
+            </Link>
             <Link 
               href="/contact" 
               className="inline-flex items-center justify-center rounded-md border border-blue-500/50 hover:border-blue-500 bg-transparent text-blue-400 hover:text-blue-300 px-8 py-3 text-sm font-medium transition-all duration-300 hover:scale-105"

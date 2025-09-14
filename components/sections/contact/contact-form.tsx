@@ -168,12 +168,12 @@ export default function ContactForm() {
           <div className="mt-8 text-center">
             <p className="text-muted-foreground text-sm">
               Or email us directly at{" "}
-              <a 
-                href="mailto:shazabjamildhami@gmail.com" 
-                className="text-primary hover:underline"
-              >
-                shazabjamildhami@gmail.com
-              </a>
+                <a 
+                  href="/contact" 
+                  className="text-primary hover:underline"
+                >
+                  Contact Us
+                </a>
             </p>
           </div>
         </div>

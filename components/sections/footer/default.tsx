@@ -63,7 +63,7 @@ export default function FooterSection({
     {
       title: "Connect",
       links: [
-        { text: "Email Us", href: "mailto:shazabjamildhami@gmail.com" },
+        { text: "Contact Us", href: "/contact" },
         { text: "Twitter", href: siteConfig.links.twitter },
         { text: "GitHub", href: siteConfig.links.github },
         { text: "LinkedIn", href: "https://linkedin.com/company/zehanx" },

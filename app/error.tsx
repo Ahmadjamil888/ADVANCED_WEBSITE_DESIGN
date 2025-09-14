@@ -47,12 +47,12 @@ export default function Error({
         <div className="mt-8 p-4 bg-muted/30 rounded-lg">
           <p className="text-sm text-muted-foreground">
             If this problem persists, please contact us at{' '}
-            <a 
-              href="mailto:shazabjamildhami@gmail.com" 
-              className="text-primary hover:underline"
-            >
-              shazabjamildhami@gmail.com
-            </a>
+              <a 
+                href="/contact" 
+                className="text-primary hover:underline"
+              >
+                Contact Us
+              </a>
           </p>
         </div>
       </div>

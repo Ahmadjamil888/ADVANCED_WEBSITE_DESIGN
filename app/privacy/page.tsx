@@ -76,7 +76,7 @@ export default function Privacy() {
                   If you have any questions about this Privacy Policy, please contact us at:
                 </p>
                 <p className="text-muted-foreground">
-                  Email: <a href="mailto:shazabjamildhami@gmail.com" className="text-primary hover:underline">shazabjamildhami@gmail.com</a>
+                  Email: <a href="/contact" className="text-primary hover:underline">Contact Us</a>
                 </p>
               </section>
             </div>
