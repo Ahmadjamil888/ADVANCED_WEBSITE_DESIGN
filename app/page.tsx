@@ -274,37 +274,37 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Ahmad Jamil - CEO & Co-founder */}
+            {/* Ahmad Jamil - Founder */}
             <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 text-center animate-fade-in-up">
               <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
                 <span className="text-2xl font-bold text-blue-400">AJ</span>
               </div>
               <h3 className="text-xl font-semibold mb-2 text-white">Ahmad Jamil</h3>
-              <p className="text-blue-400 font-medium mb-4">CEO & Co-founder</p>
+              <p className="text-blue-400 font-medium mb-4">Founder</p>
               <p className="text-gray-300 text-sm">
                 Visionary leader and strategic architect driving innovation in AI and web development solutions.
               </p>
             </div>
             
-            {/* Humayl - COO & Co-founder */}
+            {/* Humayl - Co-founder */}
             <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 text-center animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
                 <span className="text-2xl font-bold text-blue-400">H</span>
               </div>
               <h3 className="text-xl font-semibold mb-2 text-white">Humayl</h3>
-              <p className="text-blue-400 font-medium mb-4">COO & Co-founder</p>
+              <p className="text-blue-400 font-medium mb-4">Co-founder</p>
               <p className="text-gray-300 text-sm">
                 Operations expert ensuring smooth project delivery and maintaining the highest quality standards.
               </p>
             </div>
             
-            {/* Ahmad Ibrahim - Managing Director */}
+            {/* Ahmad Ibrahim - Co-founder */}
             <div className="group bg-black rounded-2xl p-8 border border-blue-500/30 hover:border-blue-500 transition-all duration-300 hover:transform hover:scale-105 text-center animate-fade-in-up" style={{animationDelay: '0.4s'}}>
               <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
                 <span className="text-2xl font-bold text-blue-400">AI</span>
               </div>
               <h3 className="text-xl font-semibold mb-2 text-white">Ahmad Ibrahim</h3>
-              <p className="text-blue-400 font-medium mb-4">Managing Director</p>
+              <p className="text-blue-400 font-medium mb-4">Co-founder</p>
               <p className="text-gray-300 text-sm">
                 Strategic leader overseeing business operations and driving growth in the creative technology space.
               </p>

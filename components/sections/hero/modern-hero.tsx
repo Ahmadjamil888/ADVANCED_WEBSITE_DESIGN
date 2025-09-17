@@ -45,18 +45,16 @@ export default function ModernHero({ className }: ModernHeroProps) {
       <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
         <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
           <Badge variant="outline" className="badge-professional fade-in-professional">
-            <span className="text-primary font-semibold">Enterprise AI & Web Development</span>
+            <span className="text-primary font-semibold">Creative, AI & Web Agency</span>
           </Badge>
           
           <h1 className="fade-in-professional heading-professional relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
-            <span className="text-foreground">Transform Your Business with</span>{" "}
-            <span className="text-gradient-primary">Professional AI & Web Development</span>
+            <span className="text-foreground">We are a creative, AI & web</span>{" "}
+            <span className="text-gradient-primary">agency building digital experiences</span>
           </h1>
           
           <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed">
-            Zehan X Technologies delivers enterprise-grade AI solutions, sophisticated Next.js development, 
-            and advanced machine learning systems. We architect intelligent applications that drive measurable 
-            business outcomes and accelerate your digital transformation journey.
+            Zehan X Technologies is a creative, AI and web agency. We craft modern websites, build intelligent AI products, and deliver standout digital content that grows brands and businesses.
           </p>
           
           <div className="fade-in-professional relative z-10 flex flex-col sm:flex-row justify-center gap-4 opacity-0 delay-300">
@@ -98,7 +96,7 @@ export default function ModernHero({ className }: ModernHeroProps) {
                   controls={false}
                   mute={true}
                   loop={true}
-                  title="Zehan X Technologies - Professional AI & Web Development Solutions"
+                  title="Zehan X Technologies - Creative, AI & Web Agency"
                 />
               </Mockup>
             </MockupFrame>
