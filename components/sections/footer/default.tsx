@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import ZehanLogo from "../../logos/zehan-logo";
+import CustomLogo from "../../logos/custom-logo";
 
 
 import {
@@ -34,7 +34,7 @@ interface FooterProps {
 }
 
 export default function FooterSection({
-  logo = <ZehanLogo size="md" />,
+  logo = <CustomLogo size="md" />,
   name = "",
   columns = [
     {

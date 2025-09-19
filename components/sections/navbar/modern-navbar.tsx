@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { gsap } from 'gsap';
 import { cn } from '@/lib/utils';
-import ZehanLogo from '../../logos/zehan-logo';
+import CustomLogo from '../../logos/custom-logo';
 import { Button } from '../../ui/button';
 
 interface NavbarLink {
@@ -74,7 +74,7 @@ export default function ModernNavbar({
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a href={homeUrl} className="flex items-center gap-3 group">
-            <ZehanLogo size="sm" />
+            <CustomLogo size="sm" />
             <span className="text-xl font-bold text-white group-hover:text-primary transition-colors duration-300">
               {name}
             </span>
