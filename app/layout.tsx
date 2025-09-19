@@ -135,7 +135,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" style={{ colorScheme: "dark" }} className="dark">
-      <head />
+      <head>
+        <script src="https://cdn.botpress.cloud/webchat/v3.3/inject.js"></script>
+        <script src="https://files.bpcontent.cloud/2025/09/19/13/20250919130112-NCQJ5BHI.js" defer></script>
+      </head>
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
         <ClerkProvider>
           <ThemeProvider>

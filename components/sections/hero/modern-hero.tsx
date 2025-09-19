@@ -23,8 +23,8 @@ interface ModernHeroProps {
 export default function ModernHero({ className }: ModernHeroProps) {
   const buttons: HeroButtonProps[] = [
     {
-      href: "/zehan",
-      text: "Try Zehan AI",
+      href: "/services",
+      text: "Learn More",
       variant: "default",
     },
     {
@@ -54,7 +54,7 @@ export default function ModernHero({ className }: ModernHeroProps) {
           </h1>
           
           <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed">
-            Zehan X Technologies is a creative, AI and web agency. We craft modern websites, build intelligent AI products, and deliver standout digital content that grows brands and businesses.
+            Zehan X Technologies is a creative and web agency. We craft modern websites, build innovative digital solutions, and deliver standout digital content that grows brands and businesses.
           </p>
           
           <div className="fade-in-professional relative z-10 flex flex-col sm:flex-row justify-center gap-4 opacity-0 delay-300">

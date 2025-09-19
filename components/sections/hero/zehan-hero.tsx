@@ -23,8 +23,8 @@ interface HeroProps {
 export default function ZehanHero({ className }: HeroProps) {
   const buttons: HeroButtonProps[] = [
     {
-      href: "/zehan",
-      text: "Try Zehan AI",
+      href: "/services",
+      text: "Learn More",
       variant: "default",
     },
     {
@@ -56,16 +56,16 @@ export default function ZehanHero({ className }: HeroProps) {
       <div className="max-w-container mx-auto flex flex-col gap-12 pt-20 sm:gap-24 relative z-10">
         <div className="flex flex-col items-center gap-8 text-center sm:gap-12">
           <Badge variant="outline" className="badge-professional fade-in-professional">
-            <span className="text-primary font-semibold">Creative AI + Web Development Agency</span>
+            <span className="text-primary font-semibold">Creative Web Development Agency</span>
           </Badge>
 
           <h1 className="fade-in-professional heading-professional relative z-10 inline-block text-4xl leading-tight text-balance sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight animate-fade-in-up">
             <span className="text-foreground">Where Creativity Meets</span>{" "}
-            <span className="text-gradient-primary animate-pulse">AI & Technology</span>
+            <span className="text-gradient-primary animate-pulse">Technology</span>
           </h1>
 
           <p className="fade-in-professional subheading-professional relative z-10 max-w-[800px] text-lg font-medium text-balance opacity-0 delay-100 sm:text-xl leading-relaxed animate-fade-in-up" style={{animationDelay: '0.3s'}}>
-            We're a full-service creative agency specializing in AI-powered solutions, cutting-edge web development, 
+            We're a full-service creative agency specializing in cutting-edge web development, 
             digital marketing, video editing, graphic design, and content creation. We transform your vision into 
             stunning digital experiences that drive results and captivate your audience.
           </p>
