@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
-import { Palette, Layers, Brush, Image, Sparkles, Target, Zap, CheckCircle } from "lucide-react";
+import { Palette, Layers, Brush, Image as ImageIcon, Sparkles, Target, Zap, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/sections/navbar/default";
 import Footer from "@/components/sections/footer/default";
@@ -22,7 +22,7 @@ const features = [
     description: "Social media graphics, web banners, and digital marketing assets."
   },
   {
-    icon: <Image className="size-6" />,
+    icon: <ImageIcon className="size-6" />,
     title: "UI/UX Design",
     description: "User interface design for web and mobile applications."
   },

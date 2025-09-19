@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/contexts/theme-provider";
 import { inter } from "@/lib/fonts";
 import { siteConfig } from "../config/site";
 import { seoConfig } from "../config/seo";
+import Script from "next/script";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -135,16 +136,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" style={{ colorScheme: "dark" }} className="dark">
-      <head>
-        <script src="https://cdn.botpress.cloud/webchat/v3.3/inject.js"></script>
-        <script src="https://files.bpcontent.cloud/2025/09/19/13/20250919130112-NCQJ5BHI.js" defer></script>
-      </head>
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
         <ClerkProvider>
           <ThemeProvider>
             {children}
           </ThemeProvider>
         </ClerkProvider>
+        <Script 
+          src="https://cdn.botpress.cloud/webchat/v3.3/inject.js" 
+          strategy="afterInteractive"
+        />
+        <Script 
+          src="https://files.bpcontent.cloud/2025/09/19/13/20250919130112-NCQJ5BHI.js" 
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

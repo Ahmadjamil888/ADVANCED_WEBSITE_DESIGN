@@ -4,9 +4,9 @@ export const siteConfig = {
   getStartedUrl: "https://zehanxtech.com/contact",
   ogImage: "/og.jpg",
   description:
-    "🚀 Leading AI & Web Development Company | Expert Next.js, Machine Learning & Deep Learning Solutions | Transform Your Business with Cutting-Edge AI Technology | 150+ Projects Delivered",
-  shortDescription: "Leading AI & Web Development Company - Transform Your Business with Cutting-Edge Technology",
-  longDescription: "Zehan X Technologies is a premier artificial intelligence and web development company specializing in Next.js, React, machine learning, and deep learning solutions. We've successfully delivered 150+ projects across 15 countries, helping businesses transform through cutting-edge AI technology, custom software development, and intelligent automation systems.",
+    "🚀 Leading AI, ML, DL & Creative Agency | Expert AI Development, Web Development, Graphic Design, Digital Marketing & Video Editing | Transform Your Business with Cutting-Edge Technology | 150+ Projects Delivered",
+  shortDescription: "Premier AI, ML, Web Development & Creative Services Agency - Complete Digital Transformation Solutions",
+  longDescription: "Zehan X Technologies is a comprehensive digital transformation agency specializing in Artificial Intelligence, Machine Learning, Deep Learning, Generative AI, Web Development, Graphic Design, Digital Marketing, and Video Editing. We've successfully delivered 150+ projects across 15 countries, helping businesses transform through cutting-edge AI technology, stunning visual designs, strategic marketing campaigns, and professional video content.",
   keywords: [
     // Primary Keywords (High Competition)
     "AI development company",
