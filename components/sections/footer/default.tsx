@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import CustomLogo from "../../logos/custom-logo";
+import SimpleLogo from "../../logos/simple-logo";
 
 
 import {
@@ -34,7 +34,7 @@ interface FooterProps {
 }
 
 export default function FooterSection({
-  logo = <CustomLogo size="md" />,
+  logo = <SimpleLogo size="md" />,
   name = "",
   columns = [
     {
