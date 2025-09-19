@@ -9,7 +9,7 @@ import {
 } from '@clerk/nextjs';
 
 import { cn } from "@/lib/utils";
-import ZehanLogo from "../../logos/zehan-logo";
+import SimpleLogo from "../../logos/simple-logo";
 
 import { Button } from "../../ui/button";
 import {
@@ -62,7 +62,7 @@ export default function Navbar({
               href={homeUrl}
               className="flex items-center gap-3"
             >
-              <ZehanLogo size="md" />
+              <SimpleLogo size="md" />
               <span className="text-xl font-bold tracking-tight text-foreground">
                 {name}
               </span>
@@ -115,7 +115,7 @@ export default function Navbar({
                     href={homeUrl}
                     className="flex items-center gap-3 text-xl font-bold"
                   >
-                    <ZehanLogo size="sm" />
+                    <SimpleLogo size="sm" />
                     <span>{name}</span>
                   </a>
                   {mobileLinks.map((link, index) => (

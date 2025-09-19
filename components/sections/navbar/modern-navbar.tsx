@@ -74,7 +74,7 @@ export default function ModernNavbar({
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a href={homeUrl} className="flex items-center gap-3 group">
-            <SimpleLogo size="sm" />
+            <SimpleLogo size="md" />
             <span className="text-xl font-bold text-white group-hover:text-primary transition-colors duration-300">
               {name}
             </span>
