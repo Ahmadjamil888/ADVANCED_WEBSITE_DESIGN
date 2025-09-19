@@ -4,6 +4,7 @@ import { Section } from '../../ui/section';
 import { cn } from '@/lib/utils';
 import { Button } from '../../ui/button';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface CorporateSectionProps {
   className?: string;
@@ -105,9 +106,11 @@ export default function CorporateSection({
             reverse && "lg:col-start-1"
           )}>
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img 
+              <Image 
                 src={imageUrl}
                 alt={imageAlt}
+                width={600}
+                height={500}
                 className="w-full h-[400px] lg:h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

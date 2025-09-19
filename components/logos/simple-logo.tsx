@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import Image from "next/image";
 
 interface SimpleLogoProps {
   className?: string;
@@ -31,9 +32,11 @@ export default function SimpleLogo({ className, size = "md" }: SimpleLogoProps) 
         <FallbackLogo />
       ) : (
         <>
-          <img
+          <Image
             src="/logo.jpg"
             alt="Company Logo"
+            width={64}
+            height={64}
             className={cn(
               "w-full h-full object-cover rounded-lg transition-opacity duration-300",
               imageLoaded ? "opacity-100" : "opacity-0"
