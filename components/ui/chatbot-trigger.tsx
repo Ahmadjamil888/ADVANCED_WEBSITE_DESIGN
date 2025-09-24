@@ -3,13 +3,24 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 
+// Define types for Botpress
+interface BotpressWebChat {
+  sendEvent: (event: { type: string }) => void;
+}
+
+declare global {
+  interface Window {
+    botpressWebChat?: BotpressWebChat;
+  }
+}
+
 export default function ChatbotTrigger() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Check if Botpress is loaded
     const checkBotpress = () => {
-      if (typeof window !== 'undefined' && (window as any).botpressWebChat) {
+      if (typeof window !== 'undefined' && window.botpressWebChat) {
         setIsLoaded(true);
       }
     };
@@ -29,8 +40,8 @@ export default function ChatbotTrigger() {
   }, [isLoaded]);
 
   const openChat = () => {
-    if (typeof window !== 'undefined' && (window as any).botpressWebChat) {
-      (window as any).botpressWebChat.sendEvent({ type: 'show' });
+    if (typeof window !== 'undefined' && window.botpressWebChat) {
+      window.botpressWebChat.sendEvent({ type: 'show' });
     } else {
       console.log('Botpress not loaded yet');
     }
