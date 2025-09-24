@@ -8,54 +8,73 @@ export const siteConfig = {
   shortDescription: "Premier AI, ML, Web Development & Creative Services Agency - Complete Digital Transformation Solutions",
   longDescription: "Zehan X Technologies is a comprehensive digital transformation agency specializing in Artificial Intelligence, Machine Learning, Deep Learning, Generative AI, Web Development, Graphic Design, Digital Marketing, and Video Editing. We've successfully delivered 150+ projects across 15 countries, helping businesses transform through cutting-edge AI technology, stunning visual designs, strategic marketing campaigns, and professional video content.",
   keywords: [
-    // Primary Keywords (High Competition)
+    // Primary AI/ML Keywords
     "AI development company",
     "machine learning services",
     "deep learning solutions",
-    "Next.js development agency",
+    "generative AI development",
     "artificial intelligence consulting",
     
-    // Long-tail Keywords (Lower Competition, Higher Intent)
+    // Web Development Keywords
+    "Next.js development agency",
+    "React development services",
+    "full-stack web development",
+    "custom web applications",
+    "responsive web design",
+    
+    // Creative Services Keywords
+    "graphic design agency",
+    "logo design services",
+    "brand identity design",
+    "UI UX design company",
+    "creative design solutions",
+    
+    // Digital Marketing Keywords
+    "digital marketing agency",
+    "SEO services",
+    "social media marketing",
+    "PPC advertising",
+    "content marketing services",
+    
+    // Video Editing Keywords
+    "video editing services",
+    "professional video production",
+    "motion graphics design",
+    "video content creation",
+    "corporate video editing",
+    
+    // Long-tail Keywords
     "custom AI model development services",
     "enterprise machine learning solutions",
-    "Next.js React TypeScript development",
     "AI chatbot development company",
-    "predictive analytics consulting services",
     "computer vision AI solutions",
     "natural language processing development",
-    "AI automation business solutions",
-    "full-stack web development agency",
+    "professional graphic design services",
+    "comprehensive digital marketing solutions",
+    "expert video editing and production",
     "AI-powered web applications",
-    
-    // Location-based Keywords
-    "AI development company USA",
-    "machine learning services worldwide",
-    "remote AI development team",
-    
-    // Industry-specific Keywords
-    "healthcare AI solutions",
-    "fintech machine learning",
-    "e-commerce AI development",
-    "manufacturing AI automation",
-    "education AI platforms",
+    "creative branding and design agency",
     
     // Technology-specific Keywords
     "TensorFlow development services",
     "PyTorch machine learning",
     "OpenAI API integration",
-    "AWS AI services",
-    "Google Cloud AI development",
+    "Adobe Creative Suite services",
+    "Google Ads management",
+    "Facebook advertising",
     
-    // Service-specific Keywords
-    "AI model training services",
-    "data science consulting",
-    "MLOps implementation",
-    "AI ethics consulting",
-    "AI strategy development"
+    // Industry Solutions
+    "healthcare AI solutions",
+    "fintech web development",
+    "e-commerce design services",
+    "startup branding packages",
+    "enterprise video solutions",
+    "B2B marketing campaigns"
   ],
   links: {
     twitter: "https://twitter.com/zehanxtech",
-    linkedin: "https://linkedin.com/company/zehanx-technologies",
+    linkedin: "https://www.linkedin.com/in/zehanx-technologies-842ba6385/",
+    youtube: "https://www.youtube.com/channel/UCKKv_31GqzUU8Gk_4IRKWrg",
     github: "https://github.com/zehanx",
     email: "mailto:contact@zehanxtech.com",
     phone: "tel:+1-555-AI-TECH",
@@ -91,30 +110,35 @@ export const siteConfig = {
   services: {
     primary: [
       "AI & Machine Learning Development",
+      "Deep Learning & Generative AI",
       "Next.js & React Development", 
       "Full-Stack Web Development",
-      "Deep Learning Solutions",
-      "AI Consulting & Strategy",
-      "Data Science & Analytics"
+      "Graphic Design & Branding",
+      "Digital Marketing & SEO",
+      "Video Editing & Production"
     ],
     secondary: [
       "AI Chatbot Development",
       "Computer Vision Solutions",
       "Natural Language Processing",
-      "Predictive Analytics",
-      "AI Automation Systems",
-      "MLOps & Model Deployment"
+      "UI/UX Design",
+      "Logo & Brand Identity",
+      "Social Media Marketing",
+      "Motion Graphics & Animation",
+      "Content Creation & Strategy"
     ]
   },
   industries: [
     "Healthcare & Medical",
-    "Financial Services",
+    "Financial Services & FinTech",
     "E-commerce & Retail",
-    "Manufacturing",
+    "Technology & SaaS",
     "Education & EdTech",
-    "Real Estate",
-    "Transportation",
-    "Entertainment & Media"
+    "Real Estate & Property",
+    "Entertainment & Media",
+    "Manufacturing & Industrial",
+    "Startups & Small Business",
+    "Non-Profit Organizations"
   ]
 };
 

@@ -240,11 +240,11 @@ export const seoConfig = {
     sameAs: [
       siteConfig.links.twitter,
       siteConfig.links.linkedin,
+      siteConfig.links.youtube,
       siteConfig.links.github,
       "https://www.crunchbase.com/organization/zehan-x-technologies",
       "https://www.facebook.com/zehanxtech",
-      "https://www.instagram.com/zehanxtech",
-      "https://www.youtube.com/c/zehanxtech"
+      "https://www.instagram.com/zehanxtech"
     ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",

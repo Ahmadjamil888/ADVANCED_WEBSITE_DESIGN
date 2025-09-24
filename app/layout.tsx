@@ -144,11 +144,11 @@ export default function RootLayout({
         </ClerkProvider>
         <Script 
           src="https://cdn.botpress.cloud/webchat/v3.3/inject.js" 
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
         <Script 
           src="https://files.bpcontent.cloud/2025/09/19/13/20250919130112-NCQJ5BHI.js" 
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
       </body>
     </html>

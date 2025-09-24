@@ -65,8 +65,9 @@ export default function FooterSection({
       links: [
         { text: "Contact Us", href: "/contact" },
         { text: "Twitter", href: siteConfig.links.twitter },
+        { text: "LinkedIn", href: siteConfig.links.linkedin },
+        { text: "YouTube", href: siteConfig.links.youtube },
         { text: "GitHub", href: siteConfig.links.github },
-        { text: "LinkedIn", href: "https://linkedin.com/company/zehanx" },
       ],
     },
   ],
