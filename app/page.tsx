@@ -385,16 +385,10 @@ export default function Home() {
       <Script 
         src="https://cdn.botpress.cloud/webchat/v3.3/inject.js" 
         strategy="afterInteractive"
-        onLoad={() => {
-          console.log('Botpress inject script loaded');
-        }}
       />
       <Script 
         src="https://files.bpcontent.cloud/2025/09/19/13/20250919130112-NCQJ5BHI.js" 
         strategy="lazyOnload"
-        onLoad={() => {
-          console.log('Botpress config script loaded');
-        }}
       />
     </main>
   );
