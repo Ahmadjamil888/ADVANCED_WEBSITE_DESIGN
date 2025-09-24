@@ -3,9 +3,19 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 
+// Define types for Botpress
+interface BotpressWebChat {
+  sendEvent: (event: { type: string }) => void;
+}
+
+declare global {
+  interface Window {
+    botpressWebChat?: BotpressWebChat;
+  }
+}
+
 export default function ChatbotTrigger() {
   const [isVisible, setIsVisible] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Check if Botpress is loaded
@@ -16,7 +26,6 @@ export default function ChatbotTrigger() {
         const botpressScript = document.querySelector('script[src*="botpress"]');
         
         if (botpressElement || botpressScript) {
-          setIsLoaded(true);
           return true;
         }
       }
@@ -48,8 +57,8 @@ export default function ChatbotTrigger() {
     // Try multiple methods to open the chat
     if (typeof window !== 'undefined') {
       // Method 1: Try Botpress webchat API
-      if ((window as any).botpressWebChat) {
-        (window as any).botpressWebChat.sendEvent({ type: 'show' });
+      if (window.botpressWebChat) {
+        window.botpressWebChat.sendEvent({ type: 'show' });
         return;
       }
 
