@@ -241,10 +241,10 @@ export const seoConfig = {
       siteConfig.links.twitter,
       siteConfig.links.linkedin,
       siteConfig.links.youtube,
+      siteConfig.links.instagram,
       siteConfig.links.github,
       "https://www.crunchbase.com/organization/zehan-x-technologies",
-      "https://www.facebook.com/zehanxtech",
-      "https://www.instagram.com/zehanxtech"
+      "https://www.facebook.com/zehanxtech"
     ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",

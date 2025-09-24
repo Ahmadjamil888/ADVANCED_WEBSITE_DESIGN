@@ -62,6 +62,7 @@ export function OrganizationStructuredData() {
       "https://twitter.com/zehanxtech",
       "https://www.linkedin.com/in/zehanx-technologies-842ba6385/",
       "https://www.youtube.com/channel/UCKKv_31GqzUU8Gk_4IRKWrg",
+      "https://www.instagram.com/zehanxtech?igsh=dTZlbDQzNDBhaWhl&utm_source=ig_contact_invite",
       "https://github.com/zehanx",
       "https://facebook.com/zehanxtech"
     ],

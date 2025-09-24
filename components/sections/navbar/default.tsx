@@ -1,4 +1,4 @@
-import { Menu, Youtube, Linkedin } from "lucide-react";
+import { Menu, Youtube, Linkedin, Instagram } from "lucide-react";
 import { ReactNode } from "react";
 import {
   SignInButton,
@@ -93,6 +93,16 @@ export default function Navbar({
                   <Linkedin className="size-4" />
                 </a>
               </Button>
+              <Button variant="ghost" size="sm" asChild className="nav-item">
+                <a 
+                  href={siteConfig.links.instagram} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="size-4" />
+                </a>
+              </Button>
             </div>
             
             <SignedOut>
@@ -154,7 +164,7 @@ export default function Navbar({
                   ))}
                   <div className="border-t border-border/50 pt-4 mt-4">
                     {/* Social Media Links for Mobile */}
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-4 mb-4 flex-wrap">
                       <a 
                         href={siteConfig.links.youtube} 
                         target="_blank" 
@@ -172,6 +182,15 @@ export default function Navbar({
                       >
                         <Linkedin className="size-4" />
                         <span className="text-sm">LinkedIn</span>
+                      </a>
+                      <a 
+                        href={siteConfig.links.instagram} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Instagram className="size-4" />
+                        <span className="text-sm">Instagram</span>
                       </a>
                     </div>
                     

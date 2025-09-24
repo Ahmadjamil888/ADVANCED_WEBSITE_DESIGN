@@ -67,6 +67,7 @@ export default function FooterSection({
         { text: "Twitter", href: siteConfig.links.twitter },
         { text: "LinkedIn", href: siteConfig.links.linkedin },
         { text: "YouTube", href: siteConfig.links.youtube },
+        { text: "Instagram", href: siteConfig.links.instagram },
         { text: "GitHub", href: siteConfig.links.github },
       ],
     },

@@ -75,6 +75,7 @@ export const siteConfig = {
     twitter: "https://twitter.com/zehanxtech",
     linkedin: "https://www.linkedin.com/in/zehanx-technologies-842ba6385/",
     youtube: "https://www.youtube.com/channel/UCKKv_31GqzUU8Gk_4IRKWrg",
+    instagram: "https://www.instagram.com/zehanxtech?igsh=dTZlbDQzNDBhaWhl&utm_source=ig_contact_invite",
     github: "https://github.com/zehanx",
     email: "mailto:contact@zehanxtech.com",
     phone: "tel:+1-555-AI-TECH",
