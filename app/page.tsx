@@ -21,6 +21,7 @@ import ModernTestimonials from "../components/sections/testimonials/modern-testi
 import SmoothScroll from "../components/ui/smooth-scroll";
 import SocialShare from "../components/ui/social-share";
 import BookMeetingButton from "../components/ui/book-meeting-button";
+import ChatbotTrigger from "../components/ui/chatbot-trigger";
 // Structured data imports removed as they're not currently used
 // import { 
 //   OrganizationStructuredData, 
@@ -380,6 +381,7 @@ export default function Home() {
       <CTA />
       <Footer />
       <BookMeetingButton />
+      <ChatbotTrigger />
       
       {/* Botpress Chatbot Scripts */}
       <Script 

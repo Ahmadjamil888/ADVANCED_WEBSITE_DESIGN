@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react";
+import { Menu, Youtube, Linkedin } from "lucide-react";
 import { ReactNode } from "react";
 import {
   SignInButton,
@@ -7,6 +7,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs';
+import { siteConfig } from "@/config/site";
 
 import { cn } from "@/lib/utils";
 import SimpleLogo from "../../logos/simple-logo";
@@ -70,6 +71,30 @@ export default function Navbar({
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
           <NavbarRight>
+            {/* Social Media Links */}
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" size="sm" asChild className="nav-item">
+                <a 
+                  href={siteConfig.links.youtube} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="size-4" />
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild className="nav-item">
+                <a 
+                  href={siteConfig.links.linkedin} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="size-4" />
+                </a>
+              </Button>
+            </div>
+            
             <SignedOut>
               <SignInButton>
                 <Button variant="ghost" size="sm" className="nav-item">
@@ -128,6 +153,28 @@ export default function Navbar({
                     </a>
                   ))}
                   <div className="border-t border-border/50 pt-4 mt-4">
+                    {/* Social Media Links for Mobile */}
+                    <div className="flex items-center gap-4 mb-4">
+                      <a 
+                        href={siteConfig.links.youtube} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Youtube className="size-4" />
+                        <span className="text-sm">YouTube</span>
+                      </a>
+                      <a 
+                        href={siteConfig.links.linkedin} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Linkedin className="size-4" />
+                        <span className="text-sm">LinkedIn</span>
+                      </a>
+                    </div>
+                    
                     <SignedOut>
                       <div className="flex flex-col gap-3">
                         <SignInButton>
