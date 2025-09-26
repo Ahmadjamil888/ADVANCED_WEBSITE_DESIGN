@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const GEMINI_API_KEY = 'AIzaSyDzQIZC1dI281pyo-BpExofvUWNCEps0JM';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyDzQIZC1dI281pyo-BpExofvUWNCEps0JM';
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export async function POST(request: NextRequest) {
@@ -46,61 +46,29 @@ export async function POST(request: NextRequest) {
 }
 
 function isComplexQuery(userInput: string): boolean {
-  const complexPatterns = [
-    // Technical deep dives
-    /explain.*how.*work/i,
-    /what.*difference.*between/i,
-    /compare.*and/i,
-    /pros.*cons/i,
-    /advantages.*disadvantages/i,
-    
-    // Multi-step questions
-    /step.*by.*step/i,
-    /how.*to.*implement/i,
-    /best.*practice/i,
-    /architecture/i,
-    
-    // Complex technical concepts
-    /algorithm/i,
-    /optimization/i,
-    /performance/i,
-    /scalability/i,
-    /security/i,
-    
-    // Business strategy
-    /strategy/i,
-    /roadmap/i,
-    /planning/i,
-    /budget/i,
-    /timeline/i,
-    
-    // Advanced AI/ML topics
-    /transformer/i,
-    /attention.*mechanism/i,
-    /gradient.*descent/i,
-    /backpropagation/i,
-    /convolutional/i,
-    /recurrent/i,
-    /lstm/i,
-    /gru/i,
-    
-    // Complex questions indicators
-    /why.*important/i,
-    /what.*impact/i,
-    /how.*affect/i,
-    /what.*should.*consider/i,
-    /what.*are.*challenges/i,
+  // Simple greetings and basic interactions use local responses
+  const simplePatterns = [
+    /^(hi|hello|hey)$/i,
+    /^(thank|thanks)$/i,
+    /^(bye|goodbye)$/i,
+    /^\d+\s*[-+*/]\s*\d+$/i, // Simple math like "5+3"
   ];
   
-  return complexPatterns.some(pattern => pattern.test(userInput)) || 
-         userInput.length > 100 || // Long questions are likely complex
-         (userInput.split(' ').length > 15); // Questions with many words
+  // If it's a simple pattern, use local response
+  if (simplePatterns.some(pattern => pattern.test(userInput.trim()))) {
+    return false;
+  }
+  
+  // Most other questions should use Gemini for dynamic responses
+  // Only exclude very basic interactions
+  return userInput.trim().length > 2; // Almost everything goes to Gemini
 }
 
 async function generateGeminiResponse(userMessage: string): Promise<string> {
   try {
-    const systemPrompt = `You are Zehan AI, Pakistan's first advanced AI assistant created by Zehan X Technologies. You are an expert in:
+    const systemPrompt = `You are Zehan AI, Pakistan's first advanced AI assistant created by Zehan X Technologies. You are knowledgeable about a wide range of topics and can provide helpful, accurate information on any subject.
 
+Your expertise includes:
 - Artificial Intelligence and Machine Learning
 - Web Development (Next.js, React, TypeScript)
 - Deep Learning and Neural Networks
@@ -109,6 +77,9 @@ async function generateGeminiResponse(userMessage: string): Promise<string> {
 - Enterprise Software Development
 - Digital Marketing and Graphic Design
 - Video Editing and Content Creation
+- General knowledge, science, history, current events
+- Technical explanations and tutorials
+- Problem-solving and analysis
 
 Key facts about Zehan X Technologies:
 - Leading AI, ML, DL & Creative Agency in Pakistan
@@ -118,7 +89,16 @@ Key facts about Zehan X Technologies:
 - Team of 10-50 experts
 - Services: AI & Machine Learning, Next.js Development, Graphic Design, Digital Marketing, Video Editing, Content Writing
 
-Always be helpful, professional, and showcase Zehan X Technologies' capabilities. Provide detailed, accurate, and actionable information. When discussing technical topics, explain them clearly and relate them to business value.`;
+Instructions:
+1. Answer ALL questions directly and helpfully, regardless of topic
+2. Be conversational, friendly, and engaging
+3. Provide accurate, up-to-date information
+4. When appropriate, relate answers back to technology or business solutions
+5. Don't always mention Zehan X Technologies unless relevant to the question
+6. Be dynamic - adapt your response style to match the question type
+7. For technical questions, provide clear explanations
+8. For general knowledge, be informative and interesting
+9. Keep responses concise but comprehensive`;
 
     // Get the Gemini model
     const model = genAI.getGenerativeModel({ 
@@ -140,8 +120,15 @@ Always be helpful, professional, and showcase Zehan X Technologies' capabilities
     const response = await result.response;
     let geminiResponse = response.text();
     
-    // Add Zehan X Technologies branding to the response
-    geminiResponse += "\n\n💡 This response is powered by Zehan AI, Pakistan's first advanced AI assistant. Want to learn more about our AI solutions? Contact Zehan X Technologies!";
+    // Add contextual branding based on the question type
+    if (userMessage.toLowerCase().includes('ai') || 
+        userMessage.toLowerCase().includes('technology') || 
+        userMessage.toLowerCase().includes('development') ||
+        userMessage.toLowerCase().includes('business')) {
+      geminiResponse += "\n\n💡 Powered by Zehan AI. Interested in AI solutions for your business? Contact Zehan X Technologies!";
+    } else {
+      geminiResponse += "\n\n🤖 Powered by Zehan AI - Pakistan's advanced AI assistant.";
+    }
     
     return geminiResponse;
     
