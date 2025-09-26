@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const GEMINI_API_KEY = 'AIzaSyDzQIZC1dI281pyo-BpExofvUWNCEps0JM';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
@@ -119,64 +120,30 @@ Key facts about Zehan X Technologies:
 
 Always be helpful, professional, and showcase Zehan X Technologies' capabilities. Provide detailed, accurate, and actionable information. When discussing technical topics, explain them clearly and relate them to business value.`;
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // Get the Gemini model
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.0-flash-exp",
+      generationConfig: {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 1024,
       },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `${systemPrompt}\n\nUser Question: ${userMessage}`
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
-      })
     });
 
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
-    }
+    // Generate content using the proper SDK
+    const result = await model.generateContent([
+      systemPrompt,
+      `\n\nUser Question: ${userMessage}`
+    ]);
 
-    const data = await response.json();
+    const response = await result.response;
+    let geminiResponse = response.text();
     
-    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      let geminiResponse = data.candidates[0].content.parts[0].text;
-      
-      // Add Zehan X Technologies branding to the response
-      geminiResponse += "\n\n💡 This response is powered by Zehan AI, Pakistan's first advanced AI assistant. Want to learn more about our AI solutions? Contact Zehan X Technologies!";
-      
-      return geminiResponse;
-    } else {
-      throw new Error('Invalid response from Gemini API');
-    }
+    // Add Zehan X Technologies branding to the response
+    geminiResponse += "\n\n💡 This response is powered by Zehan AI, Pakistan's first advanced AI assistant. Want to learn more about our AI solutions? Contact Zehan X Technologies!";
+    
+    return geminiResponse;
     
   } catch (error) {
     console.error('Gemini API Error:', error);
