@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const GEMINI_API_KEY = 'AIzaSyDzQIZC1dI281pyo-BpExofvUWNCEps0JM';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
+
 export async function POST(request: NextRequest) {
   try {
     const { messages } = await request.json();
@@ -13,12 +16,22 @@ export async function POST(request: NextRequest) {
 
     const userMessage = messages[messages.length - 1]?.content || '';
     
-    // Generate intelligent response based on user input
-    const aiResponse = generateIntelligentResponse(userMessage);
+    // Determine if this is a complex question that needs Gemini API
+    const isComplexQuestion = isComplexQuery(userMessage);
+    
+    let aiResponse: string;
+    
+    if (isComplexQuestion) {
+      // Use Gemini API for complex questions
+      aiResponse = await generateGeminiResponse(userMessage);
+    } else {
+      // Use local intelligent response for simple questions
+      aiResponse = generateIntelligentResponse(userMessage);
+    }
     
     return NextResponse.json({
       message: aiResponse,
-      model: 'zehan-ai-intelligent-system',
+      model: isComplexQuestion ? 'gemini-2.0-flash-exp' : 'zehan-ai-intelligent-system',
       timestamp: new Date().toISOString()
     });
     
@@ -28,6 +41,147 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to generate response' },
       { status: 500 }
     );
+  }
+}
+
+function isComplexQuery(userInput: string): boolean {
+  const complexPatterns = [
+    // Technical deep dives
+    /explain.*how.*work/i,
+    /what.*difference.*between/i,
+    /compare.*and/i,
+    /pros.*cons/i,
+    /advantages.*disadvantages/i,
+    
+    // Multi-step questions
+    /step.*by.*step/i,
+    /how.*to.*implement/i,
+    /best.*practice/i,
+    /architecture/i,
+    
+    // Complex technical concepts
+    /algorithm/i,
+    /optimization/i,
+    /performance/i,
+    /scalability/i,
+    /security/i,
+    
+    // Business strategy
+    /strategy/i,
+    /roadmap/i,
+    /planning/i,
+    /budget/i,
+    /timeline/i,
+    
+    // Advanced AI/ML topics
+    /transformer/i,
+    /attention.*mechanism/i,
+    /gradient.*descent/i,
+    /backpropagation/i,
+    /convolutional/i,
+    /recurrent/i,
+    /lstm/i,
+    /gru/i,
+    
+    // Complex questions indicators
+    /why.*important/i,
+    /what.*impact/i,
+    /how.*affect/i,
+    /what.*should.*consider/i,
+    /what.*are.*challenges/i,
+  ];
+  
+  return complexPatterns.some(pattern => pattern.test(userInput)) || 
+         userInput.length > 100 || // Long questions are likely complex
+         (userInput.split(' ').length > 15); // Questions with many words
+}
+
+async function generateGeminiResponse(userMessage: string): Promise<string> {
+  try {
+    const systemPrompt = `You are Zehan AI, Pakistan's first advanced AI assistant created by Zehan X Technologies. You are an expert in:
+
+- Artificial Intelligence and Machine Learning
+- Web Development (Next.js, React, TypeScript)
+- Deep Learning and Neural Networks
+- Business AI Solutions and Automation
+- Data Analytics and Predictive Modeling
+- Enterprise Software Development
+- Digital Marketing and Graphic Design
+- Video Editing and Content Creation
+
+Key facts about Zehan X Technologies:
+- Leading AI, ML, DL & Creative Agency in Pakistan
+- Specializes in AI Development, Web Development, Graphic Design, Digital Marketing & Video Editing
+- 150+ projects delivered across 15 countries
+- Founded in 2019, headquartered globally (remote-first)
+- Team of 10-50 experts
+- Services: AI & Machine Learning, Next.js Development, Graphic Design, Digital Marketing, Video Editing, Content Writing
+
+Always be helpful, professional, and showcase Zehan X Technologies' capabilities. Provide detailed, accurate, and actionable information. When discussing technical topics, explain them clearly and relate them to business value.`;
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `${systemPrompt}\n\nUser Question: ${userMessage}`
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Gemini API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      let geminiResponse = data.candidates[0].content.parts[0].text;
+      
+      // Add Zehan X Technologies branding to the response
+      geminiResponse += "\n\n💡 This response is powered by Zehan AI, Pakistan's first advanced AI assistant. Want to learn more about our AI solutions? Contact Zehan X Technologies!";
+      
+      return geminiResponse;
+    } else {
+      throw new Error('Invalid response from Gemini API');
+    }
+    
+  } catch (error) {
+    console.error('Gemini API Error:', error);
+    // Fallback to local response if Gemini fails
+    return generateIntelligentResponse(userMessage) + "\n\n⚠️ Enhanced AI processing temporarily unavailable. Using local intelligence.";
   }
 }
 

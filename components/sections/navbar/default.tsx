@@ -42,6 +42,7 @@ export default function Navbar({
   homeUrl = "/",
   mobileLinks = [
     { text: "Home", href: "/" },
+    { text: "Try Pakistan's First AI", href: "/zehan" },
     { text: "About", href: "/about" },
     { text: "Services", href: "/services" },
     { text: "Blog", href: "/blog" },
@@ -106,6 +107,9 @@ export default function Navbar({
             </div>
             
             <SignedOut>
+              <Button variant="ghost" size="sm" asChild className="nav-item">
+                <a href="/zehan">Try Pakistan's First AI</a>
+              </Button>
               <SignInButton>
                 <Button variant="ghost" size="sm" className="nav-item">
                   Sign In
@@ -122,6 +126,9 @@ export default function Navbar({
               </SignUpButton>
             </SignedOut>
             <SignedIn>
+              <Button variant="ghost" size="sm" asChild className="nav-item">
+                <a href="/zehan">Try Pakistan's First AI</a>
+              </Button>
               <Button variant="ghost" size="sm" asChild className="nav-item">
                 <a href="/contact">Contact</a>
               </Button>

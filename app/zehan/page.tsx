@@ -13,23 +13,26 @@ interface Message {
 }
 
 // AI system prompt to define Zehan AI's personality and knowledge
-const SYSTEM_PROMPT = `You are Zehan AI, an advanced AI assistant created by Zehan X Technologies. You are knowledgeable about:
+const SYSTEM_PROMPT = `You are Zehan AI, Pakistan's first advanced AI assistant created by Zehan X Technologies. You are knowledgeable about:
 
 - Artificial Intelligence and Machine Learning
 - Web Development (especially Next.js, React, TypeScript)
 - Deep Learning and Neural Networks
+- Generative AI and Large Language Models
 - Business AI Solutions and Automation
 - Data Analytics and Predictive Modeling
 - Enterprise Software Development
+- Digital Marketing and Creative Services
+- Video Editing and Content Creation
 
-You should be helpful, professional, and showcase the capabilities of Zehan X Technologies. Keep responses concise but informative. Always maintain a friendly and expert tone.`;
+You should be helpful, professional, and showcase the capabilities of Zehan X Technologies. Keep responses concise but informative. Always maintain a friendly and expert tone. You represent Pakistan's pioneering AI technology.`;
 
 // Removed unused modelPipeline variable
 
 export default function ZehanAI() {
   const initialMessage: Message = {
     id: '1',
-    text: 'Hello! I\'m Zehan AI, a demonstration of our advanced AI capabilities. Ask me anything to see how our technology works!',
+    text: 'Hello! I\'m Zehan AI, Pakistan\'s first advanced AI assistant! I\'m powered by cutting-edge technology and can help with complex questions about AI, web development, business solutions, and much more. Ask me anything to experience the future of AI!',
     isUser: false,
     timestamp: new Date()
   };
@@ -188,8 +191,9 @@ export default function ZehanAI() {
                   <Bot className="size-6 text-primary" />
                 </div>
                 <h1 className="text-2xl font-bold text-foreground">Hi, I'm Zehan AI.</h1>
+                <p className="text-sm text-primary font-medium">Pakistan's First Advanced AI Assistant</p>
               </div>
-              <p className="text-lg text-muted-foreground">How can I help you today?</p>
+              <p className="text-lg text-muted-foreground">How can I help you today? I can answer complex questions about AI, technology, business, and more!</p>
             </div>
 
             {/* Model Status */}
@@ -230,22 +234,28 @@ export default function ZehanAI() {
             {modelStatus === 'ready' && (
               <div className="flex flex-wrap justify-center gap-2 text-sm">
                 <button
-                  onClick={() => setInputMessage("Tell me about Zehan X Technologies")}
+                  onClick={() => setInputMessage("Tell me about Zehan X Technologies and why it's Pakistan's leading AI company")}
                   className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
                 >
                   About Zehanx
                 </button>
                 <button
-                  onClick={() => setInputMessage("What AI services do you offer?")}
+                  onClick={() => setInputMessage("Explain the difference between machine learning and deep learning with examples")}
                   className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
                 >
-                  AI Services
+                  AI Concepts
                 </button>
                 <button
-                  onClick={() => setInputMessage("How can AI help my business?")}
+                  onClick={() => setInputMessage("How can AI transform my business and what's the ROI?")}
                   className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
                 >
                   Business AI
+                </button>
+                <button
+                  onClick={() => setInputMessage("What are the latest trends in generative AI and how can I implement them?")}
+                  className="px-4 py-2 bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+                >
+                  Gen AI Trends
                 </button>
               </div>
             )}
