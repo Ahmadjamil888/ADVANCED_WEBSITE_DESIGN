@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
 import { generateSEO } from "@/lib/seo-utils";
 import { siteConfig } from "@/config/site";
 
@@ -380,16 +379,6 @@ export default function Home() {
       <CTA />
       <Footer />
       <BookMeetingButton />
-      
-      {/* Botpress Chatbot Scripts */}
-      <Script 
-        src="https://cdn.botpress.cloud/webchat/v3.3/inject.js" 
-        strategy="afterInteractive"
-      />
-      <Script 
-        src="https://files.bpcontent.cloud/2025/09/19/13/20250919130112-NCQJ5BHI.js" 
-        strategy="lazyOnload"
-      />
     </main>
   );
 }
