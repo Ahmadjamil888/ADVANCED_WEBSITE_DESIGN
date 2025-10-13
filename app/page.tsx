@@ -206,6 +206,89 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
+      {/* Byte AI Section */}
+      <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        </div>
+        
+        <div className="max-w-container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white animate-fade-in-up">
+              Our Upcoming Project: <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Byte AI</span>
+            </h2>
+            <p className="text-gray-300 text-lg max-w-3xl mx-auto animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              Pakistan's First Vibe Coding AI Assistant - Revolutionizing the way developers code with intelligent assistance
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            {/* Content */}
+            <div className="animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+              <div className="bg-black rounded-2xl p-8 border border-purple-500/30 hover:border-purple-500 transition-all duration-300">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mr-4">
+                    <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white">Byte AI</h3>
+                </div>
+                
+                <p className="text-gray-300 mb-6 text-lg">
+                  Get ready for Pakistan's most innovative coding companion! Byte AI is designed to understand your coding vibe and provide intelligent assistance that feels natural and intuitive.
+                </p>
+                
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                    <p className="text-gray-300">Smart code completion and suggestions</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                    <p className="text-gray-300">Natural language to code conversion</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                    <p className="text-gray-300">Intelligent debugging assistance</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                    <p className="text-gray-300">Personalized coding recommendations</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between p-4 bg-purple-500/10 rounded-xl border border-purple-500/20">
+                  <div>
+                    <p className="text-purple-400 font-semibold">Coming Soon</p>
+                    <p className="text-gray-300 text-sm">Be the first to experience the future of coding</p>
+                  </div>
+                  <div className="animate-pulse">
+                    <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Image */}
+            <div className="animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative bg-black rounded-2xl p-2 border border-purple-500/30">
+                  <img 
+                    src="/WhatsApp Image 2025-10-09 at 6.01.50 PM.jpeg" 
+                    alt="Byte AI - Pakistan's First Vibe Coding AI Assistant"
+                    className="w-full h-auto rounded-xl shadow-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Stats />
       <AIInnovationSection />
       <EnterpriseSolutionsSection />
