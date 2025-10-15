@@ -374,7 +374,7 @@ export default function Home() {
               <div className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-colors">
                 <span className="text-2xl font-bold text-blue-400">H</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">Humayl</h3>
+              <h3 className="text-xl font-semibold mb-2 text-white">Humayl Butt</h3>
               <p className="text-blue-400 font-medium mb-4">Co-founder</p>
               <p className="text-gray-300 text-sm">
                 Operations expert ensuring smooth project delivery and maintaining the highest quality standards.
