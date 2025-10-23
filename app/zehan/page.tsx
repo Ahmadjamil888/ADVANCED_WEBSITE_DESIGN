@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { 
-  Plus, Menu, User, Sparkles, ArrowUp, Trash2, Edit3, 
-  MoreHorizontal, Image, Mic, Paperclip, History, 
-  MessageSquare, Settings, LogOut, Download
+  Plus, Menu, User, Sparkles, ArrowUp, Trash2, 
+  MoreHorizontal, Image as ImageIcon, Mic, Paperclip, History, 
+  Settings, Download
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -60,16 +60,8 @@ const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
   isActive,
   onSelect,
   onDelete,
-  onRename
+  onRename: _onRename
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(session.title);
-
-  const handleRename = () => {
-    onRename(title);
-    setIsEditing(false);
-  };
-
   return (
     <div className={`group flex items-center gap-2 p-2 rounded-lg cursor-pointer ${
       isActive ? 'bg-gray-800' : 'hover:bg-gray-800'
@@ -78,12 +70,6 @@ const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({
         <span className="text-sm text-gray-300">{session.title}</span>
       </button>
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-        <button
-          onClick={() => setIsEditing(true)}
-          className="p-1 text-gray-400 hover:text-white"
-        >
-          <Edit3 className="w-3 h-3" />
-        </button>
         <button
           onClick={onDelete}
           className="p-1 text-gray-400 hover:text-white"
@@ -113,11 +99,18 @@ export default function ZehanGPT() {
   useEffect(() => {
     const savedSessions = localStorage.getItem('zehan-chat-sessions');
     if (savedSessions) {
-      const sessions = JSON.parse(savedSessions).map((session: any) => ({
+      type ParsedMessage = Omit<Message, 'timestamp'> & { timestamp: string };
+      type ParsedSession = Omit<ChatSession, 'createdAt' | 'updatedAt' | 'messages'> & {
+        createdAt: string;
+        updatedAt: string;
+        messages: ParsedMessage[];
+      };
+
+      const sessions = (JSON.parse(savedSessions) as ParsedSession[]).map((session) => ({
         ...session,
         createdAt: new Date(session.createdAt),
         updatedAt: new Date(session.updatedAt),
-        messages: session.messages.map((msg: any) => ({
+        messages: session.messages.map((msg) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
         }))
@@ -634,7 +627,7 @@ export default function ZehanGPT() {
                       className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                       title="Upload image"
                     >
-                      <Image className="w-4 h-4" />
+                      <ImageIcon className="w-4 h-4" />
                     </button>
                     <button
                       onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
