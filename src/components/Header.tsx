@@ -67,7 +67,7 @@ export const Header = () => {
         data-border="rounded"
       >
         <Flex paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s">
-          {display.location && <Flex hide="s">Pakistan, Gujranwala</Flex>}
+          {display.location && <Flex hide="s">Gujranwala, Pakistan</Flex>}
         </Flex>
         <Flex fillWidth horizontal="center">
           <Flex

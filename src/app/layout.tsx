@@ -11,13 +11,76 @@ import { opacity, SpacingToken } from "@/once-ui/types";
 import { Meta } from "@/once-ui/modules";
 
 export async function generateMetadata() {
-  return Meta.generate({
-    title: home.title,
-    description: home.description,
-    baseURL: baseURL,
-    path: home.path,
-    image: home.image,
-  });
+  return {
+    title: {
+      default: 'zehanxtech - AI Systems Development & Web Solutions',
+      template: '%s | zehanxtech'
+    },
+    description: 'zehanxtech specializes in AI systems development, machine learning solutions, and modern web applications. Building AI for the betterment of humanity from Gujranwala, Pakistan.',
+    keywords: [
+      'AI development',
+      'artificial intelligence',
+      'machine learning',
+      'web development',
+      'AI systems',
+      'Pakistan AI company',
+      'Gujranwala tech',
+      'zehanxtech',
+      'custom AI solutions',
+      'intelligent automation',
+      'Next.js development',
+      'React applications',
+      'AI consulting'
+    ],
+    authors: [{ name: 'zehanxtech Team' }],
+    creator: 'zehanxtech',
+    publisher: 'zehanxtech',
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(baseURL),
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title: 'zehanxtech - AI Systems Development & Web Solutions',
+      description: 'Building AI for the betterment of humanity. Custom AI systems, machine learning models, and modern web applications.',
+      url: baseURL,
+      siteName: 'zehanxtech',
+      images: [
+        {
+          url: '/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'zehanxtech - AI Systems Development Company',
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'zehanxtech - AI Systems Development & Web Solutions',
+      description: 'Building AI for the betterment of humanity. Custom AI systems and web applications.',
+      images: ['/og-image.jpg'],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    verification: {
+      google: 'your-google-verification-code',
+    },
+  };
 }
 
 interface RootLayoutProps {
@@ -47,6 +110,83 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       )}
     >
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href={baseURL} />
+        <meta name="geo.region" content="PK-PB" />
+        <meta name="geo.placename" content="Gujranwala" />
+        <meta name="geo.position" content="32.1877;74.1945" />
+        <meta name="ICBM" content="32.1877, 74.1945" />
+        
+        {/* Structured Data for Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "zehanxtech",
+              "alternateName": "zehanx technologies",
+              "url": baseURL,
+              "logo": `${baseURL}/logo.jpg`,
+              "description": "AI systems development and web solutions company building AI for the betterment of humanity",
+              "foundingDate": "2024",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Gujranwala",
+                "addressRegion": "Punjab",
+                "addressCountry": "Pakistan"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+92-344-2693910",
+                "contactType": "customer service",
+                "email": "zehanxtech@gmail.com",
+                "availableLanguage": ["English", "Urdu"]
+              },
+              "sameAs": [
+                "https://github.com/Ahmadjamil888",
+                "https://www.linkedin.com/company/zehanxtech",
+                "https://www.youtube.com/@zehanxtech"
+              ],
+              "serviceArea": {
+                "@type": "Place",
+                "name": "Worldwide"
+              },
+              "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "AI and Web Development Services",
+                "itemListElement": [
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "AI Systems Development",
+                      "description": "Custom AI systems, machine learning models, and intelligent automation solutions"
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "Web Development",
+                      "description": "Modern web applications, responsive design, and full-stack development"
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    "itemOffered": {
+                      "@type": "Service",
+                      "name": "AI Consulting",
+                      "description": "Technology consulting, AI strategy, and digital transformation guidance"
+                    }
+                  }
+                ]
+              }
+            })
+          }}
+        />
+
+        {/* Theme Script */}
         <script
           dangerouslySetInnerHTML={{
             __html: `

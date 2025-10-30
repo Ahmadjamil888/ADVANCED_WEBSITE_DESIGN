@@ -26,13 +26,7 @@ export const Footer = () => {
           <Text onBackground="neutral-weak">© {currentYear} /</Text>
           <Text paddingX="4">{person.name}</Text>
           <Text onBackground="neutral-weak">
-            {/* Usage of this template requires attribution. Please don't remove the link to Once UI. */}
-            / Build your website with{" "}
-            <SmartLink
-              href="https://aurionsoft.site/"
-            >
-              Aurion soft
-            </SmartLink>
+            / Created by zehanx team
           </Text>
         </Text>
         <Flex gap="16">

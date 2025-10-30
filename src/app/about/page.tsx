@@ -18,13 +18,35 @@ import React from "react";
 import { Meta, Schema } from "@/once-ui/modules";
 
 export async function generateMetadata() {
-  return Meta.generate({
-    title: about.title,
-    description: about.description,
-    baseURL: baseURL,
-    image: `${baseURL}/og?title=${encodeURIComponent(about.title)}`,
-    path: about.path,
-  });
+  return {
+    title: 'About zehanxtech - AI Systems Development Company',
+    description: 'Learn about zehanxtech, a leading AI systems development company from Gujranwala, Pakistan. We specialize in custom AI solutions, machine learning, and modern web applications.',
+    keywords: [
+      'about zehanxtech',
+      'AI company Pakistan',
+      'Gujranwala AI development',
+      'machine learning company',
+      'AI systems development',
+      'artificial intelligence Pakistan',
+      'tech company Gujranwala'
+    ],
+    openGraph: {
+      title: 'About zehanxtech - AI Systems Development Company',
+      description: 'Learn about zehanxtech, building AI for the betterment of humanity from Gujranwala, Pakistan.',
+      url: `${baseURL}${about.path}`,
+      images: [
+        {
+          url: '/og-about.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'About zehanxtech - AI Development Team',
+        },
+      ],
+    },
+    alternates: {
+      canonical: `${baseURL}${about.path}`,
+    },
+  };
 }
 
 export default function About() {

@@ -9,17 +9,46 @@ import { Schema } from "@/once-ui/modules";
 export default function Home() {
   return (
     <Column maxWidth="m" gap="xl" horizontal="center">
-      <Schema
-        as="webPage"
-        baseURL={baseURL}
-        path={home.path}
-        title="zehanxtech"
-        description={home.description}
-        image={`${baseURL}/og?title=${encodeURIComponent(home.title)}`}
-        author={{
-          name: "zehanxtech",
-          url: `${baseURL}${about.path}`,
-          image: `${baseURL}${person.avatar}`,
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "zehanxtech - AI Systems Development & Web Solutions",
+            "description": "Building AI for the betterment of humanity. Custom AI systems, machine learning models, and modern web applications from Gujranwala, Pakistan.",
+            "url": `${baseURL}${home.path}`,
+            "mainEntity": {
+              "@type": "Organization",
+              "name": "zehanxtech",
+              "description": "AI systems development and web solutions company",
+              "url": baseURL,
+              "logo": `${baseURL}/logo.jpg`,
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Gujranwala",
+                "addressRegion": "Punjab",
+                "addressCountry": "Pakistan"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+92-344-2693910",
+                "email": "zehanxtech@gmail.com",
+                "contactType": "customer service"
+              }
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": baseURL
+                }
+              ]
+            }
+          })
         }}
       />
 
@@ -68,7 +97,7 @@ export default function Home() {
       {/* Skills Section */}
       <RevealFx delay={0.2} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
         <Column maxWidth="s" gap="m">
-          <Heading variant="display-strong-s">Technologies & Expertise</Heading>
+          <Heading as="h2" variant="display-strong-s">Technologies & Expertise</Heading>
           <Flex gap="12" wrap vertical="center">
             <Badge background="brand-alpha-weak" textVariant="label-default-s">AI & Machine Learning</Badge>
             <Badge background="brand-alpha-weak" textVariant="label-default-s">React & Next.js</Badge>
@@ -85,11 +114,11 @@ export default function Home() {
       {/* Services Section */}
       <RevealFx delay={0.3} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
         <Column maxWidth="s" gap="m">
-          <Heading variant="display-strong-s">What We Offer</Heading>
+          <Heading as="h2" variant="display-strong-s">What We Offer</Heading>
           <Flex gap="16" wrap>
             <Card>
-              <Heading variant="heading-default-m">AI Development</Heading>
-              <Text onBackground="neutral-weak">Custom AI solutions, machine learning models, and intelligent automation systems.</Text>
+              <Heading variant="heading-default-m">AI Systems Development</Heading>
+              <Text onBackground="neutral-weak">Custom AI systems, machine learning models, and intelligent automation solutions.</Text>
             </Card>
             <Card>
               <Heading variant="heading-default-m">Web Development</Heading>
@@ -106,7 +135,7 @@ export default function Home() {
       {/* Timeline Section */}
       <RevealFx delay={0.4} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
         <Column maxWidth="s" gap="m">
-          <Heading variant="display-strong-s">Our Journey</Heading>
+          <Heading as="h2" variant="display-strong-s">Our Journey</Heading>
           <Flex direction="column" gap="12">
             <Card>
               <Heading variant="heading-default-s">2024 - Present</Heading>
@@ -127,7 +156,7 @@ export default function Home() {
       {/* Testimonials Section */}
       <RevealFx delay={0.5} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
         <Column maxWidth="s" gap="m">
-          <Heading variant="display-strong-s">Client Testimonials</Heading>
+          <Heading as="h2" variant="display-strong-s">Client Testimonials</Heading>
           <Flex gap="16" wrap>
             <Card>
               <Text onBackground="neutral-weak">
@@ -148,7 +177,7 @@ export default function Home() {
       {/* Contact Section */}
       <RevealFx delay={0.6} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
         <Column maxWidth="s" gap="m">
-          <Heading variant="display-strong-s">Get In Touch</Heading>
+          <Heading as="h2" variant="display-strong-s">Get In Touch</Heading>
           <Text onBackground="neutral-weak">
             Ready to transform your business with AI? Contact us today.
           </Text>
@@ -160,6 +189,10 @@ export default function Home() {
             <Card>
               <Heading variant="heading-default-s">Phone</Heading>
               <Text onBackground="neutral-weak">+92 344 2693910</Text>
+            </Card>
+            <Card>
+              <Heading variant="heading-default-s">Location</Heading>
+              <Text onBackground="neutral-weak">Gujranwala, Pakistan</Text>
             </Card>
           </Flex>
         </Column>
