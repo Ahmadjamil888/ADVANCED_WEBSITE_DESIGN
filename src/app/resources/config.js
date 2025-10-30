@@ -1,12 +1,13 @@
 // IMPORTANT: Replace with your own domain address - it's used for SEO in meta tags and schema
-const baseURL = "https://dhamia.vercel.app/";
+const baseURL = "https://zehanxtech.vercel.app/";
 
 const routes = {
   "/": true,
   "/about": true,
   "/work": true,
-  "/blog": true,
-  "/gallery": true,
+  "/contact": true,
+  "/blog": false,
+  "/gallery": false,
 };
 
 // Enable password protection on selected routes

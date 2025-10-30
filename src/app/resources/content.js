@@ -1,24 +1,24 @@
 import { Logo } from "@/once-ui/components";
 
 const person = {
-  firstName: "Ahmad",
-  lastName: "Dhami",
+  firstName: "zehanx",
+  lastName: "tech",
   get name() {
-    return `${this.firstName} ${this.lastName}`;
+    return `${this.firstName}${this.lastName}`;
   },
-  role: "Full stack developer",
-  avatar: "https://avatars.githubusercontent.com/u/190023070?s=400&u=71d85456a4eafc54ddf90eb582a1bca21e0ec824&v=4",
-  email: "shazabjamildhami@gmail.com",
+  role: "AI & Web Development Company",
+  avatar: "/logo.jpg",
+  email: "zehanxtech@gmail.com",
   location: "Asia/Karachi", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
   languages: ["English", "Urdu"], // optional: Leave the array empty if you don't want to display languages
 };
 
 const newsletter = {
   display: true,
-  title: <>Subscribe to Ahmad's Newsletter</>,
+  title: <>Subscribe to zehanxtech's Newsletter</>,
   description: (
     <>
-      I occasionally make production level websites, which can be directly used in your projects.
+      We occasionally share insights about AI development, web technologies, and cutting-edge solutions.
     </>
   ),
 };
@@ -34,17 +34,22 @@ const social = [
   {
     name: "LinkedIn",
     icon: "linkedin",
-    link: "https://www.linkedin.com/",
+    link: "https://www.linkedin.com/company/zehanxtech",
   },
   {
-    name: "X",
-    icon: "x",
-    link: "",
+    name: "YouTube",
+    icon: "youtube",
+    link: "https://www.youtube.com/@zehanxtech",
   },
   {
     name: "Email",
     icon: "email",
     link: `mailto:${person.email}`,
+  },
+  {
+    name: "Phone",
+    icon: "phone",
+    link: "tel:+923442693910",
   },
 ];
 
@@ -52,18 +57,18 @@ const home = {
   path: "/",
   image: "/images/og/home.jpg",
   label: "Home",
-  title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Building bridges between design and code</>,
+  title: `${person.name} - AI & Web Development`,
+  description: `zehanxtech - Building AI for Better of Humanity. We specialize in AI solutions, web development, and cutting-edge technology.`,
+  headline: <>Building AI for Better of Humanity</>,
   featured: {
     display: true,
-    title: <>Recent project: <strong className="ml-4">by Ahmad</strong></>,
+    title: <>Recent projects: <strong className="ml-4">by zehanxtech</strong></>,
     href: "https://github.com/Ahmadjamil888?tab=repositories",
   },
   subline: (
     <>
-      I'm Selene, a design engineer at <Logo icon={false} style={{ display: "inline-flex", top: "0.25em", marginLeft: "-0.25em" }}/>, where I craft intuitive
-      <br /> user experiences. After hours, I build my own projects.
+      We're zehanxtech, an AI & Web Development company where we craft intelligent
+      <br /> solutions and cutting-edge web applications for the future.
     </>
   ),
 };
@@ -82,57 +87,50 @@ const about = {
   },
   calendar: {
     display: true,
-    link: "https://cal.com",
+    link: "mailto:zehanxtech@gmail.com",
   },
   intro: {
     display: true,
     title: "Introduction",
     description: (
       <>
-        Hi, I'm {person.firstName}, a passionate full stack developer with a knack for creating
-        seamless user experiences. With a background in software engineering, I specialize in calling
-        the shots on design and development projects, ensuring that every detail is meticulously.
+        Welcome to zehanxtech, where we're passionate about building AI solutions for the betterment of humanity. 
+        We specialize in creating cutting-edge AI applications, modern web development, and innovative digital solutions 
+        that transform businesses and improve lives.
       </>
     ),
   },
   work: {
     display: true, // set to false to hide this section
-    title: "Work Experience",
+    title: "Our Journey",
     experiences: [
       {
-        company: "Aurion softwares",
-        timeframe: "2025 - Present",
-        role: "CEO",
+        company: "zehanxtech",
+        timeframe: "2024 - Present",
+        role: "AI & Web Development Company",
         achievements: [
           <>
-           A member of International Road Transport Chamber of Pakistan,"IRTCoP", contributed as a Blogger for about a month.
+            Founded zehanxtech with a mission to build AI solutions for the betterment of humanity.
           </>,
           <>
-            Spearheaded the integration of AI tools into design workflows, enabling designers to
-            iterate 50% faster.
+            Developed cutting-edge AI applications including chatbots, machine learning models, and intelligent web applications.
+          </>,
+          <>
+            Specialized in modern web development using Next.js, React, and advanced AI integration.
           </>,
         ],
-        images: [
-          // optional: leave the array empty if you don't want to display images
-          {
-            src: "/images/projects/project-01/cover-01.jpg",
-            alt: "Once UI Project",
-            width: 16,
-            height: 9,
-          },
-        ],
+        images: [],
       },
       {
-        company: "Creativ3",
-        timeframe: "2018 - 2022",
-        role: "Lead Designer",
+        company: "Technology Innovation",
+        timeframe: "2023 - 2024",
+        role: "Research & Development",
         achievements: [
           <>
-            Developed a design system that improved team collaboration and reduced design inconsistencies, held by Aurion tech global.
+            Researched and developed AI-powered solutions for various industries including healthcare, finance, and education.
           </>,
           <>
-            Led a cross-functional team to launch a new product line, contributing to a 15% increase
-            in overall company revenue.
+            Built scalable web applications with focus on performance, accessibility, and user experience.
           </>,
         ],
         images: [],
@@ -141,53 +139,45 @@ const about = {
   },
   studies: {
     display: true, // set to false to hide this section
-    title: "Studies",
+    title: "Expertise",
     institutions: [
       {
-        name: "Youtube",
-        description: <>Studied software engineering.</>,
+        name: "Artificial Intelligence",
+        description: <>Advanced AI development, machine learning, and neural networks.</>,
       },
       {
-        name: "Build the Future",
-        description: <>Studied online marketing and personal branding.</>,
+        name: "Web Development",
+        description: <>Modern web technologies, full-stack development, and cloud solutions.</>,
+      },
+      {
+        name: "Digital Innovation",
+        description: <>Cutting-edge technology research and innovative solution development.</>,
       },
     ],
   },
   technical: {
     display: true, // set to false to hide this section
-    title: "Technical skills",
+    title: "Technical Skills",
     skills: [
       {
-        title: "Web Design",
-        description: <>Able to prototype as a web designer at Aurion softwares</>,
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-02.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-          {
-            src: "/images/projects/project-01/cover-03.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-        ],
+        title: "AI & Machine Learning",
+        description: <>Advanced AI development, neural networks, natural language processing, and computer vision solutions.</>,
+        images: [],
       },
       {
-        title: "Next.js/Laravel/React",
-        description: <>Building next gen apps with Next.js, React and Laravel/PHP.</>,
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-04.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-        ],
+        title: "Web Development",
+        description: <>Full-stack development with Next.js, React, Node.js, TypeScript, and modern web technologies.</>,
+        images: [],
+      },
+      {
+        title: "Cloud & DevOps",
+        description: <>Cloud deployment, CI/CD pipelines, containerization, and scalable infrastructure solutions.</>,
+        images: [],
+      },
+      {
+        title: "UI/UX Design",
+        description: <>Modern design systems, user experience optimization, and responsive web design.</>,
+        images: [],
       },
     ],
   },
@@ -204,9 +194,9 @@ const blog = {
 
 const work = {
   path: "/work",
-  label: "Work",
+  label: "Portfolio",
   title: `Projects – ${person.name}`,
-  description: `Design and dev projects by ${person.name}`,
+  description: `AI and web development projects by ${person.name}`,
   // Create new project pages by adding a new .mdx file to app/blog/posts
   // All projects will be listed on the /home and /work routes
 };

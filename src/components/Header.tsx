@@ -8,6 +8,11 @@ import styles from "@/components/Header.module.scss";
 
 import { routes, display } from "@/app/resources";
 import { person, about, blog, work, gallery } from "@/app/resources/content";
+
+const contact = {
+  label: "Contact",
+  path: "/contact"
+};
 import { ThemeToggle } from "./ThemeToggle";
 
 type TimeDisplayProps = {
@@ -144,6 +149,23 @@ export const Header = () => {
                     prefixIcon="gallery"
                     href="/gallery"
                     selected={pathname.startsWith("/gallery")}
+                  />
+                </>
+              )}
+              {routes["/contact"] && (
+                <>
+                  <ToggleButton
+                    className="s-flex-hide"
+                    prefixIcon="email"
+                    href="/contact"
+                    label={contact.label}
+                    selected={pathname.startsWith("/contact")}
+                  />
+                  <ToggleButton
+                    className="s-flex-show"
+                    prefixIcon="email"
+                    href="/contact"
+                    selected={pathname.startsWith("/contact")}
                   />
                 </>
               )}
