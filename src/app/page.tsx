@@ -5,10 +5,13 @@ import { Mailchimp } from "@/components";
 import { baseURL } from "@/app/resources";
 import { home, about, person, newsletter } from "@/app/resources/content";
 import { Schema } from "@/once-ui/modules";
+import Script from "next/script";
 
 export default function Home() {
   return (
-    <Column maxWidth="m" gap="xl" horizontal="center">
+    <>
+      <Script src="https://cdn.tailwindcss.com" />
+      <Column maxWidth="m" gap="xl" horizontal="center">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -211,5 +214,6 @@ export default function Home() {
         </RevealFx>
       )}
     </Column>
+    </>
   );
 }

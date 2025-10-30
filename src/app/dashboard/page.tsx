@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import Script from "next/script";
 
 interface Message {
   id: string;
@@ -195,9 +196,12 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-white">
-        <div className="text-lg text-gray-900">Loading...</div>
-      </div>
+      <>
+        <Script src="https://cdn.tailwindcss.com" />
+        <div className="flex h-screen w-full items-center justify-center bg-white">
+          <div className="text-lg text-gray-900">Loading...</div>
+        </div>
+      </>
     );
   }
 
@@ -208,7 +212,9 @@ export default function Dashboard() {
   // If no model selected, show dashboard overview
   if (!selectedModel) {
     return (
-      <div className="flex h-screen bg-white">
+      <>
+        <Script src="https://cdn.tailwindcss.com" />
+        <div className="flex h-screen bg-white">
         {/* Sidebar */}
         <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white border-r border-gray-200 transition-all duration-300`}>
           <div className="p-4 border-b border-gray-200">
@@ -304,6 +310,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
@@ -311,7 +318,9 @@ export default function Dashboard() {
   const currentModel = aiModels.find(m => m.id === selectedModel);
 
   return (
-    <div className="flex h-screen bg-white">
+    <>
+      <Script src="https://cdn.tailwindcss.com" />
+      <div className="flex h-screen bg-white">
       {/* Chat Interface - Using the exact design you provided */}
       <div className="flex h-full w-full flex-col items-start">
         {/* Header */}
@@ -448,7 +457,7 @@ export default function Dashboard() {
               placeholder="Ask me anything"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             />
             <button 
               disabled={!inputMessage.trim() || isLoading}
@@ -466,5 +475,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
