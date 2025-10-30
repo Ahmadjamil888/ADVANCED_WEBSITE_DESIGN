@@ -242,6 +242,7 @@ export default function DashboardLayout({
             width: 100%;
             flex-direction: column;
             align-items: flex-start;
+            position: relative;
           }
           
           .chat-header {
@@ -354,6 +355,7 @@ export default function DashboardLayout({
             overflow-y: auto;
             padding: 1.5rem;
             width: 100%;
+            padding-bottom: 120px;
           }
           
           .messages-container {
@@ -455,6 +457,10 @@ export default function DashboardLayout({
             gap: 0.75rem;
             padding: 1rem;
             border-top: 1px solid #e5e7eb;
+            background: white;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
           }
           
           .chat-input-container {
@@ -464,9 +470,10 @@ export default function DashboardLayout({
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            border-radius: 9999px;
+            border-radius: 25px;
             background-color: #f3f4f6;
             padding: 0.5rem;
+            border: 1px solid #e5e7eb;
           }
           
           .input-button {
@@ -476,6 +483,11 @@ export default function DashboardLayout({
             border: none;
             cursor: pointer;
             transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            min-height: 32px;
           }
           
           .input-button:hover {
@@ -493,8 +505,10 @@ export default function DashboardLayout({
             background: transparent;
             border: none;
             outline: none;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem;
             color: #374151;
+            font-size: 16px;
+            min-height: 20px;
           }
           
           .chat-input::placeholder {
@@ -502,13 +516,18 @@ export default function DashboardLayout({
           }
           
           .send-button {
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: 50%;
             background-color: #3b82f6;
             color: white;
             border: none;
             cursor: pointer;
             transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
           }
           
           .send-button:hover {

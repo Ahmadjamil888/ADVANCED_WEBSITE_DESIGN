@@ -14,229 +14,244 @@ export default function LoginLayout({
           }
           
           body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f3f4f6;
-            color: #111827;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
           }
           
           .login-container {
-            max-width: 1200px;
-            margin: 2.5rem;
             background: white;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-radius: 0.5rem;
-            display: flex;
-            justify-content: center;
-            flex: 1;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            position: relative;
           }
           
-          .login-form-section {
-            width: 50%;
-            max-width: 416px;
-            padding: 1.5rem 3rem;
+          .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
           }
           
-          .logo-container {
+          .logo-section {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 30px;
           }
           
           .logo {
-            width: 8rem;
-            height: 8rem;
-            border-radius: 0.5rem;
-            margin: 0 auto;
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: block;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
           }
           
-          .form-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+          .brand-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+          }
+          
+          .brand-tagline {
+            font-size: 14px;
+            color: #718096;
           }
           
           .form-title {
-            font-size: 1.875rem;
-            font-weight: 800;
-            margin-bottom: 2rem;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          
+          .oauth-section {
+            margin-bottom: 30px;
           }
           
           .oauth-button {
             width: 100%;
-            max-width: 20rem;
-            font-weight: 700;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            background-color: #e0e7ff;
-            color: #374151;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            color: #4a5568;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 1.25rem;
+            gap: 12px;
+            margin-bottom: 12px;
           }
           
           .oauth-button:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
           }
           
-          .oauth-button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+          .oauth-button:active {
+            transform: translateY(0);
           }
           
           .oauth-icon {
-            background: white;
-            padding: 0.5rem;
-            border-radius: 50%;
-            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
           }
           
           .divider {
-            margin: 3rem 0;
-            border-bottom: 1px solid #e5e7eb;
-            text-align: center;
             position: relative;
+            text-align: center;
+            margin: 30px 0;
+          }
+          
+          .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
           }
           
           .divider-text {
-            line-height: 1;
-            padding: 0 0.5rem;
-            display: inline-block;
-            font-size: 0.875rem;
-            color: #6b7280;
-            font-weight: 500;
             background: white;
-            transform: translateY(50%);
+            padding: 0 20px;
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
           }
           
-          .email-form {
-            margin: 0 auto;
-            max-width: 20rem;
-            width: 100%;
+          .form-group {
+            margin-bottom: 20px;
           }
           
           .form-input {
             width: 100%;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            color: #374151;
-            font-size: 0.875rem;
-            margin-bottom: 1.25rem;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #2d3748;
+            background: #f7fafc;
+            transition: all 0.3s ease;
           }
           
           .form-input:focus {
             outline: none;
-            border-color: #9ca3af;
-            background-color: white;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
           }
           
           .form-input::placeholder {
-            color: #6b7280;
+            color: #a0aec0;
           }
           
           .submit-button {
-            margin-top: 1.25rem;
-            font-weight: 600;
-            background-color: #6366f1;
-            color: #f9fafb;
             width: 100%;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
           }
           
           .submit-button:hover {
-            background-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+          }
+          
+          .submit-button:active {
+            transform: translateY(0);
           }
           
           .submit-button:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
           }
           
-          .submit-button svg {
-            width: 1.5rem;
-            height: 1.5rem;
-            margin-left: -0.5rem;
-            margin-right: 0.75rem;
+          .toggle-section {
+            text-align: center;
+            margin-bottom: 20px;
           }
           
           .toggle-button {
-            color: #6366f1;
-            font-size: 0.875rem;
             background: none;
             border: none;
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            margin-top: 1.5rem;
+            text-decoration: underline;
           }
           
           .toggle-button:hover {
-            color: #4f46e5;
+            color: #764ba2;
           }
           
-          .terms-text {
-            margin-top: 1.5rem;
-            font-size: 0.75rem;
-            color: #6b7280;
+          .terms-section {
             text-align: center;
+            font-size: 12px;
+            color: #718096;
+            line-height: 1.5;
           }
           
           .terms-link {
-            border-bottom: 1px dotted #6b7280;
+            color: #667eea;
             text-decoration: none;
-            color: inherit;
           }
           
-          .background-section {
-            flex: 1;
-            background-color: #e0e7ff;
-            text-align: center;
-            display: none;
+          .terms-link:hover {
+            text-decoration: underline;
           }
           
-          .background-image {
-            margin: 3rem 4rem;
-            width: calc(100% - 8rem);
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: calc(100% - 6rem);
+          .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
           }
           
-          @media (min-width: 1024px) {
-            .background-section {
-              display: flex;
-            }
-            
-            .login-form-section {
-              width: 41.666667%;
-            }
+          @keyframes spin {
+            to { transform: rotate(360deg); }
           }
           
-          @media (max-width: 640px) {
+          @media (max-width: 480px) {
             .login-container {
-              margin: 0;
-              border-radius: 0;
+              padding: 30px 20px;
+              margin: 10px;
             }
             
-            .login-form-section {
-              width: 100%;
-              padding: 1.5rem;
+            .form-title {
+              font-size: 24px;
             }
           }
         `}</style>
