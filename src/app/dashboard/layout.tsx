@@ -6,6 +6,9 @@ export default function DashboardLayout({
   return (
     <html lang="en">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Dashboard - zehanxtech</title>
         <style>{`
           * {
             margin: 0;
@@ -13,18 +16,35 @@ export default function DashboardLayout({
             box-sizing: border-box;
           }
           
+          html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+          }
+          
           body {
             font-family: Arial, Helvetica, sans-serif;
             background-color: white;
             color: #111827;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
           }
           
           .dashboard-container {
             display: flex;
             height: 100vh;
+            width: 100vw;
             background: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
           }
           
           .sidebar {
