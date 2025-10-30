@@ -196,8 +196,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-white">
-        <div className="text-lg text-gray-900">Loading...</div>
+      <div className="loading-container">
+        <div className="loading-text">Loading...</div>
       </div>
     );
   }
@@ -209,39 +209,39 @@ export default function Dashboard() {
   // If no model selected, show dashboard overview
   if (!selectedModel) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="dashboard-container">
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white border-r border-gray-200 transition-all duration-300`}>
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center gap-3">
-              <img src="/logo.jpg" alt="zehanx AI" className="w-8 h-8 rounded" />
+        <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+          <div className="sidebar-header">
+            <div className="sidebar-brand">
+              <img src="/logo.jpg" alt="zehanx AI" className="sidebar-logo" />
               {sidebarOpen && (
                 <div>
-                  <h2 className="font-semibold text-gray-900">zehanx AI</h2>
-                  <p className="text-sm text-gray-500">Dashboard</p>
+                  <h2 className="sidebar-title">zehanx AI</h2>
+                  <p className="sidebar-subtitle">Dashboard</p>
                 </div>
               )}
             </div>
           </div>
           
-          <div className="p-4">
+          <div className="sidebar-menu">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="menu-button"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
               {sidebarOpen && <span>Menu</span>}
             </button>
           </div>
 
-          <div className="px-4 pb-4">
+          <div style={{ padding: '0 1rem 1rem 1rem' }}>
             <button
               onClick={signOut}
-              className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="sign-out-button"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
               {sidebarOpen && <span>Sign Out</span>}
@@ -250,53 +250,53 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-8">
+        <div className="main-content">
+          <div className="dashboard-content">
             {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to zehanx AI</h1>
-              <p className="text-gray-600">Choose an AI model to get started</p>
+            <div className="dashboard-header">
+              <h1 className="dashboard-title">Welcome to zehanx AI</h1>
+              <p className="dashboard-subtitle">Choose an AI model to get started</p>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Total Requests</h3>
-                <p className="text-2xl font-bold text-gray-900">{userStats.totalRequests}</p>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <h3 className="stat-title">Total Requests</h3>
+                <p className="stat-value">{userStats.totalRequests}</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Daily Requests</h3>
-                <p className="text-2xl font-bold text-gray-900">{userStats.dailyRequests}</p>
+              <div className="stat-card">
+                <h3 className="stat-title">Daily Requests</h3>
+                <p className="stat-value">{userStats.dailyRequests}</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Monthly Requests</h3>
-                <p className="text-2xl font-bold text-gray-900">{userStats.monthlyRequests}</p>
+              <div className="stat-card">
+                <h3 className="stat-title">Monthly Requests</h3>
+                <p className="stat-value">{userStats.monthlyRequests}</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Plan</h3>
-                <p className="text-2xl font-bold text-gray-900">{userStats.isPremium ? "Pro" : "Free"}</p>
+              <div className="stat-card">
+                <h3 className="stat-title">Plan</h3>
+                <p className="stat-value">{userStats.isPremium ? "Pro" : "Free"}</p>
               </div>
             </div>
 
             {/* AI Models Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="models-grid">
               {aiModels.map((model) => (
                 <div
                   key={model.id}
                   onClick={() => setSelectedModel(model.id)}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all cursor-pointer hover:border-blue-300"
+                  className="model-card"
                 >
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="text-3xl">{model.icon}</span>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{model.name}</h3>
-                      <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                  <div className="model-header">
+                    <span className="model-icon">{model.icon}</span>
+                    <div className="model-info">
+                      <h3>{model.name}</h3>
+                      <span className="model-category">
                         {model.category}
                       </span>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-sm mb-4">{model.description}</p>
-                  <div className="text-xs text-gray-500">
+                  <p className="model-description">{model.description}</p>
+                  <div className="model-footer">
                     Powered by zehanx AI
                   </div>
                 </div>
@@ -312,82 +312,81 @@ export default function Dashboard() {
   const currentModel = aiModels.find(m => m.id === selectedModel);
 
   return (
-    <div className="flex h-screen bg-white">
-      {/* Chat Interface - Using the exact design you provided */}
-      <div className="flex h-full w-full flex-col items-start">
-        {/* Header */}
-        <div className="w-full border-b border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSelectedModel(null)}
-                className="text-blue-600 hover:text-blue-800 text-sm"
-              >
-                ← Back to Dashboard
-              </button>
-              <span className="text-lg font-semibold text-gray-900">{currentModel?.name}</span>
-            </div>
+    <div className="chat-container">
+      {/* Header */}
+      <div className="chat-header">
+        <div className="chat-header-content">
+          <div className="chat-nav">
             <button
-              onClick={signOut}
-              className="text-red-600 hover:text-red-800 text-sm"
+              onClick={() => setSelectedModel(null)}
+              className="back-button"
             >
-              Sign Out
+              ← Back to Dashboard
             </button>
+            <span className="chat-title">{currentModel?.name}</span>
           </div>
+          <button
+            onClick={signOut}
+            className="back-button"
+            style={{ color: '#dc2626' }}
+          >
+            Sign Out
+          </button>
         </div>
+      </div>
 
         {messages.length === 0 ? (
           /* Welcome Screen */
-          <div className="flex w-full grow shrink-0 basis-0 flex-col items-center justify-center gap-4 bg-white px-6 py-6">
-            <div className="flex flex-col items-center justify-center gap-12">
+          <div className="welcome-screen">
+            <div className="welcome-content">
               <img
-                className="h-12 w-12 flex-none object-cover rounded-lg"
+                className="welcome-logo"
                 src="/logo.jpg"
                 alt="zehanx AI"
               />
-              <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="suggestions-grid">
                 <div 
-                  className="flex w-40 flex-none flex-col items-start gap-4 self-stretch rounded-md border border-solid border-gray-200 bg-white px-4 py-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                  className="suggestion-card"
                   onClick={() => setInputMessage("Create an image for my slide deck")}
                 >
-                  <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="suggestion-icon" style={{ color: '#3b82f6' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className="line-clamp-2 w-full text-sm text-gray-600">
+                  <span className="suggestion-text">
                     Create an image for my slide deck
                   </span>
                 </div>
                 <div 
-                  className="flex w-40 flex-none flex-col items-start gap-4 self-stretch rounded-md border border-solid border-gray-200 bg-white px-4 py-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                  className="suggestion-card"
                   onClick={() => setInputMessage("Thank my interviewer")}
                 >
-                  <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="suggestion-icon" style={{ color: '#ef4444' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
-                  <span className="line-clamp-2 w-full text-sm text-gray-600">
+                  <span className="suggestion-text">
                     Thank my interviewer
                   </span>
                 </div>
                 <div 
-                  className="flex w-40 flex-none flex-col items-start gap-4 self-stretch rounded-md border border-solid border-gray-200 bg-white px-4 py-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                  className="suggestion-card"
                   onClick={() => setInputMessage("Plan a relaxing day")}
                 >
-                  <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="suggestion-icon" style={{ color: '#eab308' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
-                  <span className="line-clamp-2 w-full text-sm text-gray-600">
+                  <span className="suggestion-text">
                     Plan a relaxing day
                   </span>
                 </div>
                 <div 
-                  className="flex w-40 flex-none flex-col items-start gap-4 self-stretch rounded-md border border-solid border-gray-200 bg-white px-4 py-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                  className="suggestion-card"
                   onClick={() => setInputMessage("Explain nostalgia like I'm 5")}
                 >
-                  <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="suggestion-icon" style={{ color: '#22c55e' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                   </svg>
-                  <span className="line-clamp-2 w-full text-sm text-gray-600">
+                  <span className="suggestion-text">
                     Explain nostalgia like I'm 5
                   </span>
                 </div>
@@ -396,37 +395,31 @@ export default function Dashboard() {
           </div>
         ) : (
           /* Chat Messages */
-          <div className="flex-1 overflow-y-auto p-6 w-full">
-            <div className="max-w-4xl mx-auto space-y-4">
+          <div className="chat-messages">
+            <div className="messages-container">
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}
+                  className={`message ${message.isUser ? "user" : "ai"}`}
                 >
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      message.isUser
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 border border-gray-200 text-gray-900"
-                    }`}
+                    className={`message-bubble ${message.isUser ? "user" : "ai"}`}
                   >
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-                    <p className="text-xs mt-1 opacity-70">
+                    <p className="message-text">{message.text}</p>
+                    <p className="message-time">
                       {message.timestamp.toLocaleTimeString()}
                     </p>
                   </div>
                 </div>
               ))}
               {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 border border-gray-200 text-gray-900 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
-                      </div>
-                      <span className="text-sm text-gray-500">Thinking...</span>
+                <div className="typing-indicator">
+                  <div className="typing-bubble">
+                    <div className="typing-dots">
+                      <div className="typing-dot"></div>
+                      <div className="typing-dot"></div>
+                      <div className="typing-dot"></div>
+                      <span className="typing-text">Thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -436,16 +429,16 @@ export default function Dashboard() {
         )}
 
         {/* Input Area */}
-        <div className="flex w-full flex-col items-center justify-center gap-3 px-4 py-4 border-t border-gray-200">
-          <div className="flex w-full max-w-[768px] items-center justify-center gap-2 rounded-full bg-gray-100 px-2 py-2">
-            <button className="p-2 rounded-full hover:bg-gray-200 transition-colors">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="chat-input-area">
+          <div className="chat-input-container">
+            <button className="input-button">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.586-6.586a2 2 0 00-2.828-2.828z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
               </svg>
             </button>
             <input
-              className="h-auto grow shrink-0 basis-0 bg-transparent border-none outline-none px-4 py-2 text-gray-700 placeholder-gray-500"
+              className="chat-input"
               placeholder="Ask me anything"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
@@ -454,18 +447,17 @@ export default function Dashboard() {
             <button 
               disabled={!inputMessage.trim() || isLoading}
               onClick={() => handleSendMessage()}
-              className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="send-button"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
             </button>
           </div>
-          <span className="text-xs text-gray-500">
+          <span className="chat-disclaimer">
             zehanx AI can make mistakes. Check important info.
           </span>
         </div>
-      </div>
     </div>
   );
 }
