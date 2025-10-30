@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Initialize Gemini AI
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-    const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" })
 
     // Customize the prompt based on the model
     let systemPrompt = ''
@@ -80,6 +80,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Service temporarily unavailable. Please try again later.' },
         { status: 429 }
+      )
+    }
+    
+    if (error.message?.includes('404') || error.message?.includes('not found')) {
+      return NextResponse.json(
+        { error: 'AI model temporarily unavailable. Please try again later.' },
+        { status: 503 }
       )
     }
     

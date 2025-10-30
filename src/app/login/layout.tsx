@@ -4,15 +4,16 @@ export default function LoginLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Login - zehanxtech</title>
-      </head>
-      <body style={{ margin: 0, padding: 0, height: '100vh', overflow: 'hidden' }}>
-        {children}
-      </body>
-    </html>
+    <div style={{ 
+      position: 'fixed', 
+      top: 0, 
+      left: 0, 
+      width: '100vw', 
+      height: '100vh', 
+      zIndex: 9999,
+      background: 'white'
+    }}>
+      {children}
+    </div>
   )
 }

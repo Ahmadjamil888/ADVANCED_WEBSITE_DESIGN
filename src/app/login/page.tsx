@@ -105,7 +105,7 @@ export default function LoginPage() {
         }
         
         .login-card {
-          background: rgba(255, 255, 255, 0.95);
+          background: rgba(255, 255, 255, 1);
           backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 48px 40px;
@@ -170,7 +170,7 @@ export default function LoginPage() {
           padding: 16px 20px;
           border: 2px solid rgba(226, 232, 240, 0.8);
           border-radius: 16px;
-          background: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 1);
           color: #2d3748;
           font-size: 15px;
           font-weight: 600;
@@ -228,7 +228,7 @@ export default function LoginPage() {
           border-radius: 16px;
           font-size: 15px;
           color: #1a202c;
-          background: rgba(247, 250, 252, 0.8);
+          background: rgba(255, 255, 255, 1);
           transition: all 0.3s ease;
           backdrop-filter: blur(5px);
           margin-bottom: 16px;
