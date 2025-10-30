@@ -4,12 +4,9 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Dashboard - zehanxtech</title>
-        <style>{`
+    <>
+      <style dangerouslySetInnerHTML={{
+        __html: `
           * {
             margin: 0;
             padding: 0;
@@ -578,9 +575,11 @@ export default function DashboardLayout({
               max-width: 24rem;
             }
           }
-        `}</style>
-      </head>
-      <body>{children}</body>
-    </html>
+        `
+      }} />
+      <div style={{ height: '100vh', width: '100vw', position: 'fixed', top: 0, left: 0, zIndex: 9999, background: 'white' }}>
+        {children}
+      </div>
+    </>
   )
 }
