@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
+
 
 export default function ChatRedirect() {
   const { user, loading } = useAuth();
@@ -20,11 +20,8 @@ export default function ChatRedirect() {
   }, [user, loading, router]);
 
   return (
-    <>
-      <Script src="https://cdn.tailwindcss.com" />
-      <div className="flex h-screen w-full items-center justify-center bg-white">
-        <div className="text-lg text-gray-900">Redirecting...</div>
-      </div>
-    </>
+    <div className="flex h-screen w-full items-center justify-center bg-white">
+      <div className="text-lg text-gray-900">Redirecting...</div>
+    </div>
   );
 }

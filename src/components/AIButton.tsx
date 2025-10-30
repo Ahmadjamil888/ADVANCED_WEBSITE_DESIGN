@@ -1,9 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
 
 export const AIButton: React.FC = () => {
+  const handleClick = () => {
+    window.open('/login', '_blank');
+  };
+
   return (
-    <Link href="/chat">
+    <div onClick={handleClick}>
       <div 
         className="outer-cont flex"
         style={{
@@ -47,6 +50,6 @@ export const AIButton: React.FC = () => {
         </svg>
         Ask zehanx AI
       </div>
-    </Link>
+    </div>
   );
 };

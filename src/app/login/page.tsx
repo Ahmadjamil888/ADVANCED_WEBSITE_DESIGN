@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import Script from 'next/script'
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -17,10 +17,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      // Open dashboard in new window/tab
-      window.open('/dashboard', '_blank')
-      // Or redirect in same window
-      // router.push('/dashboard')
+      // Redirect to dashboard in same window
+      router.push('/dashboard')
     }
   }, [user, router])
 
@@ -86,9 +84,7 @@ export default function LoginPage() {
   }
 
   return (
-    <>
-      <Script src="https://cdn.tailwindcss.com" />
-      <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
+    <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
       <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
           <div>
@@ -228,6 +224,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-    </>
   )
 }

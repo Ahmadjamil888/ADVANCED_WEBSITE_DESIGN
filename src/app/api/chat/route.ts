@@ -67,8 +67,24 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('Chat API error:', error)
+    
+    // More specific error messages
+    if (error.message?.includes('API key')) {
+      return NextResponse.json(
+        { error: 'API configuration error. Please contact support.' },
+        { status: 500 }
+      )
+    }
+    
+    if (error.message?.includes('quota') || error.message?.includes('limit')) {
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable. Please try again later.' },
+        { status: 429 }
+      )
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to process your request. Please try again.' },
+      { error: `AI service error: ${error.message || 'Unknown error'}` },
       { status: 500 }
     )
   }
