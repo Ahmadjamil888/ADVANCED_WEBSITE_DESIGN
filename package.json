@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.21.0",
     "@floating-ui/react-dom": "^2.1.2",
+    "@google/generative-ai": "^0.24.1",
     "@mdx-js/loader": "^3.1.0",
     "@next/mdx": "^15.3.1",
     "@supabase/auth-ui-react": "^0.4.7",
@@ -21,7 +22,6 @@
     "gray-matter": "^4.0.3",
     "next": "^15.3.1",
     "next-mdx-remote": "^5.0.0",
-    "postcss": "^8.5.3",
     "postcss-preset-env": "^9.6.0",
     "prismjs": "^1.30.0",
     "react": "19.0.0",
@@ -39,9 +39,12 @@
     "@types/node": "^20.17.30",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.25.0",
+    "postcss": "^8.5.6",
     "postcss-custom-media": "^10.0.8",
     "postcss-flexbugs-fixes": "^5.0.2",
+    "tailwindcss": "^4.1.16",
     "typescript": "^5.8.3"
   }
 }

@@ -32,6 +32,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -48,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false)
 
       // Create user record in our users table if it doesn't exist
-      if (event === 'SIGNED_IN' && session?.user) {
+      if (event === 'SIGNED_IN' && session?.user && supabase) {
         const { data: existingUser } = await supabase
           .from('users')
           .select('id')
@@ -69,7 +74,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    if (supabase) {
+      await supabase.auth.signOut()
+    }
   }
 
   const value = {

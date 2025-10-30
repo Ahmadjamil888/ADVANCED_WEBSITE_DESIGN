@@ -16,12 +16,20 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/dashboard')
+      // Open dashboard in new window/tab
+      window.open('/dashboard', '_blank')
+      // Or redirect in same window
+      // router.push('/dashboard')
     }
   }, [user, router])
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!supabase) {
+      alert('Authentication service is not available')
+      return
+    }
+    
     setLoading(true)
 
     try {
@@ -47,6 +55,11 @@ export default function LoginPage() {
   }
 
   const handleGoogleAuth = async () => {
+    if (!supabase) {
+      alert('Authentication service is not available')
+      return
+    }
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -57,6 +70,11 @@ export default function LoginPage() {
   }
 
   const handleGitHubAuth = async () => {
+    if (!supabase) {
+      alert('Authentication service is not available')
+      return
+    }
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {

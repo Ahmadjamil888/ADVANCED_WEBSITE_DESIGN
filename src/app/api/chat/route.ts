@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 
@@ -10,89 +11,52 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message and model are required' }, { status: 400 })
     }
 
+    if (!GEMINI_API_KEY) {
+      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 })
+    }
+
+    // Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
+    const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+
     // Customize the prompt based on the model
     let systemPrompt = ''
     switch (model) {
       case 'assistant':
-        systemPrompt = 'You are zehanx AI, a helpful AI assistant created by zehanxtech. Provide helpful, accurate, and friendly responses.'
+        systemPrompt = 'You are zehanx AI, a helpful AI assistant created by zehanxtech. Provide helpful, accurate, and friendly responses without using asterisks or markdown formatting.'
         break
       case 'quiz':
-        systemPrompt = 'You are zehanx AI Quiz Generator. Create educational quizzes, questions, and learning materials. Format your responses clearly with questions and answers.'
+        systemPrompt = 'You are zehanx AI Quiz Generator. Create educational quizzes, questions, and learning materials. Format your responses clearly with questions and answers without using asterisks or markdown formatting.'
         break
       case 'helper':
-        systemPrompt = 'You are zehanx AI Helper. Assist users with various tasks, provide step-by-step guidance, and offer practical solutions.'
+        systemPrompt = 'You are zehanx AI Helper. Assist users with various tasks, provide step-by-step guidance, and offer practical solutions without using asterisks or markdown formatting.'
         break
       case 'image-analyzer':
-        systemPrompt = 'You are zehanx AI Image Analyzer. Help users understand and analyze images. If no image is provided, explain what you can do with image analysis.'
+        systemPrompt = 'You are zehanx AI Image Analyzer. Help users understand and analyze images. If no image is provided, explain what you can do with image analysis without using asterisks or markdown formatting.'
         break
       case 'researcher':
-        systemPrompt = 'You are zehanx AI Researcher. Provide detailed research, analysis, and insights on topics. Use reliable information and cite sources when possible.'
+        systemPrompt = 'You are zehanx AI Researcher. Provide detailed research, analysis, and insights on topics. Use reliable information and cite sources when possible without using asterisks or markdown formatting.'
         break
       case 'doc-maker':
-        systemPrompt = 'You are zehanx AI Doc Maker. Help create, format, and structure documents. Provide well-organized content with proper formatting.'
+        systemPrompt = 'You are zehanx AI Doc Maker. Help create, format, and structure documents. Provide well-organized content with proper formatting without using asterisks or markdown formatting.'
         break
       default:
-        systemPrompt = 'You are zehanx AI, a helpful AI assistant created by zehanxtech.'
+        systemPrompt = 'You are zehanx AI, a helpful AI assistant created by zehanxtech without using asterisks or markdown formatting.'
     }
 
-    const fullPrompt = `${systemPrompt}\n\nUser: ${message}\n\nAssistant:`
+    const fullPrompt = `${systemPrompt}\n\nUser: ${message}\n\nPlease respond in plain text without any asterisks, bold formatting, or markdown. Keep your response clean and readable.`
 
-    // Call Gemini API
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: fullPrompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`)
-    }
-
-    const data = await response.json()
-    
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      throw new Error('Invalid response from Gemini API')
-    }
-
-    const aiResponse = data.candidates[0].content.parts[0].text
+    // Generate content using Gemini
+    const result = await geminiModel.generateContent(fullPrompt)
+    const response = await result.response
+    const aiResponse = response.text()
 
     // Clean up the response to remove any asterisks or unwanted formatting
     const cleanResponse = aiResponse
       .replace(/\*\*/g, '') // Remove bold markdown
       .replace(/\*/g, '') // Remove italic markdown
       .replace(/#{1,6}\s/g, '') // Remove markdown headers
+      .replace(/`{1,3}/g, '') // Remove code blocks
       .trim()
 
     return NextResponse.json({ 
