@@ -8,6 +8,7 @@ import styles from "@/components/Header.module.scss";
 
 import { routes, display } from "@/app/resources";
 import { person, about, blog, work, gallery } from "@/app/resources/content";
+import { AIButton } from "./AIButton";
 
 const contact = {
   label: "Contact",
@@ -186,6 +187,7 @@ export const Header = () => {
             textVariant="body-default-s"
             gap="20"
           >
+            <AIButton />
             <Flex hide="s">{display.time && <TimeDisplay timeZone={person.location} />}</Flex>
           </Flex>
         </Flex>

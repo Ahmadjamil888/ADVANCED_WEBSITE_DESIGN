@@ -9,6 +9,7 @@ import { baseURL, effects, style, font, home } from "@/app/resources";
 import { Background, Column, Flex, ThemeProvider, ToastProvider } from "@/once-ui/components";
 import { opacity, SpacingToken } from "@/once-ui/types";
 import { Meta } from "@/once-ui/modules";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export async function generateMetadata() {
   return {
@@ -210,7 +211,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       </head>
       <ThemeProvider>
         <ToastProvider>
-          <Column style={{ minHeight: "100vh" }} as="body" fillWidth margin="0" padding="0">
+          <AuthProvider>
+            <Column style={{ minHeight: "100vh" }} as="body" fillWidth margin="0" padding="0">
             <Background
               position="fixed"
               mask={{
@@ -268,6 +270,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             </Flex>
             <Footer />
           </Column>
+          </AuthProvider>
         </ToastProvider>
       </ThemeProvider>
     </Flex>
