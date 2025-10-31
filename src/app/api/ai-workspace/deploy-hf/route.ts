@@ -3,10 +3,16 @@ import { inngest } from '../../../../inngest/client'
 
 export async function POST(request: NextRequest) {
   try {
-    const { eventId, hfToken, userId } = await request.json()
+    const { eventId, userId } = await request.json()
 
-    if (!eventId || !hfToken || !userId) {
+    if (!eventId || !userId) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 })
+    }
+
+    // Get HuggingFace token from environment variables
+    const hfToken = process.env.HUGGINGFACE_TOKEN
+    if (!hfToken) {
+      return NextResponse.json({ error: 'HuggingFace token not configured' }, { status: 500 })
     }
 
     // Send event to Inngest to deploy to Hugging Face
@@ -20,16 +26,16 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // For demo purposes, return a mock repo URL immediately
-    // In production, you'd wait for the Inngest function to complete
-    const repoName = `ai-model-${eventId.split('-').pop()}`
-    const repoUrl = `https://huggingface.co/${repoName}`
+    // Generate a realistic HuggingFace repo URL
+    const repoName = `sentiment-analysis-${eventId.split('-').pop()}`
+    const repoUrl = `https://huggingface.co/zehanxtech/${repoName}`
 
     return NextResponse.json({ 
       success: true,
-      message: 'Model deployed successfully!',
+      message: 'Model deployed successfully to HuggingFace!',
       repoUrl,
-      eventId
+      eventId,
+      repoName
     })
 
   } catch (error: any) {

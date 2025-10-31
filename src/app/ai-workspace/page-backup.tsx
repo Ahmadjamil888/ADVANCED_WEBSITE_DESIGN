@@ -87,7 +87,7 @@ export default function AIWorkspace() {
         .from('chats')
         .insert({
           user_id: user.id,
-          title: 'New AI Model',
+          title: 'New Chat',
           mode: 'models'
         })
         .select()
@@ -103,7 +103,8 @@ export default function AIWorkspace() {
     }
   };
 
-  const deleteChat = async (chatId: string) => {
+  const deleteChat = async (chatId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!supabase) return;
 
     try {
@@ -113,8 +114,14 @@ export default function AIWorkspace() {
       setChats(prev => prev.filter(chat => chat.id !== chatId));
       
       if (currentChat?.id === chatId) {
-        setCurrentChat(null);
-        setMessages([]);
+        const remainingChats = chats.filter(chat => chat.id !== chatId);
+        if (remainingChats.length > 0) {
+          setCurrentChat(remainingChats[0]);
+          loadMessages(remainingChats[0].id);
+        } else {
+          setCurrentChat(null);
+          setMessages([]);
+        }
       }
     } catch (error) {
       console.error('Error deleting chat:', error);
@@ -125,10 +132,36 @@ export default function AIWorkspace() {
     if (!supabase || !user || isLoading) return;
 
     // Create a new chat if none exists
-    if (!currentChat) {
-      await createNewChat();
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (!currentChat) return;
+    let chatToUse = currentChat;
+    if (!chatToUse) {
+      try {
+        const { data, error } = await supabase
+          .from('chats')
+          .insert({
+            user_id: user.id,
+            title: content.slice(0, 50) + (content.length > 50 ? '...' : ''),
+            mode: 'models'
+          })
+          .select()
+          .single();
+
+        if (data && !error) {
+          chatToUse = data;
+          setChats(prev => [data, ...prev]);
+          setCurrentChat(data);
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.error('Error creating chat:', error);
+        return;
+      }
+    }
+
+    // Ensure we have a valid chat before proceeding
+    if (!chatToUse) {
+      console.error('Failed to create or get chat');
+      return;
     }
 
     setIsLoading(true);
@@ -143,7 +176,7 @@ export default function AIWorkspace() {
 
     try {
       await supabase.from('messages').insert({
-        chat_id: currentChat.id,
+        chat_id: chatToUse.id,
         role: 'user',
         content
       });
@@ -152,9 +185,9 @@ export default function AIWorkspace() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chatId: currentChat.id,
+          chatId: chatToUse.id,
           prompt: content,
-          mode: currentChat.mode,
+          mode: chatToUse.mode,
           userId: user.id
         })
       });
@@ -176,7 +209,7 @@ export default function AIWorkspace() {
       setMessages(prev => [...prev, aiMessage]);
 
       await supabase.from('messages').insert({
-        chat_id: currentChat.id,
+        chat_id: chatToUse.id,
         role: 'assistant',
         content: data.response,
         tokens_used: data.tokens_used,
@@ -185,7 +218,7 @@ export default function AIWorkspace() {
 
       if (data.eventId && data.status === 'processing') {
         setPendingModels(prev => new Set(prev).add(data.eventId));
-        setTimeout(() => pollModelStatus(data.eventId), 5000);
+        setTimeout(() => pollModelStatus(data.eventId, chatToUse.id), 5000);
       }
 
     } catch (error: any) {
@@ -202,7 +235,7 @@ export default function AIWorkspace() {
     }
   };
 
-  const pollModelStatus = async (eventId: string) => {
+  const pollModelStatus = async (eventId: string, chatId: string) => {
     try {
       const response = await fetch(`/api/ai-workspace/status/${eventId}`);
       const data = await response.json();
@@ -214,43 +247,40 @@ export default function AIWorkspace() {
           return newSet;
         });
 
-        // Auto-deploy to Hugging Face using env token
-        if (process.env.HUGGINGFACE_TOKEN) {
-          const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              eventId,
-              hfToken: process.env.HUGGINGFACE_TOKEN,
-              userId: user?.id
-            })
-          });
+        // Deploy to Hugging Face using user's token from env
+        const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            userId: user?.id
+          })
+        });
 
-          const deployData = await deployResponse.json();
+        const deployData = await deployResponse.json();
+        
+        if (deployData.success) {
+          const completionMessage: Message = {
+            id: `completion-${eventId}`,
+            role: 'assistant',
+            content: `# 🎉 **${data.model.name} - Ready & Deployed!**\n\nYour AI model has been successfully generated and deployed to Hugging Face!\n\n🔗 **Live Model URL:** [${deployData.repoUrl}](${deployData.repoUrl})\n\n## 📊 **Model Details**\n- **Name:** ${data.model.name}\n- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}\n- **Framework:** ${data.model.framework.toUpperCase()}\n- **Dataset:** ${data.model.dataset}\n- **Status:** ✅ Live on Hugging Face\n\n🚀 Your model is now accessible worldwide and ready for production use!`,
+            created_at: new Date().toISOString(),
+            eventId: eventId
+          };
           
-          if (deployData.success) {
-            const completionMessage: Message = {
-              id: `completion-${eventId}`,
-              role: 'assistant',
-              content: `# 🎉 **${data.model.name} - Ready & Deployed!**\n\nYour AI model has been successfully generated and deployed to Hugging Face!\n\n🔗 **Live Model URL:** [${deployData.repoUrl}](${deployData.repoUrl})\n\n## 📊 **Model Details**\n- **Name:** ${data.model.name}\n- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}\n- **Framework:** ${data.model.framework.toUpperCase()}\n- **Dataset:** ${data.model.dataset}\n- **Status:** ✅ Live on Hugging Face\n\n🚀 Your model is now accessible worldwide and ready for production use!`,
-              created_at: new Date().toISOString(),
-              eventId: eventId
-            };
-            
-            setMessages(prev => [...prev, completionMessage]);
+          setMessages(prev => [...prev, completionMessage]);
 
-            if (supabase && currentChat) {
-              await supabase.from('messages').insert({
-                chat_id: currentChat.id,
-                role: 'assistant',
-                content: completionMessage.content,
-                model_used: 'zehanx-ai-builder'
-              });
-            }
+          if (supabase) {
+            await supabase.from('messages').insert({
+              chat_id: chatId,
+              role: 'assistant',
+              content: completionMessage.content,
+              model_used: 'zehanx-ai-builder'
+            });
           }
         }
       } else {
-        setTimeout(() => pollModelStatus(eventId), 3000);
+        setTimeout(() => pollModelStatus(eventId, chatId), 3000);
       }
     } catch (error) {
       console.error('Error polling model status:', error);
@@ -259,6 +289,15 @@ export default function AIWorkspace() {
         newSet.delete(eventId);
         return newSet;
       });
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
     }
   };
 
@@ -280,7 +319,7 @@ export default function AIWorkspace() {
   return (
     <div className="flex h-screen bg-white">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-900 text-white flex flex-col">
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-gray-900 text-white flex flex-col overflow-hidden`}>
         {/* Header */}
         <div className="p-4 border-b border-gray-700">
           <button
@@ -314,14 +353,11 @@ export default function AIWorkspace() {
                 <span className="text-sm truncate">{chat.title}</span>
               </div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteChat(chat.id);
-                }}
+                onClick={(e) => deleteChat(chat.id, e)}
                 className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-700 rounded transition-opacity"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -330,7 +366,7 @@ export default function AIWorkspace() {
 
         {/* User Section */}
         <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center space-x-3 mb-3">
+          <div className="flex items-center space-x-3">
             <img
               src={user.user_metadata?.avatar_url || '/logo.jpg'}
               alt="User"
@@ -342,38 +378,58 @@ export default function AIWorkspace() {
             </div>
           </div>
         </div>
-      </div>   
-   {/* Main Content */}
+      </div>
+
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Header with Sign Out */}
+        {/* Top Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <h1 className="text-lg font-semibold text-gray-900">
-              {currentChat?.title || 'AI Model Generator'}
+              {currentChat?.title || 'ChatGPT'}
             </h1>
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
           
-          <button
-            onClick={async () => {
-              try {
-                await signOut();
-                router.push('/login');
-              } catch (error) {
-                console.error('Sign out error:', error);
-              }
-            }}
-            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <img
-              src={user.user_metadata?.avatar_url || '/logo.jpg'}
-              alt="User"
-              className="w-6 h-6 rounded-full"
-            />
-            <span>Sign out</span>
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <img
+                src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                alt="User"
+                className="w-8 h-8 rounded-full"
+              />
+            </button>
+            
+            {showProfileMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                <div className="py-1">
+                  <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                    <div className="font-medium">{user.email}</div>
+                    <div className="text-gray-500">AI Builder</div>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Chat Messages */}
@@ -392,7 +448,7 @@ export default function AIWorkspace() {
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-green-600">🎯</span>
-                      <span className="font-medium text-gray-900">Create model</span>
+                      <span className="font-medium text-gray-900">Create image</span>
                     </div>
                     <p className="text-sm text-gray-600">Sentiment analysis with BERT</p>
                   </button>
@@ -469,7 +525,7 @@ export default function AIWorkspace() {
                         {message.content}
                       </div>
                       
-                      {message.role === 'assistant' && message.eventId && message.content.includes('Generation Complete') && (
+                      {message.role === 'assistant' && (
                         <div className="mt-4 flex space-x-2">
                           <button className="text-gray-400 hover:text-gray-600 p-1">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -537,28 +593,27 @@ export default function AIWorkspace() {
           )}
         </div>
 
-        {/* Input Section */}
+        {/* Input Area */}
         <div className="border-t border-gray-200 p-4">
           <div className="max-w-3xl mx-auto">
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <textarea
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Message zehanx AI..."
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={1}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      if (inputValue.trim() && !isLoading) {
-                        sendMessage(inputValue.trim());
-                        setInputValue('');
-                      }
+            <div className="relative">
+              <textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (inputValue.trim() && !isLoading) {
+                      sendMessage(inputValue.trim());
+                      setInputValue('');
                     }
-                  }}
-                />
-              </div>
+                  }
+                }}
+                placeholder="Message ChatGPT"
+                className="w-full resize-none border border-gray-300 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={1}
+                style={{ minHeight: '52px', maxHeight: '200px' }}
+              />
               <button
                 onClick={() => {
                   if (inputValue.trim() && !isLoading) {
@@ -567,16 +622,31 @@ export default function AIWorkspace() {
                   }
                 }}
                 disabled={!inputValue.trim() || isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed rounded-lg transition-colors"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </button>
             </div>
+            <div className="flex items-center justify-center mt-2 space-x-4 text-xs text-gray-500">
+              <button className="hover:text-gray-700">📷 Create image</button>
+              <button className="hover:text-gray-700">✏️ Help me write</button>
+              <button className="hover:text-gray-700">📄 Summarize text</button>
+              <button className="hover:text-gray-700">💻 Code</button>
+              <button className="hover:text-gray-700">💡 Brainstorm</button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Click outside to close profile menu */}
+      {showProfileMenu && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setShowProfileMenu(false)}
+        />
+      )}
     </div>
   );
 }
