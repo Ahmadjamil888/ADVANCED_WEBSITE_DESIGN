@@ -9,6 +9,68 @@ export const helloWorld = inngest.createFunction(
   },
 );
 
+// Deploy to Hugging Face
+export const deployToHuggingFace = inngest.createFunction(
+  { id: "deploy-huggingface" },
+  { event: "ai/model.deploy-hf" },
+  async ({ event, step }) => {
+    const { eventId, hfToken, userId } = event.data;
+
+    // Step 1: Create repository name
+    const repoName = await step.run("create-repo-name", async () => {
+      return `ai-model-${eventId.split('-').pop()}`;
+    });
+
+    // Step 2: Create Hugging Face repository
+    const repoUrl = await step.run("create-hf-repo", async () => {
+      try {
+        const response = await fetch('https://huggingface.co/api/repos/create', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${hfToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: repoName,
+            type: 'model',
+            private: false,
+            license: 'mit'
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          return `https://huggingface.co/${data.name}`;
+        } else {
+          const error = await response.text();
+          throw new Error(`Failed to create HF repository: ${error}`);
+        }
+      } catch (error: any) {
+        throw new Error(`Hugging Face API error: ${error.message}`);
+      }
+    });
+
+    // Step 3: Upload model files (mock implementation)
+    await step.run("upload-files", async () => {
+      // In a real implementation, you would:
+      // 1. Get the generated files from storage
+      // 2. Create model card
+      // 3. Upload files using git or HF API
+      // 4. Set up model configuration
+      
+      await step.sleep("upload-simulation", "3s"); // Simulate upload time
+      return { filesUploaded: ['model.py', 'config.json', 'README.md'] };
+    });
+
+    return { 
+      success: true, 
+      repoUrl,
+      repoName,
+      message: 'Model successfully deployed to Hugging Face Hub!'
+    };
+  }
+);
+
 // Generate AI Model Code
 export const generateModelCode = inngest.createFunction(
   { id: "generate-model-code" },

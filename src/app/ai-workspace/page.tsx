@@ -32,7 +32,125 @@ interface Message {
   content: string;
   created_at: string;
   tokens_used?: number;
+  eventId?: string;
 }
+
+// MessageComponent for handling AI responses with actions
+const MessageComponent = ({ 
+  message, 
+  onHuggingFaceUpload, 
+  onDownloadFiles 
+}: { 
+  message: Message;
+  onHuggingFaceUpload: (eventId: string, hfToken: string) => void;
+  onDownloadFiles: (eventId: string) => void;
+}) => {
+  const [showHfDialog, setShowHfDialog] = useState(false);
+  const [hfToken, setHfToken] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+
+  const isModelGenerated = message.role === 'assistant' && 
+    message.content.includes('AI Model Successfully Generated') && 
+    message.eventId;
+
+  return (
+    <Flex horizontal={message.role === 'user' ? 'end' : 'start'}>
+      <Card
+        padding="m"
+        background={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
+        style={{ maxWidth: '80%' }}
+      >
+        <Flex direction="column" gap="m">
+          <Text 
+            variant="body-default-m" 
+            onBackground={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
+            style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+          >
+            {message.content}
+          </Text>
+          
+          {isModelGenerated && (
+            <Flex direction="column" gap="s">
+              <Text variant="body-strong-s" onBackground="neutral-medium">
+                🚀 Your AI model is ready! What would you like to do?
+              </Text>
+              
+              <Flex gap="s" wrap>
+                <Button
+                  variant="primary"
+                  size="s"
+                  onClick={() => setShowHfDialog(true)}
+                  disabled={isUploading}
+                >
+                  📤 Deploy to Hugging Face
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="s"
+                  onClick={() => message.eventId && onDownloadFiles(message.eventId)}
+                >
+                  💾 Download Files
+                </Button>
+              </Flex>
+
+              {showHfDialog && (
+                <Card padding="m" background="neutral-weak" border="neutral-medium">
+                  <Flex direction="column" gap="s">
+                    <Text variant="body-strong-s" onBackground="neutral-weak">
+                      Deploy to Hugging Face Hub
+                    </Text>
+                    <Text variant="body-default-xs" onBackground="neutral-medium">
+                      Enter your Hugging Face token to deploy your model to the Hub
+                    </Text>
+                    
+                    <Input
+                      id="hf-token"
+                      label="Hugging Face Token"
+                      placeholder="hf_..."
+                      value={hfToken}
+                      onChange={(e) => setHfToken(e.target.value)}
+                    />
+                    
+                    <Flex gap="s">
+                      <Button
+                        variant="primary"
+                        size="s"
+                        onClick={async () => {
+                          if (hfToken.trim() && message.eventId) {
+                            setIsUploading(true);
+                            await onHuggingFaceUpload(message.eventId, hfToken.trim());
+                            setShowHfDialog(false);
+                            setHfToken('');
+                            setIsUploading(false);
+                          }
+                        }}
+                        disabled={!hfToken.trim() || isUploading}
+                      >
+                        {isUploading ? 'Deploying...' : 'Deploy'}
+                      </Button>
+                      
+                      <Button
+                        variant="tertiary"
+                        size="s"
+                        onClick={() => {
+                          setShowHfDialog(false);
+                          setHfToken('');
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </Card>
+              )}
+            </Flex>
+          )}
+        </Flex>
+      </Card>
+    </Flex>
+  );
+};
 
 export default function AIWorkspace() {
   const { user, loading, signOut } = useAuth();
@@ -109,6 +227,77 @@ export default function AIWorkspace() {
     }
   };
 
+  const deleteChat = async (chatId: string) => {
+    if (!supabase) return;
+
+    try {
+      // Delete messages first
+      await supabase.from('messages').delete().eq('chat_id', chatId);
+      
+      // Delete chat
+      await supabase.from('chats').delete().eq('id', chatId);
+      
+      // Update UI
+      setChats(prev => prev.filter(chat => chat.id !== chatId));
+      
+      // If this was the current chat, clear it
+      if (currentChat?.id === chatId) {
+        setCurrentChat(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+    }
+  };
+
+  const handleHuggingFaceUpload = async (eventId: string, hfToken: string) => {
+    try {
+      const response = await fetch('/api/ai-workspace/deploy-hf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId,
+          hfToken,
+          userId: user?.id
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Add success message to chat
+        const successMessage: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `🎉 **Model Successfully Deployed to Hugging Face!**\n\n🔗 **Your Model:** ${data.repoUrl}\n\nYour AI model is now live and ready to use! You can share it with the community or integrate it into your applications.`,
+          created_at: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, successMessage]);
+      }
+    } catch (error) {
+      console.error('Error uploading to Hugging Face:', error);
+    }
+  };
+
+  const handleDownloadFiles = async (eventId: string) => {
+    try {
+      const response = await fetch(`/api/ai-workspace/download/${eventId}`);
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ai-model-${eventId}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading files:', error);
+    }
+  };
+
   const sendMessage = async (content: string) => {
     if (!currentChat || !supabase || !user || isLoading) return;
 
@@ -149,13 +338,14 @@ export default function AIWorkspace() {
         throw new Error(data.error);
       }
 
-      // Add AI response to UI
+      // Add AI response to UI with eventId for actions
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
         created_at: new Date().toISOString(),
-        tokens_used: data.tokens_used
+        tokens_used: data.tokens_used,
+        eventId: data.eventId // Store eventId for later actions
       };
       setMessages(prev => [...prev, aiMessage]);
 
@@ -211,41 +401,42 @@ export default function AIWorkspace() {
   }
 
   return (
-    <Flex fillWidth fillHeight direction="row" background="neutral-weak">
+    <Flex fillWidth fillHeight direction="row" background="neutral-weak" style={{ height: '100vh', overflow: 'hidden' }}>
       {/* Sidebar */}
       <Flex 
         direction="column" 
         width={20}
         background="neutral-strong" 
-        padding="l"
-        gap="l"
+        padding="m"
+        gap="m"
+        style={{ height: '100vh', overflow: 'hidden' }}
       >
         <Flex direction="column" gap="s">
-          <Heading variant="heading-strong-l" onBackground="neutral-strong">
+          <Heading variant="heading-strong-m" onBackground="neutral-strong">
             AI Workspace
           </Heading>
-          <Text variant="body-default-s" onBackground="neutral-medium">
+          <Text variant="body-default-xs" onBackground="neutral-medium">
             Generate, train, and deploy AI models
           </Text>
           
           <Button
             onClick={createNewChat}
             variant="secondary"
-            size="m"
+            size="s"
             fillWidth
           >
             + New chat
           </Button>
         </Flex>
         
-        <Flex flex={1} direction="column" gap="s">
-          <Text variant="body-default-s" onBackground="neutral-medium">
-            Recent chats will appear here
+        <Flex flex={1} direction="column" gap="xs" style={{ overflow: 'auto', minHeight: 0 }}>
+          <Text variant="body-default-xs" onBackground="neutral-medium">
+            Recent chats
           </Text>
           {chats.map((chat) => (
             <Card
               key={chat.id}
-              padding="s"
+              padding="xs"
               background="neutral-medium"
               style={{ cursor: 'pointer' }}
               onClick={() => {
@@ -253,9 +444,27 @@ export default function AIWorkspace() {
                 loadMessages(chat.id);
               }}
             >
-              <Text variant="body-default-s" onBackground="neutral-medium">
-                {chat.title}
-              </Text>
+              <Flex horizontal="space-between" vertical="center">
+                <Text variant="body-default-xs" onBackground="neutral-medium" style={{ 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis', 
+                  whiteSpace: 'nowrap',
+                  flex: 1
+                }}>
+                  {chat.title}
+                </Text>
+                <Button
+                  variant="tertiary"
+                  size="s"
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    deleteChat(chat.id);
+                  }}
+                  style={{ marginLeft: '8px', flexShrink: 0 }}
+                >
+                  ×
+                </Button>
+              </Flex>
             </Card>
           ))}
         </Flex>
@@ -263,7 +472,7 @@ export default function AIWorkspace() {
         <Button
           onClick={signOut}
           variant="tertiary"
-          size="m"
+          size="s"
           fillWidth
         >
           Sign out
@@ -271,13 +480,14 @@ export default function AIWorkspace() {
       </Flex>
 
       {/* Main Content Area */}
-      <Flex flex={1} direction="column" background="neutral-weak">
+      <Flex flex={1} direction="column" background="neutral-weak" style={{ height: '100vh', overflow: 'hidden' }}>
         {/* Header */}
         <Flex 
-          padding="l" 
+          padding="m" 
           borderBottom="neutral-medium" 
           direction="column" 
           gap="xs"
+          style={{ flexShrink: 0 }}
         >
           <Heading variant="heading-strong-m" onBackground="neutral-weak">
             AI Model Generator
@@ -288,9 +498,9 @@ export default function AIWorkspace() {
         </Flex>
         
         {/* Chat Area */}
-        <Flex flex={1} direction="column">
+        <Flex flex={1} direction="column" style={{ minHeight: 0 }}>
           {messages.length === 0 ? (
-            <Flex flex={1} center padding="xl">
+            <Flex flex={1} center padding="l" style={{ overflow: 'auto' }}>
               <Flex direction="column" center gap="l" maxWidth={25}>
                 <Avatar 
                   size="xl" 
@@ -340,26 +550,14 @@ export default function AIWorkspace() {
               </Flex>
             </Flex>
           ) : (
-            <Flex flex={1} direction="column" padding="l" gap="l" style={{ overflowY: 'auto' }}>
+            <Flex flex={1} direction="column" padding="m" gap="m" style={{ overflow: 'auto', minHeight: 0 }}>
               {messages.map((message) => (
-                <Flex 
+                <MessageComponent 
                   key={message.id} 
-                  horizontal={message.role === 'user' ? 'end' : 'start'}
-                >
-                  <Card
-                    padding="m"
-                    background={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
-                    style={{ maxWidth: '70%' }}
-                  >
-                    <Text 
-                      variant="body-default-m" 
-                      onBackground={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
-                      style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
-                    >
-                      {message.content}
-                    </Text>
-                  </Card>
-                </Flex>
+                  message={message}
+                  onHuggingFaceUpload={handleHuggingFaceUpload}
+                  onDownloadFiles={handleDownloadFiles}
+                />
               ))}
               
               {isLoading && (
@@ -378,7 +576,7 @@ export default function AIWorkspace() {
           )}
           
           {/* Input Area */}
-          <Flex padding="l" borderTop="neutral-medium">
+          <Flex padding="m" borderTop="neutral-medium" style={{ flexShrink: 0 }}>
             <Flex direction="column" gap="s" fillWidth maxWidth={50} style={{ margin: '0 auto' }}>
               <Card padding="m" background="neutral-weak" border="neutral-medium">
                 <Flex direction="column" gap="s">
