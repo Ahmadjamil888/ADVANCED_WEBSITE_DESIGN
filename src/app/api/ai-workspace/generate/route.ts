@@ -97,22 +97,53 @@ function parseModelRequest(prompt: string, mode: string) {
 }
 
 function extractModelName(prompt: string): string | null {
+  // First, try to detect specific model types from the prompt
+  const lowerPrompt = prompt.toLowerCase()
+  
+  // Direct model type detection
+  if (lowerPrompt.includes('sentiment analysis') || (lowerPrompt.includes('sentiment') && lowerPrompt.includes('classification'))) {
+    return 'Sentiment Analysis Model'
+  }
+  if (lowerPrompt.includes('spam detection') || (lowerPrompt.includes('spam') && lowerPrompt.includes('classification'))) {
+    return 'Spam Detection Model'
+  }
+  if (lowerPrompt.includes('emotion classification') || (lowerPrompt.includes('emotion') && lowerPrompt.includes('classification'))) {
+    return 'Emotion Classification Model'
+  }
+  if (lowerPrompt.includes('image classification') || (lowerPrompt.includes('image') && lowerPrompt.includes('classification'))) {
+    return 'Image Classification Model'
+  }
+  if (lowerPrompt.includes('object detection')) {
+    return 'Object Detection Model'
+  }
+  if (lowerPrompt.includes('face recognition')) {
+    return 'Face Recognition Model'
+  }
+  
+  // Pattern-based extraction with better filtering
   const namePatterns = [
-    /create (?:a |an )?(.+?) (?:model|classifier|predictor)/i,
-    /build (?:a |an )?(.+?) (?:model|classifier|predictor)/i,
-    /(?:model|system) (?:called|named) (.+)/i,
-    /(.+?) (?:classification|detection|prediction) model/i,
-    /(?:develop|make|generate) (?:a |an )?(.+?) (?:model|system)/i
+    /(?:create|build|make|generate|develop) (?:a |an |me )?(.+?) (?:model|classifier|predictor|system)/i,
+    /(?:model|system|classifier) (?:for|to) (.+)/i,
+    /(.+?) (?:classification|detection|prediction|recognition) (?:model|system)/i,
+    /(?:model|system) (?:called|named) (.+)/i
   ]
   
   for (const pattern of namePatterns) {
     const match = prompt.match(pattern)
     if (match && match[1]) {
-      const name = match[1].trim()
-      // Filter out common words that shouldn't be model names
-      const excludeWords = ['ai', 'machine learning', 'deep learning', 'neural network', 'the', 'this', 'that']
-      if (!excludeWords.includes(name.toLowerCase()) && name.length > 2) {
-        return name
+      let name = match[1].trim()
+      
+      // Clean up the extracted name
+      name = name.replace(/^(a |an |the |me |my )/i, '')
+      name = name.replace(/(for|to|that|which)$/i, '')
+      
+      // Filter out common words and short names
+      const excludeWords = ['ai', 'machine learning', 'deep learning', 'neural network', 'classification', 'model', 'system']
+      if (!excludeWords.includes(name.toLowerCase()) && name.length > 3) {
+        // Capitalize properly
+        return name.split(' ').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        ).join(' ') + ' Model'
       }
     }
   }

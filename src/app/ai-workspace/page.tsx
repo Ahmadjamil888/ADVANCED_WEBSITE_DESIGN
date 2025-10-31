@@ -12,9 +12,7 @@ import {
   Input, 
   Card, 
   Avatar, 
-  Icon, 
   Spinner,
-  Badge,
   Textarea
 } from "@/once-ui/components";
 
@@ -39,14 +37,14 @@ interface Message {
 const MessageComponent = ({ 
   message, 
   onHuggingFaceUpload, 
-  onDownloadFiles 
+  onDownloadFiles,
+  hasHfToken 
 }: { 
   message: Message;
-  onHuggingFaceUpload: (eventId: string, hfToken: string) => void;
+  onHuggingFaceUpload: (eventId: string, hfToken?: string) => void;
   onDownloadFiles: (eventId: string) => void;
+  hasHfToken: boolean;
 }) => {
-  const [showHfDialog, setShowHfDialog] = useState(false);
-  const [hfToken, setHfToken] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
   const isModelGenerated = message.role === 'assistant' && 
@@ -58,7 +56,7 @@ const MessageComponent = ({
       <Card
         padding="m"
         background={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
-        style={{ maxWidth: '80%' }}
+        style={{ maxWidth: '85%' }}
       >
         <Flex direction="column" gap="m">
           <Text 
@@ -68,84 +66,6 @@ const MessageComponent = ({
           >
             {message.content}
           </Text>
-          
-          {isModelGenerated && (
-            <Flex direction="column" gap="s">
-              <Text variant="body-strong-s" onBackground="neutral-medium">
-                🚀 Your AI model is ready! What would you like to do?
-              </Text>
-              
-              <Flex gap="s" wrap>
-                <Button
-                  variant="primary"
-                  size="s"
-                  onClick={() => setShowHfDialog(true)}
-                  disabled={isUploading}
-                >
-                  📤 Deploy to Hugging Face
-                </Button>
-                
-                <Button
-                  variant="secondary"
-                  size="s"
-                  onClick={() => message.eventId && onDownloadFiles(message.eventId)}
-                >
-                  💾 Download Files
-                </Button>
-              </Flex>
-
-              {showHfDialog && (
-                <Card padding="m" background="neutral-weak" border="neutral-medium">
-                  <Flex direction="column" gap="s">
-                    <Text variant="body-strong-s" onBackground="neutral-weak">
-                      Deploy to Hugging Face Hub
-                    </Text>
-                    <Text variant="body-default-xs" onBackground="neutral-medium">
-                      Enter your Hugging Face token to deploy your model to the Hub
-                    </Text>
-                    
-                    <Input
-                      id="hf-token"
-                      label="Hugging Face Token"
-                      placeholder="hf_..."
-                      value={hfToken}
-                      onChange={(e) => setHfToken(e.target.value)}
-                    />
-                    
-                    <Flex gap="s">
-                      <Button
-                        variant="primary"
-                        size="s"
-                        onClick={async () => {
-                          if (hfToken.trim() && message.eventId) {
-                            setIsUploading(true);
-                            await onHuggingFaceUpload(message.eventId, hfToken.trim());
-                            setShowHfDialog(false);
-                            setHfToken('');
-                            setIsUploading(false);
-                          }
-                        }}
-                        disabled={!hfToken.trim() || isUploading}
-                      >
-                        {isUploading ? 'Deploying...' : 'Deploy'}
-                      </Button>
-                      
-                      <Button
-                        variant="tertiary"
-                        size="s"
-                        onClick={() => {
-                          setShowHfDialog(false);
-                          setHfToken('');
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Flex>
-                  </Flex>
-                </Card>
-              )}
-            </Flex>
-          )}
         </Flex>
       </Card>
     </Flex>
@@ -160,10 +80,10 @@ export default function AIWorkspace() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentMode, setCurrentMode] = useState<string>('chat');
+  const [currentMode, setCurrentMode] = useState<string>('models');
   const [isLoading, setIsLoading] = useState(false);
-  const [contextPanelOpen, setContextPanelOpen] = useState(true);
   const [pendingModels, setPendingModels] = useState<Set<string>>(new Set());
+  const [userHfToken, setUserHfToken] = useState<string>('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -173,8 +93,23 @@ export default function AIWorkspace() {
 
     if (user) {
       loadChats();
+      loadUserHfToken();
     }
   }, [user, loading, router]);
+
+  const loadUserHfToken = async () => {
+    if (!user) return;
+    
+    try {
+      const response = await fetch(`/api/user/hf-token?userId=${user.id}`);
+      const data = await response.json();
+      if (data.hasToken) {
+        setUserHfToken(data.token);
+      }
+    } catch (error) {
+      console.error('Error loading HF token:', error);
+    }
+  };
 
   const loadChats = async () => {
     if (!supabase || !user) return;
@@ -215,7 +150,7 @@ export default function AIWorkspace() {
       .from('chats')
       .insert({
         user_id: user.id,
-        title: 'Untitled Chat',
+        title: 'New AI Model',
         mode: currentMode
       })
       .select()
@@ -232,16 +167,11 @@ export default function AIWorkspace() {
     if (!supabase) return;
 
     try {
-      // Delete messages first
       await supabase.from('messages').delete().eq('chat_id', chatId);
-      
-      // Delete chat
       await supabase.from('chats').delete().eq('id', chatId);
       
-      // Update UI
       setChats(prev => prev.filter(chat => chat.id !== chatId));
       
-      // If this was the current chat, clear it
       if (currentChat?.id === chatId) {
         setCurrentChat(null);
         setMessages([]);
@@ -251,14 +181,32 @@ export default function AIWorkspace() {
     }
   };
 
-  const handleHuggingFaceUpload = async (eventId: string, hfToken: string) => {
+  const handleHuggingFaceUpload = async (eventId: string, providedToken?: string) => {
     try {
+      let tokenToUse = providedToken || userHfToken;
+      
+      if (!tokenToUse) {
+        const token = prompt('Please enter your Hugging Face token:');
+        if (!token) return;
+        tokenToUse = token;
+        
+        await fetch('/api/user/hf-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user?.id,
+            hfToken: token
+          })
+        });
+        setUserHfToken(token);
+      }
+
       const response = await fetch('/api/ai-workspace/deploy-hf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           eventId,
-          hfToken,
+          hfToken: tokenToUse,
           userId: user?.id
         })
       });
@@ -266,11 +214,10 @@ export default function AIWorkspace() {
       const data = await response.json();
       
       if (data.success) {
-        // Add success message to chat
         const successMessage: Message = {
           id: Date.now().toString(),
           role: 'assistant',
-          content: `🎉 **Model Successfully Deployed to Hugging Face!**\n\n🔗 **Your Model:** ${data.repoUrl}\n\nYour AI model is now live and ready to use! You can share it with the community or integrate it into your applications.`,
+          content: `# 🎉 Model Deployed Successfully!\n\n🔗 **Your Model:** [${data.repoUrl}](${data.repoUrl})\n\nYour AI model is now live on Hugging Face Hub!`,
           created_at: new Date().toISOString()
         };
         setMessages(prev => [...prev, successMessage]);
@@ -285,7 +232,6 @@ export default function AIWorkspace() {
       const response = await fetch(`/api/ai-workspace/download/${eventId}`);
       const blob = await response.blob();
       
-      // Create download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -299,32 +245,28 @@ export default function AIWorkspace() {
     }
   };
 
-  // Poll for model completion
   const pollModelStatus = async (eventId: string) => {
     try {
       const response = await fetch(`/api/ai-workspace/status/${eventId}`);
       const data = await response.json();
       
       if (data.ready && data.model) {
-        // Model is ready, update the message
         setPendingModels(prev => {
           const newSet = new Set(prev);
           newSet.delete(eventId);
           return newSet;
         });
 
-        // Add completion message
         const completionMessage: Message = {
           id: `completion-${eventId}`,
           role: 'assistant',
-          content: generateCompletionMessage(data.model),
+          content: `# 🎉 **${data.model.name} - Generation Complete!**\n\nYour AI model has been successfully generated and is ready for use!\n\n## 📊 **Model Details**\n- **Name:** ${data.model.name}\n- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}\n- **Framework:** ${data.model.framework.toUpperCase()}\n- **Dataset:** ${data.model.dataset}\n- **Status:** ✅ Ready for Training & Deployment\n\n🚀 Your model is production-ready and follows industry best practices!`,
           created_at: new Date().toISOString(),
           eventId: eventId
         };
         
         setMessages(prev => [...prev, completionMessage]);
 
-        // Save completion message to database
         if (supabase && currentChat) {
           await supabase.from('messages').insert({
             chat_id: currentChat.id,
@@ -334,7 +276,6 @@ export default function AIWorkspace() {
           });
         }
       } else {
-        // Still processing, continue polling
         setTimeout(() => pollModelStatus(eventId), 3000);
       }
     } catch (error) {
@@ -347,52 +288,11 @@ export default function AIWorkspace() {
     }
   };
 
-  const generateCompletionMessage = (model: any): string => {
-    return `# 🎉 **${model.name} - Generation Complete!**
-
-Your AI model has been successfully generated and is ready for use!
-
-## 📊 **Model Details**
-- **Name:** ${model.name}
-- **Type:** ${model.type.replace('-', ' ').toUpperCase()}
-- **Framework:** ${model.framework.toUpperCase()}
-- **Dataset:** ${model.dataset}
-- **Status:** ✅ Ready for Training & Deployment
-
-## 🗂️ **Generated Files**
-Your complete AI model project includes:
-- **model.py** - Model architecture and implementation
-- **train.py** - Training script with optimization
-- **inference.py** - Inference and prediction code
-- **requirements.txt** - All necessary dependencies
-- **config.json** - Model configuration and hyperparameters
-- **README.md** - Complete documentation and usage guide
-
-## 🚀 **Next Steps**
-Choose how you'd like to proceed with your model:
-
-**Option 1: Deploy to Hugging Face Hub**
-- Share your model with the AI community
-- Get a public model URL for easy access
-- Automatic model card generation
-
-**Option 2: Download Complete Project**
-- Get all source files as a ZIP package
-- Train locally or on your preferred platform
-- Full control over the training process
-
-Your model is production-ready and follows industry best practices. All code is optimized, documented, and ready to run.
-
----
-*Generated by zehanx AI Builder - Building the future of AI development*`;
-  };
-
   const sendMessage = async (content: string) => {
     if (!currentChat || !supabase || !user || isLoading) return;
 
     setIsLoading(true);
 
-    // Add user message to UI immediately
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -402,14 +302,12 @@ Your model is production-ready and follows industry best practices. All code is 
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      // Save user message to database
       await supabase.from('messages').insert({
         chat_id: currentChat.id,
         role: 'user',
         content
       });
 
-      // Generate AI response
       const response = await fetch('/api/ai-workspace/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -427,18 +325,16 @@ Your model is production-ready and follows industry best practices. All code is 
         throw new Error(data.error);
       }
 
-      // Add AI response to UI with eventId for actions
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
         created_at: new Date().toISOString(),
         tokens_used: data.tokens_used,
-        eventId: data.eventId // Store eventId for later actions
+        eventId: data.eventId
       };
       setMessages(prev => [...prev, aiMessage]);
 
-      // Save AI message to database
       await supabase.from('messages').insert({
         chat_id: currentChat.id,
         role: 'assistant',
@@ -447,16 +343,14 @@ Your model is production-ready and follows industry best practices. All code is 
         model_used: data.model_used
       });
 
-      // Update chat timestamp
       await supabase
         .from('chats')
         .update({ updated_at: new Date().toISOString() })
         .eq('id', currentChat.id);
 
-      // Start polling for model completion if this is a model generation request
       if (data.eventId && data.status === 'processing') {
         setPendingModels(prev => new Set(prev).add(data.eventId));
-        setTimeout(() => pollModelStatus(data.eventId), 5000); // Start polling after 5 seconds
+        setTimeout(() => pollModelStatus(data.eventId), 5000);
       }
 
     } catch (error: any) {
@@ -500,18 +394,18 @@ Your model is production-ready and follows industry best practices. All code is 
       {/* Sidebar */}
       <Flex 
         direction="column" 
-        width={20}
+        width={18}
         background="neutral-strong" 
-        padding="m"
-        gap="m"
-        style={{ height: '100vh', overflow: 'hidden' }}
+        padding="s"
+        gap="s"
+        style={{ height: '100vh', overflow: 'hidden', minWidth: '280px' }}
       >
-        <Flex direction="column" gap="s">
-          <Heading variant="heading-strong-m" onBackground="neutral-strong">
+        <Flex direction="column" gap="xs" padding="s">
+          <Heading variant="heading-strong-s" onBackground="neutral-strong">
             AI Workspace
           </Heading>
           <Text variant="body-default-xs" onBackground="neutral-medium">
-            Generate, train, and deploy AI models
+            Build AI models with ease
           </Text>
           
           <Button
@@ -520,63 +414,78 @@ Your model is production-ready and follows industry best practices. All code is 
             size="s"
             fillWidth
           >
-            + New chat
+            + New Model
           </Button>
         </Flex>
         
-        <Flex flex={1} direction="column" gap="xs" style={{ overflow: 'auto', minHeight: 0 }}>
+        <Flex flex={1} direction="column" gap="xs" style={{ overflow: 'auto', minHeight: 0 }} padding="s">
           <Text variant="body-default-xs" onBackground="neutral-medium">
-            Recent chats
+            Recent Projects
           </Text>
-          {chats.map((chat) => (
-            <Card
-              key={chat.id}
-              padding="xs"
-              background="neutral-medium"
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                setCurrentChat(chat);
-                loadMessages(chat.id);
-              }}
-            >
-              <Flex horizontal="space-between" vertical="center">
-                <Text variant="body-default-xs" onBackground="neutral-medium" style={{ 
-                  overflow: 'hidden', 
-                  textOverflow: 'ellipsis', 
-                  whiteSpace: 'nowrap',
-                  flex: 1
-                }}>
-                  {chat.title}
-                </Text>
-                <Button
-                  variant="tertiary"
-                  size="s"
-                  onClick={(e: React.MouseEvent) => {
-                    e.stopPropagation();
-                    deleteChat(chat.id);
-                  }}
-                  style={{ marginLeft: '8px', flexShrink: 0 }}
-                >
-                  ×
-                </Button>
-              </Flex>
-            </Card>
-          ))}
+          {chats.length === 0 ? (
+            <Text variant="body-default-xs" onBackground="neutral-medium" style={{ fontStyle: 'italic' }}>
+              No projects yet
+            </Text>
+          ) : (
+            chats.map((chat) => (
+              <Card
+                key={chat.id}
+                padding="s"
+                background={currentChat?.id === chat.id ? "neutral-medium" : "neutral-weak"}
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  setCurrentChat(chat);
+                  loadMessages(chat.id);
+                }}
+              >
+                <Flex horizontal="space-between" vertical="center">
+                  <Text variant="body-default-xs" onBackground="neutral-medium" style={{ 
+                    overflow: 'hidden', 
+                    textOverflow: 'ellipsis', 
+                    whiteSpace: 'nowrap',
+                    flex: 1
+                  }}>
+                    {chat.title}
+                  </Text>
+                  <Button
+                    variant="tertiary"
+                    size="s"
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      deleteChat(chat.id);
+                    }}
+                    style={{ marginLeft: '8px', flexShrink: 0, minWidth: '24px', height: '24px' }}
+                  >
+                    ×
+                  </Button>
+                </Flex>
+              </Card>
+            ))
+          )}
         </Flex>
         
-        <Button
-          onClick={signOut}
-          variant="tertiary"
-          size="s"
-          fillWidth
-        >
-          Sign out
-        </Button>
+        <Flex direction="column" gap="xs" padding="s" borderTop="neutral-medium">
+          {user && (
+            <Flex vertical="center" gap="s">
+              <Avatar size="s" src={user.user_metadata?.avatar_url} />
+              <Text variant="body-default-xs" onBackground="neutral-medium" style={{ flex: 1 }}>
+                {user.email}
+              </Text>
+            </Flex>
+          )}
+          <Button
+            onClick={signOut}
+            variant="tertiary"
+            size="s"
+            fillWidth
+          >
+            🚪 Sign out
+          </Button>
+        </Flex>
       </Flex>
 
       {/* Main Content Area */}
       <Flex flex={1} direction="column" background="neutral-weak" style={{ height: '100vh', overflow: 'hidden' }}>
-        {/* Header */}
         <Flex 
           padding="m" 
           borderBottom="neutral-medium" 
@@ -592,7 +501,6 @@ Your model is production-ready and follows industry best practices. All code is 
           </Text>
         </Flex>
         
-        {/* Chat Area */}
         <Flex flex={1} direction="column" style={{ minHeight: 0 }}>
           {messages.length === 0 ? (
             <Flex flex={1} center padding="l" style={{ overflow: 'auto' }}>
@@ -652,6 +560,7 @@ Your model is production-ready and follows industry best practices. All code is 
                   message={message}
                   onHuggingFaceUpload={handleHuggingFaceUpload}
                   onDownloadFiles={handleDownloadFiles}
+                  hasHfToken={!!userHfToken}
                 />
               ))}
               
@@ -683,7 +592,6 @@ Your model is production-ready and follows industry best practices. All code is 
             </Flex>
           )}
           
-          {/* Input Area */}
           <Flex padding="m" borderTop="neutral-medium" style={{ flexShrink: 0 }}>
             <Flex direction="column" gap="s" fillWidth maxWidth={50} style={{ margin: '0 auto' }}>
               <Card padding="m" background="neutral-weak" border="neutral-medium">
