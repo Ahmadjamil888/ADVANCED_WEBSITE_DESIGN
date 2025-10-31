@@ -34,17 +34,29 @@ export default function AIWorkspace() {
   const [pendingModels, setPendingModels] = useState<Set<string>>(new Set());
   const [inputValue, setInputValue] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
+    // Mark that we've checked auth state
+    if (!loading) {
+      setAuthChecked(true);
+      setInitialLoad(false);
+    }
+
+    // Only redirect if we're sure there's no user and loading is complete
+    if (!loading && !user && authChecked) {
+      console.log('AI Workspace: No user found, redirecting to login');
+      router.replace("/login"); // Use replace instead of push for cleaner navigation
       return;
     }
 
-    if (user && supabase) {
+    // Load chats when user is available
+    if (user && supabase && !loading && !initialLoad) {
+      console.log('AI Workspace: User authenticated, loading chats');
       loadChats();
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, authChecked, initialLoad]);
 
   const loadChats = async () => {
     if (!supabase || !user) return;
@@ -401,26 +413,83 @@ Your model is now accessible worldwide and ready for production use!`,
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [router]);
 
-  if (loading) {
+  if (loading || initialLoad) {
     return (
       <div style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        height: '100vh', 
-        backgroundColor: 'white' 
+        backgroundColor: 'white',
+        zIndex: 9999
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ 
-            width: '32px', 
-            height: '32px', 
-            border: '2px solid #e5e7eb', 
-            borderTop: '2px solid #2563eb', 
+            width: '40px', 
+            height: '40px', 
+            border: '3px solid #f3f4f6', 
+            borderTop: '3px solid #059669', 
             borderRadius: '50%', 
             animation: 'spin 1s linear infinite',
-            margin: '0 auto 16px'
+            margin: '0 auto 20px'
           }}></div>
-          <p style={{ color: '#6b7280' }}>Loading AI Workspace...</p>
+          <h3 style={{ 
+            color: '#111827', 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            marginBottom: '8px' 
+          }}>
+            {initialLoad ? 'Loading AI Workspace' : 'Initializing AI Workspace'}
+          </h3>
+          <p style={{ color: '#6b7280', fontSize: '14px' }}>
+            {initialLoad ? 'Please wait...' : 'Setting up your AI environment...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading if we're still determining auth state
+  if (!loading && !user) {
+    // This will trigger the redirect in useEffect
+    return (
+      <div style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        backgroundColor: 'white',
+        zIndex: 9999
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            border: '3px solid #f3f4f6', 
+            borderTop: '3px solid #dc2626', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 20px'
+          }}></div>
+          <h3 style={{ 
+            color: '#111827', 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            marginBottom: '8px' 
+          }}>
+            Redirecting to Login
+          </h3>
+          <p style={{ color: '#6b7280', fontSize: '14px' }}>
+            Please wait...
+          </p>
         </div>
       </div>
     );

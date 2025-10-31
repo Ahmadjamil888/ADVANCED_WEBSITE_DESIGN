@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('AuthContext: Forcing loading to false due to timeout')
         setLoading(false)
       }
-    }, 10000) // Increased to 10 seconds to give more time for auth resolution
+    }, 3000) // Reduced to 3 seconds for faster response
 
     return () => clearTimeout(timeout)
   }, [loading])
@@ -58,16 +58,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return
     }
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('AuthContext: Initial session check:', { session: !!session, error })
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    }).catch((error) => {
-      console.error('AuthContext: Error getting session:', error)
-      setLoading(false)
-    })
+    // Get initial session with faster timeout
+    const getInitialSession = async () => {
+      try {
+        if (!supabase) {
+          setLoading(false)
+          return
+        }
+        
+        const { data: { session }, error } = await supabase.auth.getSession()
+        console.log('AuthContext: Initial session check:', { session: !!session, error })
+        
+        if (error) {
+          console.error('AuthContext: Session error:', error)
+        }
+        
+        setSession(session)
+        setUser(session?.user ?? null)
+        setLoading(false)
+      } catch (error) {
+        console.error('AuthContext: Error getting session:', error)
+        setLoading(false)
+      }
+    }
+
+    getInitialSession()
 
     // Listen for auth changes
     const {
