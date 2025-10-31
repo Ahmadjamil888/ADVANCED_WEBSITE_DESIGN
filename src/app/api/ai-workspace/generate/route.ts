@@ -56,14 +56,14 @@ function parseModelRequest(prompt: string, mode: string) {
   const lowerPrompt = prompt.toLowerCase()
   
   // Detect model type
-  let modelType = 'classification'
-  if (lowerPrompt.includes('image') || lowerPrompt.includes('vision') || lowerPrompt.includes('cnn')) {
+  let modelType = 'text-classification'
+  if (lowerPrompt.includes('image') || lowerPrompt.includes('vision') || lowerPrompt.includes('cnn') || lowerPrompt.includes('computer vision')) {
     modelType = 'computer-vision'
-  } else if (lowerPrompt.includes('text') || lowerPrompt.includes('nlp') || lowerPrompt.includes('sentiment')) {
+  } else if (lowerPrompt.includes('text') || lowerPrompt.includes('nlp') || lowerPrompt.includes('sentiment') || lowerPrompt.includes('classification')) {
     modelType = 'text-classification'
-  } else if (lowerPrompt.includes('chat') || lowerPrompt.includes('conversation') || lowerPrompt.includes('llm')) {
+  } else if (lowerPrompt.includes('chat') || lowerPrompt.includes('conversation') || lowerPrompt.includes('llm') || lowerPrompt.includes('language model')) {
     modelType = 'language-model'
-  } else if (lowerPrompt.includes('regression') || lowerPrompt.includes('predict')) {
+  } else if (lowerPrompt.includes('regression') || lowerPrompt.includes('predict') || lowerPrompt.includes('forecasting')) {
     modelType = 'regression'
   }
 
@@ -81,10 +81,12 @@ function parseModelRequest(prompt: string, mode: string) {
     baseModel = 'roberta-base'
   } else if (lowerPrompt.includes('resnet')) {
     baseModel = 'resnet50'
+  } else if (lowerPrompt.includes('distilbert')) {
+    baseModel = 'distilbert-base-uncased'
   }
 
   return {
-    name: extractModelName(prompt) || `AI Model ${Date.now()}`,
+    name: extractModelName(prompt) || generateModelName(modelType, prompt),
     description: prompt,
     modelType,
     framework,
@@ -96,20 +98,51 @@ function parseModelRequest(prompt: string, mode: string) {
 
 function extractModelName(prompt: string): string | null {
   const namePatterns = [
-    /create (?:a |an )?(.+?) model/i,
-    /build (?:a |an )?(.+?) model/i,
+    /create (?:a |an )?(.+?) (?:model|classifier|predictor)/i,
+    /build (?:a |an )?(.+?) (?:model|classifier|predictor)/i,
     /(?:model|system) (?:called|named) (.+)/i,
-    /(.+?) (?:classifier|predictor|model)/i
+    /(.+?) (?:classification|detection|prediction) model/i,
+    /(?:develop|make|generate) (?:a |an )?(.+?) (?:model|system)/i
   ]
   
   for (const pattern of namePatterns) {
     const match = prompt.match(pattern)
     if (match && match[1]) {
-      return match[1].trim()
+      const name = match[1].trim()
+      // Filter out common words that shouldn't be model names
+      const excludeWords = ['ai', 'machine learning', 'deep learning', 'neural network', 'the', 'this', 'that']
+      if (!excludeWords.includes(name.toLowerCase()) && name.length > 2) {
+        return name
+      }
     }
   }
   
   return null
+}
+
+function generateModelName(modelType: string, prompt: string): string {
+  const lowerPrompt = prompt.toLowerCase()
+  
+  if (modelType === 'text-classification') {
+    if (lowerPrompt.includes('sentiment')) return 'Sentiment Analysis Model'
+    if (lowerPrompt.includes('spam')) return 'Spam Detection Model'
+    if (lowerPrompt.includes('emotion')) return 'Emotion Classification Model'
+    if (lowerPrompt.includes('topic')) return 'Topic Classification Model'
+    return 'Text Classification Model'
+  } else if (modelType === 'computer-vision') {
+    if (lowerPrompt.includes('face')) return 'Face Recognition Model'
+    if (lowerPrompt.includes('object')) return 'Object Detection Model'
+    if (lowerPrompt.includes('medical')) return 'Medical Image Analysis Model'
+    return 'Image Classification Model'
+  } else if (modelType === 'language-model') {
+    return 'Custom Language Model'
+  } else if (modelType === 'regression') {
+    if (lowerPrompt.includes('price')) return 'Price Prediction Model'
+    if (lowerPrompt.includes('sales')) return 'Sales Forecasting Model'
+    return 'Regression Model'
+  }
+  
+  return 'Custom AI Model'
 }
 
 function extractDomain(prompt: string): string {
@@ -145,31 +178,56 @@ function extractRequirements(prompt: string): string[] {
 }
 
 function generateImmediateResponse(modelConfig: any, mode: string): string {
-  const { name, modelType, framework, baseModel } = modelConfig
+  const { name, modelType, framework, baseModel, domain } = modelConfig
   
-  return `🚀 **AI Model Generation Started**
+  return `## 🤖 AI Model Generation Initiated
 
-I'm now creating your **${name}** using the zehanx AI Builder system!
+I'm now building your **${name}** using advanced machine learning techniques and industry best practices.
 
-**Model Configuration:**
-- **Type:** ${modelType.replace('-', ' ').toUpperCase()}
+### 📋 Model Specifications
+- **Architecture Type:** ${modelType.replace('-', ' ').toUpperCase()}
 - **Framework:** ${framework.toUpperCase()}
 - **Base Model:** ${baseModel}
+- **Domain:** ${domain.charAt(0).toUpperCase() + domain.slice(1)}
 
-**What's happening now:**
-1. 🔍 **Analyzing Requirements** - Understanding your specifications
-2. 🗃️ **Finding Datasets** - Searching Kaggle and Hugging Face for suitable data
-3. 🏗️ **Generating Architecture** - Creating optimized model structure
-4. 📝 **Writing Code** - Generating complete training and inference scripts
-5. ⚙️ **Setting up Environment** - Preparing E2B sandbox for execution
+### 🔄 Current Process Status
+The AI model generation pipeline is now active. Here's what's happening:
 
-**Next Steps:**
-- I'll provide complete code files in a few moments
-- Dataset recommendations with download links
-- Training instructions and hyperparameter suggestions
-- Deployment guide for Hugging Face Hub
+**Phase 1: Requirements Analysis** ✅
+- Parsed your specifications and requirements
+- Determined optimal model architecture
+- Selected appropriate base model and framework
 
-This process typically takes 30-60 seconds. I'm working on it now! 🤖✨
+**Phase 2: Dataset Curation** 🔄
+- Searching Kaggle and Hugging Face repositories
+- Evaluating dataset quality and relevance
+- Preparing data preprocessing pipelines
 
-*Powered by zehanx AI Builder - Building AI that builds AI*`
+**Phase 3: Code Generation** 🔄
+- Creating model architecture code
+- Generating training and validation scripts
+- Setting up inference and deployment code
+
+**Phase 4: Environment Setup** 🔄
+- Initializing E2B sandbox environment
+- Installing dependencies and requirements
+- Configuring training environment
+
+**Phase 5: Final Assembly** ⏳
+- Packaging complete model project
+- Generating documentation and guides
+- Preparing deployment options
+
+### ⏱️ Estimated Completion
+Your model will be ready in approximately **45-90 seconds**. I'll provide you with:
+- Complete source code files
+- Training and inference scripts
+- Dataset recommendations and setup
+- Deployment options (Hugging Face Hub, local, cloud)
+- Performance optimization suggestions
+
+Please keep this chat open while I complete the generation process. You'll receive the complete model package shortly.
+
+---
+*zehanx AI Builder - Autonomous AI Development Platform*`
 }

@@ -113,20 +113,76 @@ export const generateModelCode = inngest.createFunction(
       return generateComprehensiveResponse(modelConfig, architecture, dataset, sandboxInfo);
     });
 
-    // Step 5: Save to database and send response back to user
-    await step.run("save-and-respond", async () => {
-      // Here you would typically save to your database and send the response back to the user
-      // For now, we'll just log it
-      console.log('Model generation completed:', {
-        eventId,
-        userId,
-        chatId,
-        modelConfig,
-        dataset: dataset.name,
-        sandboxId: sandboxInfo.sandboxId
-      });
-      
-      return { success: true, response: finalResponse };
+    // Step 5: Save to Supabase database
+    await step.run("save-to-database", async () => {
+      try {
+        // Import supabase here to avoid issues
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        // Save AI model to database
+        const { data: modelData, error: modelError } = await supabase
+          .from('ai_models')
+          .insert({
+            user_id: userId,
+            name: modelConfig.name,
+            description: modelConfig.description,
+            model_type: modelConfig.modelType,
+            framework: modelConfig.framework,
+            base_model: modelConfig.baseModel,
+            dataset_source: dataset.source,
+            dataset_name: dataset.name,
+            training_status: 'ready',
+            model_config: modelConfig,
+            file_structure: {
+              'model.py': architecture.main_model,
+              'train.py': architecture.training_script,
+              'inference.py': architecture.inference_script,
+              'requirements.txt': architecture.requirements,
+              'config.json': architecture.config
+            },
+            metadata: {
+              eventId,
+              sandboxId: sandboxInfo.sandboxId,
+              dataset_info: dataset,
+              generation_timestamp: new Date().toISOString()
+            }
+          })
+          .select()
+          .single();
+
+        if (modelError) {
+          console.error('Error saving model to database:', modelError);
+          throw modelError;
+        }
+
+        // Create training job entry
+        const { error: jobError } = await supabase
+          .from('training_jobs')
+          .insert({
+            model_id: modelData.id,
+            user_id: userId,
+            job_status: 'ready',
+            sandbox_session_id: sandboxInfo.sandboxId,
+            metadata: {
+              eventId,
+              dataset: dataset.name,
+              framework: modelConfig.framework
+            }
+          });
+
+        if (jobError) {
+          console.error('Error creating training job:', jobError);
+        }
+
+        return { modelId: modelData.id, success: true };
+      } catch (error) {
+        console.error('Database save error:', error);
+        throw error;
+      }
     });
 
     return { success: true, architecture, dataset, sandboxInfo, response: finalResponse };
