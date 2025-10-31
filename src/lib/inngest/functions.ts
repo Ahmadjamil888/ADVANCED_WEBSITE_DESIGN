@@ -192,7 +192,7 @@ export const deployToHuggingFace = inngest.createFunction(
 export const findDataset = inngest.createFunction(
   { id: "find-dataset" },
   { event: "ai/dataset.find" },
-  async ({ event, step }) => {
+  async ({ event, step }: { event: any; step: any }) => {
     const { query, source, userId } = event.data;
 
     const datasets = await step.run("search-datasets", async () => {
