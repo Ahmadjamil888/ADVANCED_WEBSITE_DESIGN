@@ -30,20 +30,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [initialized, setInitialized] = useState(false)
+
+
 
   // Fallback timeout to prevent infinite loading
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log('AuthContext: Timeout reached, checking if we should force loading to false')
-      // Only force loading to false if we haven't already resolved the auth state
-      if (loading) {
-        console.log('AuthContext: Forcing loading to false due to timeout')
-        setLoading(false)
-      }
-    }, 3000) // Reduced to 3 seconds for faster response
+      console.log('AuthContext: Timeout reached, forcing loading to false')
+      setLoading(false)
+      setInitialized(true)
+    }, 1000) // Even faster timeout - 1 second
 
     return () => clearTimeout(timeout)
-  }, [loading])
+  }, [])
 
   useEffect(() => {
     console.log('AuthContext: Supabase client:', supabase ? 'initialized' : 'null')
@@ -58,55 +58,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return
     }
 
-    // Get initial session with faster timeout
-    const getInitialSession = async () => {
-      try {
-        if (!supabase) {
-          setLoading(false)
-          return
-        }
-        
-        const { data: { session }, error } = await supabase.auth.getSession()
-        console.log('AuthContext: Initial session check:', { session: !!session, error })
-        
-        if (error) {
-          console.error('AuthContext: Session error:', error)
-        }
-        
-        setSession(session)
-        setUser(session?.user ?? null)
+    // Get initial session immediately
+    const initializeAuth = () => {
+      if (!supabase) {
         setLoading(false)
-      } catch (error) {
-        console.error('AuthContext: Error getting session:', error)
-        setLoading(false)
+        setInitialized(true)
+        return
       }
+
+      // Try to get session synchronously first
+      supabase.auth.getSession()
+        .then(({ data: { session }, error }) => {
+          console.log('AuthContext: Initial session check:', { session: !!session, error })
+          
+          if (error) {
+            console.error('AuthContext: Session error:', error)
+          }
+          
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false)
+          setInitialized(true)
+        })
+        .catch((error) => {
+          console.error('AuthContext: Error getting session:', error)
+          setLoading(false)
+          setInitialized(true)
+        })
     }
 
-    getInitialSession()
+    initializeAuth()
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('AuthContext: Auth state changed:', event, !!session)
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
 
-      // Create user record in our users table if it doesn't exist
+      // Create user record in our users table if it doesn't exist (async, don't block)
       if (event === 'SIGNED_IN' && session?.user && supabase) {
-        const { data: existingUser } = await supabase
-          .from('users')
-          .select('id')
-          .eq('id', session.user.id)
-          .single()
+        // Don't await this - let it run in background
+        const createUserIfNeeded = async () => {
+          try {
+            if (!supabase) return
+            
+            const { data: existingUser } = await supabase
+              .from('users')
+              .select('id')
+              .eq('id', session.user.id)
+              .single()
 
-        if (!existingUser) {
-          await supabase.from('users').insert({
-            id: session.user.id,
-            email: session.user.email!,
-            username: session.user.user_metadata?.full_name || session.user.email!.split('@')[0],
-          })
+            if (!existingUser) {
+              await supabase.from('users').insert({
+                id: session.user.id,
+                email: session.user.email!,
+                username: session.user.user_metadata?.full_name || session.user.email!.split('@')[0],
+              })
+            }
+          } catch (error) {
+            console.log('Background user creation error:', error)
+          }
         }
+        createUserIfNeeded()
       }
     })
 
@@ -122,7 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value = {
     user,
     session,
-    loading,
+    loading: loading && !initialized,
     signOut,
   }
 

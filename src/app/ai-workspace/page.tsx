@@ -34,29 +34,28 @@ export default function AIWorkspace() {
   const [pendingModels, setPendingModels] = useState<Set<string>>(new Set());
   const [inputValue, setInputValue] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Mark that we've checked auth state
-    if (!loading) {
-      setAuthChecked(true);
-      setInitialLoad(false);
-    }
+    setMounted(true);
+  }, []);
 
-    // Only redirect if we're sure there's no user and loading is complete
-    if (!loading && !user && authChecked) {
-      console.log('AI Workspace: No user found, redirecting to login');
-      router.replace("/login"); // Use replace instead of push for cleaner navigation
+  useEffect(() => {
+    if (!mounted) return;
+
+    // If we have a user, load chats immediately
+    if (user && supabase) {
+      console.log('AI Workspace: User authenticated, loading chats');
+      loadChats();
       return;
     }
 
-    // Load chats when user is available
-    if (user && supabase && !loading && !initialLoad) {
-      console.log('AI Workspace: User authenticated, loading chats');
-      loadChats();
+    // Only redirect if loading is complete and we definitely have no user
+    if (!loading && !user) {
+      console.log('AI Workspace: No user found, redirecting to login');
+      router.replace("/login");
     }
-  }, [user, loading, router, authChecked, initialLoad]);
+  }, [user, loading, router, mounted, supabase]);
 
   const loadChats = async () => {
     if (!supabase || !user) return;
@@ -413,7 +412,8 @@ Your model is now accessible worldwide and ready for production use!`,
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [router]);
 
-  if (loading || initialLoad) {
+  // Show loading only if we're still checking auth or not mounted
+  if (!mounted || (loading && !user)) {
     return (
       <div style={{ 
         position: 'fixed',
@@ -443,49 +443,7 @@ Your model is now accessible worldwide and ready for production use!`,
             fontWeight: '600', 
             marginBottom: '8px' 
           }}>
-            {initialLoad ? 'Loading AI Workspace' : 'Initializing AI Workspace'}
-          </h3>
-          <p style={{ color: '#6b7280', fontSize: '14px' }}>
-            {initialLoad ? 'Please wait...' : 'Setting up your AI environment...'}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading if we're still determining auth state
-  if (!loading && !user) {
-    // This will trigger the redirect in useEffect
-    return (
-      <div style={{ 
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        backgroundColor: 'white',
-        zIndex: 9999
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            border: '3px solid #f3f4f6', 
-            borderTop: '3px solid #dc2626', 
-            borderRadius: '50%', 
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 20px'
-          }}></div>
-          <h3 style={{ 
-            color: '#111827', 
-            fontSize: '18px', 
-            fontWeight: '600', 
-            marginBottom: '8px' 
-          }}>
-            Redirecting to Login
+            Loading AI Workspace
           </h3>
           <p style={{ color: '#6b7280', fontSize: '14px' }}>
             Please wait...
@@ -495,7 +453,8 @@ Your model is now accessible worldwide and ready for production use!`,
     );
   }
 
-  if (!user) {
+  // If no user and loading is complete, return null (redirect will happen in useEffect)
+  if (!user && !loading) {
     return null;
   }
 
@@ -980,12 +939,12 @@ Your model is now accessible worldwide and ready for production use!`,
           <div className="user-section">
             <div className="user-info">
               <img
-                src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                src={user?.user_metadata?.avatar_url || '/logo.jpg'}
                 alt="User"
                 className="user-avatar"
               />
               <div className="user-details">
-                <p className="user-email">{user.email}</p>
+                <p className="user-email">{user?.email}</p>
                 <p className="user-role">AI Builder</p>
               </div>
             </div>
@@ -1013,7 +972,7 @@ Your model is now accessible worldwide and ready for production use!`,
             {/* Sign Out Button - Top Right */}
             <button onClick={handleSignOut} className="signout-btn">
               <img
-                src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                src={user?.user_metadata?.avatar_url || '/logo.jpg'}
                 alt="User"
                 className="signout-avatar"
               />
@@ -1097,7 +1056,7 @@ Your model is now accessible worldwide and ready for production use!`,
                       <div>
                         {message.role === 'user' ? (
                           <img
-                            src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                            src={user?.user_metadata?.avatar_url || '/logo.jpg'}
                             alt="User"
                             className="message-avatar"
                           />
