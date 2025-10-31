@@ -58,7 +58,6 @@ export default function AIWorkspace() {
 
       if (data && !error) {
         setChats(data);
-        // Don't auto-select first chat - start with empty state
       }
     } catch (err) {
       console.error('Error loading chats:', err);
@@ -102,8 +101,6 @@ export default function AIWorkspace() {
         setCurrentChat(data);
         setMessages([]);
         setInputValue('');
-      } else {
-        console.error('Error creating chat:', error);
       }
     } catch (error) {
       console.error('Error in createNewChat:', error);
@@ -119,13 +116,7 @@ export default function AIWorkspace() {
     if (!supabase || !user) return;
 
     try {
-      // Delete messages first
-      await supabase
-        .from('messages')
-        .delete()
-        .eq('chat_id', chatId);
-
-      // Delete chat
+      await supabase.from('messages').delete().eq('chat_id', chatId);
       const { error: chatError } = await supabase
         .from('chats')
         .delete()
@@ -133,10 +124,7 @@ export default function AIWorkspace() {
         .eq('user_id', user.id);
 
       if (!chatError) {
-        // Update UI
         setChats(prev => prev.filter(chat => chat.id !== chatId));
-        
-        // If this was the current chat, clear it
         if (currentChat?.id === chatId) {
           setCurrentChat(null);
           setMessages([]);
@@ -149,12 +137,10 @@ export default function AIWorkspace() {
 
   const handleExampleClick = (exampleText: string) => {
     setInputValue(exampleText);
-    // Auto-focus the textarea
     setTimeout(() => {
       const textarea = document.querySelector('textarea');
       if (textarea) {
         textarea.focus();
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
       }
     }, 100);
   };
@@ -163,7 +149,6 @@ export default function AIWorkspace() {
     const value = e.target.value;
     setInputValue(value);
     
-    // Auto-resize textarea
     const target = e.target;
     target.style.height = 'auto';
     target.style.height = target.scrollHeight + 'px';
@@ -187,7 +172,7 @@ export default function AIWorkspace() {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      console.log('Copied to clipboard');
+      alert('Copied to clipboard!');
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -204,12 +189,12 @@ export default function AIWorkspace() {
 
   const rateResponse = async (messageId: string, rating: 'good' | 'bad') => {
     console.log(`Rated message ${messageId} as ${rating}`);
+    alert(`Rated as ${rating}!`);
   };
 
   const sendMessage = async (content: string) => {
     if (!supabase || !user || isLoading || !content.trim()) return;
 
-    // Create a new chat if none exists
     let chatToUse = currentChat;
     if (!chatToUse) {
       try {
@@ -237,19 +222,16 @@ export default function AIWorkspace() {
       }
     }
 
-    // At this point, chatToUse is guaranteed to be non-null
     const activeChat = chatToUse as Chat;
 
     setIsLoading(true);
     setInputValue('');
     
-    // Reset textarea height
     const textarea = document.querySelector('textarea');
     if (textarea) {
       textarea.style.height = 'auto';
     }
 
-    // Add user message to UI immediately
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -259,14 +241,12 @@ export default function AIWorkspace() {
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      // Save user message to database
       await supabase.from('messages').insert({
         chat_id: activeChat.id,
         role: 'user',
         content
       });
 
-      // Generate AI response
       const response = await fetch('/api/ai-workspace/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -284,7 +264,6 @@ export default function AIWorkspace() {
         throw new Error(data.error);
       }
 
-      // Add AI response to UI
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -295,7 +274,6 @@ export default function AIWorkspace() {
       };
       setMessages(prev => [...prev, aiMessage]);
 
-      // Save AI message to database
       await supabase.from('messages').insert({
         chat_id: activeChat.id,
         role: 'assistant',
@@ -304,13 +282,11 @@ export default function AIWorkspace() {
         model_used: data.model_used
       });
 
-      // Update chat timestamp
       await supabase
         .from('chats')
         .update({ updated_at: new Date().toISOString() })
         .eq('id', activeChat.id);
 
-      // Start polling for model completion if this is a model generation request
       if (data.eventId && data.status === 'processing') {
         setPendingModels(prev => new Set(prev).add(data.eventId));
         setTimeout(() => pollModelStatus(data.eventId), 5000);
@@ -342,7 +318,6 @@ export default function AIWorkspace() {
           return newSet;
         });
 
-        // Auto-deploy to Hugging Face using env token
         try {
           const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
             method: 'POST',
@@ -416,10 +391,24 @@ Your model is now accessible worldwide and ready for production use!`,
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading AI Workspace...</p>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        backgroundColor: 'white' 
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ 
+            width: '32px', 
+            height: '32px', 
+            border: '2px solid #e5e7eb', 
+            borderTop: '2px solid #2563eb', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{ color: '#6b7280' }}>Loading AI Workspace...</p>
         </div>
       </div>
     );
@@ -431,339 +420,714 @@ Your model is now accessible worldwide and ready for production use!`,
 
   if (!supabase) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Database Connection Error</h3>
-          <p className="text-gray-600">Unable to connect to the database. Please try refreshing the page.</p>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        backgroundColor: 'white' 
+      }}>
+        <div style={{ textAlign: 'center', maxWidth: '400px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+            Database Connection Error
+          </h3>
+          <p style={{ color: '#6b7280' }}>Unable to connect to the database. Please try refreshing the page.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-white">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-gray-900 text-white flex flex-col overflow-hidden`}>
-        {/* Sidebar Header */}
-        <div className="p-3 border-b border-gray-700">
-          <button
-            onClick={createNewChat}
-            className="w-full flex items-center justify-center space-x-2 border border-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span>New chat</span>
-          </button>
+    <>
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .sidebar {
+          width: ${sidebarOpen ? '256px' : '0px'};
+          transition: width 0.3s ease;
+          background-color: #111827;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .sidebar-header {
+          padding: 12px;
+          border-bottom: 1px solid #374151;
+        }
+        .new-chat-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border: 1px solid #4b5563;
+          color: white;
+          padding: 8px 12px;
+          border-radius: 6px;
+          background: transparent;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.2s;
+        }
+        .new-chat-btn:hover {
+          background-color: #1f2937;
+        }
+        .chat-list {
+          flex: 1;
+          overflow-y: auto;
+          padding: 8px;
+        }
+        .chat-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px;
+          border-radius: 8px;
+          cursor: pointer;
+          margin-bottom: 4px;
+          transition: background-color 0.2s;
+        }
+        .chat-item:hover {
+          background-color: #1f2937;
+        }
+        .chat-item.active {
+          background-color: #1f2937;
+        }
+        .chat-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+          min-width: 0;
+        }
+        .chat-title {
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .delete-btn {
+          opacity: 0;
+          padding: 4px;
+          border-radius: 4px;
+          background: transparent;
+          border: none;
+          color: white;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .chat-item:hover .delete-btn {
+          opacity: 1;
+        }
+        .delete-btn:hover {
+          background-color: #374151;
+        }
+        .user-section {
+          padding: 16px;
+          border-top: 1px solid #374151;
+        }
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .user-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+        }
+        .user-details {
+          flex: 1;
+          min-width: 0;
+        }
+        .user-email {
+          font-size: 14px;
+          font-weight: 500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .user-role {
+          font-size: 12px;
+          color: #9ca3af;
+        }
+        .main-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        .header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px;
+          border-bottom: 1px solid #e5e7eb;
+          background: white;
+        }
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .sidebar-toggle {
+          padding: 8px;
+          border-radius: 8px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .sidebar-toggle:hover {
+          background-color: #f3f4f6;
+        }
+        .header-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #111827;
+        }
+        .signout-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          font-size: 14px;
+          color: #6b7280;
+          background: transparent;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .signout-btn:hover {
+          color: #111827;
+          background-color: #f3f4f6;
+        }
+        .signout-avatar {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+        }
+        .messages-area {
+          flex: 1;
+          overflow-y: auto;
+        }
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          padding: 16px;
+        }
+        .empty-title {
+          font-size: 30px;
+          font-weight: 600;
+          color: #111827;
+          margin-bottom: 32px;
+          text-align: center;
+        }
+        .example-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+          margin-bottom: 32px;
+          max-width: 600px;
+        }
+        .example-card {
+          padding: 16px;
+          text-align: left;
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .example-card:hover {
+          background: #f3f4f6;
+        }
+        .example-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+        .example-title {
+          font-weight: 500;
+          color: #111827;
+        }
+        .example-desc {
+          font-size: 14px;
+          color: #6b7280;
+        }
+        .messages-container {
+          max-width: 768px;
+          margin: 0 auto;
+          padding: 24px 16px;
+        }
+        .message {
+          margin-bottom: 32px;
+        }
+        .message-content {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .message-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .ai-avatar {
+          width: 32px;
+          height: 32px;
+          background: #059669;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 14px;
+          font-weight: bold;
+        }
+        .message-body {
+          flex: 1;
+          min-width: 0;
+        }
+        .message-sender {
+          font-size: 14px;
+          font-weight: 500;
+          color: #111827;
+          margin-bottom: 4px;
+        }
+        .message-text {
+          color: #1f2937;
+          white-space: pre-wrap;
+          line-height: 1.6;
+        }
+        .message-actions {
+          margin-top: 16px;
+          display: flex;
+          gap: 8px;
+        }
+        .action-btn {
+          padding: 4px;
+          border-radius: 4px;
+          background: transparent;
+          border: none;
+          color: #9ca3af;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .action-btn:hover {
+          background: #f3f4f6;
+        }
+        .action-btn:hover.good { color: #059669; }
+        .action-btn:hover.bad { color: #dc2626; }
+        .action-btn:hover.copy { color: #2563eb; }
+        .action-btn:hover.regen { color: #7c3aed; }
+        .loading-message {
+          margin-bottom: 32px;
+        }
+        .loading-content {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .loading-body {
+          flex: 1;
+        }
+        .loading-text {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid #e5e7eb;
+          border-top: 2px solid #059669;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+        .input-section {
+          border-top: 1px solid #e5e7eb;
+          padding: 16px;
+          background: white;
+        }
+        .input-container {
+          max-width: 768px;
+          margin: 0 auto;
+        }
+        .input-wrapper {
+          position: relative;
+        }
+        .input-textarea {
+          width: 100%;
+          padding: 12px 48px 12px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          resize: none;
+          outline: none;
+          color: #111827;
+          min-height: 44px;
+          max-height: 200px;
+          font-family: inherit;
+          font-size: 14px;
+        }
+        .input-textarea:focus {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .input-textarea::placeholder {
+          color: #9ca3af;
+        }
+        .send-btn {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          padding: 8px;
+          background: transparent;
+          border: none;
+          color: #9ca3af;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .send-btn:hover:not(:disabled) {
+          color: #6b7280;
+        }
+        .send-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .footer-text {
+          font-size: 12px;
+          color: #9ca3af;
+          text-align: center;
+          margin-top: 12px;
+        }
+      `}</style>
+      
+      <div style={{ display: 'flex', height: '100vh', backgroundColor: 'white' }}>
+        {/* Sidebar */}
+        <div className="sidebar">
+          {/* Sidebar Header */}
+          <div className="sidebar-header">
+            <button onClick={createNewChat} className="new-chat-btn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span>New chat</span>
+            </button>
+          </div>
+
+          {/* Chat List */}
+          <div className="chat-list">
+            {chats.length === 0 ? (
+              <div style={{ textAlign: 'center', color: '#9ca3af', fontSize: '14px', marginTop: '32px' }}>
+                No chats yet
+              </div>
+            ) : (
+              chats.map((chat) => (
+                <div
+                  key={chat.id}
+                  className={`chat-item ${currentChat?.id === chat.id ? 'active' : ''}`}
+                  onClick={() => {
+                    setCurrentChat(chat);
+                    loadMessages(chat.id);
+                  }}
+                >
+                  <div className="chat-content">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <span className="chat-title">{chat.title}</span>
+                  </div>
+                  <button
+                    onClick={(e) => deleteChat(chat.id, e)}
+                    className="delete-btn"
+                    title="Delete chat"
+                  >
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* User Section */}
+          <div className="user-section">
+            <div className="user-info">
+              <img
+                src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                alt="User"
+                className="user-avatar"
+              />
+              <div className="user-details">
+                <p className="user-email">{user.email}</p>
+                <p className="user-role">AI Builder</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Chat List */}
-        <div className="flex-1 overflow-y-auto p-2">
-          {chats.length === 0 ? (
-            <div className="text-center text-gray-400 text-sm mt-8">
-              No chats yet
-            </div>
-          ) : (
-            chats.map((chat) => (
-              <div
-                key={chat.id}
-                className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-800 mb-1 ${
-                  currentChat?.id === chat.id ? 'bg-gray-800' : ''
-                }`}
-                onClick={() => {
-                  setCurrentChat(chat);
-                  loadMessages(chat.id);
-                }}
+        {/* Main Content */}
+        <div className="main-content">
+          {/* Top Header */}
+          <div className="header">
+            <div className="header-left">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="sidebar-toggle"
               >
-                <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <span className="text-sm truncate">{chat.title}</span>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <h1 className="header-title">
+                {currentChat?.title || 'zehanx AI'}
+              </h1>
+            </div>
+            
+            {/* Sign Out Button - Top Right */}
+            <button onClick={handleSignOut} className="signout-btn">
+              <img
+                src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                alt="User"
+                className="signout-avatar"
+              />
+              <span>Sign out</span>
+            </button>
+          </div>
+
+          {/* Chat Messages Area */}
+          <div className="messages-area">
+            {messages.length === 0 ? (
+              /* Empty State */
+              <div className="empty-state">
+                <div style={{ textAlign: 'center', maxWidth: '600px' }}>
+                  <h2 className="empty-title">What can I help with?</h2>
+                  
+                  {/* Action Cards Grid */}
+                  <div className="example-grid">
+                    <button
+                      onClick={() => handleExampleClick('Create a sentiment analysis model using BERT for analyzing customer reviews and feedback')}
+                      className="example-card"
+                    >
+                      <div className="example-header">
+                        <span style={{ color: '#059669' }}>🎯</span>
+                        <span className="example-title">Create model</span>
+                      </div>
+                      <p className="example-desc">Sentiment analysis with BERT</p>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleExampleClick('Help me create an image classification model using ResNet for detecting objects in photos')}
+                      className="example-card"
+                    >
+                      <div className="example-header">
+                        <span style={{ color: '#2563eb' }}>✏️</span>
+                        <span className="example-title">Help me write</span>
+                      </div>
+                      <p className="example-desc">Image classification model</p>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleExampleClick('Summarize the best practices for training deep neural networks and optimizing model performance')}
+                      className="example-card"
+                    >
+                      <div className="example-header">
+                        <span style={{ color: '#d97706' }}>📄</span>
+                        <span className="example-title">Summarize text</span>
+                      </div>
+                      <p className="example-desc">Neural network best practices</p>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleExampleClick('Generate Python code for a conversational AI chatbot using transformers and Hugging Face')}
+                      className="example-card"
+                    >
+                      <div className="example-header">
+                        <span style={{ color: '#7c3aed' }}>💻</span>
+                        <span className="example-title">Code</span>
+                      </div>
+                      <p className="example-desc">Chatbot with transformers</p>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleExampleClick('Brainstorm innovative AI applications for healthcare, finance, and education sectors')}
+                      className="example-card"
+                    >
+                      <div className="example-header">
+                        <span style={{ color: '#ec4899' }}>💡</span>
+                        <span className="example-title">Brainstorm</span>
+                      </div>
+                      <p className="example-desc">AI applications ideas</p>
+                    </button>
+                  </div>
                 </div>
+              </div>
+            ) : (
+              /* Chat Messages */
+              <div className="messages-container">
+                {messages.map((message, index) => (
+                  <div key={message.id} className="message">
+                    <div className="message-content">
+                      <div>
+                        {message.role === 'user' ? (
+                          <img
+                            src={user.user_metadata?.avatar_url || '/logo.jpg'}
+                            alt="User"
+                            className="message-avatar"
+                          />
+                        ) : (
+                          <div className="ai-avatar">AI</div>
+                        )}
+                      </div>
+                      <div className="message-body">
+                        <div className="message-sender">
+                          {message.role === 'user' ? 'You' : 'zehanx AI'}
+                        </div>
+                        <div className="message-text">{message.content}</div>
+                        
+                        {/* Action Buttons for AI Messages */}
+                        {message.role === 'assistant' && (
+                          <div className="message-actions">
+                            <button 
+                              onClick={() => rateResponse(message.id, 'good')}
+                              className="action-btn good" 
+                              title="Good response"
+                            >
+                              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L9 6v4m-5 8h2.5a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => rateResponse(message.id, 'bad')}
+                              className="action-btn bad" 
+                              title="Bad response"
+                            >
+                              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L15 18v-4m-5-8h2.5a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => copyToClipboard(message.content)}
+                              className="action-btn copy" 
+                              title="Copy"
+                            >
+                              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => regenerateResponse(index)}
+                              className="action-btn regen" 
+                              title="Regenerate"
+                              disabled={isLoading}
+                            >
+                              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Loading State */}
+                {isLoading && (
+                  <div className="loading-message">
+                    <div className="loading-content">
+                      <div className="ai-avatar">AI</div>
+                      <div className="loading-body">
+                        <div className="message-sender">zehanx AI</div>
+                        <div className="loading-text">
+                          <div className="spinner"></div>
+                          <span style={{ color: '#6b7280' }}>Generating your AI model...</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Pending Models Status */}
+                {pendingModels.size > 0 && (
+                  <div className="loading-message">
+                    <div className="loading-content">
+                      <div style={{ 
+                        width: '32px', 
+                        height: '32px', 
+                        background: '#2563eb', 
+                        borderRadius: '50%', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        color: 'white', 
+                        fontSize: '14px', 
+                        fontWeight: 'bold' 
+                      }}>🔧</div>
+                      <div className="loading-body">
+                        <div className="message-sender">System</div>
+                        <div style={{ 
+                          background: '#eff6ff', 
+                          border: '1px solid #bfdbfe', 
+                          borderRadius: '8px', 
+                          padding: '12px' 
+                        }}>
+                          <div className="loading-text">
+                            <div className="spinner"></div>
+                            <span style={{ color: '#1e40af' }}>Building your AI model... This may take 1-2 minutes.</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Input Section */}
+          <div className="input-section">
+            <div className="input-container">
+              <div className="input-wrapper">
+                <textarea
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Message zehanx AI..."
+                  className="input-textarea"
+                  rows={1}
+                  disabled={isLoading}
+                />
                 <button
-                  onClick={(e) => deleteChat(chat.id, e)}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-700 rounded transition-all flex-shrink-0"
-                  title="Delete chat"
+                  onClick={handleSendClick}
+                  disabled={!inputValue.trim() || isLoading}
+                  className="send-btn"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </button>
               </div>
-            ))
-          )}
-        </div>
-
-        {/* User Section */}
-        <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center space-x-3">
-            <img
-              src={user.user_metadata?.avatar_url || '/logo.jpg'}
-              alt="User"
-              className="w-8 h-8 rounded-full"
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.email}</p>
-              <p className="text-xs text-gray-400">AI Builder</p>
+              
+              {/* Footer Text */}
+              <p className="footer-text">
+                zehanx AI can generate, train, and deploy custom AI models. Always verify generated code before training.
+              </p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <h1 className="text-lg font-semibold text-gray-900">
-              {currentChat?.title || 'zehanx AI'}
-            </h1>
-          </div>
-          
-          {/* Sign Out Button - Top Right */}
-          <button
-            onClick={handleSignOut}
-            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <img
-              src={user.user_metadata?.avatar_url || '/logo.jpg'}
-              alt="User"
-              className="w-6 h-6 rounded-full"
-            />
-            <span>Sign out</span>
-          </button>
-        </div>
-
-        {/* Chat Messages Area */}
-        <div className="flex-1 overflow-y-auto">
-          {messages.length === 0 ? (
-            /* Empty State - Exact ChatGPT Design */
-            <div className="flex flex-col items-center justify-center h-full px-4">
-              <div className="text-center max-w-2xl">
-                <h2 className="text-3xl font-semibold text-gray-900 mb-8">
-                  What can I help with?
-                </h2>
-                
-                {/* Action Cards Grid */}
-                <div className="grid grid-cols-2 gap-3 mb-8 max-w-2xl">
-                  <button
-                    onClick={() => handleExampleClick('Create a sentiment analysis model using BERT for analyzing customer reviews and feedback')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-green-600">🎯</span>
-                      <span className="font-medium text-gray-900">Create model</span>
-                    </div>
-                    <p className="text-sm text-gray-600">Sentiment analysis with BERT</p>
-                  </button>
-                  
-                  <button
-                    onClick={() => handleExampleClick('Help me create an image classification model using ResNet for detecting objects in photos')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-blue-600">✏️</span>
-                      <span className="font-medium text-gray-900">Help me write</span>
-                    </div>
-                    <p className="text-sm text-gray-600">Image classification model</p>
-                  </button>
-                  
-                  <button
-                    onClick={() => handleExampleClick('Summarize the best practices for training deep neural networks and optimizing model performance')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-yellow-600">📄</span>
-                      <span className="font-medium text-gray-900">Summarize text</span>
-                    </div>
-                    <p className="text-sm text-gray-600">Neural network best practices</p>
-                  </button>
-                  
-                  <button
-                    onClick={() => handleExampleClick('Generate Python code for a conversational AI chatbot using transformers and Hugging Face')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-purple-600">💻</span>
-                      <span className="font-medium text-gray-900">Code</span>
-                    </div>
-                    <p className="text-sm text-gray-600">Chatbot with transformers</p>
-                  </button>
-                  
-                  <button
-                    onClick={() => handleExampleClick('Brainstorm innovative AI applications for healthcare, finance, and education sectors')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="text-pink-600">💡</span>
-                      <span className="font-medium text-gray-900">Brainstorm</span>
-                    </div>
-                    <p className="text-sm text-gray-600">AI applications ideas</p>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* Chat Messages - Exact ChatGPT Design */
-            <div className="max-w-3xl mx-auto px-4 py-6">
-              {messages.map((message, index) => (
-                <div key={message.id} className="mb-8">
-                  <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      {message.role === 'user' ? (
-                        <img
-                          src={user.user_metadata?.avatar_url || '/logo.jpg'}
-                          alt="User"
-                          className="w-8 h-8 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">AI</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 mb-1">
-                        {message.role === 'user' ? 'You' : 'zehanx AI'}
-                      </div>
-                      <div className="prose prose-sm max-w-none text-gray-800 whitespace-pre-wrap">
-                        {message.content}
-                      </div>
-                      
-                      {/* Action Buttons for AI Messages */}
-                      {message.role === 'assistant' && (
-                        <div className="mt-4 flex space-x-2">
-                          <button 
-                            onClick={() => rateResponse(message.id, 'good')}
-                            className="text-gray-400 hover:text-green-600 p-1 rounded hover:bg-gray-100 transition-colors" 
-                            title="Good response"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L9 6v4m-5 8h2.5a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                          </button>
-                          <button 
-                            onClick={() => rateResponse(message.id, 'bad')}
-                            className="text-gray-400 hover:text-red-600 p-1 rounded hover:bg-gray-100 transition-colors" 
-                            title="Bad response"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L15 18v-4m-5-8h2.5a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
-                            </svg>
-                          </button>
-                          <button 
-                            onClick={() => copyToClipboard(message.content)}
-                            className="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-gray-100 transition-colors" 
-                            title="Copy"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                          </button>
-                          <button 
-                            onClick={() => regenerateResponse(index)}
-                            className="text-gray-400 hover:text-purple-600 p-1 rounded hover:bg-gray-100 transition-colors" 
-                            title="Regenerate"
-                            disabled={isLoading}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {/* Loading State */}
-              {isLoading && (
-                <div className="mb-8">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">AI</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900 mb-1">zehanx AI</div>
-                      <div className="flex items-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                        <span className="text-gray-600">Generating your AI model...</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Pending Models Status */}
-              {pendingModels.size > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">🔧</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900 mb-1">System</div>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                          <span className="text-blue-800">Building your AI model... This may take 1-2 minutes.</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Input Section - Exact ChatGPT Design */}
-        <div className="border-t border-gray-200 p-4 bg-white">
-          <div className="max-w-3xl mx-auto">
-            <div className="relative">
-              <textarea
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                placeholder="Message zehanx AI..."
-                className="w-full p-3 pr-12 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                rows={1}
-                style={{ minHeight: '44px', maxHeight: '200px' }}
-                disabled={isLoading}
-              />
-              <button
-                onClick={handleSendClick}
-                disabled={!inputValue.trim() || isLoading}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </button>
-            </div>
-            
-            {/* Footer Text */}
-            <p className="text-xs text-gray-500 text-center mt-3">
-              zehanx AI can generate, train, and deploy custom AI models. Always verify generated code before training.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
