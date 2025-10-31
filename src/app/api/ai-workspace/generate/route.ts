@@ -1,131 +1,175 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+import { inngest } from '../../../../inngest/client'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
     const { chatId, prompt, mode, userId } = await request.json()
 
-    if (!prompt || !mode) {
-      return NextResponse.json({ error: 'Prompt and mode are required' }, { status: 400 })
+    if (!prompt || !mode || !userId) {
+      return NextResponse.json({ error: 'Prompt, mode, and userId are required' }, { status: 400 })
     }
 
-    if (!GEMINI_API_KEY) {
-      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 })
-    }
+    // Parse the user's request to extract model requirements
+    const modelConfig = parseModelRequest(prompt, mode)
 
-    // Initialize Gemini AI
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-    const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" })
+    // Send event to Inngest to start AI model generation
+    const eventId = `ai-model-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    
+    await inngest.send({
+      name: "ai/model.generate",
+      data: {
+        eventId,
+        userId,
+        chatId,
+        prompt,
+        mode,
+        modelConfig,
+        timestamp: new Date().toISOString()
+      }
+    })
 
-    // Customize the prompt based on the mode
-    let systemPrompt = ''
-    switch (mode) {
-      case 'models':
-        systemPrompt = `You are zehanx AI Model Generator, an expert AI system that creates, trains, and deploys custom AI models. 
-
-Your capabilities:
-1. Generate complete PyTorch/TensorFlow model code
-2. Find and configure datasets from Kaggle/Hugging Face
-3. Create training scripts with proper hyperparameters
-4. Generate requirements.txt and setup files
-5. Provide deployment instructions for Hugging Face
-
-When a user requests an AI model:
-1. Analyze their requirements
-2. Choose the best architecture (CNN, LSTM, Transformer, etc.)
-3. Find suitable datasets
-4. Generate complete, runnable code
-5. Provide step-by-step training instructions
-
-Always provide:
-- Complete Python code files
-- Dataset recommendations with sources
-- Training configuration
-- Performance metrics to track
-- Deployment steps
-
-Format your response with clear sections and code blocks.`
-        break
-      case 'code':
-        systemPrompt = 'You are zehanx AI Code Assistant. Help with code generation, debugging, and optimization. Provide clean, well-commented code with explanations.'
-        break
-      case 'research':
-        systemPrompt = 'You are zehanx AI Researcher. Provide detailed research, analysis, and insights. Use reliable sources and provide citations when possible.'
-        break
-      case 'app-builder':
-        systemPrompt = 'You are zehanx AI App Builder. Help create web applications, APIs, and software solutions. Provide complete project structures and deployment guides.'
-        break
-      case 'translate':
-        systemPrompt = 'You are zehanx AI Translator. Provide accurate translations and language assistance. Support multiple languages and cultural context.'
-        break
-      case 'fine-tune':
-        systemPrompt = 'You are zehanx AI Fine-tuning Expert. Guide users through model fine-tuning processes, dataset preparation, and training optimization.'
-        break
-      default:
-        systemPrompt = 'You are zehanx AI, a helpful AI assistant. Provide accurate, helpful responses while being conversational and friendly.'
-    }
-
-    const fullPrompt = `${systemPrompt}
-
-User Request: ${prompt}
-
-Please provide a comprehensive response. If this is about creating an AI model, include:
-1. Model architecture recommendation
-2. Dataset suggestions with sources
-3. Complete code implementation
-4. Training instructions
-5. Deployment steps
-
-Respond in a clear, structured format with code blocks where appropriate.`
-
-    // Generate content using Gemini
-    const result = await geminiModel.generateContent(fullPrompt)
-    const response = await result.response
-    const aiResponse = response.text()
-
-    // Calculate approximate token usage
-    const promptTokens = fullPrompt.length / 4 // Rough estimate
-    const completionTokens = aiResponse.length / 4
-    const totalTokens = promptTokens + completionTokens
+    // Return immediate response while Inngest processes in background
+    const response = generateImmediateResponse(modelConfig, mode)
 
     return NextResponse.json({ 
-      response: aiResponse,
-      model_used: 'gemini-1.5-pro',
-      tokens_used: Math.round(totalTokens),
+      response,
+      model_used: 'zehanx-ai-builder',
+      tokens_used: Math.round(prompt.length / 4 + response.length / 4),
       mode: mode,
+      eventId,
+      status: 'processing',
       timestamp: new Date().toISOString()
     })
 
   } catch (error: any) {
     console.error('AI Workspace API error:', error)
     
-    // More specific error messages
-    if (error.message?.includes('API key')) {
-      return NextResponse.json(
-        { error: 'API configuration error. Please contact support.' },
-        { status: 500 }
-      )
-    }
-    
-    if (error.message?.includes('quota') || error.message?.includes('limit')) {
-      return NextResponse.json(
-        { error: 'Service temporarily unavailable. Please try again later.' },
-        { status: 429 }
-      )
-    }
-    
-    if (error.message?.includes('404') || error.message?.includes('not found')) {
-      return NextResponse.json(
-        { error: 'AI model temporarily unavailable. Please try again later.' },
-        { status: 503 }
-      )
-    }
-    
     return NextResponse.json(
       { error: `AI service error: ${error.message || 'Unknown error'}` },
       { status: 500 }
     )
   }
+}
+
+function parseModelRequest(prompt: string, mode: string) {
+  const lowerPrompt = prompt.toLowerCase()
+  
+  // Detect model type
+  let modelType = 'classification'
+  if (lowerPrompt.includes('image') || lowerPrompt.includes('vision') || lowerPrompt.includes('cnn')) {
+    modelType = 'computer-vision'
+  } else if (lowerPrompt.includes('text') || lowerPrompt.includes('nlp') || lowerPrompt.includes('sentiment')) {
+    modelType = 'text-classification'
+  } else if (lowerPrompt.includes('chat') || lowerPrompt.includes('conversation') || lowerPrompt.includes('llm')) {
+    modelType = 'language-model'
+  } else if (lowerPrompt.includes('regression') || lowerPrompt.includes('predict')) {
+    modelType = 'regression'
+  }
+
+  // Detect framework preference
+  let framework = 'pytorch'
+  if (lowerPrompt.includes('tensorflow') || lowerPrompt.includes('keras')) {
+    framework = 'tensorflow'
+  }
+
+  // Detect base model
+  let baseModel = 'bert-base-uncased'
+  if (lowerPrompt.includes('gpt')) {
+    baseModel = 'gpt2'
+  } else if (lowerPrompt.includes('roberta')) {
+    baseModel = 'roberta-base'
+  } else if (lowerPrompt.includes('resnet')) {
+    baseModel = 'resnet50'
+  }
+
+  return {
+    name: extractModelName(prompt) || `AI Model ${Date.now()}`,
+    description: prompt,
+    modelType,
+    framework,
+    baseModel,
+    domain: extractDomain(prompt),
+    requirements: extractRequirements(prompt)
+  }
+}
+
+function extractModelName(prompt: string): string | null {
+  const namePatterns = [
+    /create (?:a |an )?(.+?) model/i,
+    /build (?:a |an )?(.+?) model/i,
+    /(?:model|system) (?:called|named) (.+)/i,
+    /(.+?) (?:classifier|predictor|model)/i
+  ]
+  
+  for (const pattern of namePatterns) {
+    const match = prompt.match(pattern)
+    if (match && match[1]) {
+      return match[1].trim()
+    }
+  }
+  
+  return null
+}
+
+function extractDomain(prompt: string): string {
+  const lowerPrompt = prompt.toLowerCase()
+  
+  if (lowerPrompt.includes('medical') || lowerPrompt.includes('health')) return 'healthcare'
+  if (lowerPrompt.includes('finance') || lowerPrompt.includes('trading')) return 'finance'
+  if (lowerPrompt.includes('ecommerce') || lowerPrompt.includes('retail')) return 'ecommerce'
+  if (lowerPrompt.includes('social') || lowerPrompt.includes('media')) return 'social-media'
+  if (lowerPrompt.includes('education') || lowerPrompt.includes('learning')) return 'education'
+  
+  return 'general'
+}
+
+function extractRequirements(prompt: string): string[] {
+  const requirements = []
+  const lowerPrompt = prompt.toLowerCase()
+  
+  if (lowerPrompt.includes('real-time') || lowerPrompt.includes('fast')) {
+    requirements.push('low-latency')
+  }
+  if (lowerPrompt.includes('accurate') || lowerPrompt.includes('precision')) {
+    requirements.push('high-accuracy')
+  }
+  if (lowerPrompt.includes('scalable') || lowerPrompt.includes('large')) {
+    requirements.push('scalable')
+  }
+  if (lowerPrompt.includes('deploy') || lowerPrompt.includes('production')) {
+    requirements.push('production-ready')
+  }
+  
+  return requirements
+}
+
+function generateImmediateResponse(modelConfig: any, mode: string): string {
+  const { name, modelType, framework, baseModel } = modelConfig
+  
+  return `🚀 **AI Model Generation Started**
+
+I'm now creating your **${name}** using the zehanx AI Builder system!
+
+**Model Configuration:**
+- **Type:** ${modelType.replace('-', ' ').toUpperCase()}
+- **Framework:** ${framework.toUpperCase()}
+- **Base Model:** ${baseModel}
+
+**What's happening now:**
+1. 🔍 **Analyzing Requirements** - Understanding your specifications
+2. 🗃️ **Finding Datasets** - Searching Kaggle and Hugging Face for suitable data
+3. 🏗️ **Generating Architecture** - Creating optimized model structure
+4. 📝 **Writing Code** - Generating complete training and inference scripts
+5. ⚙️ **Setting up Environment** - Preparing E2B sandbox for execution
+
+**Next Steps:**
+- I'll provide complete code files in a few moments
+- Dataset recommendations with download links
+- Training instructions and hyperparameter suggestions
+- Deployment guide for Hugging Face Hub
+
+This process typically takes 30-60 seconds. I'm working on it now! 🤖✨
+
+*Powered by zehanx AI Builder - Building AI that builds AI*`
 }
