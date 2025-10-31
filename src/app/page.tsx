@@ -63,12 +63,12 @@ export default function Home() {
           </RevealFx>
           <RevealFx translateY="4" fillWidth horizontal="start" paddingBottom="16">
             <Heading wrap="balance" variant="display-strong-l">
-              {home.headline || "Building AI for Better of Humanity"}
+              World's first AI that generates other AI
             </Heading>
           </RevealFx>
           <RevealFx translateY="8" delay={0.2} fillWidth horizontal="start" paddingBottom="32">
             <Text wrap="balance" onBackground="neutral-weak" variant="heading-default-xl">
-              We're zehanxtech, an AI & Web Development company specializing in cutting-edge artificial intelligence solutions, modern web applications, and innovative digital products that transform businesses.
+              Revolutionary AI technology that autonomously creates, trains, and deploys custom AI models. Simply describe what you want, and our AI builds it for you - from sentiment analysis to computer vision models.
             </Text>
           </RevealFx>
           <RevealFx paddingTop="12" delay={0.4} horizontal="start" paddingLeft="12">
@@ -115,19 +115,19 @@ export default function Home() {
       {/* Services Section */}
       <RevealFx delay={0.3} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
         <Column maxWidth="s" gap="m">
-          <Heading as="h2" variant="display-strong-s">What We Offer</Heading>
+          <Heading as="h2" variant="display-strong-s">Revolutionary AI Technology</Heading>
           <Flex gap="16" wrap>
             <Card>
-              <Heading variant="heading-default-m">AI Systems Development</Heading>
-              <Text onBackground="neutral-weak">Custom AI systems, machine learning models, and intelligent automation solutions.</Text>
+              <Heading variant="heading-default-m">🤖 AI Model Generation</Heading>
+              <Text onBackground="neutral-weak">Describe any AI model you need, and our AI will generate, train, and deploy it automatically.</Text>
             </Card>
             <Card>
-              <Heading variant="heading-default-m">Web Development</Heading>
-              <Text onBackground="neutral-weak">Modern, scalable web applications using cutting-edge technologies and best practices.</Text>
+              <Heading variant="heading-default-m">🚀 Instant Deployment</Heading>
+              <Text onBackground="neutral-weak">Deploy your custom AI models to Hugging Face Hub with one click - no coding required.</Text>
             </Card>
             <Card>
-              <Heading variant="heading-default-m">Digital Innovation</Heading>
-              <Text onBackground="neutral-weak">Transformative digital solutions that drive business growth and efficiency.</Text>
+              <Heading variant="heading-default-m">🎯 Any Use Case</Heading>
+              <Text onBackground="neutral-weak">From sentiment analysis to computer vision - create AI models for any business need.</Text>
             </Card>
           </Flex>
         </Column>

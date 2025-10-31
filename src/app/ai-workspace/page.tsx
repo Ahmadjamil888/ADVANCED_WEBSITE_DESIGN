@@ -66,6 +66,45 @@ const MessageComponent = ({
           >
             {message.content}
           </Text>
+          
+          {isModelGenerated && (
+            <Flex direction="column" gap="s">
+              <Text variant="body-strong-s" onBackground="neutral-medium">
+                🚀 Your AI model is ready! Choose your next step:
+              </Text>
+              
+              <Flex gap="s" wrap>
+                <Button
+                  variant="primary"
+                  size="s"
+                  onClick={async () => {
+                    if (message.eventId) {
+                      setIsUploading(true);
+                      await onHuggingFaceUpload(message.eventId);
+                      setIsUploading(false);
+                    }
+                  }}
+                  disabled={isUploading}
+                >
+                  {isUploading ? '🔄 Deploying...' : '🚀 Deploy to Hugging Face'}
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="s"
+                  onClick={() => message.eventId && onDownloadFiles(message.eventId)}
+                >
+                  💾 Download Files
+                </Button>
+              </Flex>
+
+              {!hasHfToken && (
+                <Text variant="body-default-xs" onBackground="neutral-medium">
+                  💡 You'll be prompted for your Hugging Face token on first deployment
+                </Text>
+              )}
+            </Flex>
+          )}
         </Flex>
       </Card>
     </Flex>
@@ -146,20 +185,27 @@ export default function AIWorkspace() {
   const createNewChat = async () => {
     if (!supabase || !user) return;
 
-    const { data, error } = await supabase
-      .from('chats')
-      .insert({
-        user_id: user.id,
-        title: 'New AI Model',
-        mode: currentMode
-      })
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('chats')
+        .insert({
+          user_id: user.id,
+          title: 'New AI Model',
+          mode: currentMode
+        })
+        .select()
+        .single();
 
-    if (data && !error) {
-      setChats(prev => [data, ...prev]);
-      setCurrentChat(data);
-      setMessages([]);
+      if (data && !error) {
+        setChats(prev => [data, ...prev]);
+        setCurrentChat(data);
+        setMessages([]);
+        console.log('New chat created:', data);
+      } else {
+        console.error('Error creating chat:', error);
+      }
+    } catch (error) {
+      console.error('Error in createNewChat:', error);
     }
   };
 
@@ -289,7 +335,15 @@ export default function AIWorkspace() {
   };
 
   const sendMessage = async (content: string) => {
-    if (!currentChat || !supabase || !user || isLoading) return;
+    if (!supabase || !user || isLoading) return;
+
+    // Create a new chat if none exists
+    if (!currentChat) {
+      await createNewChat();
+      // Wait a bit for the chat to be created
+      await new Promise(resolve => setTimeout(resolve, 100));
+      if (!currentChat) return;
+    }
 
     setIsLoading(true);
 
@@ -464,22 +518,34 @@ export default function AIWorkspace() {
           )}
         </Flex>
         
-        <Flex direction="column" gap="xs" padding="s" borderTop="neutral-medium">
+        <Flex direction="column" gap="s" padding="s" borderTop="neutral-medium">
           {user && (
-            <Flex vertical="center" gap="s">
+            <Flex vertical="center" gap="s" padding="xs">
               <Avatar size="s" src={user.user_metadata?.avatar_url} />
-              <Text variant="body-default-xs" onBackground="neutral-medium" style={{ flex: 1 }}>
-                {user.email}
-              </Text>
+              <Flex direction="column" style={{ flex: 1 }}>
+                <Text variant="body-default-xs" onBackground="neutral-strong">
+                  {user.email}
+                </Text>
+                <Text variant="body-default-xs" onBackground="neutral-medium">
+                  AI Builder
+                </Text>
+              </Flex>
             </Flex>
           )}
           <Button
-            onClick={signOut}
-            variant="tertiary"
+            onClick={async () => {
+              try {
+                await signOut();
+                router.push('/login');
+              } catch (error) {
+                console.error('Sign out error:', error);
+              }
+            }}
+            variant="secondary"
             size="s"
             fillWidth
           >
-            🚪 Sign out
+            🚪 Sign Out
           </Button>
         </Flex>
       </Flex>
@@ -519,7 +585,18 @@ export default function AIWorkspace() {
                 </Flex>
                 
                 <Flex direction="column" gap="s" fillWidth>
-                  <Card padding="m" background="neutral-weak" style={{ cursor: 'pointer' }}>
+                  <Card 
+                    padding="m" 
+                    background="neutral-weak" 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+                      if (textarea) {
+                        textarea.value = 'Create a sentiment analysis model using BERT for analyzing customer reviews and feedback';
+                        textarea.focus();
+                      }
+                    }}
+                  >
                     <Flex direction="column" gap="xs">
                       <Text variant="body-strong-m" onBackground="neutral-weak">
                         🎯 Text Classification
@@ -529,7 +606,18 @@ export default function AIWorkspace() {
                       </Text>
                     </Flex>
                   </Card>
-                  <Card padding="m" background="neutral-weak" style={{ cursor: 'pointer' }}>
+                  <Card 
+                    padding="m" 
+                    background="neutral-weak" 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+                      if (textarea) {
+                        textarea.value = 'Create an image classification model using ResNet for detecting and categorizing objects in photos';
+                        textarea.focus();
+                      }
+                    }}
+                  >
                     <Flex direction="column" gap="xs">
                       <Text variant="body-strong-m" onBackground="neutral-weak">
                         🖼️ Image Classification
@@ -539,7 +627,18 @@ export default function AIWorkspace() {
                       </Text>
                     </Flex>
                   </Card>
-                  <Card padding="m" background="neutral-weak" style={{ cursor: 'pointer' }}>
+                  <Card 
+                    padding="m" 
+                    background="neutral-weak" 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+                      if (textarea) {
+                        textarea.value = 'Create a conversational AI chatbot model using GPT architecture for customer support and assistance';
+                        textarea.focus();
+                      }
+                    }}
+                  >
                     <Flex direction="column" gap="xs">
                       <Text variant="body-strong-m" onBackground="neutral-weak">
                         🤖 Chatbot Model
