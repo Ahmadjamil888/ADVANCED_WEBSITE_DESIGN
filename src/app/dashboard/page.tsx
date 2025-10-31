@@ -81,19 +81,11 @@ export default function Dashboard() {
     }
 
     if (user) {
-      fetchUserStats();
-      const model = searchParams.get("model");
-      const prompt = searchParams.get("prompt");
-      
-      if (model) {
-        setSelectedModel(model);
-        if (prompt) {
-          setInputMessage(prompt);
-          handleSendMessage(prompt, model);
-        }
-      }
+      // Redirect to AI workspace instead of showing dashboard
+      router.push("/ai-workspace");
+      return;
     }
-  }, [user, loading, router, searchParams]);
+  }, [user, loading, router]);
 
   const fetchUserStats = async () => {
     if (!user || !supabase) return;
