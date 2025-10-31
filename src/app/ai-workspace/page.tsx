@@ -34,7 +34,6 @@ export default function AIWorkspace() {
   const [pendingModels, setPendingModels] = useState<Set<string>>(new Set());
   const [inputValue, setInputValue] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -42,7 +41,7 @@ export default function AIWorkspace() {
       return;
     }
 
-    if (user) {
+    if (user && supabase) {
       loadChats();
     }
   }, [user, loading, router]);
@@ -50,32 +49,37 @@ export default function AIWorkspace() {
   const loadChats = async () => {
     if (!supabase || !user) return;
 
-    const { data, error } = await supabase
-      .from('chats')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('updated_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('chats')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
 
-    if (data && !error) {
-      setChats(data);
-      if (data.length > 0 && !currentChat) {
-        setCurrentChat(data[0]);
-        loadMessages(data[0].id);
+      if (data && !error) {
+        setChats(data);
+        // Don't auto-select first chat - start with empty state
       }
+    } catch (err) {
+      console.error('Error loading chats:', err);
     }
   };
 
   const loadMessages = async (chatId: string) => {
     if (!supabase) return;
 
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('chat_id', chatId)
-      .order('created_at', { ascending: true });
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('chat_id', chatId)
+        .order('created_at', { ascending: true });
 
-    if (data && !error) {
-      setMessages(data);
+      if (data && !error) {
+        setMessages(data);
+      }
+    } catch (err) {
+      console.error('Error loading messages:', err);
     }
   };
 
@@ -87,7 +91,7 @@ export default function AIWorkspace() {
         .from('chats')
         .insert({
           user_id: user.id,
-          title: 'New AI Model',
+          title: 'New Chat',
           mode: 'models'
         })
         .select()
@@ -97,42 +101,155 @@ export default function AIWorkspace() {
         setChats(prev => [data, ...prev]);
         setCurrentChat(data);
         setMessages([]);
+        setInputValue('');
+      } else {
+        console.error('Error creating chat:', error);
       }
     } catch (error) {
-      console.error('Error creating chat:', error);
+      console.error('Error in createNewChat:', error);
     }
   };
 
-  const deleteChat = async (chatId: string) => {
-    if (!supabase) return;
+  const deleteChat = async (chatId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    if (!supabase || !user) return;
 
     try {
-      await supabase.from('messages').delete().eq('chat_id', chatId);
-      await supabase.from('chats').delete().eq('id', chatId);
-      
-      setChats(prev => prev.filter(chat => chat.id !== chatId));
-      
-      if (currentChat?.id === chatId) {
-        setCurrentChat(null);
-        setMessages([]);
+      // Delete messages first
+      await supabase
+        .from('messages')
+        .delete()
+        .eq('chat_id', chatId);
+
+      // Delete chat
+      const { error: chatError } = await supabase
+        .from('chats')
+        .delete()
+        .eq('id', chatId)
+        .eq('user_id', user.id);
+
+      if (!chatError) {
+        // Update UI
+        setChats(prev => prev.filter(chat => chat.id !== chatId));
+        
+        // If this was the current chat, clear it
+        if (currentChat?.id === chatId) {
+          setCurrentChat(null);
+          setMessages([]);
+        }
       }
     } catch (error) {
-      console.error('Error deleting chat:', error);
+      console.error('Error in deleteChat:', error);
     }
+  };
+
+  const handleExampleClick = (exampleText: string) => {
+    setInputValue(exampleText);
+    // Auto-focus the textarea
+    setTimeout(() => {
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      }
+    }, 100);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    
+    // Auto-resize textarea
+    const target = e.target;
+    target.style.height = 'auto';
+    target.style.height = target.scrollHeight + 'px';
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (inputValue.trim() && !isLoading) {
+        sendMessage(inputValue.trim());
+      }
+    }
+  };
+
+  const handleSendClick = () => {
+    if (inputValue.trim() && !isLoading) {
+      sendMessage(inputValue.trim());
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log('Copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const regenerateResponse = async (messageIndex: number) => {
+    if (!currentChat || isLoading) return;
+    
+    const userMessage = messages[messageIndex - 1];
+    if (userMessage && userMessage.role === 'user') {
+      await sendMessage(userMessage.content);
+    }
+  };
+
+  const rateResponse = async (messageId: string, rating: 'good' | 'bad') => {
+    console.log(`Rated message ${messageId} as ${rating}`);
   };
 
   const sendMessage = async (content: string) => {
-    if (!supabase || !user || isLoading) return;
+    if (!supabase || !user || isLoading || !content.trim()) return;
 
     // Create a new chat if none exists
-    if (!currentChat) {
-      await createNewChat();
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (!currentChat) return;
+    let chatToUse = currentChat;
+    if (!chatToUse) {
+      try {
+        const { data, error } = await supabase
+          .from('chats')
+          .insert({
+            user_id: user.id,
+            title: content.slice(0, 50) + (content.length > 50 ? '...' : ''),
+            mode: 'models'
+          })
+          .select()
+          .single();
+
+        if (data && !error) {
+          chatToUse = data;
+          setChats(prev => [data, ...prev]);
+          setCurrentChat(data);
+        } else {
+          console.error('Error creating chat for message:', error);
+          return;
+        }
+      } catch (error) {
+        console.error('Error creating new chat:', error);
+        return;
+      }
     }
 
-    setIsLoading(true);
+    // At this point, chatToUse is guaranteed to be non-null
+    const activeChat = chatToUse as Chat;
 
+    setIsLoading(true);
+    setInputValue('');
+    
+    // Reset textarea height
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = 'auto';
+    }
+
+    // Add user message to UI immediately
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -142,19 +259,21 @@ export default function AIWorkspace() {
     setMessages(prev => [...prev, userMessage]);
 
     try {
+      // Save user message to database
       await supabase.from('messages').insert({
-        chat_id: currentChat.id,
+        chat_id: activeChat.id,
         role: 'user',
         content
       });
 
+      // Generate AI response
       const response = await fetch('/api/ai-workspace/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chatId: currentChat.id,
+          chatId: activeChat.id,
           prompt: content,
-          mode: currentChat.mode,
+          mode: activeChat.mode,
           userId: user.id
         })
       });
@@ -165,6 +284,7 @@ export default function AIWorkspace() {
         throw new Error(data.error);
       }
 
+      // Add AI response to UI
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -175,14 +295,22 @@ export default function AIWorkspace() {
       };
       setMessages(prev => [...prev, aiMessage]);
 
+      // Save AI message to database
       await supabase.from('messages').insert({
-        chat_id: currentChat.id,
+        chat_id: activeChat.id,
         role: 'assistant',
         content: data.response,
         tokens_used: data.tokens_used,
         model_used: data.model_used
       });
 
+      // Update chat timestamp
+      await supabase
+        .from('chats')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', activeChat.id);
+
+      // Start polling for model completion if this is a model generation request
       if (data.eventId && data.status === 'processing') {
         setPendingModels(prev => new Set(prev).add(data.eventId));
         setTimeout(() => pollModelStatus(data.eventId), 5000);
@@ -215,14 +343,14 @@ export default function AIWorkspace() {
         });
 
         // Auto-deploy to Hugging Face using env token
-        if (process.env.HUGGINGFACE_TOKEN) {
+        try {
           const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               eventId,
-              hfToken: process.env.HUGGINGFACE_TOKEN,
-              userId: user?.id
+              userId: user?.id,
+              autoUseEnvToken: true
             })
           });
 
@@ -232,7 +360,20 @@ export default function AIWorkspace() {
             const completionMessage: Message = {
               id: `completion-${eventId}`,
               role: 'assistant',
-              content: `# 🎉 **${data.model.name} - Ready & Deployed!**\n\nYour AI model has been successfully generated and deployed to Hugging Face!\n\n🔗 **Live Model URL:** [${deployData.repoUrl}](${deployData.repoUrl})\n\n## 📊 **Model Details**\n- **Name:** ${data.model.name}\n- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}\n- **Framework:** ${data.model.framework.toUpperCase()}\n- **Dataset:** ${data.model.dataset}\n- **Status:** ✅ Live on Hugging Face\n\n🚀 Your model is now accessible worldwide and ready for production use!`,
+              content: `🎉 **${data.model.name} - Ready & Deployed!**
+
+Your AI model has been successfully generated and deployed to Hugging Face!
+
+🔗 **Live Model URL:** [${deployData.repoUrl}](${deployData.repoUrl})
+
+**Model Details:**
+- **Name:** ${data.model.name}
+- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}
+- **Framework:** ${data.model.framework.toUpperCase()}
+- **Dataset:** ${data.model.dataset}
+- **Status:** ✅ Live on Hugging Face
+
+Your model is now accessible worldwide and ready for production use!`,
               created_at: new Date().toISOString(),
               eventId: eventId
             };
@@ -248,6 +389,8 @@ export default function AIWorkspace() {
               });
             }
           }
+        } catch (deployError) {
+          console.error('Deployment error:', deployError);
         }
       } else {
         setTimeout(() => pollModelStatus(eventId), 3000);
@@ -262,9 +405,18 @@ export default function AIWorkspace() {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading AI Workspace...</p>
@@ -277,12 +429,28 @@ export default function AIWorkspace() {
     return null;
   }
 
+  if (!supabase) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Database Connection Error</h3>
+          <p className="text-gray-600">Unable to connect to the database. Please try refreshing the page.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-white">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-900 text-white flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-gray-700">
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 bg-gray-900 text-white flex flex-col overflow-hidden`}>
+        {/* Sidebar Header */}
+        <div className="p-3 border-b border-gray-700">
           <button
             onClick={createNewChat}
             className="w-full flex items-center justify-center space-x-2 border border-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm"
@@ -296,41 +464,45 @@ export default function AIWorkspace() {
 
         {/* Chat List */}
         <div className="flex-1 overflow-y-auto p-2">
-          {chats.map((chat) => (
-            <div
-              key={chat.id}
-              className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-800 ${
-                currentChat?.id === chat.id ? 'bg-gray-800' : ''
-              }`}
-              onClick={() => {
-                setCurrentChat(chat);
-                loadMessages(chat.id);
-              }}
-            >
-              <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <span className="text-sm truncate">{chat.title}</span>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteChat(chat.id);
-                }}
-                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-700 rounded transition-opacity"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
+          {chats.length === 0 ? (
+            <div className="text-center text-gray-400 text-sm mt-8">
+              No chats yet
             </div>
-          ))}
+          ) : (
+            chats.map((chat) => (
+              <div
+                key={chat.id}
+                className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-800 mb-1 ${
+                  currentChat?.id === chat.id ? 'bg-gray-800' : ''
+                }`}
+                onClick={() => {
+                  setCurrentChat(chat);
+                  loadMessages(chat.id);
+                }}
+              >
+                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span className="text-sm truncate">{chat.title}</span>
+                </div>
+                <button
+                  onClick={(e) => deleteChat(chat.id, e)}
+                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-700 rounded transition-all flex-shrink-0"
+                  title="Delete chat"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* User Section */}
         <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center space-x-3 mb-3">
+          <div className="flex items-center space-x-3">
             <img
               src={user.user_metadata?.avatar_url || '/logo.jpg'}
               alt="User"
@@ -342,29 +514,29 @@ export default function AIWorkspace() {
             </div>
           </div>
         </div>
-      </div>   
-   {/* Main Content */}
+      </div>
+
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Header with Sign Out */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center space-x-2">
+        {/* Top Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <h1 className="text-lg font-semibold text-gray-900">
-              {currentChat?.title || 'AI Model Generator'}
+              {currentChat?.title || 'zehanx AI'}
             </h1>
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
           </div>
           
+          {/* Sign Out Button - Top Right */}
           <button
-            onClick={async () => {
-              try {
-                await signOut();
-                router.push('/login');
-              } catch (error) {
-                console.error('Sign out error:', error);
-              }
-            }}
+            onClick={handleSignOut}
             className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <img
@@ -376,19 +548,21 @@ export default function AIWorkspace() {
           </button>
         </div>
 
-        {/* Chat Messages */}
+        {/* Chat Messages Area */}
         <div className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
+            /* Empty State - Exact ChatGPT Design */
             <div className="flex flex-col items-center justify-center h-full px-4">
               <div className="text-center max-w-2xl">
                 <h2 className="text-3xl font-semibold text-gray-900 mb-8">
                   What can I help with?
                 </h2>
                 
-                <div className="grid grid-cols-2 gap-3 mb-8">
+                {/* Action Cards Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-8 max-w-2xl">
                   <button
-                    onClick={() => setInputValue('Create a sentiment analysis model using BERT for analyzing customer reviews')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
+                    onClick={() => handleExampleClick('Create a sentiment analysis model using BERT for analyzing customer reviews and feedback')}
+                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-green-600">🎯</span>
@@ -398,8 +572,8 @@ export default function AIWorkspace() {
                   </button>
                   
                   <button
-                    onClick={() => setInputValue('Help me create an image classification model for detecting objects')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
+                    onClick={() => handleExampleClick('Help me create an image classification model using ResNet for detecting objects in photos')}
+                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-blue-600">✏️</span>
@@ -409,8 +583,8 @@ export default function AIWorkspace() {
                   </button>
                   
                   <button
-                    onClick={() => setInputValue('Summarize the best practices for training neural networks')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
+                    onClick={() => handleExampleClick('Summarize the best practices for training deep neural networks and optimizing model performance')}
+                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-yellow-600">📄</span>
@@ -420,8 +594,8 @@ export default function AIWorkspace() {
                   </button>
                   
                   <button
-                    onClick={() => setInputValue('Generate Python code for a chatbot using transformers')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
+                    onClick={() => handleExampleClick('Generate Python code for a conversational AI chatbot using transformers and Hugging Face')}
+                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-purple-600">💻</span>
@@ -431,21 +605,22 @@ export default function AIWorkspace() {
                   </button>
                   
                   <button
-                    onClick={() => setInputValue('Brainstorm ideas for AI applications in healthcare')}
-                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors"
+                    onClick={() => handleExampleClick('Brainstorm innovative AI applications for healthcare, finance, and education sectors')}
+                    className="p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors group"
                   >
                     <div className="flex items-center space-x-2 mb-2">
                       <span className="text-pink-600">💡</span>
                       <span className="font-medium text-gray-900">Brainstorm</span>
                     </div>
-                    <p className="text-sm text-gray-600">AI in healthcare ideas</p>
+                    <p className="text-sm text-gray-600">AI applications ideas</p>
                   </button>
                 </div>
               </div>
             </div>
           ) : (
+            /* Chat Messages - Exact ChatGPT Design */
             <div className="max-w-3xl mx-auto px-4 py-6">
-              {messages.map((message) => (
+              {messages.map((message, index) => (
                 <div key={message.id} className="mb-8">
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
@@ -469,24 +644,42 @@ export default function AIWorkspace() {
                         {message.content}
                       </div>
                       
-                      {message.role === 'assistant' && message.eventId && message.content.includes('Generation Complete') && (
+                      {/* Action Buttons for AI Messages */}
+                      {message.role === 'assistant' && (
                         <div className="mt-4 flex space-x-2">
-                          <button className="text-gray-400 hover:text-gray-600 p-1">
+                          <button 
+                            onClick={() => rateResponse(message.id, 'good')}
+                            className="text-gray-400 hover:text-green-600 p-1 rounded hover:bg-gray-100 transition-colors" 
+                            title="Good response"
+                          >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L9 6v4m-5 8h2.5a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
                           </button>
-                          <button className="text-gray-400 hover:text-gray-600 p-1">
+                          <button 
+                            onClick={() => rateResponse(message.id, 'bad')}
+                            className="text-gray-400 hover:text-red-600 p-1 rounded hover:bg-gray-100 transition-colors" 
+                            title="Bad response"
+                          >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 13l3 3 7-7" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L15 18v-4m-5-8h2.5a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
                             </svg>
                           </button>
-                          <button className="text-gray-400 hover:text-gray-600 p-1">
+                          <button 
+                            onClick={() => copyToClipboard(message.content)}
+                            className="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-gray-100 transition-colors" 
+                            title="Copy"
+                          >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
                           </button>
-                          <button className="text-gray-400 hover:text-gray-600 p-1">
+                          <button 
+                            onClick={() => regenerateResponse(index)}
+                            className="text-gray-400 hover:text-purple-600 p-1 rounded hover:bg-gray-100 transition-colors" 
+                            title="Regenerate"
+                            disabled={isLoading}
+                          >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
@@ -498,6 +691,7 @@ export default function AIWorkspace() {
                 </div>
               ))}
               
+              {/* Loading State */}
               {isLoading && (
                 <div className="mb-8">
                   <div className="flex items-start space-x-4">
@@ -515,6 +709,7 @@ export default function AIWorkspace() {
                 </div>
               )}
               
+              {/* Pending Models Status */}
               {pendingModels.size > 0 && (
                 <div className="mb-8">
                   <div className="flex items-start space-x-4">
@@ -537,43 +732,35 @@ export default function AIWorkspace() {
           )}
         </div>
 
-        {/* Input Section */}
-        <div className="border-t border-gray-200 p-4">
+        {/* Input Section - Exact ChatGPT Design */}
+        <div className="border-t border-gray-200 p-4 bg-white">
           <div className="max-w-3xl mx-auto">
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <textarea
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Message zehanx AI..."
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={1}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      if (inputValue.trim() && !isLoading) {
-                        sendMessage(inputValue.trim());
-                        setInputValue('');
-                      }
-                    }
-                  }}
-                />
-              </div>
+            <div className="relative">
+              <textarea
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Message zehanx AI..."
+                className="w-full p-3 pr-12 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                rows={1}
+                style={{ minHeight: '44px', maxHeight: '200px' }}
+                disabled={isLoading}
+              />
               <button
-                onClick={() => {
-                  if (inputValue.trim() && !isLoading) {
-                    sendMessage(inputValue.trim());
-                    setInputValue('');
-                  }
-                }}
+                onClick={handleSendClick}
                 disabled={!inputValue.trim() || isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </button>
             </div>
+            
+            {/* Footer Text */}
+            <p className="text-xs text-gray-500 text-center mt-3">
+              zehanx AI can generate, train, and deploy custom AI models. Always verify generated code before training.
+            </p>
           </div>
         </div>
       </div>

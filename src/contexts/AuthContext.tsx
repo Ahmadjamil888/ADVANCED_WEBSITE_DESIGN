@@ -34,12 +34,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fallback timeout to prevent infinite loading
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log('AuthContext: Timeout reached, forcing loading to false')
-      setLoading(false)
-    }, 5000) // 5 second timeout
+      console.log('AuthContext: Timeout reached, checking if we should force loading to false')
+      // Only force loading to false if we haven't already resolved the auth state
+      if (loading) {
+        console.log('AuthContext: Forcing loading to false due to timeout')
+        setLoading(false)
+      }
+    }, 10000) // Increased to 10 seconds to give more time for auth resolution
 
     return () => clearTimeout(timeout)
-  }, [])
+  }, [loading])
 
   useEffect(() => {
     console.log('AuthContext: Supabase client:', supabase ? 'initialized' : 'null')
@@ -55,9 +59,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('AuthContext: Initial session check:', { session: !!session, error })
       setSession(session)
       setUser(session?.user ?? null)
+      setLoading(false)
+    }).catch((error) => {
+      console.error('AuthContext: Error getting session:', error)
       setLoading(false)
     })
 
