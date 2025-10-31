@@ -439,6 +439,20 @@ Your model is now accessible worldwide and ready for production use!`,
 
   return (
     <>
+      <style jsx global>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        html, body {
+          height: 100%;
+          overflow: hidden;
+        }
+        #__next {
+          height: 100%;
+        }
+      `}</style>
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
@@ -452,6 +466,7 @@ Your model is now accessible worldwide and ready for production use!`,
           display: flex;
           flex-direction: column;
           overflow: hidden;
+          height: 100vh;
         }
         .sidebar-header {
           padding: 12px;
@@ -558,6 +573,8 @@ Your model is now accessible worldwide and ready for production use!`,
           flex: 1;
           display: flex;
           flex-direction: column;
+          height: 100vh;
+          overflow: hidden;
         }
         .header {
           display: flex;
@@ -566,6 +583,8 @@ Your model is now accessible worldwide and ready for production use!`,
           padding: 16px;
           border-bottom: 1px solid #e5e7eb;
           background: white;
+          min-height: 70px;
+          flex-shrink: 0;
         }
         .header-left {
           display: flex;
@@ -600,6 +619,8 @@ Your model is now accessible worldwide and ready for production use!`,
           border-radius: 8px;
           cursor: pointer;
           transition: all 0.2s;
+          white-space: nowrap;
+          min-width: fit-content;
         }
         .signout-btn:hover {
           color: #111827;
@@ -613,6 +634,7 @@ Your model is now accessible worldwide and ready for production use!`,
         .messages-area {
           flex: 1;
           overflow-y: auto;
+          height: calc(100vh - 140px);
         }
         .empty-state {
           display: flex;
@@ -757,6 +779,8 @@ Your model is now accessible worldwide and ready for production use!`,
           border-top: 1px solid #e5e7eb;
           padding: 16px;
           background: white;
+          flex-shrink: 0;
+          min-height: 70px;
         }
         .input-container {
           max-width: 768px;
@@ -812,7 +836,17 @@ Your model is now accessible worldwide and ready for production use!`,
         }
       `}</style>
       
-      <div style={{ display: 'flex', height: '100vh', backgroundColor: 'white' }}>
+      <div style={{ 
+        display: 'flex', 
+        height: '100vh', 
+        backgroundColor: 'white',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'hidden'
+      }}>
         {/* Sidebar */}
         <div className="sidebar">
           {/* Sidebar Header */}
