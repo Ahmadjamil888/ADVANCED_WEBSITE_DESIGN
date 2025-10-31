@@ -31,8 +31,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Fallback timeout to prevent infinite loading
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.log('AuthContext: Timeout reached, forcing loading to false')
+      setLoading(false)
+    }, 5000) // 5 second timeout
+
+    return () => clearTimeout(timeout)
+  }, [])
+
+  useEffect(() => {
+    console.log('AuthContext: Supabase client:', supabase ? 'initialized' : 'null')
+    console.log('AuthContext: Environment check:', {
+      url: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      key: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    })
+    
     if (!supabase) {
+      console.log('AuthContext: No Supabase client, setting loading to false')
       setLoading(false)
       return
     }
