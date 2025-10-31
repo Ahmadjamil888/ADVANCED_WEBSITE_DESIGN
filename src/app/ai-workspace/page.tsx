@@ -4,6 +4,19 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { 
+  Flex, 
+  Button, 
+  Text, 
+  Heading, 
+  Input, 
+  Card, 
+  Avatar, 
+  Icon, 
+  Spinner,
+  Badge,
+  Textarea
+} from "@/once-ui/components";
 
 interface Chat {
   id: string;
@@ -177,9 +190,19 @@ export default function AIWorkspace() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
-        <div className="text-lg text-gray-600">Loading AI Workspace...</div>
-      </div>
+      <Flex 
+        fillWidth 
+        fillHeight 
+        center
+        background="neutral-weak"
+      >
+        <Flex direction="column" center gap="m">
+          <Spinner size="l" />
+          <Text variant="body-default-s" onBackground="neutral-weak">
+            Loading AI Workspace...
+          </Text>
+        </Flex>
+      </Flex>
     );
   }
 
@@ -188,143 +211,211 @@ export default function AIWorkspace() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-white overflow-hidden" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-      {/* Sidebar - ChatGPT Style */}
-      <div className="w-64 bg-gray-900 text-white flex flex-col">
-        <div className="p-4">
-          <h1 className="text-white text-xl font-semibold">AI Workspace</h1>
-          <p className="text-gray-300 text-sm mt-2">Generate, train, and deploy AI models</p>
+    <Flex fillWidth fillHeight direction="row" background="neutral-weak">
+      {/* Sidebar */}
+      <Flex 
+        direction="column" 
+        width={20}
+        background="neutral-strong" 
+        padding="l"
+        gap="l"
+      >
+        <Flex direction="column" gap="s">
+          <Heading variant="heading-strong-l" onBackground="neutral-strong">
+            AI Workspace
+          </Heading>
+          <Text variant="body-default-s" onBackground="neutral-medium">
+            Generate, train, and deploy AI models
+          </Text>
           
-          <button
+          <Button
             onClick={createNewChat}
-            className="w-full mt-4 flex items-center justify-center space-x-2 border border-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm"
+            variant="secondary"
+            size="m"
+            fillWidth
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span>New chat</span>
-          </button>
-        </div>
+            + New chat
+          </Button>
+        </Flex>
         
-        <div className="flex-1 p-4">
-          <div className="text-gray-400 text-sm">Recent chats will appear here</div>
-        </div>
+        <Flex flex={1} direction="column" gap="s">
+          <Text variant="body-default-s" onBackground="neutral-medium">
+            Recent chats will appear here
+          </Text>
+          {chats.map((chat) => (
+            <Card
+              key={chat.id}
+              padding="s"
+              background="neutral-medium"
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                setCurrentChat(chat);
+                loadMessages(chat.id);
+              }}
+            >
+              <Text variant="body-default-s" onBackground="neutral-medium">
+                {chat.title}
+              </Text>
+            </Card>
+          ))}
+        </Flex>
         
-        <div className="p-4 border-t border-gray-700">
-          <button
-            onClick={signOut}
-            className="w-full flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span>Sign out</span>
-          </button>
-        </div>
-      </div>
+        <Button
+          onClick={signOut}
+          variant="tertiary"
+          size="m"
+          fillWidth
+        >
+          Sign out
+        </Button>
+      </Flex>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col bg-white">
+      <Flex flex={1} direction="column" background="neutral-weak">
         {/* Header */}
-        <div className="border-b border-gray-200 p-4">
-          <h2 className="text-lg font-semibold text-gray-900">AI Model Generator</h2>
-          <p className="text-gray-500 text-sm">Describe the AI model you want to create</p>
-        </div>
+        <Flex 
+          padding="l" 
+          borderBottom="neutral-medium" 
+          direction="column" 
+          gap="xs"
+        >
+          <Heading variant="heading-strong-m" onBackground="neutral-weak">
+            AI Model Generator
+          </Heading>
+          <Text variant="body-default-s" onBackground="neutral-medium">
+            Describe the AI model you want to create
+          </Text>
+        </Flex>
         
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
+        <Flex flex={1} direction="column">
           {messages.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center max-w-md">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <img src="/logo.jpg" alt="AI" className="w-10 h-10 rounded-full" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Ready to create amazing AI models?
-                </h3>
-                <p className="text-gray-500 mb-6">
-                  I can help you generate, train, and deploy custom AI models. Just describe what you want to build!
-                </p>
+            <Flex flex={1} center padding="xl">
+              <Flex direction="column" center gap="l" maxWidth={25}>
+                <Avatar 
+                  size="xl" 
+                  src="/logo.jpg"
+                />
+                <Flex direction="column" center gap="s">
+                  <Heading variant="heading-strong-l" onBackground="neutral-weak">
+                    Ready to create amazing AI models?
+                  </Heading>
+                  <Text variant="body-default-m" onBackground="neutral-medium" align="center">
+                    I can help you generate, train, and deploy custom AI models. Just describe what you want to build!
+                  </Text>
+                </Flex>
                 
-                <div className="grid grid-cols-1 gap-3">
-                  <button className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors">
-                    <div className="font-medium text-gray-900">🎯 Text Classification</div>
-                    <div className="text-sm text-gray-500">Create a sentiment analysis model</div>
-                  </button>
-                  <button className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors">
-                    <div className="font-medium text-gray-900">🖼️ Image Classification</div>
-                    <div className="text-sm text-gray-500">Detect and classify objects in images</div>
-                  </button>
-                  <button className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors">
-                    <div className="font-medium text-gray-900">🤖 Chatbot Model</div>
-                    <div className="text-sm text-gray-500">Build a conversational AI assistant</div>
-                  </button>
-                </div>
-              </div>
-            </div>
+                <Flex direction="column" gap="s" fillWidth>
+                  <Card padding="m" background="neutral-weak" style={{ cursor: 'pointer' }}>
+                    <Flex direction="column" gap="xs">
+                      <Text variant="body-strong-m" onBackground="neutral-weak">
+                        🎯 Text Classification
+                      </Text>
+                      <Text variant="body-default-s" onBackground="neutral-medium">
+                        Create a sentiment analysis model
+                      </Text>
+                    </Flex>
+                  </Card>
+                  <Card padding="m" background="neutral-weak" style={{ cursor: 'pointer' }}>
+                    <Flex direction="column" gap="xs">
+                      <Text variant="body-strong-m" onBackground="neutral-weak">
+                        🖼️ Image Classification
+                      </Text>
+                      <Text variant="body-default-s" onBackground="neutral-medium">
+                        Detect and classify objects in images
+                      </Text>
+                    </Flex>
+                  </Card>
+                  <Card padding="m" background="neutral-weak" style={{ cursor: 'pointer' }}>
+                    <Flex direction="column" gap="xs">
+                      <Text variant="body-strong-m" onBackground="neutral-weak">
+                        🤖 Chatbot Model
+                      </Text>
+                      <Text variant="body-default-s" onBackground="neutral-medium">
+                        Build a conversational AI assistant
+                      </Text>
+                    </Flex>
+                  </Card>
+                </Flex>
+              </Flex>
+            </Flex>
           ) : (
-            <div className="flex-1 overflow-y-auto p-6">
+            <Flex flex={1} direction="column" padding="l" gap="l" style={{ overflowY: 'auto' }}>
               {messages.map((message) => (
-                <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-6`}>
-                  <div className={`max-w-3xl rounded-2xl px-4 py-3 ${
-                    message.role === 'user' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-100 text-gray-900'
-                  }`}>
-                    <div className="whitespace-pre-wrap break-words">
+                <Flex 
+                  key={message.id} 
+                  horizontal={message.role === 'user' ? 'end' : 'start'}
+                >
+                  <Card
+                    padding="m"
+                    background={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
+                    style={{ maxWidth: '70%' }}
+                  >
+                    <Text 
+                      variant="body-default-m" 
+                      onBackground={message.role === 'user' ? 'brand-medium' : 'neutral-medium'}
+                      style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                    >
                       {message.content}
-                    </div>
-                  </div>
-                </div>
+                    </Text>
+                  </Card>
+                </Flex>
               ))}
               
               {isLoading && (
-                <div className="flex justify-start mb-6">
-                  <div className="bg-gray-100 rounded-2xl px-4 py-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                      <span className="text-sm text-gray-500">AI is thinking...</span>
-                    </div>
-                  </div>
-                </div>
+                <Flex horizontal="start">
+                  <Card padding="m" background="neutral-medium">
+                    <Flex center gap="s">
+                      <Spinner size="s" />
+                      <Text variant="body-default-s" onBackground="neutral-medium">
+                        AI is thinking...
+                      </Text>
+                    </Flex>
+                  </Card>
+                </Flex>
               )}
-            </div>
+            </Flex>
           )}
           
           {/* Input Area */}
-          <div className="border-t border-gray-200 p-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="relative bg-white border border-gray-300 rounded-2xl shadow-sm focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-                <textarea
-                  placeholder="Describe the AI model you want to create (e.g., 'Create a sentiment analysis model using BERT...')"
-                  className="w-full resize-none border-none outline-none text-gray-900 placeholder-gray-500 p-4"
-                  style={{ minHeight: '60px', maxHeight: '200px' }}
-                  disabled={isLoading}
-                />
-                <div className="flex justify-end p-3 pt-0">
-                  <button
+          <Flex padding="l" borderTop="neutral-medium">
+            <Flex direction="column" gap="s" fillWidth maxWidth={50} style={{ margin: '0 auto' }}>
+              <Card padding="m" background="neutral-weak" border="neutral-medium">
+                <Flex direction="column" gap="s">
+                  <Textarea
+                    id="ai-prompt"
+                    label="AI Model Description"
+                    labelAsPlaceholder
+                    placeholder="Describe the AI model you want to create (e.g., 'Create a sentiment analysis model using BERT...')"
+                    lines={3}
                     disabled={isLoading}
-                    className="p-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div className="text-center mt-3">
-                <p className="text-xs text-gray-500">
-                  zehanx AI can generate, train, and deploy custom AI models. Always verify generated code before training.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                    resize="none"
+                  />
+                  <Flex horizontal="end">
+                    <Button
+                      onClick={() => {
+                        const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+                        if (textarea?.value.trim()) {
+                          sendMessage(textarea.value.trim());
+                          textarea.value = '';
+                        }
+                      }}
+                      disabled={isLoading}
+                      variant="primary"
+                      size="m"
+                    >
+                      Send →
+                    </Button>
+                  </Flex>
+                </Flex>
+              </Card>
+              <Text variant="body-default-xs" onBackground="neutral-medium" align="center">
+                zehanx AI can generate, train, and deploy custom AI models. Always verify generated code before training.
+              </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }

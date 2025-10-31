@@ -1,6 +1,16 @@
 import { inngest } from "@/lib/inngest";
 import { supabase } from "@/lib/supabase";
 
+// Hello World function for testing
+export const helloWorld = inngest.createFunction(
+  { id: "hello-world" },
+  { event: "test/hello.world" },
+  async ({ event, step }) => {
+    await step.sleep("wait-a-moment", "1s");
+    return { message: `Hello ${event.data.email}!` };
+  }
+);
+
 // Generate AI Model Code
 export const generateModelCode = inngest.createFunction(
   { id: "generate-model-code" },

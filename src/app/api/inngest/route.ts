@@ -1,19 +1,11 @@
 import { serve } from "inngest/next";
-import { inngest } from "@/lib/inngest";
-import { 
-  trainAIModel, 
-  deployToHuggingFace, 
-  findDataset,
-  generateModelCode 
-} from "@/lib/inngest/functions";
+import { inngest } from "../../../inngest/client";
+import { helloWorld } from "../../../inngest/functions";
 
-// Create the Inngest serve handler
+// Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
-    trainAIModel,
-    deployToHuggingFace,
-    findDataset,
-    generateModelCode
+    helloWorld, // <-- This is where you'll always add all your functions
   ],
 });

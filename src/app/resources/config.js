@@ -9,6 +9,7 @@ const routes = {
   "/chat": true,
   "/login": true,
   "/dashboard": true,
+  "/ai-workspace": true,
   "/blog": false,
   "/gallery": false,
 };
