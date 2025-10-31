@@ -4,12 +4,16 @@ export default function AIWorkspaceLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" style={{ height: '100%', margin: 0, padding: 0 }}>
-      <body style={{ height: '100%', margin: 0, padding: 0, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: '100%' }}>
-          {children}
-        </div>
-      </body>
-    </html>
+    <div style={{ 
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 9999,
+      backgroundColor: 'white'
+    }}>
+      {children}
+    </div>
   );
 }

@@ -389,6 +389,18 @@ Your model is now accessible worldwide and ready for production use!`,
     }
   };
 
+  // Add escape key handler to exit full-screen if needed
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && e.ctrlKey) {
+        router.push('/');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [router]);
+
   if (loading) {
     return (
       <div style={{ 
