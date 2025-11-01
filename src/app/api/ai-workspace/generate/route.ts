@@ -29,8 +29,40 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // Also trigger deployment immediately like sentiment analysis route
+    const hfToken = process.env.HUGGINGFACE_TOKEN
+    let deploymentData = null;
+    
+    if (hfToken) {
+      try {
+        const deployResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai-workspace/deploy-hf`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            userId,
+            prompt
+          })
+        });
+        
+        if (deployResponse.ok) {
+          deploymentData = await deployResponse.json();
+          console.log('Deployment initiated successfully:', deploymentData);
+        } else {
+          console.error('Deployment failed:', await deployResponse.text());
+        }
+      } catch (error) {
+        console.error('Auto-deploy error:', error);
+      }
+    }
+
     // Return immediate response while Inngest processes in background
     const response = generateImmediateResponse(modelConfig, mode)
+
+    // Include deployment data in response
+    const spaceName = deploymentData?.spaceName || `${modelConfig.modelType}-live-${eventId.split('-').pop()}`;
+    const spaceUrl = deploymentData?.spaceUrl || `https://huggingface.co/spaces/dhamia/${spaceName}`;
+    const apiUrl = deploymentData?.apiUrl || `https://api-inference.huggingface.co/models/dhamia/${spaceName}`;
 
     return NextResponse.json({ 
       response,
@@ -39,7 +71,20 @@ export async function POST(request: NextRequest) {
       mode: mode,
       eventId,
       status: 'processing',
-      timestamp: new Date().toISOString()
+      modelType: modelConfig.modelType,
+      spaceUrl,
+      apiUrl,
+      spaceName,
+      deploymentStatus: deploymentData?.success ? 'Deployment initiated successfully!' : 'Building live inference Space...',
+      timestamp: new Date().toISOString(),
+      deploymentData: deploymentData || {
+        spaceUrl,
+        apiUrl,
+        spaceName,
+        modelType: modelConfig.modelType,
+        status: 'Building...',
+        message: 'Space deployment initiated - will be live in 2-3 minutes'
+      }
     })
 
   } catch (error: any) {

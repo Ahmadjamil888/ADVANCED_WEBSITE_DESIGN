@@ -368,8 +368,10 @@ Your model is now accessible worldwide with live inference capabilities!
 
   const pollModelStatus = async (eventId: string) => {
     try {
+      console.log('Polling status for eventId:', eventId);
       const response = await fetch(`/api/ai-workspace/status/${eventId}`);
       const data = await response.json();
+      console.log('Status response:', data);
       
       if (data.ready && data.model) {
         setPendingModels(prev => {
@@ -379,25 +381,30 @@ Your model is now accessible worldwide with live inference capabilities!
         });
 
         try {
-          // Get the original prompt from messages - find the user message before the assistant message with this eventId
-          const assistantMessageIndex = messages.findIndex(msg => msg.eventId === eventId && msg.role === 'assistant');
-          const userMessage = assistantMessageIndex > 0 ? messages[assistantMessageIndex - 1] : null;
-          const prompt = userMessage?.content || '';
-
-          const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              eventId,
-              userId: user?.id,
-              prompt: prompt,
-              autoUseEnvToken: true
-            })
-          });
-
-          const deployData = await deployResponse.json();
+          // Use deployment data from status response if available, otherwise make deploy call
+          let deployData = data.deploymentData;
           
-          if (deployData.success) {
+          if (!deployData) {
+            // Fallback: Get the original prompt and make deploy call
+            const assistantMessageIndex = messages.findIndex(msg => msg.eventId === eventId && msg.role === 'assistant');
+            const userMessage = assistantMessageIndex > 0 ? messages[assistantMessageIndex - 1] : null;
+            const prompt = userMessage?.content || '';
+
+            const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                eventId,
+                userId: user?.id,
+                prompt: prompt,
+                autoUseEnvToken: true
+              })
+            });
+
+            deployData = await deployResponse.json();
+          }
+          
+          if (deployData && (deployData.success || deployData.spaceUrl)) {
             const modelTypeDisplay = deployData.modelType ? deployData.modelType.replace('-', ' ').toUpperCase() : data.model.type.replace('-', ' ').toUpperCase();
             
             const completionMessage: Message = {
