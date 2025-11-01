@@ -453,20 +453,21 @@ async function uploadFilesToHuggingFaceSpace(spaceFiles: any, spaceName: string,
   
   for (const file of spaceFiles.files) {
     try {
+      // Use the HuggingFace Hub API for file uploads
       const response = await fetch(`https://huggingface.co/api/repos/${spaceName}/upload/main/${file.name}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${hfToken}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/octet-stream'
         },
-        body: JSON.stringify({
-          content: Buffer.from(file.content).toString('base64'),
-          encoding: 'base64'
-        })
+        body: file.content
       });
 
       if (response.ok) {
         uploadedFiles.push(file.name);
+        console.log(`Successfully uploaded ${file.name} to ${spaceName}`);
+      } else {
+        console.error(`Failed to upload ${file.name}:`, response.status, await response.text());
       }
     } catch (error) {
       console.error(`Failed to upload ${file.name}:`, error);

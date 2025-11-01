@@ -358,7 +358,7 @@ export default function AIWorkspace() {
 
 Your AI model has been successfully generated and deployed to Hugging Face!
 
-🔗 **Live Model URL:** [${deployData.repoUrl}](${deployData.repoUrl})
+🔗 **Live Model URL:** [${deployData.spaceUrl || deployData.repoUrl}](${deployData.spaceUrl || deployData.repoUrl})
 
 **Model Details:**
 - **Name:** ${data.model.name}

@@ -263,7 +263,7 @@ export default function AIWorkspace() {
           const completionMessage: Message = {
             id: `completion-${eventId}`,
             role: 'assistant',
-            content: `# 🎉 **${data.model.name} - Ready & Deployed!**\n\nYour AI model has been successfully generated and deployed to Hugging Face!\n\n🔗 **Live Model URL:** [${deployData.repoUrl}](${deployData.repoUrl})\n\n## 📊 **Model Details**\n- **Name:** ${data.model.name}\n- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}\n- **Framework:** ${data.model.framework.toUpperCase()}\n- **Dataset:** ${data.model.dataset}\n- **Status:** ✅ Live on Hugging Face\n\n🚀 Your model is now accessible worldwide and ready for production use!`,
+            content: `# 🎉 **${data.model.name} - Ready & Deployed!**\n\nYour AI model has been successfully generated and deployed to Hugging Face!\n\n🔗 **Live Model URL:** [${deployData.spaceUrl || deployData.repoUrl}](${deployData.spaceUrl || deployData.repoUrl})\n\n## 📊 **Model Details**\n- **Name:** ${data.model.name}\n- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}\n- **Framework:** ${data.model.framework.toUpperCase()}\n- **Dataset:** ${data.model.dataset}\n- **Status:** ✅ Live on Hugging Face\n\n🚀 Your model is now accessible worldwide and ready for production use!`,
             created_at: new Date().toISOString(),
             eventId: eventId
           };
