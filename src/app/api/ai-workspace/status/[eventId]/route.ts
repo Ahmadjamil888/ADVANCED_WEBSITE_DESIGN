@@ -3,8 +3,11 @@ import { NextRequest, NextResponse } from 'next/server'
 async function getHuggingFaceUsername(): Promise<string> {
   try {
     const hfToken = process.env.HUGGINGFACE_TOKEN;
-    if (!hfToken) return 'zehanxtech';
+    if (!hfToken) {
+      throw new Error('HuggingFace token not found');
+    }
     
+    console.log('Authenticating with HF token...');
     const response = await fetch('https://huggingface.co/api/whoami', {
       headers: {
         'Authorization': `Bearer ${hfToken}`
@@ -13,13 +16,18 @@ async function getHuggingFaceUsername(): Promise<string> {
     
     if (response.ok) {
       const data = await response.json();
-      return data.name || 'zehanxtech';
+      console.log('HF authentication successful:', data);
+      if (data.name) {
+        return data.name;
+      }
+    } else {
+      console.error('HF authentication failed:', response.status, await response.text());
     }
   } catch (error) {
-    console.error('Failed to get HF username:', error);
+    console.error('Failed to authenticate with HF:', error);
   }
   
-  return 'zehanxtech';
+  throw new Error('Could not authenticate with HuggingFace. Please check your token.');
 }
 
 export async function GET(

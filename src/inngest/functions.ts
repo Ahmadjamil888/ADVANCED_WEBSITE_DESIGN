@@ -370,6 +370,7 @@ export const deployToHuggingFace = inngest.createFunction(
 
 async function getHuggingFaceUsername(hfToken: string): Promise<string> {
   try {
+    console.log('Getting HF username with token...');
     const response = await fetch('https://huggingface.co/api/whoami', {
       headers: {
         'Authorization': `Bearer ${hfToken}`
@@ -378,14 +379,19 @@ async function getHuggingFaceUsername(hfToken: string): Promise<string> {
     
     if (response.ok) {
       const data = await response.json();
-      return data.name || 'user';
+      console.log('HF API response:', data);
+      if (data.name) {
+        return data.name;
+      }
+    } else {
+      console.error('HF API error:', response.status, await response.text());
     }
   } catch (error) {
     console.error('Failed to get HF username:', error);
   }
   
-  // Fallback username
-  return 'zehanxtech';
+  // If we can't get the username, throw an error instead of using fallback
+  throw new Error('Could not authenticate with HuggingFace token. Please check your token.');
 }
 
 async function createHuggingFaceSpace(spaceName: string, hfToken: string, modelInfo: any) {
@@ -413,32 +419,23 @@ async function createHuggingFaceSpace(spaceName: string, hfToken: string, modelI
 
     if (response.ok) {
       const data = await response.json();
+      console.log('HF Space created successfully:', data);
+      const fullName = `${username}/${spaceName}`;
       return {
-        fullName: data.name,
-        url: `https://huggingface.co/spaces/${data.name}`,
+        fullName: fullName,
+        url: `https://huggingface.co/spaces/${fullName}`,
         username: username,
         success: true
       };
     } else {
       const errorText = await response.text();
-      console.error('HF Space creation failed:', errorText);
-      return {
-        fullName: `${username}/${spaceName}`,
-        url: `https://huggingface.co/spaces/${username}/${spaceName}`,
-        username: username,
-        success: false,
-        error: errorText
-      };
+      console.error('HF Space creation failed:', response.status, errorText);
+      // Don't return fallback URLs if creation failed
+      throw new Error(`Failed to create HuggingFace Space: ${errorText}`);
     }
   } catch (error: any) {
-    const username = await getHuggingFaceUsername(hfToken);
-    return {
-      fullName: `${username}/${spaceName}`,
-      url: `https://huggingface.co/spaces/${username}/${spaceName}`,
-      username: username,
-      success: false,
-      error: error.message
-    };
+    console.error('HF Space creation error:', error);
+    throw new Error(`Failed to create HuggingFace Space: ${error.message}`);
   }
 }
 
@@ -481,27 +478,41 @@ function generateLiveInferenceSpaceFiles(modelInfo: any, spaceName: string, prom
 async function uploadFilesToHuggingFaceSpace(spaceFiles: any, spaceName: string, hfToken: string) {
   const uploadedFiles = [];
   
+  console.log(`Uploading ${spaceFiles.files.length} files to Space: ${spaceName}`);
+  
   for (const file of spaceFiles.files) {
     try {
-      // Use the HuggingFace Hub API for file uploads
+      console.log(`Uploading ${file.name}...`);
+      
+      // Use the correct HuggingFace API endpoint for file uploads
       const response = await fetch(`https://huggingface.co/api/repos/${spaceName}/upload/main/${file.name}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${hfToken}`,
-          'Content-Type': 'application/octet-stream'
+          'Content-Type': 'application/json'
         },
-        body: file.content
+        body: JSON.stringify({
+          content: file.content,
+          encoding: 'utf-8'
+        })
       });
 
       if (response.ok) {
         uploadedFiles.push(file.name);
-        console.log(`Successfully uploaded ${file.name} to ${spaceName}`);
+        console.log(`✅ Successfully uploaded ${file.name} to ${spaceName}`);
       } else {
-        console.error(`Failed to upload ${file.name}:`, response.status, await response.text());
+        const errorText = await response.text();
+        console.error(`❌ Failed to upload ${file.name}:`, response.status, errorText);
       }
     } catch (error) {
-      console.error(`Failed to upload ${file.name}:`, error);
+      console.error(`❌ Upload error for ${file.name}:`, error);
     }
+  }
+
+  console.log(`Upload complete: ${uploadedFiles.length}/${spaceFiles.files.length} files uploaded`);
+  
+  if (uploadedFiles.length === 0) {
+    throw new Error('Failed to upload any files to HuggingFace Space');
   }
 
   return { files: uploadedFiles, success: uploadedFiles.length > 0 };
