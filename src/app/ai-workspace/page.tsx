@@ -507,6 +507,125 @@ Your model is now accessible worldwide and ready for production use!`,
           flex-direction: column;
           overflow: hidden;
           height: 100vh;
+          position: relative;
+          z-index: 10;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+          .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: ${sidebarOpen ? '280px' : '0px'};
+            z-index: 1000;
+            box-shadow: ${sidebarOpen ? '0 0 20px rgba(0,0,0,0.3)' : 'none'};
+          }
+          .main-content {
+            margin-left: 0 !important;
+          }
+          .header {
+            padding: 12px 16px !important;
+          }
+          .header-title {
+            font-size: 16px !important;
+          }
+          .signout-btn {
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+          }
+          .signout-avatar {
+            width: 20px !important;
+            height: 20px !important;
+          }
+          .messages-container {
+            padding: 16px 12px !important;
+          }
+          .message {
+            margin-bottom: 24px !important;
+          }
+          .message-content {
+            gap: 12px !important;
+          }
+          .message-avatar, .ai-avatar {
+            width: 28px !important;
+            height: 28px !important;
+          }
+          .message-sender {
+            font-size: 13px !important;
+          }
+          .message-text {
+            font-size: 14px !important;
+            line-height: 1.5 !important;
+          }
+          .input-section {
+            padding: 12px !important;
+          }
+          .input-textarea {
+            padding: 12px 40px 12px 12px !important;
+            font-size: 16px !important;
+          }
+          .send-btn {
+            right: 6px !important;
+            padding: 6px !important;
+          }
+          .footer-text {
+            font-size: 11px !important;
+          }
+          .example-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+            max-width: 100% !important;
+          }
+          .example-card {
+            padding: 12px !important;
+          }
+          .example-title {
+            font-size: 14px !important;
+          }
+          .example-desc {
+            font-size: 13px !important;
+          }
+          .empty-title {
+            font-size: 24px !important;
+            margin-bottom: 24px !important;
+          }
+          .chat-item {
+            padding: 8px !important;
+          }
+          .chat-title {
+            font-size: 13px !important;
+          }
+          .user-section {
+            padding: 12px !important;
+          }
+          .user-email {
+            font-size: 13px !important;
+          }
+          .user-role {
+            font-size: 11px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .sidebar {
+            width: ${sidebarOpen ? '100vw' : '0px'};
+          }
+          .empty-title {
+            font-size: 20px !important;
+          }
+          .example-card {
+            padding: 10px !important;
+          }
+          .input-textarea {
+            padding: 10px 36px 10px 10px !important;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .mobile-overlay {
+            display: block !important;
+          }
         }
         .sidebar-header {
           padding: 12px;
@@ -887,6 +1006,23 @@ Your model is now accessible worldwide and ready for production use!`,
         bottom: 0,
         overflow: 'hidden'
       }}>
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 999,
+              display: 'none'
+            }}
+            className="mobile-overlay"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
         {/* Sidebar */}
         <div className="sidebar">
           {/* Sidebar Header */}

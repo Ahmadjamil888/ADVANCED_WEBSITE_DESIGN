@@ -9,7 +9,62 @@ import { Schema } from "@/once-ui/modules";
 
 export default function Home() {
   return (
-    <Column maxWidth="m" gap="xl" horizontal="center">
+    <>
+      <style jsx global>{`
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+          .mobile-responsive {
+            padding: 16px !important;
+          }
+          .mobile-text-center {
+            text-align: center !important;
+          }
+          .mobile-small-gap {
+            gap: 12px !important;
+          }
+          .mobile-card-stack {
+            flex-direction: column !important;
+          }
+          .mobile-full-width {
+            width: 100% !important;
+          }
+          .mobile-padding-sm {
+            padding: 12px !important;
+          }
+          .mobile-margin-sm {
+            margin: 8px 0 !important;
+          }
+          .mobile-font-sm {
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+          }
+          .mobile-heading-sm {
+            font-size: 24px !important;
+            line-height: 1.2 !important;
+          }
+          .mobile-display-sm {
+            font-size: 32px !important;
+            line-height: 1.1 !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .mobile-responsive {
+            padding: 12px !important;
+          }
+          .mobile-display-sm {
+            font-size: 28px !important;
+          }
+          .mobile-heading-sm {
+            font-size: 20px !important;
+          }
+          .mobile-font-sm {
+            font-size: 13px !important;
+          }
+        }
+      `}</style>
+      
+      <Column maxWidth="m" gap="xl" horizontal="center" className="mobile-responsive">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -54,24 +109,24 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <Column fillWidth paddingY="32" gap="m">
-        <Column maxWidth="s" gap="m">
-          <RevealFx fillWidth horizontal="start" paddingTop="16" paddingBottom="32" paddingLeft="12">
+      <Column fillWidth paddingY="32" gap="m" className="mobile-responsive">
+        <Column maxWidth="s" gap="m" className="mobile-text-center">
+          <RevealFx fillWidth horizontal="start" paddingTop="16" paddingBottom="32" paddingLeft="12" className="mobile-text-center">
             <Badge background="brand-alpha-weak" paddingX="12" paddingY="4" onBackground="neutral-strong" textVariant="label-default-s" arrow={false}>
               <Row paddingY="2">Welcome to zehanxtech</Row>
             </Badge>
           </RevealFx>
-          <RevealFx translateY="4" fillWidth horizontal="start" paddingBottom="16">
-            <Heading wrap="balance" variant="display-strong-l">
+          <RevealFx translateY="4" fillWidth horizontal="start" paddingBottom="16" className="mobile-text-center">
+            <Heading wrap="balance" variant="display-strong-l" className="mobile-display-sm">
               World's first AI that generates other AI
             </Heading>
           </RevealFx>
-          <RevealFx translateY="8" delay={0.2} fillWidth horizontal="start" paddingBottom="32">
-            <Text wrap="balance" onBackground="neutral-weak" variant="heading-default-xl">
+          <RevealFx translateY="8" delay={0.2} fillWidth horizontal="start" paddingBottom="32" className="mobile-text-center">
+            <Text wrap="balance" onBackground="neutral-weak" variant="heading-default-xl" className="mobile-font-sm">
               Revolutionary AI technology that autonomously creates, trains, and deploys custom AI models. Simply describe what you want, and our AI builds it for you - from sentiment analysis to computer vision models.
             </Text>
           </RevealFx>
-          <RevealFx paddingTop="12" delay={0.4} horizontal="start" paddingLeft="12">
+          <RevealFx paddingTop="12" delay={0.4} horizontal="start" paddingLeft="12" className="mobile-text-center">
             <Button
               id="about"
               data-border="rounded"
@@ -79,6 +134,7 @@ export default function Home() {
               variant="secondary"
               size="m"
               arrowIcon
+              className="mobile-full-width"
             >
               <Flex gap="8" vertical="center">
                 {about.avatar?.display && (
@@ -96,104 +152,104 @@ export default function Home() {
       </Column>
 
       {/* Skills Section */}
-      <RevealFx delay={0.2} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
-        <Column maxWidth="s" gap="m">
-          <Heading as="h2" variant="display-strong-s">Technologies & Expertise</Heading>
-          <Flex gap="12" wrap vertical="center">
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">AI & Machine Learning</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">React & Next.js</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">TypeScript</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">Node.js</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">Python</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">Neural Networks</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">Cloud Solutions</Badge>
-            <Badge background="brand-alpha-weak" textVariant="label-default-s">UI/UX Design</Badge>
+      <RevealFx delay={0.2} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
+        <Column maxWidth="s" gap="m" className="mobile-text-center">
+          <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Technologies & Expertise</Heading>
+          <Flex gap="12" wrap vertical="center" className="mobile-small-gap">
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">AI & Machine Learning</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">React & Next.js</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">TypeScript</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">Node.js</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">Python</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">Neural Networks</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">Cloud Solutions</Badge>
+            <Badge background="brand-alpha-weak" textVariant="label-default-s" className="mobile-padding-sm">UI/UX Design</Badge>
           </Flex>
         </Column>
       </RevealFx>
 
       {/* Services Section */}
-      <RevealFx delay={0.3} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
-        <Column maxWidth="s" gap="m">
-          <Heading as="h2" variant="display-strong-s">Revolutionary AI Technology</Heading>
-          <Flex gap="16" wrap>
-            <Card>
-              <Heading variant="heading-default-m">🤖 AI Model Generation</Heading>
-              <Text onBackground="neutral-weak">Describe any AI model you need, and our AI will generate, train, and deploy it automatically.</Text>
+      <RevealFx delay={0.3} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
+        <Column maxWidth="s" gap="m" className="mobile-text-center">
+          <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Revolutionary AI Technology</Heading>
+          <Flex gap="16" wrap className="mobile-card-stack mobile-small-gap">
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-m" className="mobile-font-sm">🤖 AI Model Generation</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">Describe any AI model you need, and our AI will generate, train, and deploy it automatically.</Text>
             </Card>
-            <Card>
-              <Heading variant="heading-default-m">🚀 Instant Deployment</Heading>
-              <Text onBackground="neutral-weak">Deploy your custom AI models to Hugging Face Hub with one click - no coding required.</Text>
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-m" className="mobile-font-sm">🚀 Instant Deployment</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">Deploy your custom AI models to Hugging Face Hub with one click - no coding required.</Text>
             </Card>
-            <Card>
-              <Heading variant="heading-default-m">🎯 Any Use Case</Heading>
-              <Text onBackground="neutral-weak">From sentiment analysis to computer vision - create AI models for any business need.</Text>
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-m" className="mobile-font-sm">🎯 Any Use Case</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">From sentiment analysis to computer vision - create AI models for any business need.</Text>
             </Card>
           </Flex>
         </Column>
       </RevealFx>
 
       {/* Timeline Section */}
-      <RevealFx delay={0.4} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
-        <Column maxWidth="s" gap="m">
-          <Heading as="h2" variant="display-strong-s">Our Journey</Heading>
-          <Flex direction="column" gap="12">
-            <Card>
-              <Heading variant="heading-default-s">2024 - Present</Heading>
-              <Text onBackground="neutral-weak">Founded zehanxtech with a mission to build AI for the betterment of humanity.</Text>
+      <RevealFx delay={0.4} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
+        <Column maxWidth="s" gap="m" className="mobile-text-center">
+          <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Our Journey</Heading>
+          <Flex direction="column" gap="12" className="mobile-small-gap">
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-s" className="mobile-font-sm">2024 - Present</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">Founded zehanxtech with a mission to build AI for the betterment of humanity.</Text>
             </Card>
-            <Card>
-              <Heading variant="heading-default-s">2023 - 2024</Heading>
-              <Text onBackground="neutral-weak">Research and development in AI technologies and modern web solutions.</Text>
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-s" className="mobile-font-sm">2023 - 2024</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">Research and development in AI technologies and modern web solutions.</Text>
             </Card>
-            <Card>
-              <Heading variant="heading-default-s">2022 - 2023</Heading>
-              <Text onBackground="neutral-weak">Building expertise in machine learning, neural networks, and advanced web development.</Text>
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-s" className="mobile-font-sm">2022 - 2023</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">Building expertise in machine learning, neural networks, and advanced web development.</Text>
             </Card>
           </Flex>
         </Column>
       </RevealFx>
 
       {/* Testimonials Section */}
-      <RevealFx delay={0.5} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
-        <Column maxWidth="s" gap="m">
-          <Heading as="h2" variant="display-strong-s">Client Testimonials</Heading>
-          <Flex gap="16" wrap>
-            <Card>
-              <Text onBackground="neutral-weak">
+      <RevealFx delay={0.5} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
+        <Column maxWidth="s" gap="m" className="mobile-text-center">
+          <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Client Testimonials</Heading>
+          <Flex gap="16" wrap className="mobile-card-stack mobile-small-gap">
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Text onBackground="neutral-weak" className="mobile-font-sm">
                 "zehanxtech delivered an exceptional AI solution that transformed our business operations. Highly professional and innovative!"
               </Text>
-              <Text variant="label-default-s" style={{ marginTop: 8 }}>— Sarah Johnson, Tech Director</Text>
+              <Text variant="label-default-s" style={{ marginTop: 8 }} className="mobile-font-sm">— Sarah Johnson, Tech Director</Text>
             </Card>
-            <Card>
-              <Text onBackground="neutral-weak">
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Text onBackground="neutral-weak" className="mobile-font-sm">
                 "Their expertise in both AI and web development is outstanding. They created exactly what we envisioned."
               </Text>
-              <Text variant="label-default-s" style={{ marginTop: 8 }}>— Michael Chen, Startup Founder</Text>
+              <Text variant="label-default-s" style={{ marginTop: 8 }} className="mobile-font-sm">— Michael Chen, Startup Founder</Text>
             </Card>
           </Flex>
         </Column>
       </RevealFx>
 
       {/* Contact Section */}
-      <RevealFx delay={0.6} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
-        <Column maxWidth="s" gap="m">
-          <Heading as="h2" variant="display-strong-s">Get In Touch</Heading>
-          <Text onBackground="neutral-weak">
+      <RevealFx delay={0.6} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
+        <Column maxWidth="s" gap="m" className="mobile-text-center">
+          <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Get In Touch</Heading>
+          <Text onBackground="neutral-weak" className="mobile-font-sm">
             Ready to transform your business with AI? Contact us today.
           </Text>
-          <Flex gap="16" wrap vertical="center">
-            <Card>
-              <Heading variant="heading-default-s">Email</Heading>
-              <Text onBackground="neutral-weak">zehanxtech@gmail.com</Text>
+          <Flex gap="16" wrap vertical="center" className="mobile-card-stack mobile-small-gap">
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-s" className="mobile-font-sm">Email</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">zehanxtech@gmail.com</Text>
             </Card>
-            <Card>
-              <Heading variant="heading-default-s">Phone</Heading>
-              <Text onBackground="neutral-weak">+92 344 2693910</Text>
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-s" className="mobile-font-sm">Phone</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">+92 344 2693910</Text>
             </Card>
-            <Card>
-              <Heading variant="heading-default-s">Location</Heading>
-              <Text onBackground="neutral-weak">Gujranwala, Pakistan</Text>
+            <Card className="mobile-full-width mobile-padding-sm">
+              <Heading variant="heading-default-s" className="mobile-font-sm">Location</Heading>
+              <Text onBackground="neutral-weak" className="mobile-font-sm">Gujranwala, Pakistan</Text>
             </Card>
           </Flex>
         </Column>
@@ -201,10 +257,10 @@ export default function Home() {
 
       {/* Newsletter Section */}
       {newsletter.display && (
-        <RevealFx delay={0.7} fillWidth horizontal="center" paddingTop="32" paddingBottom="32">
-          <Column maxWidth="s" gap="m">
-            <Heading variant="display-strong-s">Stay Updated</Heading>
-            <Text onBackground="neutral-weak">
+        <RevealFx delay={0.7} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
+          <Column maxWidth="s" gap="m" className="mobile-text-center">
+            <Heading variant="display-strong-s" className="mobile-heading-sm">Stay Updated</Heading>
+            <Text onBackground="neutral-weak" className="mobile-font-sm">
               Subscribe to our newsletter for AI insights, tech updates, and project showcases.
             </Text>
             <Mailchimp newsletter={newsletter} />
@@ -212,5 +268,6 @@ export default function Home() {
         </RevealFx>
       )}
     </Column>
+    </>
   );
 }

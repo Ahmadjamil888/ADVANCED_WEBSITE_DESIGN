@@ -54,12 +54,61 @@ export const Header = () => {
 
   return (
     <>
+      <style jsx global>{`
+        /* Mobile Header Styles */
+        @media (max-width: 768px) {
+          .mobile-header-padding {
+            padding: 4px !important;
+          }
+          .mobile-nav-container {
+            padding: 2px !important;
+            gap: 2px !important;
+          }
+          .mobile-nav-item {
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+          }
+          .mobile-location-hide {
+            display: none !important;
+          }
+          .mobile-time-hide {
+            display: none !important;
+          }
+          .mobile-ai-button {
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+          }
+          .mobile-ai-button svg {
+            width: 16px !important;
+            height: 16px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .mobile-header-padding {
+            padding: 2px !important;
+          }
+          .mobile-nav-container {
+            padding: 1px !important;
+            gap: 1px !important;
+          }
+          .mobile-nav-item {
+            padding: 4px 6px !important;
+            font-size: 11px !important;
+          }
+          .mobile-ai-button {
+            padding: 6px 8px !important;
+            font-size: 10px !important;
+          }
+        }
+      `}</style>
+      
       <Fade hide="s" fillWidth position="fixed" height="80" zIndex={9} />
       <Fade show="s" fillWidth position="fixed" bottom="0" to="top" height="80" zIndex={9} />
       <Flex
         fitHeight
         position="unset"
-        className={styles.position}
+        className={`${styles.position} mobile-header-padding`}
         as="header"
         zIndex={9}
         fillWidth
@@ -67,7 +116,7 @@ export const Header = () => {
         horizontal="center"
         data-border="rounded"
       >
-        <Flex paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s">
+        <Flex paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s" className="mobile-location-hide">
           {display.location && <Flex hide="s">Gujranwala, Pakistan</Flex>}
         </Flex>
         <Flex fillWidth horizontal="center">
@@ -79,8 +128,9 @@ export const Header = () => {
             padding="4"
             horizontal="center"
             zIndex={1}
+            className="mobile-nav-container"
           >
-            <Flex gap="4" vertical="center" textVariant="body-default-s">
+            <Flex gap="4" vertical="center" textVariant="body-default-s" className="mobile-nav-container">
               {routes["/"] && (
                 <ToggleButton prefixIcon="home" href="/" selected={pathname === "/"} />
               )}
@@ -187,8 +237,10 @@ export const Header = () => {
             textVariant="body-default-s"
             gap="20"
           >
-            <AIButton />
-            <Flex hide="s">{display.time && <TimeDisplay timeZone={person.location} />}</Flex>
+            <div className="mobile-ai-button">
+              <AIButton />
+            </div>
+            <Flex hide="s" className="mobile-time-hide">{display.time && <TimeDisplay timeZone={person.location} />}</Flex>
           </Flex>
         </Flex>
       </Flex>

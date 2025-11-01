@@ -23,3 +23,17 @@
         bottom: 0;
     }
 }
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 768px) {
+    .position {
+        padding: 4px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .position {
+        padding: 2px !important;
+        bottom: var(--static-space-12) !important;
+    }
+}
