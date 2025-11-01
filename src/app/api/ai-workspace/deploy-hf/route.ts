@@ -37,6 +37,12 @@ export async function POST(request: NextRequest) {
 
     // Get HuggingFace token from environment variables
     const hfToken = process.env.HUGGINGFACE_TOKEN
+    console.log('🔑 HF Token check:', {
+      exists: !!hfToken,
+      length: hfToken ? hfToken.length : 0,
+      startsWithHf: hfToken ? hfToken.startsWith('hf_') : false
+    });
+    
     if (!hfToken) {
       return NextResponse.json({ error: 'HuggingFace token not configured' }, { status: 500 })
     }
@@ -47,7 +53,8 @@ export async function POST(request: NextRequest) {
       data: {
         eventId,
         userId,
-        prompt
+        prompt,
+        hfToken // Pass the token directly to Inngest
       }
     });
 

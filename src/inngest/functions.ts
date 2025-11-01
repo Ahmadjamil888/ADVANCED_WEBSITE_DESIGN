@@ -292,8 +292,7 @@ export const deployToHuggingFace = inngest.createFunction(
   },
   { event: "ai/model.deploy-hf" },
   async ({ event, step }) => {
-    const { eventId, userId, prompt } = event.data;
-    const hfToken = process.env.HUGGINGFACE_TOKEN;
+    const { eventId, userId, prompt, hfToken } = event.data;
 
     if (!hfToken) {
       throw new Error('HuggingFace token not configured');
@@ -371,6 +370,9 @@ export const deployToHuggingFace = inngest.createFunction(
 async function getHuggingFaceUsername(hfToken: string): Promise<string> {
   try {
     console.log('Getting HF username with token...');
+    console.log('Token length:', hfToken ? hfToken.length : 'undefined');
+    console.log('Token starts with hf_:', hfToken ? hfToken.startsWith('hf_') : 'undefined');
+    
     const response = await fetch('https://huggingface.co/api/whoami', {
       headers: {
         'Authorization': `Bearer ${hfToken}`
@@ -381,10 +383,12 @@ async function getHuggingFaceUsername(hfToken: string): Promise<string> {
       const data = await response.json();
       console.log('HF API response:', data);
       if (data.name) {
+        console.log('✅ Successfully got username:', data.name);
         return data.name;
       }
     } else {
-      console.error('HF API error:', response.status, await response.text());
+      const errorText = await response.text();
+      console.error('HF API error:', response.status, errorText);
     }
   } catch (error) {
     console.error('Failed to get HF username:', error);
