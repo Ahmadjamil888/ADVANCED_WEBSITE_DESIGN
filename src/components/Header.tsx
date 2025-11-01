@@ -58,15 +58,19 @@ export const Header = () => {
         /* Mobile Header Styles */
         @media (max-width: 768px) {
           .mobile-header-padding {
-            padding: 4px !important;
+            padding: 2px !important;
+            margin: 0 4px !important;
           }
           .mobile-nav-container {
-            padding: 2px !important;
-            gap: 2px !important;
+            padding: 1px !important;
+            gap: 1px !important;
+            max-width: calc(100vw - 16px) !important;
+            overflow: hidden !important;
           }
           .mobile-nav-item {
-            padding: 6px 8px !important;
-            font-size: 12px !important;
+            padding: 4px 6px !important;
+            font-size: 11px !important;
+            min-width: auto !important;
           }
           .mobile-location-hide {
             display: none !important;
@@ -75,30 +79,46 @@ export const Header = () => {
             display: none !important;
           }
           .mobile-ai-button {
-            padding: 8px 12px !important;
-            font-size: 12px !important;
+            padding: 6px 8px !important;
+            font-size: 10px !important;
+            min-width: auto !important;
           }
           .mobile-ai-button svg {
-            width: 16px !important;
-            height: 16px !important;
+            width: 14px !important;
+            height: 14px !important;
+          }
+          /* Hide text labels on mobile for nav items */
+          .s-flex-hide {
+            display: none !important;
+          }
+          /* Ensure nav container doesn't overflow */
+          header[data-border="rounded"] {
+            margin: 0 2px !important;
+            max-width: calc(100vw - 4px) !important;
           }
         }
         
         @media (max-width: 480px) {
           .mobile-header-padding {
-            padding: 2px !important;
+            padding: 1px !important;
+            margin: 0 2px !important;
           }
           .mobile-nav-container {
-            padding: 1px !important;
-            gap: 1px !important;
+            padding: 0px !important;
+            gap: 0px !important;
+            max-width: calc(100vw - 8px) !important;
           }
           .mobile-nav-item {
-            padding: 4px 6px !important;
-            font-size: 11px !important;
+            padding: 3px 4px !important;
+            font-size: 10px !important;
           }
           .mobile-ai-button {
-            padding: 6px 8px !important;
-            font-size: 10px !important;
+            padding: 4px 6px !important;
+            font-size: 9px !important;
+          }
+          header[data-border="rounded"] {
+            margin: 0 1px !important;
+            max-width: calc(100vw - 2px) !important;
           }
         }
       `}</style>

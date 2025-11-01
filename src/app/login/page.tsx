@@ -65,415 +65,435 @@ export default function LoginPage() {
     if (error) alert(error.message)
   }
 
-  const handleGitHubAuth = async () => {
-    if (!supabase) {
-      alert('Authentication service is not available')
-      return
-    }
-    
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: `${window.location.origin}/ai-workspace`
-      }
-    })
-    if (error) alert(error.message)
-  }
-
   return (
     <>
       <style jsx global>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
+        :root {
+          --bg: #f6f8fb;
+          --card: #ffffff;
+          --muted: #6b7280;
+          --primary: #0b5cff;
+          --accent: #0ea5e9;
+          --border: #e6e9ef;
+          --radius: 12px;
+          --shadow: 0 8px 30px rgba(12,18,27,0.06);
+          --glass: rgba(255,255,255,0.6);
+          font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         }
+
         html, body {
-          height: 100%;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          height: 100vh;
+          margin: 0;
+          background: linear-gradient(180deg, var(--bg), #eef3fb 120%);
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        .login-container {
+
+        /* Layout */
+        .split {
           min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-          position: relative;
-          overflow: hidden;
-        }
-        .login-container::before {
-          content: '';
-          position: absolute;
+          align-items: stretch;
+          justify-content: stretch;
+          position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-          pointer-events: none;
         }
-        .login-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          border-radius: 24px;
-          padding: 48px;
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-          width: 100%;
-          max-width: 440px;
-          animation: fadeIn 0.6s ease-out;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .logo-section {
-          text-align: center;
-          margin-bottom: 40px;
-        }
-        .logo {
-          width: 80px;
-          height: 80px;
-          border-radius: 20px;
-          margin: 0 auto 20px;
-          display: block;
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        .brand-title {
-          font-size: 28px;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin-bottom: 8px;
-          letter-spacing: -0.5px;
-        }
-        .brand-subtitle {
-          font-size: 16px;
-          color: #6b7280;
-          margin-bottom: 8px;
-        }
-        .welcome-title {
-          font-size: 32px;
-          font-weight: 800;
-          color: #1a1a1a;
-          margin-bottom: 32px;
-          text-align: center;
-          letter-spacing: -1px;
-        }
-        .oauth-section {
-          margin-bottom: 32px;
-        }
-        .oauth-button {
-          width: 100%;
-          padding: 16px 24px;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          background: white;
-          color: #374151;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
+
+        .left, .right {
+          flex: 1 1 50%;
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+
+        /* Left (form) */
+        .panel {
+          width: 100%;
+          max-width: 520px;
+          padding: 44px;
+          background: var(--card);
+          border-radius: 16px;
+          box-shadow: var(--shadow);
+          border: 1px solid var(--border);
+        }
+
+        .brand {
+          display: flex;
+          align-items: center;
           gap: 12px;
-          margin-bottom: 12px;
+          margin-bottom: 18px;
         }
-        .oauth-button:hover {
-          border-color: #d1d5db;
-          background: #f9fafb;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        .logo {
+          width: 44px;
+          height: 44px;
+          border-radius: 10px;
+          background: linear-gradient(135deg, var(--primary), var(--accent));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 700;
+          box-shadow: 0 6px 18px rgba(11,92,255,0.12);
         }
-        .oauth-button:active {
-          transform: translateY(0);
+
+        h1 {
+          margin: 0;
+          font-size: 22px;
+          font-weight: 700;
+          color: #0f1724;
         }
-        .google-button {
-          border-color: #ea4335;
-          color: #ea4335;
+
+        p.lead {
+          margin: 8px 0 26px 0;
+          color: var(--muted);
+          font-size: 14px;
         }
-        .google-button:hover {
-          background: #fef2f2;
-          border-color: #dc2626;
+
+        /* OAuth button */
+        .oauth {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          padding: 12px 14px;
+          border-radius: 10px;
+          border: 1px solid var(--border);
+          background: white;
+          cursor: pointer;
+          width: 100%;
+          box-shadow: 0 1px 0 rgba(12,18,27,0.02);
+          transition: transform .12s ease, box-shadow .12s ease;
+          text-decoration: none;
         }
-        .github-button {
-          border-color: #24292e;
-          color: #24292e;
+
+        .oauth:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 30px rgba(12,18,27,0.06);
         }
-        .github-button:hover {
-          background: #f6f8fa;
-          border-color: #1b1f23;
+
+        .oauth img {
+          width: 18px;
+          height: 18px;
         }
-        .divider {
+
+        .oauth span {
+          flex: 1;
           text-align: center;
-          margin: 32px 0;
-          position: relative;
-        }
-        .divider::before {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 0;
-          right: 0;
-          height: 1px;
-          background: #e5e7eb;
-        }
-        .divider-text {
-          background: rgba(255, 255, 255, 0.95);
-          padding: 0 20px;
-          color: #6b7280;
-          font-size: 14px;
-          font-weight: 500;
-        }
-        .form-section {
-          margin-bottom: 32px;
-        }
-        .form-group {
-          margin-bottom: 20px;
-        }
-        .form-label {
-          display: block;
-          font-size: 14px;
           font-weight: 600;
+          color: #111827;
+          font-size: 14px;
+        }
+
+        .divider {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          margin: 20px 0;
+          color: var(--muted);
+          font-size: 13px;
+        }
+
+        .divider:before, .divider:after {
+          content: "";
+          flex: 1;
+          height: 1px;
+          background: var(--border);
+          border-radius: 2px;
+        }
+
+        form .field {
+          margin-bottom: 14px;
+        }
+
+        label {
+          display: block;
+          font-size: 13px;
           color: #374151;
           margin-bottom: 8px;
-        }
-        .form-input {
-          width: 100%;
-          padding: 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          font-size: 16px;
-          color: #1f2937;
-          background: white;
-          transition: all 0.2s ease;
-        }
-        .form-input:focus {
-          outline: none;
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .form-input::placeholder {
-          color: #9ca3af;
-        }
-        .primary-button {
-          width: 100%;
-          padding: 16px 24px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-size: 16px;
           font-weight: 600;
+        }
+
+        input[type="email"], input[type="password"] {
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 10px;
+          border: 1px solid var(--border);
+          background: #fbfdff;
+          font-size: 14px;
+          outline: none;
+          transition: box-shadow .12s ease, border-color .12s ease;
+          box-sizing: border-box;
+        }
+
+        input:focus {
+          box-shadow: 0 6px 20px rgba(14,165,233,0.12);
+          border-color: var(--accent);
+        }
+
+        .row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 13px;
+          color: var(--muted);
+          margin-bottom: 18px;
+        }
+
+        .remember input {
+          width: 16px;
+          height: 16px;
+          accent-color: var(--primary);
+        }
+
+        button.cta {
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 10px;
+          background: linear-gradient(90deg, var(--primary), #3d7bff);
+          border: 0;
+          color: white;
+          font-weight: 700;
+          font-size: 15px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          box-shadow: 0 10px 30px rgba(11,92,255,0.12);
+          transition: transform .12s ease, opacity .12s ease;
+        }
+
+        button.cta:active {
+          transform: translateY(1px);
+        }
+
+        button.cta:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .muted-note {
+          margin-top: 14px;
+          font-size: 13px;
+          color: var(--muted);
+          text-align: center;
+        }
+
+        .muted-note a {
+          color: var(--primary);
+          font-weight: 700;
+          text-decoration: none;
+        }
+
+        /* Right (image) */
+        .right {
           position: relative;
           overflow: hidden;
         }
-        .primary-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+
+        .hero {
+          width: 100%;
+          height: 100%;
+          min-height: 420px;
+          background-image: url('https://images.unsplash.com/photo-1531379410503-4a3b6a6f6a4b?auto=format&fit=crop&w=1400&q=80');
+          background-size: cover;
+          background-position: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .primary-button:active {
-          transform: translateY(0);
+
+        .overlay {
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(180deg, rgba(3,7,18,0.18), rgba(2,6,23,0.46));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 32px;
         }
-        .primary-button:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-          transform: none;
+
+        .hero-card {
+          max-width: 520px;
+          color: white;
+          text-align: left;
+          border-radius: 12px;
+          padding: 28px;
+          backdrop-filter: blur(6px);
+          background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+          box-shadow: 0 10px 40px rgba(2,6,23,0.35);
+          border: 1px solid rgba(255,255,255,0.06);
         }
-        .loading-spinner {
-          animation: pulse 1.5s ease-in-out infinite;
+
+        .hero h2 {
+          margin: 0;
+          font-size: 28px;
+          line-height: 1.05;
+          font-weight: 700;
         }
-        .toggle-button {
-          background: none;
-          border: none;
-          color: #667eea;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          text-decoration: underline;
-          transition: color 0.2s ease;
+
+        .hero p {
+          margin-top: 12px;
+          color: rgba(255,255,255,0.85);
+          font-size: 15px;
         }
-        .toggle-button:hover {
-          color: #5a67d8;
+
+        .hero-tags {
+          margin-top: 18px;
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
         }
-        .footer-text {
-          text-align: center;
-          font-size: 12px;
-          color: #9ca3af;
-          line-height: 1.5;
+
+        .hero-tag {
+          background: rgba(255,255,255,0.06);
+          padding: 8px 12px;
+          border-radius: 8px;
+          font-size: 13px;
         }
-        .footer-text a {
-          color: #667eea;
-          text-decoration: none;
-        }
-        .footer-text a:hover {
-          text-decoration: underline;
-        }
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-          .login-container {
-            padding: 16px;
+
+        /* Small screens */
+        @media (max-width: 900px) {
+          .right {
+            display: none;
           }
-          .login-card {
-            padding: 32px 24px;
-            border-radius: 20px;
+          .left {
+            flex: 1 1 100%;
+            padding: 40px 18px;
+            align-items: flex-start;
+            justify-content: flex-start;
           }
-          .logo {
-            width: 64px;
-            height: 64px;
-          }
-          .brand-title {
-            font-size: 24px;
-          }
-          .welcome-title {
-            font-size: 28px;
-            margin-bottom: 24px;
-          }
-          .oauth-button {
-            padding: 14px 20px;
-            font-size: 15px;
-          }
-          .form-input {
-            padding: 14px;
-            font-size: 16px; /* Prevent zoom on iOS */
-          }
-          .primary-button {
-            padding: 14px 20px;
-            font-size: 15px;
+          .panel {
+            margin-top: 28px;
+            width: 100%;
+            box-shadow: none;
+            border-radius: 10px;
           }
         }
-        
-        @media (max-width: 480px) {
-          .login-container {
-            padding: 12px;
+
+        @media (max-width: 420px) {
+          .panel {
+            padding: 20px;
           }
-          .login-card {
-            padding: 24px 20px;
+          .brand h1 {
+            font-size: 18px;
           }
-          .brand-title {
-            font-size: 22px;
-          }
-          .welcome-title {
-            font-size: 24px;
+          .hero h2 {
+            font-size: 20px;
           }
         }
       `}</style>
 
-      <div className="login-container">
-        <div className="login-card">
-          {/* Logo Section */}
-          <div className="logo-section">
-            <img src="/logo.jpg" alt="zehanxtech" className="logo" />
-            <h1 className="brand-title">zehanxtech</h1>
-            <p className="brand-subtitle">AI for Better Humanity</p>
-          </div>
-
-          <h2 className="welcome-title">
-            {isSignUp ? 'Join the Future' : 'Welcome Back'}
-          </h2>
-
-          {/* OAuth Buttons */}
-          <div className="oauth-section">
-            <button
-              onClick={handleGoogleAuth}
-              className="oauth-button google-button"
-              disabled={loading}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              Continue with Google
-            </button>
-
-            <button
-              onClick={handleGitHubAuth}
-              className="oauth-button github-button"
-              disabled={loading}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-              Continue with GitHub
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="divider">
-            <span className="divider-text">or continue with email</span>
-          </div>
-
-          {/* Email Form */}
-          <form onSubmit={handleEmailAuth} className="form-section">
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email Address</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
-                required
-                disabled={loading}
-              />
+      <div className="split">
+        {/* LEFT: form */}
+        <div className="left">
+          <div className="panel" role="main">
+            <div className="brand">
+              <div>
+                <h1>{isSignUp ? 'Create Account' : 'Welcome back'}</h1>
+                <p className="lead">
+                  {isSignUp 
+                    ? 'Join DHAMIA — secure, fast, enterprise-ready AI platform.'
+                    : 'Sign in to continue to DHAMIA — secure, fast, enterprise-ready.'
+                  }
+                </p>
+              </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="form-input"
-                required
-                disabled={loading}
-                minLength={6}
+            {/* GOOGLE OAUTH BUTTON */}
+            <button className="oauth" onClick={handleGoogleAuth} disabled={loading}>
+              <img 
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 533.5 544.3'><path fill='%23EA4335' d='M533.5 278.4c0-18.4-1.6-36-4.6-53.1H272v100.6h146.9c-6.3 33.8-25.6 62.5-54.6 81.5l88.1 68.3c51.4-47.5 81.1-117 81.1-197.3z'/><path fill='%234285F4' d='M272 544.3c73.8 0 135.8-24.5 181.1-66.5l-88.1-68.3c-24.5 16.5-56 26.3-93 26.3-71.5 0-132.1-48.2-153.8-113.1l-90.3 69.6c41.7 82.6 128 141.9 244.1 141.9z'/><path fill='%2340C853' d='M118.2 327.9c-11.7-34.9-11.7-72.4 0-107.3l-90.3-69.6C7.5 219 0 244.6 0 272c0 27.4 7.5 53 27.9 121.1l90.3-65.2z'/><path fill='%23FBBC05' d='M272 107.7c39.9 0 75.7 13.7 104 40.6l78-78C401.4 25.6 347.1 0 272 0 155.9 0 69.6 59.3 27.9 141.9l90.3 69.6C139.9 156 200.5 107.7 272 107.7z'/></svg>" 
+                alt="Google" 
               />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="primary-button"
-            >
-              {loading ? (
-                <span className="loading-spinner">
-                  {isSignUp ? 'Creating Account...' : 'Signing In...'}
-                </span>
-              ) : (
-                isSignUp ? 'Create Account' : 'Sign In'
-              )}
+              <span>Continue with Google</span>
             </button>
-          </form>
 
-          {/* Toggle Sign Up/Sign In */}
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="toggle-button"
-              disabled={loading}
-            >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Join us"}
-            </button>
+            <div className="divider">or sign in with email</div>
+
+            {/* EMAIL / PASSWORD FORM */}
+            <form onSubmit={handleEmailAuth}>
+              <div className="field">
+                <label htmlFor="email">Email address</label>
+                <input 
+                  id="email" 
+                  name="email" 
+                  type="email" 
+                  autoComplete="email" 
+                  required 
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="password">Password</label>
+                <input 
+                  id="password" 
+                  name="password" 
+                  type="password" 
+                  autoComplete="current-password" 
+                  required 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  minLength={6}
+                />
+              </div>
+
+              <div className="row">
+                <label className="remember">
+                  <input type="checkbox" name="remember" /> Remember me
+                </label>
+                <a href="/forgot" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: '600' }}>
+                  Forgot password?
+                </a>
+              </div>
+
+              <button className="cta" type="submit" disabled={loading}>
+                {loading ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign in')}
+              </button>
+
+              <p className="muted-note">
+                {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
+                <button 
+                  type="button"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    color: 'var(--primary)', 
+                    fontWeight: '700', 
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    fontSize: 'inherit'
+                  }}
+                  disabled={loading}
+                >
+                  {isSignUp ? 'Sign in' : 'Create one'}
+                </button>
+              </p>
+            </form>
           </div>
+        </div>
 
-          {/* Footer */}
-          <div className="footer-text">
-            By continuing, you agree to our{' '}
-            <a href="/terms" target="_blank">Terms of Service</a> and{' '}
-            <a href="/privacy" target="_blank">Privacy Policy</a>
+        {/* RIGHT: image/marketing */}
+        <div className="right">
+          <div className="hero">
+            <div className="overlay">
+              <div className="hero-card">
+                <h2>Build intelligent systems<br />for modern enterprises</h2>
+                <p>Create custom AI models with zero coding — from sentiment analysis to computer vision, deployed instantly to production.</p>
+                
+                <div className="hero-tags">
+                  <div className="hero-tag">Auto ML</div>
+                  <div className="hero-tag">Zero Code</div>
+                  <div className="hero-tag">Instant Deploy</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

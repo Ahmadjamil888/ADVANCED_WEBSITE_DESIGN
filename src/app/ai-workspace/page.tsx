@@ -330,12 +330,18 @@ export default function AIWorkspace() {
         });
 
         try {
+          // Get the original prompt from messages - find the user message before the assistant message with this eventId
+          const assistantMessageIndex = messages.findIndex(msg => msg.eventId === eventId && msg.role === 'assistant');
+          const userMessage = assistantMessageIndex > 0 ? messages[assistantMessageIndex - 1] : null;
+          const prompt = userMessage?.content || '';
+
           const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               eventId,
               userId: user?.id,
+              prompt: prompt,
               autoUseEnvToken: true
             })
           });
@@ -343,6 +349,8 @@ export default function AIWorkspace() {
           const deployData = await deployResponse.json();
           
           if (deployData.success) {
+            const modelTypeDisplay = deployData.modelType ? deployData.modelType.replace('-', ' ').toUpperCase() : data.model.type.replace('-', ' ').toUpperCase();
+            
             const completionMessage: Message = {
               id: `completion-${eventId}`,
               role: 'assistant',
@@ -354,10 +362,18 @@ Your AI model has been successfully generated and deployed to Hugging Face!
 
 **Model Details:**
 - **Name:** ${data.model.name}
-- **Type:** ${data.model.type.replace('-', ' ').toUpperCase()}
+- **Type:** ${modelTypeDisplay}
 - **Framework:** ${data.model.framework.toUpperCase()}
 - **Dataset:** ${data.model.dataset}
 - **Status:** ✅ Live on Hugging Face
+
+**Files Included:**
+- ✅ Model Configuration (config.json)
+- ✅ Interactive Demo (app.py)
+- ✅ Training Script (train.py)
+- ✅ Requirements & Dockerfile
+- ✅ Complete Documentation
+${deployData.modelType !== 'image-classification' ? '- ✅ Tokenizer Files' : '- ✅ Image Processor Config'}
 
 Your model is now accessible worldwide and ready for production use!`,
               created_at: new Date().toISOString(),
