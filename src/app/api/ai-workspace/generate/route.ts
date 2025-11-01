@@ -2,6 +2,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { inngest } from '../../../../inngest/client'
 import { supabase } from '@/lib/supabase'
 
+async function getHuggingFaceUsername(hfToken: string): Promise<string> {
+  try {
+    const response = await fetch('https://huggingface.co/api/whoami', {
+      headers: {
+        'Authorization': `Bearer ${hfToken}`
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.name || 'user';
+    }
+  } catch (error) {
+    console.error('Failed to get HF username:', error);
+  }
+  
+  // Fallback username
+  return 'zehanxtech';
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { chatId, prompt, mode, userId } = await request.json()
@@ -59,10 +79,11 @@ export async function POST(request: NextRequest) {
     // Return immediate response while Inngest processes in background
     const response = generateImmediateResponse(modelConfig, mode)
 
-    // Include deployment data in response
+    // Get actual username and include deployment data in response
+    const username = hfToken ? await getHuggingFaceUsername(hfToken) : 'zehanxtech';
     const spaceName = deploymentData?.spaceName || `${modelConfig.modelType}-live-${eventId.split('-').pop()}`;
-    const spaceUrl = deploymentData?.spaceUrl || `https://huggingface.co/spaces/dhamia/${spaceName}`;
-    const apiUrl = deploymentData?.apiUrl || `https://api-inference.huggingface.co/models/dhamia/${spaceName}`;
+    const spaceUrl = deploymentData?.spaceUrl || `https://huggingface.co/spaces/${username}/${spaceName}`;
+    const apiUrl = deploymentData?.apiUrl || `https://api-inference.huggingface.co/models/${username}/${spaceName}`;
 
     return NextResponse.json({ 
       response,

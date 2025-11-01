@@ -368,8 +368,31 @@ export const deployToHuggingFace = inngest.createFunction(
 // HUGGINGFACE SPACES DEPLOYMENT FUNCTIONS - LIVE INFERENCE
 // ============================================================================
 
+async function getHuggingFaceUsername(hfToken: string): Promise<string> {
+  try {
+    const response = await fetch('https://huggingface.co/api/whoami', {
+      headers: {
+        'Authorization': `Bearer ${hfToken}`
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.name || 'user';
+    }
+  } catch (error) {
+    console.error('Failed to get HF username:', error);
+  }
+  
+  // Fallback username
+  return 'zehanxtech';
+}
+
 async function createHuggingFaceSpace(spaceName: string, hfToken: string, modelInfo: any) {
   try {
+    // Get the actual HuggingFace username
+    const username = await getHuggingFaceUsername(hfToken);
+    
     const response = await fetch('https://huggingface.co/api/repos/create', {
       method: 'POST',
       headers: {
@@ -393,19 +416,26 @@ async function createHuggingFaceSpace(spaceName: string, hfToken: string, modelI
       return {
         fullName: data.name,
         url: `https://huggingface.co/spaces/${data.name}`,
+        username: username,
         success: true
       };
     } else {
+      const errorText = await response.text();
+      console.error('HF Space creation failed:', errorText);
       return {
-        fullName: `dhamia/${spaceName}`,
-        url: `https://huggingface.co/spaces/dhamia/${spaceName}`,
-        success: false
+        fullName: `${username}/${spaceName}`,
+        url: `https://huggingface.co/spaces/${username}/${spaceName}`,
+        username: username,
+        success: false,
+        error: errorText
       };
     }
   } catch (error: any) {
+    const username = await getHuggingFaceUsername(hfToken);
     return {
-      fullName: `dhamia/${spaceName}`,
-      url: `https://huggingface.co/spaces/dhamia/${spaceName}`,
+      fullName: `${username}/${spaceName}`,
+      url: `https://huggingface.co/spaces/${username}/${spaceName}`,
+      username: username,
       success: false,
       error: error.message
     };

@@ -1,5 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+async function getHuggingFaceUsername(): Promise<string> {
+  try {
+    const hfToken = process.env.HUGGINGFACE_TOKEN;
+    if (!hfToken) return 'zehanxtech';
+    
+    const response = await fetch('https://huggingface.co/api/whoami', {
+      headers: {
+        'Authorization': `Bearer ${hfToken}`
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.name || 'zehanxtech';
+    }
+  } catch (error) {
+    console.error('Failed to get HF username:', error);
+  }
+  
+  return 'zehanxtech';
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> }
@@ -24,9 +46,11 @@ export async function GET(
       modelName = 'Sentiment Analysis Model';
     }
     
+    // Get actual HuggingFace username
+    const username = await getHuggingFaceUsername();
     const spaceName = `${modelType}-live-${eventId.split('-').pop()}`;
-    const spaceUrl = `https://huggingface.co/spaces/dhamia/${spaceName}`;
-    const apiUrl = `https://api-inference.huggingface.co/models/dhamia/${spaceName}`;
+    const spaceUrl = `https://huggingface.co/spaces/${username}/${spaceName}`;
+    const apiUrl = `https://api-inference.huggingface.co/models/${username}/${spaceName}`;
 
     // Simple time-based completion (wait 10 seconds from first call)
     // For testing purposes, we'll use a simple approach

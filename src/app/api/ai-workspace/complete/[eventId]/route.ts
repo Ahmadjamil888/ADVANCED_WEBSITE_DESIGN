@@ -1,5 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+async function getHuggingFaceUsername(): Promise<string> {
+  try {
+    const hfToken = process.env.HUGGINGFACE_TOKEN;
+    if (!hfToken) return 'zehanxtech';
+    
+    const response = await fetch('https://huggingface.co/api/whoami', {
+      headers: {
+        'Authorization': `Bearer ${hfToken}`
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.name || 'zehanxtech';
+    }
+  } catch (error) {
+    console.error('Failed to get HF username:', error);
+  }
+  
+  return 'zehanxtech';
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ eventId: string }> }
@@ -11,11 +33,12 @@ export async function POST(
       return NextResponse.json({ error: 'Missing eventId' }, { status: 400 })
     }
 
-    // Force complete the model generation
+    // Get actual username and force complete the model generation
+    const username = await getHuggingFaceUsername();
     const modelType = 'text-classification'
     const spaceName = `${modelType}-live-${eventId.split('-').pop()}`
-    const spaceUrl = `https://huggingface.co/spaces/dhamia/${spaceName}`
-    const apiUrl = `https://api-inference.huggingface.co/models/dhamia/${spaceName}`
+    const spaceUrl = `https://huggingface.co/spaces/${username}/${spaceName}`
+    const apiUrl = `https://api-inference.huggingface.co/models/${username}/${spaceName}`
 
     // Trigger the deployment immediately
     try {
