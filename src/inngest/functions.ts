@@ -400,30 +400,38 @@ async function getHuggingFaceUsername(hfToken: string): Promise<string> {
 
 async function createHuggingFaceSpace(spaceName: string, hfToken: string, modelInfo: any) {
   try {
+    console.log('🔑 Initializing HuggingFace authentication...');
+    
     // Get the actual HuggingFace username
     const username = await getHuggingFaceUsername(hfToken);
+    console.log('👤 Username:', username);
     
+    // Create the Space using HF API
+    console.log('🚀 Creating HuggingFace Space:', spaceName);
+    
+    const spaceData = {
+      name: spaceName,
+      type: 'space' as const,
+      private: false,
+      sdk: 'gradio' as const,
+      hardware: 'cpu-basic' as const,
+      license: 'mit' as const,
+      tags: ['zehanx-ai', 'live-inference', modelInfo.type, 'gradio'],
+      description: `Live ${modelInfo.task} model with inference provider - Built with zehanx tech`
+    };
+
     const response = await fetch('https://huggingface.co/api/repos/create', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${hfToken}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        name: spaceName,
-        type: 'space',
-        private: false,
-        sdk: 'gradio',
-        hardware: 'cpu-basic',
-        license: 'mit',
-        tags: ['dhamia-ai', 'live-inference', modelInfo.type, 'gradio'],
-        description: `Live ${modelInfo.task} model with inference provider - Built with DHAMIA AI`
-      })
+      body: JSON.stringify(spaceData)
     });
 
     if (response.ok) {
       const data = await response.json();
-      console.log('HF Space created successfully:', data);
+      console.log('✅ HF Space created successfully:', data);
       const fullName = `${username}/${spaceName}`;
       return {
         fullName: fullName,
@@ -433,12 +441,11 @@ async function createHuggingFaceSpace(spaceName: string, hfToken: string, modelI
       };
     } else {
       const errorText = await response.text();
-      console.error('HF Space creation failed:', response.status, errorText);
-      // Don't return fallback URLs if creation failed
+      console.error('❌ HF Space creation failed:', response.status, errorText);
       throw new Error(`Failed to create HuggingFace Space: ${errorText}`);
     }
   } catch (error: any) {
-    console.error('HF Space creation error:', error);
+    console.error('❌ HF Space creation error:', error);
     throw new Error(`Failed to create HuggingFace Space: ${error.message}`);
   }
 }
@@ -482,13 +489,13 @@ function generateLiveInferenceSpaceFiles(modelInfo: any, spaceName: string, prom
 async function uploadFilesToHuggingFaceSpace(spaceFiles: any, spaceName: string, hfToken: string) {
   const uploadedFiles = [];
   
-  console.log(`Uploading ${spaceFiles.files.length} files to Space: ${spaceName}`);
+  console.log(`📁 Uploading ${spaceFiles.files.length} files to Space: ${spaceName}`);
   
   for (const file of spaceFiles.files) {
     try {
-      console.log(`Uploading ${file.name}...`);
+      console.log(`📤 Uploading ${file.name}...`);
       
-      // Use the correct HuggingFace API endpoint for file uploads
+      // Upload file using HuggingFace API
       const response = await fetch(`https://huggingface.co/api/repos/${spaceName}/upload/main/${file.name}`, {
         method: 'POST',
         headers: {
@@ -513,7 +520,13 @@ async function uploadFilesToHuggingFaceSpace(spaceFiles: any, spaceName: string,
     }
   }
 
-  console.log(`Upload complete: ${uploadedFiles.length}/${spaceFiles.files.length} files uploaded`);
+    console.log(`📊 Upload complete: ${uploadedFiles.length}/${spaceFiles.files.length} files uploaded`);
+    
+    if (uploadedFiles.length === 0) {
+      throw new Error('Failed to upload any files to HuggingFace Space');
+    }
+
+  console.log(`📊 Upload complete: ${uploadedFiles.length}/${spaceFiles.files.length} files uploaded`);
   
   if (uploadedFiles.length === 0) {
     throw new Error('Failed to upload any files to HuggingFace Space');

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 async function getHuggingFaceUsername(): Promise<string> {
   try {
-    const hfToken = process.env.HUGGINGFACE_TOKEN;
+    const hfToken = process.env.HF_ACCESS_TOKEN || process.env.HUGGINGFACE_TOKEN;
     if (!hfToken) {
       throw new Error('HuggingFace token not found');
     }

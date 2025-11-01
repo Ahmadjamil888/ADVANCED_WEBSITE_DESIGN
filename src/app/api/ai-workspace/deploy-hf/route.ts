@@ -36,15 +36,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Get HuggingFace token from environment variables
-    const hfToken = process.env.HUGGINGFACE_TOKEN
+    const hfToken = process.env.HF_ACCESS_TOKEN || process.env.HUGGINGFACE_TOKEN
     console.log('🔑 HF Token check:', {
       exists: !!hfToken,
       length: hfToken ? hfToken.length : 0,
-      startsWithHf: hfToken ? hfToken.startsWith('hf_') : false
+      startsWithHf: hfToken ? hfToken.startsWith('hf_') : false,
+      source: process.env.HF_ACCESS_TOKEN ? 'HF_ACCESS_TOKEN' : 'HUGGINGFACE_TOKEN'
     });
     
     if (!hfToken) {
-      return NextResponse.json({ error: 'HuggingFace token not configured' }, { status: 500 })
+      return NextResponse.json({ error: 'HuggingFace token not configured. Please set HF_ACCESS_TOKEN in environment variables.' }, { status: 500 })
     }
 
     // Send event to Inngest for Space deployment

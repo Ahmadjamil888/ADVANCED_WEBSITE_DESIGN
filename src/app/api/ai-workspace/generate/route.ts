@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Also trigger deployment immediately like sentiment analysis route
-    const hfToken = process.env.HUGGINGFACE_TOKEN
+    const hfToken = process.env.HF_ACCESS_TOKEN || process.env.HUGGINGFACE_TOKEN
     let deploymentData = null;
     
     if (hfToken) {
