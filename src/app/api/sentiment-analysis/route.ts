@@ -110,50 +110,45 @@ You'll receive the complete model with:
 ---
 *Building your AI model with zehanx AI Builder...*`
 
-    // Use actual deployment data if available, otherwise use predicted URLs
-    let responseData;
-    if (deploymentData && deploymentData.success) {
-      responseData = {
-        response,
-        model_used: 'zehanx-ai-builder',
-        tokens_used: Math.round(prompt.length / 4 + response.length / 4),
-        eventId,
-        status: 'deployed',
-        modelType: 'sentiment-analysis',
-        spaceUrl: deploymentData.spaceUrl,
-        apiUrl: deploymentData.apiUrl,
-        spaceName: deploymentData.spaceName,
-        deploymentStatus: 'Live Space created successfully!',
-        timestamp: new Date().toISOString(),
-        deploymentData: deploymentData
-      };
-    } else {
-      // Fallback to predicted URLs
-      const spaceName = `text-classification-live-${eventId.split('-').pop()}`;
-      const spaceUrl = `https://huggingface.co/spaces/dhamia/${spaceName}`;
-      const apiUrl = `https://api-inference.huggingface.co/models/dhamia/${spaceName}`;
-      
-      responseData = {
-        response,
-        model_used: 'zehanx-ai-builder',
-        tokens_used: Math.round(prompt.length / 4 + response.length / 4),
-        eventId,
-        status: 'processing',
-        modelType: 'sentiment-analysis',
+    // Always return 'processing' status to trigger polling, regardless of immediate deployment success
+    const spaceName = `text-classification-live-${eventId.split('-').pop()}`;
+    const spaceUrl = deploymentData?.spaceUrl || `https://huggingface.co/spaces/dhamia/${spaceName}`;
+    const apiUrl = deploymentData?.apiUrl || `https://api-inference.huggingface.co/models/dhamia/${spaceName}`;
+    
+    const responseData = {
+      response,
+      model_used: 'zehanx-ai-builder',
+      tokens_used: Math.round(prompt.length / 4 + response.length / 4),
+      eventId,
+      status: 'processing', // Always processing to trigger polling
+      modelType: 'sentiment-analysis',
+      spaceUrl,
+      apiUrl,
+      spaceName,
+      deploymentStatus: deploymentData?.success ? 'Deployment initiated successfully!' : 'Building live inference Space...',
+      timestamp: new Date().toISOString(),
+      deploymentData: deploymentData || {
         spaceUrl,
         apiUrl,
         spaceName,
-        deploymentStatus: 'Building live inference Space...',
-        timestamp: new Date().toISOString(),
-        deploymentData: {
-          spaceUrl,
-          apiUrl,
-          spaceName,
-          modelType: 'sentiment-analysis',
-          status: 'Building...',
-          message: 'Space deployment initiated - will be live in 2-3 minutes'
+        modelType: 'sentiment-analysis',
+        status: 'Building...',
+        message: 'Space deployment initiated - will be live in 2-3 minutes'
+      }
+    };
+
+    // For immediate testing, also trigger a delayed completion response
+    if (deploymentData?.success) {
+      // Send a delayed completion message via a separate mechanism
+      setTimeout(async () => {
+        try {
+          // This would typically be done via WebSocket or database update
+          // For now, we'll rely on the polling mechanism
+          console.log('Deployment completed for eventId:', eventId);
+        } catch (error) {
+          console.error('Delayed completion error:', error);
         }
-      };
+      }, 2000);
     }
 
     return NextResponse.json(responseData)
