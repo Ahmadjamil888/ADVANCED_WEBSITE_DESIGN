@@ -392,8 +392,8 @@ export default function LoginPage() {
                 <h1>{isSignUp ? 'Create Account' : 'Welcome back'}</h1>
                 <p className="lead">
                   {isSignUp 
-                    ? 'Join DHAMIA — secure, fast, enterprise-ready AI platform.'
-                    : 'Sign in to continue to DHAMIA — secure, fast, enterprise-ready.'
+                    ? 'Join zehanxtech — secure, fast, enterprise-ready AI platform.'
+                    : 'Sign in to continue to zehanxtech — secure, fast, enterprise-ready.'
                   }
                 </p>
               </div>

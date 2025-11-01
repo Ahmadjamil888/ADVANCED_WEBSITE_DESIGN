@@ -1,13 +1,12 @@
 import { serve } from "inngest/next";
 import { inngest } from "../../../inngest/client";
-import { helloWorld, generateModelCode, deployToHuggingFace } from "../../../inngest/functions";
+import { generateAIModel, deployToHuggingFace } from "../../../inngest/functions";
 
-// Create an API that serves zero functions
+// Create an API that serves all AI functions
 export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
-    helloWorld, // <-- This is where you'll always add all your functions
-    generateModelCode, // AI model generation function
+    generateAIModel, // Complete AI model generation function
     deployToHuggingFace, // Hugging Face deployment function
   ],
 });
