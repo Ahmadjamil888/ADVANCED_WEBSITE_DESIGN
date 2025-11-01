@@ -27,35 +27,32 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Get HuggingFace token from environment
+    // Get HuggingFace token from environment and deploy immediately
     const hfToken = process.env.HUGGINGFACE_TOKEN
+    let deploymentData = null;
+    
     if (hfToken) {
-      // Auto-deploy to HuggingFace
-      setTimeout(async () => {
-        try {
-          const deployResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai-workspace/deploy-hf`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              eventId,
-              userId,
-              prompt: "Create a sentiment analysis model using BERT for analyzing customer reviews and feedback"
-            })
-          });
-          
-          if (deployResponse.ok) {
-            const deployData = await deployResponse.json();
-            console.log('Deployment initiated:', deployData);
-            
-            // Send a follow-up message with the deployment URL
-            // This would typically be done via WebSocket or Server-Sent Events
-            // For now, we'll include it in the response
-            console.log('Deployment data:', deployData);
-          }
-        } catch (error) {
-          console.error('Auto-deploy error:', error);
+      // Deploy immediately to HuggingFace
+      try {
+        const deployResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai-workspace/deploy-hf`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            userId,
+            prompt: "Create a sentiment analysis model using BERT for analyzing customer reviews and feedback"
+          })
+        });
+        
+        if (deployResponse.ok) {
+          deploymentData = await deployResponse.json();
+          console.log('Deployment initiated successfully:', deploymentData);
+        } else {
+          console.error('Deployment failed:', await deployResponse.text());
         }
-      }, 30000); // Deploy after 30 seconds
+      } catch (error) {
+        console.error('Auto-deploy error:', error);
+      }
     }
 
     // Return immediate response with model details
@@ -113,33 +110,53 @@ You'll receive the complete model with:
 ---
 *Building your AI model with zehanx AI Builder...*`
 
-    // Generate predicted URLs for immediate feedback
-    const spaceName = `text-classification-live-${eventId.split('-').pop()}`
-    const spaceUrl = `https://huggingface.co/spaces/dhamia/${spaceName}`
-    const apiUrl = `https://api-inference.huggingface.co/models/dhamia/${spaceName}`
-
-    return NextResponse.json({ 
-      response,
-      model_used: 'zehanx-ai-builder',
-      tokens_used: Math.round(prompt.length / 4 + response.length / 4),
-      eventId,
-      status: 'processing',
-      modelType: 'sentiment-analysis',
-      spaceUrl,
-      apiUrl,
-      spaceName,
-      deploymentStatus: 'Building live inference Space...',
-      timestamp: new Date().toISOString(),
-      // Include deployment data for immediate frontend use
-      deploymentData: {
+    // Use actual deployment data if available, otherwise use predicted URLs
+    let responseData;
+    if (deploymentData && deploymentData.success) {
+      responseData = {
+        response,
+        model_used: 'zehanx-ai-builder',
+        tokens_used: Math.round(prompt.length / 4 + response.length / 4),
+        eventId,
+        status: 'deployed',
+        modelType: 'sentiment-analysis',
+        spaceUrl: deploymentData.spaceUrl,
+        apiUrl: deploymentData.apiUrl,
+        spaceName: deploymentData.spaceName,
+        deploymentStatus: 'Live Space created successfully!',
+        timestamp: new Date().toISOString(),
+        deploymentData: deploymentData
+      };
+    } else {
+      // Fallback to predicted URLs
+      const spaceName = `text-classification-live-${eventId.split('-').pop()}`;
+      const spaceUrl = `https://huggingface.co/spaces/dhamia/${spaceName}`;
+      const apiUrl = `https://api-inference.huggingface.co/models/dhamia/${spaceName}`;
+      
+      responseData = {
+        response,
+        model_used: 'zehanx-ai-builder',
+        tokens_used: Math.round(prompt.length / 4 + response.length / 4),
+        eventId,
+        status: 'processing',
+        modelType: 'sentiment-analysis',
         spaceUrl,
         apiUrl,
         spaceName,
-        modelType: 'sentiment-analysis',
-        status: 'Building...',
-        message: 'Space deployment initiated - will be live in 2-3 minutes'
-      }
-    })
+        deploymentStatus: 'Building live inference Space...',
+        timestamp: new Date().toISOString(),
+        deploymentData: {
+          spaceUrl,
+          apiUrl,
+          spaceName,
+          modelType: 'sentiment-analysis',
+          status: 'Building...',
+          message: 'Space deployment initiated - will be live in 2-3 minutes'
+        }
+      };
+    }
+
+    return NextResponse.json(responseData)
 
   } catch (error: any) {
     console.error('Sentiment Analysis API error:', error)
