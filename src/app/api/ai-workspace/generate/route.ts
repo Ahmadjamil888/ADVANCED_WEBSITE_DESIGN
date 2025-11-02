@@ -4,24 +4,34 @@ import { supabase } from '@/lib/supabase'
 
 async function getHuggingFaceUsername(hfToken: string): Promise<string> {
   try {
-    console.log('Getting HF username with token...');
+    console.log('🔑 Getting HF username with token...');
+    console.log('🔍 Token details:', {
+      length: hfToken.length,
+      startsWithHf: hfToken.startsWith('hf_'),
+      isValidFormat: hfToken.length === 37 && hfToken.startsWith('hf_')
+    });
+    
     const response = await fetch('https://huggingface.co/api/whoami', {
       headers: {
         'Authorization': `Bearer ${hfToken}`
       }
     });
     
+    console.log('📡 HF API Response Status:', response.status);
+    
     if (response.ok) {
       const data = await response.json();
-      console.log('HF API response:', data);
+      console.log('✅ HF API response:', data);
       if (data.name) {
+        console.log('👤 Username found:', data.name);
         return data.name;
       }
     } else {
-      console.error('HF API error:', response.status, await response.text());
+      const errorText = await response.text();
+      console.error('❌ HF API error:', response.status, errorText);
     }
   } catch (error) {
-    console.error('Failed to get HF username:', error);
+    console.error('❌ Failed to get HF username:', error);
   }
   
   // If we can't get the username, throw an error instead of using fallback
@@ -85,9 +95,19 @@ export async function POST(request: NextRequest) {
     // Return immediate response while Inngest processes in background
     const response = generateImmediateResponse(modelConfig, mode)
 
+    // Debug token information
+    console.log('🔍 Token Debug:', {
+      hfTokenExists: !!hfToken,
+      hfTokenLength: hfToken ? hfToken.length : 0,
+      hfTokenStart: hfToken ? hfToken.substring(0, 10) + '...' : 'none',
+      envHfAccess: !!process.env.HF_ACCESS_TOKEN,
+      envHuggingface: !!process.env.HUGGINGFACE_TOKEN
+    });
+
     // Get actual username from HF token - no fallbacks
     const username = hfToken ? await getHuggingFaceUsername(hfToken) : null;
     if (!username) {
+      console.error('❌ Authentication failed - no username returned');
       return NextResponse.json({ error: 'Could not authenticate with HuggingFace token' }, { status: 500 });
     }
     const spaceName = deploymentData?.spaceName || `${modelConfig.modelType}-live-${eventId.split('-').pop()}`;
