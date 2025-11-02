@@ -25,7 +25,7 @@ interface Message {
 export default function AIWorkspace() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
-  
+
   // State management
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
@@ -123,7 +123,7 @@ export default function AIWorkspace() {
       e.preventDefault();
       e.stopPropagation();
     }
-    
+
     if (!supabase || !user) return;
 
     try {
@@ -159,7 +159,7 @@ export default function AIWorkspace() {
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    
+
     const target = e.target;
     target.style.height = 'auto';
     target.style.height = target.scrollHeight + 'px';
@@ -191,7 +191,7 @@ export default function AIWorkspace() {
 
   const regenerateResponse = async (messageIndex: number) => {
     if (!currentChat || isLoading) return;
-    
+
     const userMessage = messages[messageIndex - 1];
     if (userMessage && userMessage.role === 'user') {
       await sendMessage(userMessage.content);
@@ -237,7 +237,7 @@ export default function AIWorkspace() {
 
     setIsLoading(true);
     setInputValue('');
-    
+
     const textarea = document.querySelector('textarea');
     if (textarea) {
       textarea.style.height = 'auto';
@@ -275,10 +275,33 @@ export default function AIWorkspace() {
         throw new Error(data.error);
       }
 
+      // Handle the response format from the generate API
+      let responseContent = '';
+      if (data.success && data.message) {
+        responseContent = `🎉 **${data.modelConfig?.task || 'AI Model'} - Generated Successfully!**
+
+${data.message}
+
+**Model Details:**
+- **Type**: ${data.modelConfig?.type?.toUpperCase() || 'N/A'}
+- **Task**: ${data.modelConfig?.task || 'N/A'}
+- **Base Model**: ${data.modelConfig?.baseModel || 'N/A'}
+- **Dataset**: ${data.modelConfig?.dataset || 'N/A'}
+
+**Generated Files (${data.totalFiles || 0}):**
+${data.files?.map((file: string) => `- ✅ ${file}`).join('\n') || '- No files listed'}
+
+**Event ID**: ${data.eventId}
+
+Your AI model is being prepared for deployment...`;
+      } else {
+        responseContent = data.response || data.message || 'Model generation completed';
+      }
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response,
+        content: responseContent,
         created_at: new Date().toISOString(),
         tokens_used: data.tokens_used,
         eventId: data.eventId
@@ -301,7 +324,7 @@ export default function AIWorkspace() {
       if (data.eventId && data.status === 'processing') {
         setPendingModels(prev => new Set(prev).add(data.eventId));
         setTimeout(() => pollModelStatus(data.eventId), 5000);
-        
+
         // Add a timeout to prevent infinite waiting
         setTimeout(() => {
           setPendingModels(prev => {
@@ -372,7 +395,7 @@ Your model is now accessible worldwide with live inference capabilities!
       const response = await fetch(`/api/ai-workspace/status/${eventId}`);
       const data = await response.json();
       console.log('Status response:', data);
-      
+
       if (data.ready && data.model) {
         setPendingModels(prev => {
           const newSet = new Set(prev);
@@ -383,7 +406,7 @@ Your model is now accessible worldwide with live inference capabilities!
         try {
           // Use deployment data from status response if available, otherwise make deploy call
           let deployData = data.deploymentData;
-          
+
           if (!deployData) {
             // Fallback: Get the original prompt and make deploy call
             const assistantMessageIndex = messages.findIndex(msg => msg.eventId === eventId && msg.role === 'assistant');
@@ -403,10 +426,10 @@ Your model is now accessible worldwide with live inference capabilities!
 
             deployData = await deployResponse.json();
           }
-          
+
           if (deployData && (deployData.success || deployData.spaceUrl)) {
             const modelTypeDisplay = deployData.modelType ? deployData.modelType.replace('-', ' ').toUpperCase() : data.model.type.replace('-', ' ').toUpperCase();
-            
+
             const completionMessage: Message = {
               id: `completion-${eventId}`,
               role: 'assistant',
@@ -435,7 +458,7 @@ Your model is now accessible worldwide and ready for production use!`,
               created_at: new Date().toISOString(),
               eventId: eventId
             };
-            
+
             setMessages(prev => [...prev, completionMessage]);
 
             if (supabase && currentChat) {
@@ -487,33 +510,33 @@ Your model is now accessible worldwide and ready for production use!`,
   // Show loading only if we're still checking auth or not mounted
   if (!mounted || (loading && !user)) {
     return (
-      <div style={{ 
+      <div style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: 'white',
         zIndex: 9999
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            border: '3px solid #f3f4f6', 
-            borderTop: '3px solid #059669', 
-            borderRadius: '50%', 
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '3px solid #f3f4f6',
+            borderTop: '3px solid #059669',
+            borderRadius: '50%',
             animation: 'spin 1s linear infinite',
             margin: '0 auto 20px'
           }}></div>
-          <h3 style={{ 
-            color: '#111827', 
-            fontSize: '18px', 
-            fontWeight: '600', 
-            marginBottom: '8px' 
+          <h3 style={{
+            color: '#111827',
+            fontSize: '18px',
+            fontWeight: '600',
+            marginBottom: '8px'
           }}>
             Loading AI Workspace
           </h3>
@@ -532,12 +555,12 @@ Your model is now accessible worldwide and ready for production use!`,
 
   if (!supabase) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        height: '100vh', 
-        backgroundColor: 'white' 
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: 'white'
       }}>
         <div style={{ textAlign: 'center', maxWidth: '400px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
@@ -1066,10 +1089,10 @@ Your model is now accessible worldwide and ready for production use!`,
           margin-top: 12px;
         }
       `}</style>
-      
-      <div style={{ 
-        display: 'flex', 
-        height: '100vh', 
+
+      <div style={{
+        display: 'flex',
+        height: '100vh',
         backgroundColor: 'white',
         position: 'fixed',
         top: 0,
@@ -1080,7 +1103,7 @@ Your model is now accessible worldwide and ready for production use!`,
       }}>
         {/* Mobile Overlay */}
         {sidebarOpen && (
-          <div 
+          <div
             style={{
               position: 'fixed',
               top: 0,
@@ -1176,7 +1199,7 @@ Your model is now accessible worldwide and ready for production use!`,
                 {currentChat?.title || 'zehanx AI'}
               </h1>
             </div>
-            
+
             {/* Sign Out Button - Top Right */}
             <button onClick={handleSignOut} className="signout-btn">
               <img
@@ -1195,7 +1218,7 @@ Your model is now accessible worldwide and ready for production use!`,
               <div className="empty-state">
                 <div style={{ textAlign: 'center', maxWidth: '600px' }}>
                   <h2 className="empty-title">What can I help with?</h2>
-                  
+
                   {/* Action Cards Grid */}
                   <div className="example-grid">
                     <button
@@ -1208,7 +1231,7 @@ Your model is now accessible worldwide and ready for production use!`,
                       </div>
                       <p className="example-desc">Sentiment analysis with BERT</p>
                     </button>
-                    
+
                     <button
                       onClick={() => handleExampleClick('Help me create an image classification model using ResNet for detecting objects in photos')}
                       className="example-card"
@@ -1219,7 +1242,7 @@ Your model is now accessible worldwide and ready for production use!`,
                       </div>
                       <p className="example-desc">Image classification model</p>
                     </button>
-                    
+
                     <button
                       onClick={() => handleExampleClick('Summarize the best practices for training deep neural networks and optimizing model performance')}
                       className="example-card"
@@ -1230,7 +1253,7 @@ Your model is now accessible worldwide and ready for production use!`,
                       </div>
                       <p className="example-desc">Neural network best practices</p>
                     </button>
-                    
+
                     <button
                       onClick={() => handleExampleClick('Generate Python code for a conversational AI chatbot using transformers and Hugging Face')}
                       className="example-card"
@@ -1241,7 +1264,7 @@ Your model is now accessible worldwide and ready for production use!`,
                       </div>
                       <p className="example-desc">Chatbot with transformers</p>
                     </button>
-                    
+
                     <button
                       onClick={() => handleExampleClick('Brainstorm innovative AI applications for healthcare, finance, and education sectors')}
                       className="example-card"
@@ -1277,40 +1300,40 @@ Your model is now accessible worldwide and ready for production use!`,
                           {message.role === 'user' ? 'You' : 'zehanx AI'}
                         </div>
                         <div className="message-text">{message.content}</div>
-                        
+
                         {/* Action Buttons for AI Messages */}
                         {message.role === 'assistant' && (
                           <div className="message-actions">
-                            <button 
+                            <button
                               onClick={() => rateResponse(message.id, 'good')}
-                              className="action-btn good" 
+                              className="action-btn good"
                               title="Good response"
                             >
                               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L9 6v4m-5 8h2.5a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                             </button>
-                            <button 
+                            <button
                               onClick={() => rateResponse(message.id, 'bad')}
-                              className="action-btn bad" 
+                              className="action-btn bad"
                               title="Bad response"
                             >
                               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m-7 10v2a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L15 18v-4m-5-8h2.5a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
                               </svg>
                             </button>
-                            <button 
+                            <button
                               onClick={() => copyToClipboard(message.content)}
-                              className="action-btn copy" 
+                              className="action-btn copy"
                               title="Copy"
                             >
                               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                             </button>
-                            <button 
+                            <button
                               onClick={() => regenerateResponse(index)}
-                              className="action-btn regen" 
+                              className="action-btn regen"
                               title="Regenerate"
                               disabled={isLoading}
                             >
@@ -1324,7 +1347,7 @@ Your model is now accessible worldwide and ready for production use!`,
                     </div>
                   </div>
                 ))}
-                
+
                 {/* Loading State */}
                 {isLoading && (
                   <div className="loading-message">
@@ -1340,30 +1363,30 @@ Your model is now accessible worldwide and ready for production use!`,
                     </div>
                   </div>
                 )}
-                
+
                 {/* Pending Models Status */}
                 {pendingModels.size > 0 && (
                   <div className="loading-message">
                     <div className="loading-content">
-                      <div style={{ 
-                        width: '32px', 
-                        height: '32px', 
-                        background: '#2563eb', 
-                        borderRadius: '50%', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        color: 'white', 
-                        fontSize: '14px', 
-                        fontWeight: 'bold' 
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        background: '#2563eb',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: 'bold'
                       }}>🔧</div>
                       <div className="loading-body">
                         <div className="message-sender">System</div>
-                        <div style={{ 
-                          background: '#eff6ff', 
-                          border: '1px solid #bfdbfe', 
-                          borderRadius: '8px', 
-                          padding: '12px' 
+                        <div style={{
+                          background: '#eff6ff',
+                          border: '1px solid #bfdbfe',
+                          borderRadius: '8px',
+                          padding: '12px'
                         }}>
                           <div className="loading-text">
                             <div className="spinner"></div>
@@ -1401,7 +1424,7 @@ Your model is now accessible worldwide and ready for production use!`,
                   </svg>
                 </button>
               </div>
-              
+
               {/* Footer Text */}
               <p className="footer-text">
                 zehanx AI can generate, train, and deploy custom AI models. Always verify generated code before training.
