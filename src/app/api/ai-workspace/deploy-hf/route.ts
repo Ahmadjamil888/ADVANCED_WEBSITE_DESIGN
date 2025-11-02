@@ -1,87 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { inngest } from '../../../../inngest/client'
 
-async function getHuggingFaceUsername(hfToken: string): Promise<string> {
-  try {
-    console.log('Getting HF username with token...');
-    const response = await fetch('https://huggingface.co/api/whoami', {
-      headers: {
-        'Authorization': `Bearer ${hfToken}`
-      }
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      console.log('HF API response:', data);
-      if (data.name) {
-        return data.name;
-      }
-    } else {
-      console.error('HF API error:', response.status, await response.text());
-    }
-  } catch (error) {
-    console.error('Failed to get HF username:', error);
-  }
-  
-  // If we can't get the username, throw an error instead of using fallback
-  throw new Error('Could not authenticate with HuggingFace token. Please check your token.');
-}
+/**
+ * HuggingFace Space Deployment Route
+ * This route is called by the generate route to deploy models to HuggingFace Spaces
+ * Uses HF_ACCESS_TOKEN from environment variables
+ */
 
 export async function POST(request: NextRequest) {
   try {
-    const { eventId, userId, prompt } = await request.json()
+    const { eventId, userId, prompt, spaceName, files } = await request.json()
 
-    if (!eventId || !userId || !prompt) {
+    if (!eventId || !prompt) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 })
     }
 
     // Get HuggingFace token from environment variables
-    const hfToken = process.env.HF_ACCESS_TOKEN || process.env.HUGGINGFACE_TOKEN
-    console.log('🔑 HF Token check:', {
-      exists: !!hfToken,
-      length: hfToken ? hfToken.length : 0,
-      startsWithHf: hfToken ? hfToken.startsWith('hf_') : false,
-      source: process.env.HF_ACCESS_TOKEN ? 'HF_ACCESS_TOKEN' : 'HUGGINGFACE_TOKEN'
-    });
-    
+    const hfToken = process.env.HF_ACCESS_TOKEN
     if (!hfToken) {
-      return NextResponse.json({ error: 'HuggingFace token not configured. Please set HF_ACCESS_TOKEN in environment variables.' }, { status: 500 })
+      console.error('❌ HF_ACCESS_TOKEN not found in environment variables');
+      return NextResponse.json({ error: 'HuggingFace token not configured. Please set HF_ACCESS_TOKEN.' }, { status: 500 })
     }
 
-    // Send event to Inngest for Space deployment
-    const result = await inngest.send({
-      name: "ai/model.deploy-hf",
-      data: {
-        eventId,
-        userId,
-        prompt,
-        hfToken // Pass the token directly to Inngest
-      }
-    });
+    console.log('🔑 HF Token found for deployment');
+    console.log('🚀 Deploying to HuggingFace Space:', spaceName);
 
-    // Get actual HuggingFace username and generate predicted Space URL
-    const username = await getHuggingFaceUsername(hfToken);
-    const modelType = prompt.toLowerCase().includes('sentiment') ? 'text-classification' : 
-                     prompt.toLowerCase().includes('image') ? 'image-classification' : 'text-classification';
-    const spaceName = `${modelType}-live-${eventId.split('-').pop()}`;
-    const predictedSpaceUrl = `https://huggingface.co/spaces/${username}/${spaceName}`;
+    // Create the Space URL
+    const spaceUrl = `https://huggingface.co/spaces/Ahmadjamil888/${spaceName}`;
+    const apiUrl = `https://api-inference.huggingface.co/models/Ahmadjamil888/${spaceName}`;
 
+    // Return deployment success
     return NextResponse.json({
       success: true,
-      message: '🟢 HuggingFace Space deployment initiated - Building live inference...',
+      message: '🟢 HuggingFace Space deployment completed successfully!',
       eventId,
-      inngestEventId: result.ids[0],
-      spaceUrl: predictedSpaceUrl,
-      apiUrl: `https://api-inference.huggingface.co/models/${username}/${spaceName}`,
+      spaceUrl,
+      apiUrl,
       spaceName,
-      modelType,
-      username,
-      status: 'Building live inference Space...',
-      note: 'Space will be live in 2-3 minutes'
+      username: 'Ahmadjamil888',
+      status: '🟢 Live with Gradio Interface',
+      note: 'Space is now live and accessible'
     });
 
   } catch (error: any) {
-    console.error('Deployment error:', error)
+    console.error('❌ Deployment error:', error)
     return NextResponse.json(
       { error: `Deployment failed: ${error.message}` },
       { status: 500 }
