@@ -7,12 +7,17 @@ import { useAuth } from '@/contexts/AuthContext';
 interface ApiKey {
     id: string;
     name: string;
+    description?: string;
     key_preview: string;
     created_at: string;
     is_active: boolean;
     max_daily_requests: number;
     max_monthly_requests: number;
     total_usage: number;
+    daily_usage: number;
+    monthly_usage: number;
+    last_used_at?: string;
+    key?: string; // Only present when first generated
 }
 
 interface ApiKeysModalProps {
@@ -28,6 +33,7 @@ export default function ApiKeysModal({ isOpen, onClose }: ApiKeysModalProps) {
     const [newKeyName, setNewKeyName] = useState('');
     const [newKeyDescription, setNewKeyDescription] = useState('');
     const [generatedKey, setGeneratedKey] = useState('');
+    const [copySuccess, setCopySuccess] = useState(false);
 
     const inngestCallbackUrl = `${window.location.origin}/api/inngest`;
 
@@ -37,20 +43,35 @@ export default function ApiKeysModal({ isOpen, onClose }: ApiKeysModalProps) {
         }
     }, [isOpen, user]);
 
+    const getAuthToken = async () => {
+        if (!supabase) return null;
+        const { data: { session } } = await supabase.auth.getSession();
+        return session?.access_token || null;
+    };
+
     const loadApiKeys = async () => {
-        if (!user || !supabase) return;
+        if (!user) return;
 
         setLoading(true);
         try {
-            const { data, error } = await supabase
-                .from('api_keys')
-                .select('*')
-                .eq('user_id', user.id)
-                .eq('is_revoked', false)
-                .order('created_at', { ascending: false });
+            const token = await getAuthToken();
+            if (!token) {
+                console.error('No auth token available');
+                return;
+            }
 
-            if (data && !error) {
-                setApiKeys(data);
+            const response = await fetch('/api/api-keys', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setApiKeys(data.apiKeys || []);
+            } else {
+                console.error('Failed to load API keys:', response.statusText);
             }
         } catch (err) {
             console.error('Error loading API keys:', err);
@@ -59,46 +80,40 @@ export default function ApiKeysModal({ isOpen, onClose }: ApiKeysModalProps) {
         }
     };
 
-    const generateApiKey = () => {
-        const prefix = 'zx_';
-        const randomPart = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-        return prefix + randomPart;
-    };
-
     const createApiKey = async () => {
-        if (!user || !supabase || !newKeyName.trim()) return;
+        if (!user || !newKeyName.trim()) return;
 
         setLoading(true);
         try {
-            const apiKey = generateApiKey();
-            const keyPreview = apiKey.substring(0, 12) + '...';
+            const token = await getAuthToken();
+            if (!token) {
+                console.error('No auth token available');
+                return;
+            }
 
-            // Hash the key for storage (in production, use proper hashing)
-            const keyHash = btoa(apiKey);
-
-            const { data, error } = await supabase
-                .from('api_keys')
-                .insert({
-                    user_id: user.id,
-                    key_hash: keyHash,
-                    key_preview: keyPreview,
+            const response = await fetch('/api/api-keys', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
                     name: newKeyName.trim(),
-                    description: newKeyDescription.trim() || null,
-                    max_daily_requests: 1000,
-                    max_monthly_requests: 10000,
-                    max_tokens_per_request: 2048
+                    description: newKeyDescription.trim() || null
                 })
-                .select()
-                .single();
+            });
 
-            if (data && !error) {
-                setGeneratedKey(apiKey);
-                setNewKeyName('');
-                setNewKeyDescription('');
-                setShowCreateForm(false);
-                loadApiKeys();
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.apiKey) {
+                    setGeneratedKey(data.apiKey.key);
+                    setNewKeyName('');
+                    setNewKeyDescription('');
+                    setShowCreateForm(false);
+                    loadApiKeys();
+                }
+            } else {
+                console.error('Failed to create API key:', response.statusText);
             }
         } catch (err) {
             console.error('Error creating API key:', err);
@@ -108,21 +123,51 @@ export default function ApiKeysModal({ isOpen, onClose }: ApiKeysModalProps) {
     };
 
     const revokeApiKey = async (keyId: string) => {
-        if (!supabase || !confirm('Are you sure you want to revoke this API key? This action cannot be undone.')) {
+        if (!confirm('Are you sure you want to revoke this API key? This action cannot be undone.')) {
             return;
         }
 
         try {
-            const { error } = await supabase
-                .from('api_keys')
-                .update({ is_revoked: true, is_active: false })
-                .eq('id', keyId);
+            const token = await getAuthToken();
+            if (!token) {
+                console.error('No auth token available');
+                return;
+            }
 
-            if (!error) {
+            const response = await fetch(`/api/api-keys?id=${keyId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
                 loadApiKeys();
+            } else {
+                console.error('Failed to revoke API key:', response.statusText);
             }
         } catch (err) {
             console.error('Error revoking API key:', err);
+        }
+    };
+
+    const copyToClipboard = async (text: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy to clipboard:', err);
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
         }
     };
 
@@ -196,62 +241,95 @@ export default function ApiKeysModal({ isOpen, onClose }: ApiKeysModalProps) {
                 {generatedKey && (
                     <div style={{
                         backgroundColor: '#ecfdf5',
-                        border: '1px solid #10b981',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        marginBottom: '24px'
+                        border: '2px solid #10b981',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        marginBottom: '24px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                     }}>
-                        <h3 style={{ fontSize: '16px', fontWeight: '500', color: '#065f46', marginBottom: '8px' }}>
-                            API Key Generated Successfully
-                        </h3>
-                        <code style={{
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                            <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#065f46', margin: 0 }}>
+                                🎉 API Key Generated Successfully!
+                            </h3>
+                        </div>
+                        
+                        <div style={{
                             backgroundColor: '#f0fdf4',
-                            padding: '8px 12px',
-                            borderRadius: '6px',
-                            fontSize: '14px',
-                            display: 'block',
-                            wordBreak: 'break-all',
-                            color: '#065f46'
+                            border: '1px solid #bbf7d0',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            marginBottom: '12px'
                         }}>
-                            {generatedKey}
-                        </code>
-                        <p style={{ fontSize: '14px', color: '#065f46', marginTop: '8px' }}>
-                            Please copy this key now. You won't be able to see it again for security reasons.
+                            <code style={{
+                                fontSize: '14px',
+                                fontFamily: 'Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                                display: 'block',
+                                wordBreak: 'break-all',
+                                color: '#065f46',
+                                lineHeight: '1.4'
+                            }}>
+                                {generatedKey}
+                            </code>
+                        </div>
+                        
+                        <p style={{ fontSize: '14px', color: '#065f46', marginBottom: '16px', fontWeight: '500' }}>
+                            ⚠️ Please copy this key now. You won't be able to see it again for security reasons.
                         </p>
-                        <button
-                            onClick={() => {
-                                navigator.clipboard.writeText(generatedKey);
-                                alert('API key copied to clipboard!');
-                            }}
-                            style={{
-                                marginTop: '8px',
-                                padding: '6px 12px',
-                                backgroundColor: '#10b981',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            Copy to Clipboard
-                        </button>
-                        <button
-                            onClick={() => setGeneratedKey('')}
-                            style={{
-                                marginTop: '8px',
-                                marginLeft: '8px',
-                                padding: '6px 12px',
-                                backgroundColor: '#6b7280',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            Dismiss
-                        </button>
+                        
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <button
+                                onClick={() => copyToClipboard(generatedKey)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '8px 16px',
+                                    backgroundColor: copySuccess ? '#059669' : '#10b981',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {copySuccess ? (
+                                    <>
+                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Copied!
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                        Copy to Clipboard
+                                    </>
+                                )}
+                            </button>
+                            <button
+                                onClick={() => setGeneratedKey('')}
+                                style={{
+                                    padding: '8px 16px',
+                                    backgroundColor: 'transparent',
+                                    color: '#065f46',
+                                    border: '1px solid #10b981',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                Dismiss
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -396,52 +474,134 @@ export default function ApiKeysModal({ isOpen, onClose }: ApiKeysModalProps) {
                                     key={key.id}
                                     style={{
                                         border: '1px solid #e5e7eb',
-                                        borderRadius: '8px',
-                                        padding: '16px',
-                                        backgroundColor: key.is_active ? 'white' : '#f9fafb'
+                                        borderRadius: '12px',
+                                        padding: '20px',
+                                        backgroundColor: key.is_active ? 'white' : '#f9fafb',
+                                        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
                                     }}
                                 >
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                                         <div style={{ flex: 1 }}>
-                                            <h4 style={{ fontSize: '16px', fontWeight: '500', marginBottom: '4px' }}>
-                                                {key.name}
-                                            </h4>
-                                            <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                                {key.key_preview}
-                                            </p>
-                                            <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#9ca3af' }}>
-                                                <span>Created: {new Date(key.created_at).toLocaleDateString()}</span>
-                                                <span>Usage: {key.total_usage} requests</span>
-                                                <span>Daily Limit: {key.max_daily_requests}</span>
-                                                <span>Monthly Limit: {key.max_monthly_requests}</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                                <svg width="16" height="16" fill="none" stroke="#6b7280" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                                </svg>
+                                                <h4 style={{ fontSize: '16px', fontWeight: '600', margin: 0, color: '#111827' }}>
+                                                    {key.name}
+                                                </h4>
                                             </div>
+                                            {key.description && (
+                                                <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px', margin: 0 }}>
+                                                    {key.description}
+                                                </p>
+                                            )}
                                         </div>
                                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                             <span style={{
-                                                padding: '4px 8px',
-                                                borderRadius: '12px',
+                                                padding: '4px 12px',
+                                                borderRadius: '16px',
                                                 fontSize: '12px',
-                                                fontWeight: '500',
+                                                fontWeight: '600',
                                                 backgroundColor: key.is_active ? '#ecfdf5' : '#f3f4f6',
-                                                color: key.is_active ? '#065f46' : '#6b7280'
+                                                color: key.is_active ? '#065f46' : '#6b7280',
+                                                border: `1px solid ${key.is_active ? '#bbf7d0' : '#d1d5db'}`
                                             }}>
-                                                {key.is_active ? 'Active' : 'Inactive'}
+                                                {key.is_active ? '✅ Active' : '❌ Inactive'}
                                             </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{
+                                        backgroundColor: '#f8fafc',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        padding: '12px',
+                                        marginBottom: '12px'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <code style={{
+                                                fontSize: '14px',
+                                                fontFamily: 'Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                                                color: '#475569',
+                                                flex: 1
+                                            }}>
+                                                {key.key_preview}
+                                            </code>
                                             <button
-                                                onClick={() => revokeApiKey(key.id)}
+                                                onClick={() => copyToClipboard(key.key_preview)}
                                                 style={{
-                                                    padding: '6px 12px',
-                                                    backgroundColor: '#dc2626',
-                                                    color: 'white',
+                                                    padding: '4px',
+                                                    backgroundColor: 'transparent',
                                                     border: 'none',
-                                                    borderRadius: '6px',
                                                     cursor: 'pointer',
-                                                    fontSize: '12px'
+                                                    borderRadius: '4px',
+                                                    color: '#6b7280'
                                                 }}
+                                                title="Copy key preview"
                                             >
-                                                Revoke
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
                                             </button>
                                         </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
+                                        <div style={{ display: 'flex', gap: '16px' }}>
+                                            <span>📅 Created: {new Date(key.created_at).toLocaleDateString()}</span>
+                                            {key.last_used_at && (
+                                                <span>🕒 Last used: {new Date(key.last_used_at).toLocaleDateString()}</span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+                                        <div style={{ textAlign: 'center', padding: '8px', backgroundColor: '#f1f5f9', borderRadius: '6px' }}>
+                                            <div style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b' }}>{key.total_usage}</div>
+                                            <div style={{ fontSize: '11px', color: '#64748b' }}>Total Requests</div>
+                                        </div>
+                                        <div style={{ textAlign: 'center', padding: '8px', backgroundColor: '#fef3c7', borderRadius: '6px' }}>
+                                            <div style={{ fontSize: '18px', fontWeight: '600', color: '#92400e' }}>{key.daily_usage}</div>
+                                            <div style={{ fontSize: '11px', color: '#92400e' }}>Today</div>
+                                        </div>
+                                        <div style={{ textAlign: 'center', padding: '8px', backgroundColor: '#e0f2fe', borderRadius: '6px' }}>
+                                            <div style={{ fontSize: '18px', fontWeight: '600', color: '#0369a1' }}>{key.monthly_usage}</div>
+                                            <div style={{ fontSize: '11px', color: '#0369a1' }}>This Month</div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                                            Limits: {key.max_daily_requests}/day • {key.max_monthly_requests}/month
+                                        </div>
+                                        <button
+                                            onClick={() => revokeApiKey(key.id)}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                padding: '6px 12px',
+                                                backgroundColor: '#fee2e2',
+                                                color: '#dc2626',
+                                                border: '1px solid #fecaca',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px',
+                                                fontWeight: '500',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseOver={(e) => {
+                                                e.currentTarget.style.backgroundColor = '#fecaca';
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.currentTarget.style.backgroundColor = '#fee2e2';
+                                            }}
+                                        >
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Revoke
+                                        </button>
                                     </div>
                                 </div>
                             ))}

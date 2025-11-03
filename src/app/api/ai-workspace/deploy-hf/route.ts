@@ -59,17 +59,17 @@ async function deployWithCLI(spaceName: string, hfToken: string, modelType: stri
         // Generate file content based on file name and model type
         const fileContent = generateFileContent(fileName, modelType, options.prompt);
         
-        const uploadResponse = await fetch(`https://huggingface.co/api/repos/spaces/Ahmadjamil888/${finalSpaceName}/upload/main/${fileName}`, {
-          method: 'PUT',
+        // Use the HuggingFace Hub upload API with form data
+        const formData = new FormData();
+        formData.append('file', new Blob([fileContent], { type: 'text/plain' }), fileName);
+        formData.append('message', `Add ${fileName} - Complete ML Pipeline by zehanx tech`);
+        
+        const uploadResponse = await fetch(`https://huggingface.co/api/repos/Ahmadjamil888/${finalSpaceName}/upload/main`, {
+          method: 'POST',
           headers: {
             'Authorization': `Bearer ${hfToken}`,
-            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            content: fileContent,
-            message: `Add ${fileName} - Complete ML Pipeline`,
-            encoding: 'utf-8'
-          })
+          body: formData
         });
 
         if (uploadResponse.ok) {
@@ -127,69 +127,216 @@ function generateFileContent(fileName: string, modelType: string, prompt: string
     case 'app.py':
       return `import gradio as gr
 import torch
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 import pandas as pd
 import numpy as np
+import logging
 
-print("Loading ${taskName} model...")
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Initialize the model pipeline
+print("🚀 Loading ${taskName} model...")
+
+# Initialize the model pipeline with error handling
+model_pipeline = None
+model_name = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+
 try:
+    logger.info(f"Loading model: {model_name}")
     model_pipeline = pipeline(
-        "${modelType === 'text-classification' ? 'sentiment-analysis' : 'text-classification'}",
-        model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+        "sentiment-analysis",
+        model=model_name,
+        tokenizer=model_name,
+        return_all_scores=True
     )
-    print("Model loaded successfully!")
+    logger.info("✅ Model loaded successfully!")
+    print("✅ Model loaded successfully!")
 except Exception as e:
-    print(f"Model loading failed: {e}")
-    model_pipeline = None
+    logger.error(f"❌ Model loading failed: {e}")
+    print(f"❌ Model loading failed: {e}")
+    # Fallback to a simpler model
+    try:
+        model_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+        logger.info("✅ Fallback model loaded!")
+        print("✅ Fallback model loaded!")
+    except Exception as fallback_error:
+        logger.error(f"❌ Fallback model also failed: {fallback_error}")
+        print(f"❌ Fallback model also failed: {fallback_error}")
 
 def analyze_text(text):
+    """Analyze sentiment of input text"""
     if not text or not text.strip():
-        return "Please enter some text to analyze."
+        return "⚠️ Please enter some text to analyze.", ""
     
     if model_pipeline is None:
-        return "Model not available. Please try again later."
+        return "❌ Model not available. Please try again later.", ""
     
     try:
+        logger.info(f"Analyzing text: {text[:50]}...")
         results = model_pipeline(text)
-        result = results[0] if isinstance(results, list) else results
         
-        label = result['label']
-        score = result['score']
-        confidence = f"{score:.1%}"
+        if isinstance(results, list) and len(results) > 0:
+            # Handle multiple scores
+            if isinstance(results[0], list):
+                scores = results[0]
+                # Sort by score and get top result
+                top_result = max(scores, key=lambda x: x['score'])
+                label = top_result['label']
+                confidence = top_result['score']
+            else:
+                # Single result
+                result = results[0]
+                label = result['label']
+                confidence = result['score']
+        else:
+            return "❌ No results returned from model", ""
         
-        return f"**Result:** {label}\\n**Confidence:** {confidence}"
+        # Format the result
+        confidence_pct = f"{confidence:.1%}"
+        
+        # Map labels to more readable format
+        label_mapping = {
+            'LABEL_0': 'Negative 😞',
+            'LABEL_1': 'Positive 😊',
+            'NEGATIVE': 'Negative 😞',
+            'POSITIVE': 'Positive 😊',
+            'NEUTRAL': 'Neutral 😐'
+        }
+        
+        display_label = label_mapping.get(label, label)
+        
+        result_text = f"**Sentiment:** {display_label}\\n**Confidence:** {confidence_pct}"
+        
+        # Add confidence bar
+        confidence_bar = "🟩" * int(confidence * 10) + "⬜" * (10 - int(confidence * 10))
+        
+        detailed_result = f"""**Analysis Results:**
+
+🎯 **Sentiment:** {display_label}
+📊 **Confidence:** {confidence_pct}
+📈 **Confidence Bar:** {confidence_bar}
+
+**Input Text:** "{text}"
+
+---
+*Powered by zehanx tech AI*"""
+        
+        return result_text, detailed_result
         
     except Exception as e:
-        return f"Error analyzing text: {str(e)}"
+        error_msg = f"❌ Error analyzing text: {str(e)}"
+        logger.error(error_msg)
+        return error_msg, ""
+
+def get_examples():
+    """Get example texts for demonstration"""
+    return [
+        "I love this product! It's amazing and works perfectly.",
+        "This is terrible. I hate it and want my money back.",
+        "The weather is okay today, nothing special.",
+        "Absolutely fantastic! Best purchase I've ever made!",
+        "Not sure how I feel about this. It's complicated."
+    ]
 
 # Create Gradio interface
-with gr.Blocks(title="${taskName} - zehanx AI") as demo:
-    gr.Markdown("# ${taskName} Model")
-    gr.Markdown("**Professional ML Pipeline - Built by zehanx tech**")
+with gr.Blocks(
+    title="${taskName} - zehanx AI",
+    theme=gr.themes.Soft(),
+    css="""
+    .gradio-container {
+        max-width: 800px !important;
+        margin: auto !important;
+    }
+    """
+) as demo:
+    
+    gr.Markdown("""
+    # 🎯 ${taskName} Model
+    ### Professional ML Pipeline - Built by zehanx tech
+    
+    Analyze the sentiment of any text using state-of-the-art transformer models.
+    """)
     
     with gr.Row():
-        with gr.Column():
+        with gr.Column(scale=2):
             text_input = gr.Textbox(
-                placeholder="Enter text to analyze...", 
-                label="Input Text", 
-                lines=3
+                placeholder="Enter text to analyze sentiment...", 
+                label="📝 Input Text", 
+                lines=4,
+                max_lines=10
             )
-            analyze_btn = gr.Button("Analyze", variant="primary")
             
-        with gr.Column():
+            with gr.Row():
+                analyze_btn = gr.Button("🔍 Analyze Sentiment", variant="primary", size="lg")
+                clear_btn = gr.Button("🗑️ Clear", variant="secondary")
+            
+            gr.Examples(
+                examples=get_examples(),
+                inputs=text_input,
+                label="💡 Try these examples:"
+            )
+            
+        with gr.Column(scale=2):
             result_output = gr.Textbox(
-                label="Analysis Result",
-                lines=5
+                label="📊 Quick Result",
+                lines=3,
+                interactive=False
+            )
+            
+            detailed_output = gr.Textbox(
+                label="📋 Detailed Analysis",
+                lines=8,
+                interactive=False
             )
     
-    analyze_btn.click(fn=analyze_text, inputs=text_input, outputs=result_output)
+    # Event handlers
+    analyze_btn.click(
+        fn=analyze_text, 
+        inputs=text_input, 
+        outputs=[result_output, detailed_output]
+    )
     
-    gr.Markdown("**Powered by zehanx tech AI**")
+    clear_btn.click(
+        fn=lambda: ("", "", ""),
+        outputs=[text_input, result_output, detailed_output]
+    )
+    
+    text_input.submit(
+        fn=analyze_text,
+        inputs=text_input,
+        outputs=[result_output, detailed_output]
+    )
+    
+    gr.Markdown("""
+    ---
+    ### 🚀 About This Model
+    
+    This sentiment analysis model uses advanced transformer architecture to understand the emotional tone of text.
+    
+    **Features:**
+    - Real-time sentiment analysis
+    - Confidence scoring
+    - Support for various text lengths
+    - Professional-grade accuracy
+    
+    **Built with:**
+    - 🤗 Transformers
+    - 🎯 PyTorch
+    - 🎨 Gradio
+    - ⚡ zehanx tech AI
+    
+    **Powered by zehanx tech** - Building the future of AI
+    """)
 
+# Launch the app
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    demo.launch(
+        server_name="0.0.0.0", 
+        server_port=7860,
+        show_error=True,
+        show_tips=True
+    )
 `;
 
     case 'requirements.txt':
