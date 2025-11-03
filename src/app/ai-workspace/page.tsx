@@ -206,7 +206,7 @@ export default function AIWorkspace() {
     alert(`Rated as ${rating}!`);
   };
 
-  const startDeploymentProcess = async (eventId: string, originalPrompt: string, modelConfig: any) => {
+  const startCleanDeploymentProcess = async (eventId: string, originalPrompt: string, modelConfig: any) => {
     const stages = [
       { name: 'ANALYZING', duration: 2000, description: 'Analyzing model requirements and dependencies' },
       { name: 'BUILDING', duration: 3000, description: 'Building complete ML pipeline with all components' },
@@ -233,9 +233,9 @@ ${stage.description}`,
       await new Promise(resolve => setTimeout(resolve, stage.duration));
     }
 
-    // Start actual deployment to HuggingFace with ALL files
+    // Start clean deployment to HuggingFace (NO GIT CLI)
     try {
-      const deployResponse = await fetch('/api/ai-workspace/deploy-hf', {
+      const deployResponse = await fetch('/api/ai-workspace/deploy-clean', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -516,8 +516,8 @@ Initiating deployment pipeline...`;
       if (data.eventId) {
         setPendingModels(prev => new Set(prev).add(data.eventId));
         
-        // Start deployment process immediately
-        setTimeout(() => startDeploymentProcess(data.eventId, content, data.modelConfig), 2000);
+        // Start clean deployment process immediately
+        setTimeout(() => startCleanDeploymentProcess(data.eventId, content, data.modelConfig), 2000);
       }
 
     } catch (error: any) {

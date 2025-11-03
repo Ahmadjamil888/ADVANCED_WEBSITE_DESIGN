@@ -5,6 +5,9 @@ import * as path from 'path'
 // Force Node.js runtime for Vercel deployment
 export const runtime = 'nodejs'
 
+// ⚠️ NO GIT CLI - PURE API DEPLOYMENT ONLY ⚠️
+// This route uses ONLY HuggingFace API, no Git commands whatsoever
+
 /**
  * 🚀 HuggingFace Space Deployment Route
  * Production-ready deployment using HuggingFace API with /tmp directory support
@@ -470,10 +473,12 @@ if __name__ == "__main__":
 }
 
 /**
- * Main POST handler
+ * Main POST handler - PURE API DEPLOYMENT
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('🚀 DEPLOY-HF: Starting API-only deployment (NO GIT CLI)')
+    
     const { eventId, userId, prompt, spaceName, modelType, ensureAllFiles, forceGradioApp } = await request.json()
 
     if (!eventId || !prompt) {
@@ -489,12 +494,13 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    console.log('🔑 HF Token found - starting deployment...')
+    console.log('🔑 HF Token found - starting API deployment...')
+    console.log('⚠️ USING PURE API METHOD - NO GIT COMMANDS')
     console.log(`📋 Event ID: ${eventId}`)
     console.log(`🎯 Model Type: ${modelType || 'text-classification'}`)
     console.log(`🏷️ Space Name: ${spaceName}`)
 
-    // 🚀 Deploy to HuggingFace
+    // 🚀 Deploy to HuggingFace using API only
     const deployResult = await deployToHuggingFace(
       spaceName, 
       hfToken, 
