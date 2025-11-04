@@ -1137,52 +1137,45 @@ function isFollowUpPrompt(prompt: string): boolean {
   return followUpIndicators.some(indicator => lowerPrompt.includes(indicator));
 }
 
-// Main POST handler
+// SIMPLE TRIGGER - ONLY USES /api/inngest
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { eventId, userId, chatId, prompt, modelConfig } = body;
+    const { eventId, userId, chatId, prompt } = body;
     
     if (!eventId || !prompt) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    console.log(`🚀 Starting training for eventId: ${eventId}`);
+    console.log(`🚀 Triggering Inngest for eventId: ${eventId}`);
     
-    // Detect model configuration if not provided
-    const finalModelConfig = modelConfig || detectModelType(prompt);
+    // Import inngest client
+    const { inngest } = await import("../../../../inngest/client");
     
-    // Generate unique identifiers
-    const spaceName = `ai-model-${eventId.slice(-8)}`;
-    
-    // Initialize training status
-    const trainingStatus = {
-      eventId,
-      completed: false,
-      currentStage: 'Initializing training...',
-      progress: 0,
-      startTime: new Date().toISOString(),
-      success: false,
-      modelConfig: finalModelConfig,
-      spaceName
-    };
+    // Send event to /api/inngest endpoint
+    await inngest.send({
+      name: "ai/model.generate",
+      data: {
+        eventId,
+        userId,
+        chatId,
+        prompt,
+        e2bApiKey: process.env.E2B_API_KEY
+      }
+    });
 
-    // Start the training process (this will be handled by the status API)
-    console.log(`✅ Training initialized for eventId: ${eventId}`);
+    console.log(`✅ Event sent to /api/inngest for eventId: ${eventId}`);
     
     return NextResponse.json({
       success: true,
       eventId,
-      modelConfig: finalModelConfig,
-      spaceName,
-      message: 'Training started successfully',
-      status: trainingStatus
+      message: 'AI model generation started'
     });
 
   } catch (error: any) {
     console.error('Generate API error:', error);
     return NextResponse.json(
-      { error: error.message || 'Training failed' },
+      { error: error.message || 'Failed to start generation' },
       { status: 500 }
     );
   }
