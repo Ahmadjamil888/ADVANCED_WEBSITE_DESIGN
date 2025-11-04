@@ -1140,7 +1140,7 @@ function isFollowUpPrompt(prompt: string): boolean {
 // Main POST handler
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, modelType, framework, chatId, userId } = await request.json();
+    const { prompt, modelType, framework, chatId, userId, eventId: providedEventId, useE2B } = await request.json();
     
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
@@ -1154,13 +1154,38 @@ export async function POST(request: NextRequest) {
     
     // Generate unique identifiers
     const spaceName = `${modelConfig.type}-${Date.now()}`;
-    const eventId = `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const eventId = providedEventId || `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Generate all files
     const files = generateAllFiles(modelConfig, spaceName);
     
     // Generate natural response
     const naturalResponse = generateNaturalResponse(modelConfig, prompt, eventId);
+
+    // Trigger Inngest function for E2B training if requested
+    if (useE2B) {
+      try {
+        const { inngest } = await import('../../../../inngest/client');
+        
+        await inngest.send({
+          name: 'ai/model.generate',
+          data: {
+            userId,
+            chatId,
+            prompt,
+            eventId,
+            modelConfig,
+            spaceName,
+            useE2B: true
+          }
+        });
+        
+        console.log(`🚀 Triggered E2B training for eventId: ${eventId}`);
+      } catch (inngestError) {
+        console.error('Inngest trigger error:', inngestError);
+        // Continue without Inngest if it fails
+      }
+    }
     
     return NextResponse.json({
       success: true,
@@ -1173,7 +1198,8 @@ export async function POST(request: NextRequest) {
       response: naturalResponse,
       generatedFiles: files,
       isFollowUp,
-      model_used: 'zehanx-ai-builder'
+      model_used: 'zehanx-ai-builder',
+      e2bTraining: useE2B
     });
 
   } catch (error: any) {

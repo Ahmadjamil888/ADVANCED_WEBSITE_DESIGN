@@ -8,6 +8,11 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// Check if required environment variables are set
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('Missing required Supabase environment variables');
+}
+
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -101,35 +106,22 @@ export async function POST(request: NextRequest) {
     // Hash the key for storage (using btoa for simplicity, use proper hashing in production)
     const keyHash = btoa(apiKey);
 
-    // Try to insert with flexible column names
+    // Insert data matching the actual table schema
     const insertData: any = {
       user_id: user.id,
       name: name.trim(),
-      api_key: apiKey, // Some tables might store the full key
+      description: description?.trim() || '',
+      key_hash: keyHash,
       key_preview: keyPreview,
       is_active: true,
-      created_at: new Date().toISOString()
+      is_revoked: false,
+      max_daily_requests: 1000,
+      max_monthly_requests: 10000,
+      max_tokens_per_request: 2048,
+      total_usage: 0,
+      daily_usage: 0,
+      monthly_usage: 0
     };
-
-    // Add optional fields if they exist
-    if (description?.trim()) {
-      insertData.description = description.trim();
-    }
-
-    // Try common column names
-    try {
-      insertData.key_hash = keyHash;
-    } catch (e) {
-      // Column might not exist
-    }
-
-    try {
-      insertData.max_daily_requests = 1000;
-      insertData.max_monthly_requests = 10000;
-      insertData.max_tokens_per_request = 2048;
-    } catch (e) {
-      // Columns might not exist
-    }
 
     // Insert API key into database
     const { data: newApiKey, error } = await supabaseAdmin
@@ -140,7 +132,11 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Error creating API key:', error);
-      return NextResponse.json({ error: `Failed to create API key: ${error.message}` }, { status: 500 });
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      return NextResponse.json({ 
+        error: `Failed to create API key: ${error.message}`,
+        details: error.details || 'No additional details available'
+      }, { status: 500 });
     }
 
     return NextResponse.json({
