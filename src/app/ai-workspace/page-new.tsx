@@ -630,11 +630,11 @@ export default function AIWorkspace() {
               </button>
             </div>
             <div className="flex items-center justify-center mt-2 space-x-4 text-xs text-gray-500">
-              <button className="hover:text-gray-700">📷 Create image</button>
-              <button className="hover:text-gray-700">✏️ Help me write</button>
-              <button className="hover:text-gray-700">📄 Summarize text</button>
-              <button className="hover:text-gray-700">💻 Code</button>
-              <button className="hover:text-gray-700">💡 Brainstorm</button>
+              <button className="hover:text-gray-700">Create image</button>
+              <button className="hover:text-gray-700">Help me write</button>
+              <button className="hover:text-gray-700">Summarize text</button>
+              <button className="hover:text-gray-700">Code</button>
+              <button className="hover:text-gray-700">Brainstorm</button>
             </div>
           </div>
         </div>
