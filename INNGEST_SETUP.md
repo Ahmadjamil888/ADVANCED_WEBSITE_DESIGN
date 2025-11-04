@@ -57,14 +57,14 @@ INNGEST_SIGNING_KEY=signkey-prod-4b628d68eb7ff4117cf134da546244096dad4450adfd951
 INNGEST_EVENT_KEY=Ek1TwIQUBxTcCQLYdBdJpzdUjhB2MxAWr9bWvhKzVpSPt-reDskPwmdiM8HG8Y8_lzUqNKSdSibPWhcwMD1Rxw
 
 # E2B Sandbox
-E2B_API_KEY=e2b_e80e1e96b185535397f67ec657e3777cc8ee99cb
+E2B_API_KEY=your_e2b_api_key_here
 
-# HuggingFace
-HF_ACCESS_TOKEN=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
+# HuggingFace (Optional - not used in E2B deployment)
+HF_ACCESS_TOKEN=your_hf_token_here
 
-# Kaggle
-KAGGLE_USERNAME=ahmadjamil888
-KAGGLE_KEY=20563a2cc61852143a21e00c1329e760
+# Kaggle (Optional - for dataset access)
+KAGGLE_USERNAME=your_kaggle_username
+KAGGLE_KEY=your_kaggle_key_here
 ```
 
 ## 📁 FILE STRUCTURE
