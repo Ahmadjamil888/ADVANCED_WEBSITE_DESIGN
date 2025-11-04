@@ -206,7 +206,7 @@ export class CompleteAIPipeline {
   }
 
   private getTaskName(modelType: string): string {
-    const taskNames = {
+    const taskNames: { [key: string]: string } = {
       'text-classification': 'Sentiment Analysis',
       'image-classification': 'Image Classification'
     }
