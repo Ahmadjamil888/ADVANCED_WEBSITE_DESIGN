@@ -1111,26 +1111,56 @@ ENV GRADIO_SERVER_PORT=7860
 CMD ["python", "app.py"]`;
 }
 
+// Generate natural responses based on the request
+function generateNaturalResponse(modelConfig: any, prompt: string, eventId: string): string {
+  const responses = [
+    `Perfect! I understand you want to build a ${modelConfig.task} model. Let me create that for you right now! I'll analyze your requirements, find the best model architecture, get some great training data, and build everything from scratch. This is going to be exciting! 🚀`,
+    
+    `Got it! A ${modelConfig.task} model sounds like exactly what you need. I'm going to set up the entire pipeline for you - from finding the perfect base model to training it on quality data. Give me a few minutes to work my magic! ✨`,
+    
+    `Awesome request! I'll build you a complete ${modelConfig.task} system. I'm thinking we'll use ${modelConfig.baseModel} as the foundation and train it properly. I'll also create a nice interface so you can test it easily. Let's get started! 🎯`,
+    
+    `Great idea! I'm going to create a ${modelConfig.task} model that actually works well. I'll handle all the technical stuff - finding the right architecture, getting good training data, writing all the code, and making sure it's properly trained. This should be fun to build! 🔥`
+  ];
+  
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
+// Check if this is a follow-up prompt
+function isFollowUpPrompt(prompt: string): boolean {
+  const followUpIndicators = [
+    'change', 'modify', 'update', 'improve', 'make it', 'can you', 'instead', 
+    'better', 'different', 'adjust', 'tweak', 'fix', 'enhance', 'add', 'remove'
+  ];
+  
+  const lowerPrompt = prompt.toLowerCase();
+  return followUpIndicators.some(indicator => lowerPrompt.includes(indicator));
+}
+
 // Main POST handler
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, modelType, framework } = await request.json();
+    const { prompt, modelType, framework, chatId, userId } = await request.json();
     
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
 
+    // Check if this is a follow-up request
+    const isFollowUp = isFollowUpPrompt(prompt);
+    
     // Detect model configuration
     const modelConfig = detectModelType(prompt);
     
-    // Generate unique space name
+    // Generate unique identifiers
     const spaceName = `${modelConfig.type}-${Date.now()}`;
+    const eventId = `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Generate all files
     const files = generateAllFiles(modelConfig, spaceName);
     
-    // Create event ID for tracking
-    const eventId = `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // Generate natural response
+    const naturalResponse = generateNaturalResponse(modelConfig, prompt, eventId);
     
     return NextResponse.json({
       success: true,
@@ -1139,8 +1169,11 @@ export async function POST(request: NextRequest) {
       spaceName,
       files: Object.keys(files),
       totalFiles: Object.keys(files).length,
-      message: `🎉 Complete ${modelConfig.task} project generated with ${Object.keys(files).length} files!`,
-      generatedFiles: files
+      message: naturalResponse,
+      response: naturalResponse,
+      generatedFiles: files,
+      isFollowUp,
+      model_used: 'zehanx-ai-builder'
     });
 
   } catch (error: any) {

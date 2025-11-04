@@ -38,6 +38,7 @@ export default function AIWorkspace() {
   const [mounted, setMounted] = useState(false);
   const [showApiKeys, setShowApiKeys] = useState(false);
   const [deploymentStage, setDeploymentStage] = useState<string>('');
+  const [completedModels, setCompletedModels] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setMounted(true);
@@ -206,7 +207,7 @@ export default function AIWorkspace() {
     alert(`Rated as ${rating}!`);
   };
 
-  const startCompleteAIModelPipeline = async (eventId: string, originalPrompt: string, modelConfig: any) => {
+  const startCompleteAIModelPipeline = async (eventId: string, originalPrompt: string, modelConfig: any, isFollowUp: boolean = false, previousModelId: string | null = null) => {
     const stages = [
       { 
         name: 'ANALYZING PROMPT', 
@@ -239,16 +240,16 @@ export default function AIWorkspace() {
         details: 'Running complete training pipeline with PyTorch, monitoring accuracy and loss'
       },
       { 
-        name: 'DEPLOYING WITH CLI', 
-        duration: 8000, 
-        description: '🚀 Deploying to HuggingFace using Git CLI commands...',
-        details: 'Creating space, cloning repo, copying all files including trained model, pushing with git'
+        name: 'PREPARING FILES', 
+        duration: 5000, 
+        description: '📦 Preparing all files for download...',
+        details: 'Collecting trained model, generating deployment instructions, creating complete package'
       },
       { 
         name: 'FINALIZING', 
         duration: 2000, 
-        description: '✅ Finalizing deployment and cleaning up resources...',
-        details: 'Verifying deployment, cleaning E2B resources, preparing final model URL'
+        description: '✅ Finalizing and preparing download...',
+        details: 'Storing files, cleaning E2B resources, preparing download package'
       }
     ];
 
@@ -338,7 +339,9 @@ ${stage.description}
             eventId,
             userId: user?.id,
             chatId: currentChat?.id,
-            prompt: originalPrompt
+            prompt: originalPrompt,
+            isFollowUp,
+            previousModelId
           }
         })
       });
@@ -433,79 +436,26 @@ ${stage.description}
         const completionMessage: Message = {
           id: `completion-${eventId}`,
           role: 'assistant',
-          content: `**🎉 ${modelConfig?.task || 'AI Model'} - DEPLOYMENT COMPLETE!**
+          content: deployData.message || `Hey! Great news - I've successfully built and deployed your AI model! 🎉
 
-Your AI model has been successfully trained and deployed to HuggingFace Spaces using Git CLI!
+Your model is now live and running at: **${deployData.e2bAppUrl || deployData.deploymentUrl}**
 
-**🔗 Live Model URL:** [${deployData.spaceUrl}](${deployData.spaceUrl})
+I trained it with ${Math.round((deployData.accuracy || 0.94) * 100)}% accuracy, which is pretty solid! The interface is user-friendly and shows confidence scores for each prediction.
 
-## 📊 Model Specifications
-- **Name:** ${modelConfig?.task || 'AI Model'}
-- **Type:** ${modelConfig?.type?.toUpperCase() || 'TEXT CLASSIFICATION'}
-- **Framework:** PyTorch + Transformers
-- **Base Model:** ${modelConfig?.baseModel || 'BERT'}
-- **Dataset:** ${modelConfig?.dataset || 'Kaggle Dataset'}
-- **Training Accuracy:** ${deployData.accuracy || '94%'}
-- **Status:** 🟢 Live and Operational
+**🚀 What you can do now:**
+- **Try it live**: Click the link above to test your model
+- **Download files**: Get all the source code if you want to customize it
+- **Make changes**: Just tell me what you'd like to adjust!
 
-## 🚀 Deployment Method: E2B + Git CLI
-The following Git CLI commands were executed in E2B sandbox:
-
-\`\`\`bash
-# Install HuggingFace CLI
-curl -s https://hf.co/cli/install.sh | bash
-huggingface-cli login --token YOUR_TOKEN
-
-# Create HuggingFace Space
-huggingface-cli repo create ${deployData.spaceName} --type space --sdk gradio
-
-# Clone and deploy
-git clone https://oauth2:TOKEN@huggingface.co/spaces/Ahmadjamil888/${deployData.spaceName}
-cd ${deployData.spaceName}
-cp /workspace/model_training/*.py .
-cp -r /workspace/model_training/trained_model .
-git add .
-git commit -m "Add complete trained AI model - zehanx tech"
-git push origin main
-\`\`\`
-
-## 📁 Complete File Structure Deployed (${deployData.uploadedCount || 11} files):
-✅ **app.py** - Professional Gradio Interface with trained model
-✅ **train.py** - Complete PyTorch Training Pipeline  
-✅ **model.py** - Model Architecture Definitions
-✅ **dataset.py** - Kaggle Dataset Loading & Preprocessing
-✅ **config.py** - Training Configuration Management
-✅ **utils.py** - Utility Functions and Helpers
-✅ **inference.py** - Model Inference Engine
-✅ **requirements.txt** - All Python Dependencies
-✅ **README.md** - Complete Documentation
-✅ **Dockerfile** - Container Configuration
-✅ **trained_model/** - Saved trained model files
-
-## 🎯 Features Included:
-- ✅ Real-time inference with trained model
-- ✅ Professional Gradio interface
-- ✅ Confidence scoring and predictions
-- ✅ Example inputs for testing
-- ✅ Model information display
-- ✅ Error handling and validation
-- ✅ Mobile-responsive design
-
-## 🔧 Technical Details:
-- **Space Name:** ${deployData.spaceName}
-- **Username:** Ahmadjamil888
-- **Deployment Method:** Git CLI Integration
-- **Training Environment:** E2B Sandbox
-- **Dataset Source:** Kaggle API
-- **Model Training:** Complete PyTorch Pipeline
-
-**🌟 Your model is now live and accessible worldwide!**
-**🚀 Ready for production use with professional interface!**`,
+The model handles different types of input gracefully and I've made sure the interface looks professional. Want to test it out or make any modifications?`,
           created_at: new Date().toISOString(),
           eventId: eventId
         };
         
         setMessages(prev => [...prev, completionMessage]);
+        
+        // Mark model as completed and ready for download
+        setCompletedModels(prev => new Set(prev).add(eventId));
 
         if (supabase && currentChat) {
           await supabase.from('messages').insert({
@@ -617,6 +567,11 @@ Please try again or contact support.`,
         content
       });
 
+      // Check if this is a follow-up to a previous model
+      const lastAIMessage = messages.slice().reverse().find(msg => 
+        msg.role === 'assistant' && msg.eventId && completedModels.has(msg.eventId)
+      );
+      
       const response = await fetch('/api/ai-workspace/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -624,7 +579,9 @@ Please try again or contact support.`,
           chatId: activeChat.id,
           prompt: content,
           mode: activeChat.mode,
-          userId: user.id
+          userId: user.id,
+          isFollowUp: !!lastAIMessage,
+          previousModelId: lastAIMessage?.eventId || null
         })
       });
 
@@ -634,28 +591,8 @@ Please try again or contact support.`,
         throw new Error(data.error);
       }
 
-      // Handle the response format from the generate API
-      let responseContent = '';
-      if (data.success && data.message) {
-        responseContent = `**${data.modelConfig?.task || 'AI Model'} - Generated Successfully**
-
-${data.message}
-
-**Model Details:**
-- **Type**: ${data.modelConfig?.type?.toUpperCase() || 'N/A'}
-- **Task**: ${data.modelConfig?.task || 'N/A'}
-- **Base Model**: ${data.modelConfig?.baseModel || 'N/A'}
-- **Dataset**: ${data.modelConfig?.dataset || 'N/A'}
-
-**Generated Files (${data.totalFiles || 0}):**
-${data.files?.map((file: string) => `- ${file}`).join('\n') || '- No files listed'}
-
-**Event ID**: ${data.eventId}
-
-Initiating deployment pipeline...`;
-      } else {
-        responseContent = data.response || data.message || 'Model generation completed';
-      }
+      // Use the natural response from the API
+      const responseContent = data.response || data.message || 'I\'ll help you build that AI model!';
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -684,7 +621,7 @@ Initiating deployment pipeline...`;
         setPendingModels(prev => new Set(prev).add(data.eventId));
         
         // Start complete AI model pipeline immediately
-        setTimeout(() => startCompleteAIModelPipeline(data.eventId, content, data.modelConfig), 2000);
+        setTimeout(() => startCompleteAIModelPipeline(data.eventId, content, data.modelConfig, data.isFollowUp, lastAIMessage?.eventId), 2000);
       }
 
     } catch (error: any) {
@@ -804,6 +741,43 @@ Your model is now accessible worldwide and ready for production use!`,
       router.push('/login');
     } catch (error) {
       console.error('Sign out error:', error);
+    }
+  };
+
+  const downloadModelFiles = async (eventId: string) => {
+    try {
+      console.log('Downloading files for eventId:', eventId);
+      
+      const response = await fetch('/api/ai-workspace/download-files', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventId,
+          userId: user?.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download files');
+      }
+
+      // Create download link
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ai-model-${eventId}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log('Download completed successfully');
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download files. Please try again.');
     }
   };
 
@@ -1665,6 +1639,57 @@ Your model is now accessible worldwide and ready for production use!`,
                         {/* Action Buttons for AI Messages */}
                         {message.role === 'assistant' && (
                           <div className="message-actions">
+                            {/* E2B App Link and Download for Completed Models */}
+                            {message.eventId && completedModels.has(message.eventId) && (
+                              <>
+                                {/* E2B App Link Button */}
+                                <button
+                                  onClick={() => {
+                                    // Extract URL from message content
+                                    const urlMatch = message.content.match(/https:\/\/[^\s\)]+/);
+                                    if (urlMatch) {
+                                      window.open(urlMatch[0], '_blank');
+                                    }
+                                  }}
+                                  className="action-btn e2b-app"
+                                  title="Open Live Model"
+                                  style={{
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    borderRadius: '6px',
+                                    fontWeight: '500',
+                                    marginRight: '8px'
+                                  }}
+                                >
+                                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '4px' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                  Try Live Model
+                                </button>
+                                
+                                {/* Download Button */}
+                                <button
+                                  onClick={() => downloadModelFiles(message.eventId!)}
+                                  className="action-btn download"
+                                  title="Download Source Code"
+                                  style={{
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    borderRadius: '6px',
+                                    fontWeight: '500',
+                                    marginRight: '8px'
+                                  }}
+                                >
+                                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ marginRight: '4px' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  Download Code
+                                </button>
+                              </>
+                            )}
+                            
                             <button
                               onClick={() => rateResponse(message.id, 'good')}
                               className="action-btn good"
