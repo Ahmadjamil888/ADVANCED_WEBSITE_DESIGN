@@ -391,6 +391,28 @@ export const generateModelCode = inngest.createFunction(
       };
     });
 
+    // Push real E2B URL to status API so the frontend opens the original e2b.dev link
+    try {
+      const appBaseUrl = process.env.APP_BASE_URL || 'https://zehanxtech.com';
+      await fetch(`${appBaseUrl}/api/ai-workspace/status/${effectiveEventId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          e2bUrl: e2bDeployment.e2bUrl,
+          appUrl: e2bDeployment.e2bUrl,
+          message: 'Training completed successfully in E2B sandbox',
+          accuracy: e2bTraining.finalAccuracy,
+          trainingTime: e2bTraining.trainingTime,
+          completed: true,
+          progress: 100,
+          currentStage: 'Completed'
+        })
+      });
+      console.log(`✅ Status API updated with real E2B URL for ${effectiveEventId}: ${e2bDeployment.e2bUrl}`);
+    } catch (updateErr) {
+      console.log('⚠️ Failed to update status with real E2B URL:', updateErr);
+    }
+
     // Generate completion message
     const completionMessage = `🎉 **Your ${modelAnalysis.task} model is now LIVE!**
 
