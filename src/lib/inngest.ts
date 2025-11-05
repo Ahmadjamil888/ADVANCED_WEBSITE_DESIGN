@@ -1,6 +1,2 @@
-import { Inngest } from "inngest";
-
-// Create the Inngest client
-export const inngest = new Inngest({ 
-  id: "zehanx-ai-workspace"
-});
+// Re-export the main Inngest client to avoid conflicts
+export { inngest } from "../inngest/client";

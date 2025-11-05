@@ -1,5 +1,18 @@
 import { inngest } from "./client";
 
+// ============================================================================
+// TEST FUNCTION TO VERIFY INNGEST IS WORKING
+// ============================================================================
+
+export const testFunction = inngest.createFunction(
+  { id: "test-function", name: "Test Function" },
+  { event: "test/ping" },
+  async ({ event }) => {
+    console.log("✅ Test function executed successfully!");
+    return { success: true, message: "Test function working!" };
+  }
+);
+
 /**
  * FIXED AI Model Generation System - RELIABLE E2B TRAINING
  * Integrates Hugging Face, Kaggle, E2B for complete ML pipeline
@@ -14,19 +27,21 @@ export const generateModelCode = inngest.createFunction(
     id: "zehanx-ai-workspace-generate-model-code",
     name: "Complete AI Model Pipeline with E2B Training",
     concurrency: { limit: 3 },
-    retries: 2
+    retries: 1
   },
   { event: "ai/model.generate" },
   async ({ event, step }) => {
-    const { 
-      userId, 
-      chatId, 
-      prompt, 
-      eventId, 
-      e2bApiKey = process.env.E2B_API_KEY
-    } = event.data;
+    try {
+      const { 
+        userId, 
+        chatId, 
+        prompt, 
+        eventId, 
+        e2bApiKey = process.env.E2B_API_KEY
+      } = event.data;
 
-    console.log(`🚀 Starting AI model generation for eventId: ${eventId}`);
+      console.log(`🚀 Starting AI model generation for eventId: ${eventId}`);
+      console.log(`📝 Prompt: ${prompt}`);
 
     // Step 1: Analyze Prompt and Detect Model Type
     const modelAnalysis = await step.run("analyze-prompt", async () => {
@@ -84,10 +99,7 @@ export const generateModelCode = inngest.createFunction(
       const hfToken = process.env.HF_ACCESS_TOKEN || process.env.HUGGINGFACE_TOKEN;
       const kaggleUsername = process.env.KAGGLE_USERNAME;
       const kaggleKey = process.env.KAGGLE_KEY;
-      
-      if (!hfToken) {
-        throw new Error("HuggingFace token not found in environment variables");
-      }
+      // Note: HF token is optional. We'll use HF if available, otherwise try Kaggle, else fallback.
       
       let datasetInfo = {
         name: modelAnalysis.dataset,
@@ -100,7 +112,7 @@ export const generateModelCode = inngest.createFunction(
       };
       
       // Try to fetch from HuggingFace first
-      if (modelAnalysis.hfDataset) {
+      if (hfToken && modelAnalysis.hfDataset) {
         try {
           const hfResponse = await fetch(`https://huggingface.co/api/datasets/${modelAnalysis.hfDataset}`, {
             headers: {
@@ -173,6 +185,7 @@ export const generateModelCode = inngest.createFunction(
         description: "Complete ML pipeline with FastAPI, HTML interface, and E2B training generated!"
       };
     });
+
 
     // Step 4: E2B Sandbox Training with Real Implementation
     const e2bTraining = await step.run("e2b-training", async () => {
@@ -408,6 +421,19 @@ Your model is running live with GPU acceleration! 🚀`;
       completionStatus: 'COMPLETED',
       totalTime: '35 seconds'
     };
+
+    } catch (error: any) {
+      console.error(`❌ AI model generation failed for eventId ${event}:`, error);
+      
+      // Return error response
+      return {
+        success: false,
+        event,
+        error: error?.message || 'Unknown error occurred',
+        message: `❌ **Model generation failed**\n\nError: ${error?.message || 'Unknown error'}\n\nPlease try again or contact support.`,
+        completionStatus: 'FAILED'
+      };
+    }
   }
 );
 
@@ -510,7 +536,7 @@ export const analyzePrompt = inngest.createFunction(
 
 export const findDataset = inngest.createFunction(
   {
-    id: "zehanx-ai-workspace-find-dataset",
+    id: "find-dataset",
     name: "Find Optimal Dataset for AI Model Training",
     concurrency: { limit: 10 }
   },
@@ -559,7 +585,7 @@ export const findDataset = inngest.createFunction(
 
 export const trainAIModel = inngest.createFunction(
   {
-    id: "zehanx-ai-workspace-train-model",
+    id: "train-ai-model",
     name: "Train AI Model with E2B Sandbox",
     concurrency: { limit: 3 }
   },
@@ -2490,10 +2516,6 @@ echo "🔧 Setting up Kaggle API..."
 mkdir -p ~/.kaggle
 echo "{\\"username\\": \\"$KAGGLE_USERNAME\\", \\"key\\": \\"$KAGGLE_KEY\\"}" > ~/.kaggle/kaggle.json
 chmod 600 ~/.kaggle/kaggle.json
-
-# Setup HuggingFace
-echo "🤗 Setting up HuggingFace..."
-huggingface-cli login --token $HF_TOKEN --add-to-git-credential
 
 # Create necessary directories
 mkdir -p ./data

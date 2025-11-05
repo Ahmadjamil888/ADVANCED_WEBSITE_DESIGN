@@ -344,6 +344,10 @@ Training your BERT model on customer review data...`,
       document.documentElement.style.setProperty('--workspace-bg', isDarkTheme ? '#111827' : '#ffffff');
       document.documentElement.style.setProperty('--workspace-text', isDarkTheme ? '#f9fafb' : '#1f2937');
       
+      // Apply global body styles for better dark mode readability
+      document.body.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--workspace-bg').trim();
+      document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--workspace-text').trim();
+
       localStorage.setItem('ai-workspace-theme', isDarkTheme ? 'dark' : 'light');
     }
   }, [isDarkTheme, mounted]);
