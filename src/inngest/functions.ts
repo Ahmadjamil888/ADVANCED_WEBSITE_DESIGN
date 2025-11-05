@@ -200,6 +200,7 @@ export const generateModelCode = inngest.createFunction(
       }
       
       try {
+        const appBaseUrl = process.env.APP_BASE_URL || 'https://zehanxtech.com';
         // Create E2B sandbox
         const sandboxResponse = await fetch('https://api.e2b.dev/sandboxes', {
           method: 'POST',
@@ -223,6 +224,13 @@ export const generateModelCode = inngest.createFunction(
         const sandbox = await sandboxResponse.json();
         const sandboxId = sandbox.id;
         console.log(`✅ E2B sandbox created: ${sandboxId}`);
+        // progress: sandbox ready
+        try {
+          await fetch(`${appBaseUrl}/api/ai-workspace/status/${effectiveEventId}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentStage: 'E2B sandbox created', progress: 30 })
+          });
+        } catch {}
         
         // Upload files to sandbox
         const uploadPromises = Object.entries(codeGeneration.files).map(async ([filename, content]) => {
@@ -247,6 +255,12 @@ export const generateModelCode = inngest.createFunction(
         
         await Promise.all(uploadPromises);
         console.log(`✅ All files uploaded to E2B sandbox`);
+        try {
+          await fetch(`${appBaseUrl}/api/ai-workspace/status/${effectiveEventId}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentStage: 'Files uploaded to E2B sandbox', progress: 45 })
+          });
+        } catch {}
         
         // Set up environment variables in sandbox
         const envSetup = await fetch(`https://api.e2b.dev/sandboxes/${sandboxId}/commands`, {
@@ -277,6 +291,12 @@ export const generateModelCode = inngest.createFunction(
         if (!setupResponse.ok) {
           console.log(`⚠️ Setup script failed: ${setupResponse.statusText}`);
         }
+        try {
+          await fetch(`${appBaseUrl}/api/ai-workspace/status/${effectiveEventId}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentStage: 'Environment ready', progress: 60 })
+          });
+        } catch {}
         
         // Run training
         const trainingResponse = await fetch(`https://api.e2b.dev/sandboxes/${sandboxId}/commands`, {
@@ -299,6 +319,12 @@ export const generateModelCode = inngest.createFunction(
         } else {
           console.log(`⚠️ Training failed: ${trainingResponse.statusText}`);
         }
+        try {
+          await fetch(`${appBaseUrl}/api/ai-workspace/status/${effectiveEventId}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentStage: 'Training completed', progress: 85 })
+          });
+        } catch {}
         
         // Start the web application
         const appResponse = await fetch(`https://api.e2b.dev/sandboxes/${sandboxId}/commands`, {
@@ -314,6 +340,12 @@ export const generateModelCode = inngest.createFunction(
         });
         
         const e2bUrl = `https://${sandboxId}.e2b.dev`;
+        try {
+          await fetch(`${appBaseUrl}/api/ai-workspace/status/${effectiveEventId}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentStage: 'Application started', progress: 100, e2bUrl })
+          });
+        } catch {}
         
         return {
           status: 'completed',
@@ -2269,6 +2301,12 @@ class E2BTrainer:
         os.makedirs('./trained_model', exist_ok=True)
         trainer.save_model('./trained_model')
         self.tokenizer.save_pretrained('./trained_model')
+        try:
+            # Also save a plain PyTorch state_dict for portability
+            torch.save(self.model.state_dict(), './trained_model/model.pth')
+            logger.info("✅ Saved PyTorch state_dict at ./trained_model/model.pth")
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to save model.pth: {e}")
         
         # Save training info
         training_info = {
