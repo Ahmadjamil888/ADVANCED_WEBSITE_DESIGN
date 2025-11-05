@@ -491,7 +491,7 @@ export const analyzePrompt = inngest.createFunction(
   {
     id: "zehanx-ai-workspace-analyze-prompt",
     name: "Analyze User Prompt for AI Model Requirements",
-    concurrency: { limit: 10 }
+    concurrency: { limit: 5 }
   },
   { event: "ai/prompt.analyze" },
   async ({ event, step }) => {
@@ -540,7 +540,7 @@ export const findDataset = inngest.createFunction(
   {
     id: "find-dataset",
     name: "Find Optimal Dataset for AI Model Training",
-    concurrency: { limit: 10 }
+    concurrency: { limit: 5 }
   },
   { event: "ai/dataset.find" },
   async ({ event, step }) => {
@@ -648,7 +648,6 @@ export const trainAIModel = inngest.createFunction(
     };
   }
 );
-
 // ============================================================================
 // CONVERSATIONAL FOLLOW-UP FUNCTION
 // ============================================================================
@@ -657,7 +656,7 @@ export const handleFollowUpConversation = inngest.createFunction(
   {
     id: "zehanx-ai-workspace-follow-up",
     name: "Handle Follow-up Conversations and Code Editing",
-    concurrency: { limit: 10 }
+    concurrency: { limit: 5 }
   },
   { event: "ai/conversation.followup" },
   async ({ event, step }) => {
