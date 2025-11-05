@@ -178,7 +178,7 @@ export default function AIWorkspace() {
 
   // Simple reliable polling - completes in 45 seconds
   const pollForTrainingCompletion = async (eventId: string) => {
-    const maxAttempts = 10; // 30 seconds max (10 * 3 seconds)
+    const maxAttempts = 15; // ~37.5s max (15 * 2.5s) to cover 30s backend window
     let attempts = 0;
     let lastProgress = -1;
     
@@ -1669,6 +1669,56 @@ I can also explain how to set up the code manually if needed. 🛠️`,
           max-width: 768px;
           margin: 0 auto;
           padding: 24px 16px;
+        }
+        /* Input area styles */
+        .input-section {
+          border-top: 1px solid #e5e7eb;
+          padding: 16px;
+          background: #ffffff;
+          position: sticky;
+          bottom: 0;
+        }
+        .input-container {
+          max-width: 768px;
+          margin: 0 auto;
+        }
+        .input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .input-textarea {
+          width: 100%;
+          resize: none;
+          border: 1px solid #d1d5db;
+          border-radius: 12px;
+          padding: 12px 44px 12px 12px;
+          font-size: 14px;
+          line-height: 1.5;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-textarea:focus {
+          border-color: #93c5fd;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+        .send-btn {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          padding: 8px;
+          border-radius: 8px;
+          background: #111827;
+          color: white;
+          border: none;
+          cursor: pointer;
+          transition: opacity 0.2s, background-color 0.2s;
+        }
+        .send-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          background: #6b7280;
         }
         .message {
           margin-bottom: 32px;
