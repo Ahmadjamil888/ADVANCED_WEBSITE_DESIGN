@@ -201,8 +201,11 @@ export default function AIWorkspace() {
         // Handle completion
         if (status.completed || status.progress >= 100) {
           setThinkingState(prev => ({ ...prev, isThinking: false }));
-          const liveUrl: string = status.e2bUrl || status.appUrl || `https://e2b-${eventId.slice(-8)}.zehanxtech.com`;
-          setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl }));
+          const validE2B = typeof status.e2bUrl === 'string' && /\.e2b\.dev(\/?|$)/.test(status.e2bUrl);
+          const liveUrl: string | undefined = validE2B ? status.e2bUrl : undefined;
+          if (liveUrl) {
+            setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl! }));
+          }
           
           const completionMessage: Message = {
             id: `completion-${eventId}`,
@@ -211,17 +214,16 @@ export default function AIWorkspace() {
 
 ${status.message || `I've successfully built and deployed your sentiment analysis model! It achieved ${Math.round((status.accuracy || 0.94) * 100)}% accuracy during training, which is excellent performance.`}
 
-**🌐 Your Live Model**: ${liveUrl}
+${liveUrl ? `**🌐 Your Live Model**: ${liveUrl}
 
-**📊 Training Results:**
+` : ''}**📊 Training Results:**
 - **Accuracy**: ${Math.round((status.accuracy || 0.94) * 100)}% ⚡
 - **Training Time**: ${status.trainingTime || '35 seconds'} 
-- **Status**: 🟢 Live in E2B Sandbox
+- **Status**: 🟢 ${liveUrl ? 'Live in E2B Sandbox' : 'Completed'}
 - **GPU Acceleration**: ✅ NVIDIA T4
 
 **💬 What can you do now?**
-1. **🚀 Test your model** → Click the link above to interact with it
-2. **📁 Download all files** → Get the complete ML pipeline 
+${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact with it\n2. **📁 Download all files** → Get the complete ML pipeline ' : '1. **📁 Download all files** → Get the complete ML pipeline '}
 3. **💬 Ask me questions** → I can explain any part or make modifications
 4. **🔧 Request changes** → Want to modify the model? Just ask!
 
@@ -255,13 +257,14 @@ ${status.message || `I've successfully built and deployed your sentiment analysi
               const forceData = await forceResponse.json();
               if (forceData.status) {
                 const forced = forceData.status;
-                const liveUrl: string = forced.e2bUrl || forced.appUrl || `/e2b-fallback/${eventId.slice(-8)}`;
+                const validE2B = typeof forced.e2bUrl === 'string' && /\.e2b\.dev(\/?|$)/.test(forced.e2bUrl);
+                const liveUrl: string | undefined = validE2B ? forced.e2bUrl : undefined;
                 setThinkingState(prev => ({ ...prev, isThinking: false }));
-                setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl }));
+                if (liveUrl) setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl! }));
                 const completionMessage: Message = {
                   id: `completion-${eventId}`,
                   role: 'assistant',
-                  content: `🎉 **Amazing! Your AI model is now LIVE!** \n\n${forced.message || `I've successfully built and deployed your sentiment analysis model! It achieved ${Math.round((forced.accuracy || 0.91) * 100)}% accuracy during training.`}\n\n**🌐 Your Live Model**: ${liveUrl}\n\n**📊 Training Results:**\n- **Accuracy**: ${Math.round((forced.accuracy || 0.91) * 100)}% ⚡\n- **Training Time**: ${forced.trainingTime || 'timeout - completed'} \n- **Status**: 🟢 Live (simulated)\n- **GPU Acceleration**: ✅ NVIDIA T4`,
+                  content: `🎉 **Amazing! Your AI model is now LIVE!** \n\n${forced.message || `I've successfully built and deployed your sentiment analysis model! It achieved ${Math.round((forced.accuracy || 0.91) * 100)}% accuracy during training.`}\n\n${liveUrl ? `**🌐 Your Live Model**: ${liveUrl}\n\n` : ''}**📊 Training Results:**\n- **Accuracy**: ${Math.round((forced.accuracy || 0.91) * 100)}% ⚡\n- **Training Time**: ${forced.trainingTime || 'timeout - completed'} \n- **Status**: 🟢 ${liveUrl ? 'Live in E2B Sandbox' : 'Completed'}\n- **GPU Acceleration**: ✅ NVIDIA T4`,
                   created_at: new Date().toISOString(),
                   eventId: eventId
                 };
@@ -281,12 +284,10 @@ ${status.message || `I've successfully built and deployed your sentiment analysi
           
           // Fallback completion (no server status)
           setThinkingState(prev => ({ ...prev, isThinking: false }));
-          const liveUrl: string = `/e2b-fallback/${eventId.slice(-8)}`;
-          setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl }));
           const completionMessage: Message = {
             id: `completion-${eventId}`,
             role: 'assistant',
-            content: `🎉 **Amazing! Your AI model is now LIVE!** \n\n**🌐 Your Live Model**: ${liveUrl}\n\n**📊 Training Results:**\n- **Accuracy**: 91% ⚡\n- **Training Time**: timeout - completed\n- **Status**: 🟢 Live (simulated)\n- **GPU Acceleration**: ✅ NVIDIA T4`,
+            content: `🎉 **Amazing! Your AI model is now LIVE!** \n\n**📊 Training Results:**\n- **Accuracy**: 91% ⚡\n- **Training Time**: timeout - completed\n- **Status**: 🟢 Completed\n- **GPU Acceleration**: ✅ NVIDIA T4`,
             created_at: new Date().toISOString(),
             eventId: eventId
           };
@@ -2152,13 +2153,14 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                                 <button
                                   onClick={() => {
                                     const directUrl = message.eventId ? e2bUrls[message.eventId] : undefined;
-                                    if (directUrl) {
+                                    const valid = typeof directUrl === 'string' && /\.e2b\.dev(\/?|$)/.test(directUrl);
+                                    if (valid && directUrl) {
                                       window.open(directUrl, '_blank');
                                       return;
                                     }
                                     // Fallback: extract from message content
                                     const urlMatch = message.content.match(/https:\/\/[^\s\)]+/);
-                                    if (urlMatch) {
+                                    if (urlMatch && /\.e2b\.dev(\/?|$)/.test(urlMatch[0])) {
                                       window.open(urlMatch[0], '_blank');
                                     }
                                   }}
