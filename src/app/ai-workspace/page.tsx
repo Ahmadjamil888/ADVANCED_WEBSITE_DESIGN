@@ -131,6 +131,10 @@ export default function AIWorkspace() {
   const isE2bUrl = (u: unknown): u is string =>
     typeof u === 'string' && /\.e2b\.dev(\/?|$)/.test(u);
 
+  // Allow same-origin fallback path used by the local status API simulation
+  const isFallbackLocalUrl = (u: unknown): u is string =>
+    typeof u === 'string' && u.startsWith('/e2b-fallback/');
+
   // Helper function to generate natural AI responses
   const generateNaturalResponse = (prompt: string): string => {
     const lowerPrompt = prompt.toLowerCase();
@@ -2181,14 +2185,23 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                                 <button
                                   onClick={async () => {
                                     const directUrl = message.eventId ? e2bUrls[message.eventId] : undefined;
-                                    if (isE2bUrl(directUrl)) {
-                                      window.open(directUrl, '_blank');
+                                    if (isE2bUrl(directUrl) || isFallbackLocalUrl(directUrl)) {
+                                      const openUrl = directUrl!;
+                                      if (isFallbackLocalUrl(openUrl)) {
+                                        window.location.href = openUrl;
+                                      } else {
+                                        window.open(openUrl, '_blank');
+                                      }
                                       return;
                                     }
                                     // Fallback 1: extract from message content (only allow real e2b.dev)
                                     const url = message.content.match(/https:\/\/[^\s\)]+/)?.[0];
-                                    if (isE2bUrl(url)) {
-                                      window.open(url, '_blank');
+                                    if (isE2bUrl(url) || isFallbackLocalUrl(url)) {
+                                      if (isFallbackLocalUrl(url)) {
+                                        window.location.href = url;
+                                      } else {
+                                        window.open(url, '_blank');
+                                      }
                                       return;
                                     }
                                     // Fallback 2: fetch latest status to get e2bUrl
@@ -2198,9 +2211,13 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                                         if (res.ok) {
                                           const status = await res.json();
                                           const live = status?.e2bUrl as unknown;
-                                          if (isE2bUrl(live)) {
-                                            setE2bUrls(prev => ({ ...prev, [message.eventId!]: live }));
-                                            window.open(live, '_blank');
+                                          if (isE2bUrl(live) || isFallbackLocalUrl(live)) {
+                                            setE2bUrls(prev => ({ ...prev, [message.eventId!]: live as string }));
+                                            if (isFallbackLocalUrl(live)) {
+                                              window.location.href = live as string;
+                                            } else {
+                                              window.open(live as string, '_blank');
+                                            }
                                             return;
                                           }
                                         }
