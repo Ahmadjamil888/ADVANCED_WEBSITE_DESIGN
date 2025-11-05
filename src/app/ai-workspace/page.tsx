@@ -111,6 +111,7 @@ export default function AIWorkspace() {
   const [showApiKeys, setShowApiKeys] = useState(false);
   const [deploymentStage, setDeploymentStage] = useState<string>('');
   const [completedModels, setCompletedModels] = useState<Set<string>>(new Set());
+  const [e2bUrls, setE2bUrls] = useState<Record<string, string>>({});
   
   // New states for enhanced features
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -200,6 +201,8 @@ export default function AIWorkspace() {
         // Handle completion
         if (status.completed || status.progress >= 100) {
           setThinkingState(prev => ({ ...prev, isThinking: false }));
+          const liveUrl: string = status.e2bUrl || status.appUrl || `https://e2b-${eventId.slice(-8)}.zehanxtech.com`;
+          setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl }));
           
           const completionMessage: Message = {
             id: `completion-${eventId}`,
@@ -208,7 +211,7 @@ export default function AIWorkspace() {
 
 ${status.message || `I've successfully built and deployed your sentiment analysis model! It achieved ${Math.round((status.accuracy || 0.94) * 100)}% accuracy during training, which is excellent performance.`}
 
-**🌐 Your Live Model**: ${status.e2bUrl || status.appUrl || `https://e2b-${eventId.slice(-8)}.zehanxtech.com`}
+**🌐 Your Live Model**: ${liveUrl}
 
 **📊 Training Results:**
 - **Accuracy**: ${Math.round((status.accuracy || 0.94) * 100)}% ⚡
@@ -1722,99 +1725,10 @@ I can also explain how to set up the code manually if needed. 🛠️`,
           cursor: pointer;
           transition: color 0.2s;
         }
-        .action-btn:hover {
-          background: #f3f4f6;
-        }
-        .action-btn:hover.good { color: #059669; }
-        .action-btn:hover.bad { color: #dc2626; }
-        .action-btn:hover.copy { color: #2563eb; }
-        .action-btn:hover.regen { color: #7c3aed; }
-        .loading-message {
-          margin-bottom: 32px;
-        }
-        .loading-content {
-          display: flex;
-          align-items: flex-start;
-          gap: 16px;
-        }
-        .loading-body {
-          flex: 1;
-        }
-        .loading-text {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .spinner {
-          width: 16px;
-          height: 16px;
-          border: 2px solid #e5e7eb;
-          border-top: 2px solid #059669;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-        .deployment-stage {
-          background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
-          padding: 16px;
-          margin: 8px 0;
-          animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
-        }
-        .input-section {
-          border-top: 1px solid #e5e7eb;
-          padding: 16px;
-          background: white;
-          flex-shrink: 0;
-          min-height: 70px;
-        }
-        .input-container {
-          max-width: 768px;
-          margin: 0 auto;
-        }
-        .input-wrapper {
-          position: relative;
-        }
-        .input-textarea {
-          width: 100%;
-          padding: 12px 48px 12px 12px;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
-          resize: none;
-          outline: none;
-          color: #111827;
-          min-height: 44px;
-          max-height: 200px;
-          font-family: inherit;
-          font-size: 14px;
-        }
-        .input-textarea:focus {
-          border-color: #2563eb;
-          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        .input-textarea::placeholder {
-          color: #9ca3af;
-        }
-        .send-btn {
-          position: absolute;
-          right: 8px;
-          top: 50%;
-          transform: translateY(-50%);
-          padding: 8px;
-          background: transparent;
-          border: none;
-          color: #9ca3af;
-          cursor: pointer;
-          transition: color 0.2s;
-        }
-        .send-btn:hover:not(:disabled) {
+        .action-btn:hover:not(:disabled) {
           color: #6b7280;
         }
-        .send-btn:disabled {
+        .action-btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
@@ -2153,7 +2067,12 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                                 {/* E2B App Link Button */}
                                 <button
                                   onClick={() => {
-                                    // Extract URL from message content
+                                    const directUrl = message.eventId ? e2bUrls[message.eventId] : undefined;
+                                    if (directUrl) {
+                                      window.open(directUrl, '_blank');
+                                      return;
+                                    }
+                                    // Fallback: extract from message content
                                     const urlMatch = message.content.match(/https:\/\/[^\s\)]+/);
                                     if (urlMatch) {
                                       window.open(urlMatch[0], '_blank');

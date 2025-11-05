@@ -39,7 +39,7 @@ export async function GET(
 
     // Simulate progressive training (remove this in production with real Inngest integration)
     const elapsed = Date.now() - status.startTime;
-    const totalTime = 45000; // 45 seconds total
+    const totalTime = 30000; // 30 seconds total to match frontend polling
     
     if (!status.completed && elapsed < totalTime) {
       // Update progress based on time
@@ -62,8 +62,8 @@ export async function GET(
       status.progress = 100;
       status.currentStage = 'Completed';
       status.accuracy = 0.94;
-      status.trainingTime = '45 seconds';
-      status.e2bUrl = `https://e2b-${eventId.slice(-8)}.zehanxtech.com`;
+      status.trainingTime = '30 seconds';
+      status.e2bUrl = `https://fallback-${eventId.slice(-8)}.zehanxtech.com`;
       status.appUrl = status.e2bUrl;
       status.message = `🎉 **Your AI model is now LIVE!**
 
@@ -111,7 +111,7 @@ export async function PUT(
     status.progress = 100;
     status.accuracy = 0.91;
     status.trainingTime = 'timeout - completed';
-    status.e2bUrl = `https://e2b-${eventId.slice(-8)}.zehanxtech.com`;
+    status.e2bUrl = `https://fallback-${eventId.slice(-8)}.zehanxtech.com`;
     status.message = "Training completed successfully!";
     
     trainingStatus.set(eventId, status);
