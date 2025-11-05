@@ -31,16 +31,20 @@ export const generateModelCode = inngest.createFunction(
   },
   { event: "ai/model.generate" },
   async ({ event, step }) => {
+    // Ensure eventId is available outside the try/catch scope
+    const eventId = (event as any)?.data?.eventId as string | undefined;
     try {
       const { 
         userId, 
         chatId, 
         prompt, 
-        eventId, 
+        eventId: _innerEventId, 
         e2bApiKey = process.env.E2B_API_KEY
       } = event.data;
+      const effectiveEventId = (_innerEventId ?? eventId ?? "").toString();
+      const shortId = effectiveEventId ? effectiveEventId.slice(-8) : "00000000";
 
-      console.log(`🚀 Starting AI model generation for eventId: ${eventId}`);
+      console.log(`🚀 Starting AI model generation for eventId: ${effectiveEventId}`);
       console.log(`📝 Prompt: ${prompt}`);
 
     // Step 1: Analyze Prompt and Detect Model Type
@@ -206,7 +210,7 @@ export const generateModelCode = inngest.createFunction(
           body: JSON.stringify({
             template: 'python3',
             metadata: {
-              eventId: eventId,
+              eventId: effectiveEventId,
               task: modelAnalysis.task
             }
           })
@@ -335,8 +339,8 @@ export const generateModelCode = inngest.createFunction(
           finalLoss: 0.18,
           epochs: 3,
           trainingTime: '5 minutes',
-          e2bSandboxId: `fallback_${eventId.slice(-8)}`,
-          e2bUrl: `https://fallback-${eventId.slice(-8)}.zehanxtech.com`,
+          e2bSandboxId: `fallback_${shortId}`,
+          e2bUrl: `https://fallback-${shortId}.zehanxtech.com`,
           trainingOutput: 'Training completed with fallback method',
           gpuUsage: '88%',
           memoryUsage: '3.8GB',
@@ -409,35 +413,33 @@ Your model is running live with GPU acceleration! 🚀`;
 
     return {
       success: true,
-      eventId,
+      eventId: effectiveEventId,
       modelAnalysis,
       datasetSelection,
       codeGeneration,
       e2bTraining,
       e2bDeployment,
       e2bUrl: e2bDeployment.e2bUrl,
-      downloadUrl: `/api/ai-workspace/download/${eventId}`,
+      downloadUrl: `/api/ai-workspace/download/${effectiveEventId}`,
       message: completionMessage,
       completionStatus: 'COMPLETED',
       totalTime: '35 seconds'
     };
 
-    } catch (error: any) {
-      console.error(`❌ AI model generation failed for eventId ${event}:`, error);
-      
-      // Return error response
-      return {
-        success: false,
-        event,
-        error: error?.message || 'Unknown error occurred',
-        message: `❌ **Model generation failed**\n\nError: ${error?.message || 'Unknown error'}\n\nPlease try again or contact support.`,
-        completionStatus: 'FAILED'
-      };
-    }
+  } catch (error: any) {
+    console.error(`❌ AI model generation failed for eventId ${ (event as any)?.data?.eventId ?? '' }:`, error);
+    
+    // Return error response
+    return {
+      success: false,
+      eventId: (event as any)?.data?.eventId ?? '',
+      error: error?.message || 'Unknown error occurred',
+      message: `❌ **Model generation failed**\n\nError: ${error?.message || 'Unknown error'}\n\nPlease try again or contact support.`,
+      completionStatus: 'FAILED'
+    };
   }
+}
 );
-
-
 
 // Enhanced Gradio app generator for better interactivity
 function generateInteractiveGradioApp(modelConfig: any): string {
