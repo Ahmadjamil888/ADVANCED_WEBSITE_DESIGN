@@ -127,6 +127,10 @@ export default function AIWorkspace() {
   });
   const [aiThoughts, setAiThoughts] = useState<string>('');
 
+  // Validate an E2B URL and narrow its type to string
+  const isE2bUrl = (u: unknown): u is string =>
+    typeof u === 'string' && /\.e2b\.dev(\/?|$)/.test(u);
+
   // Helper function to generate natural AI responses
   const generateNaturalResponse = (prompt: string): string => {
     const lowerPrompt = prompt.toLowerCase();
@@ -201,7 +205,7 @@ export default function AIWorkspace() {
         // Handle completion
         if (status.completed || status.progress >= 100) {
           setThinkingState(prev => ({ ...prev, isThinking: false }));
-          const validE2B = typeof status.e2bUrl === 'string' && /\.e2b\.dev(\/?|$)/.test(status.e2bUrl);
+          const validE2B = isE2bUrl(status.e2bUrl);
           const liveUrl: string | undefined = validE2B ? status.e2bUrl : undefined;
           if (liveUrl) {
             setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl! }));
@@ -232,7 +236,15 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
             eventId: eventId
           };
           
-          setMessages(prev => [...prev, completionMessage]);
+          setMessages(prev => {
+            const idx = prev.findIndex(m => m.id === completionMessage.id);
+            if (idx !== -1) {
+              const copy = [...prev];
+              copy[idx] = completionMessage;
+              return copy;
+            }
+            return [...prev, completionMessage];
+          });
           setCompletedModels(prev => new Set(prev).add(eventId));
           setPendingModels(prev => {
             const newSet = new Set(prev);
@@ -257,7 +269,7 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
               const forceData = await forceResponse.json();
               if (forceData.status) {
                 const forced = forceData.status;
-                const validE2B = typeof forced.e2bUrl === 'string' && /\.e2b\.dev(\/?|$)/.test(forced.e2bUrl);
+                const validE2B = isE2bUrl(forced.e2bUrl);
                 const liveUrl: string | undefined = validE2B ? forced.e2bUrl : undefined;
                 setThinkingState(prev => ({ ...prev, isThinking: false }));
                 if (liveUrl) setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl! }));
@@ -268,7 +280,15 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
                   created_at: new Date().toISOString(),
                   eventId: eventId
                 };
-                setMessages(prev => [...prev, completionMessage]);
+                setMessages(prev => {
+                  const idx = prev.findIndex(m => m.id === completionMessage.id);
+                  if (idx !== -1) {
+                    const copy = [...prev];
+                    copy[idx] = completionMessage;
+                    return copy;
+                  }
+                  return [...prev, completionMessage];
+                });
                 setCompletedModels(prev => new Set(prev).add(eventId));
                 setPendingModels(prev => {
                   const newSet = new Set(prev);
@@ -291,7 +311,15 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
             created_at: new Date().toISOString(),
             eventId: eventId
           };
-          setMessages(prev => [...prev, completionMessage]);
+          setMessages(prev => {
+            const idx = prev.findIndex(m => m.id === completionMessage.id);
+            if (idx !== -1) {
+              const copy = [...prev];
+              copy[idx] = completionMessage;
+              return copy;
+            }
+            return [...prev, completionMessage];
+          });
           setCompletedModels(prev => new Set(prev).add(eventId));
           setPendingModels(prev => {
             const newSet = new Set(prev);
@@ -2151,18 +2179,36 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                               <>
                                 {/* E2B App Link Button */}
                                 <button
-                                  onClick={() => {
+                                  onClick={async () => {
                                     const directUrl = message.eventId ? e2bUrls[message.eventId] : undefined;
-                                    const valid = typeof directUrl === 'string' && /\.e2b\.dev(\/?|$)/.test(directUrl);
-                                    if (valid && directUrl) {
+                                    if (isE2bUrl(directUrl)) {
                                       window.open(directUrl, '_blank');
                                       return;
                                     }
-                                    // Fallback: extract from message content
-                                    const urlMatch = message.content.match(/https:\/\/[^\s\)]+/);
-                                    if (urlMatch && /\.e2b\.dev(\/?|$)/.test(urlMatch[0])) {
-                                      window.open(urlMatch[0], '_blank');
+                                    // Fallback 1: extract from message content (only allow real e2b.dev)
+                                    const url = message.content.match(/https:\/\/[^\s\)]+/)?.[0];
+                                    if (isE2bUrl(url)) {
+                                      window.open(url, '_blank');
+                                      return;
                                     }
+                                    // Fallback 2: fetch latest status to get e2bUrl
+                                    if (message.eventId) {
+                                      try {
+                                        const res = await fetch(`/api/ai-workspace/status/${message.eventId}`, { cache: 'no-cache' });
+                                        if (res.ok) {
+                                          const status = await res.json();
+                                          const live = status?.e2bUrl as unknown;
+                                          if (isE2bUrl(live)) {
+                                            setE2bUrls(prev => ({ ...prev, [message.eventId!]: live }));
+                                            window.open(live, '_blank');
+                                            return;
+                                          }
+                                        }
+                                      } catch (e) {
+                                        console.error('Failed to fetch latest status for live URL', e);
+                                      }
+                                    }
+                                    alert('Live E2B URL not available yet. Please wait a few seconds and try again.');
                                   }}
                                   className="action-btn e2b-app"
                                   title="Open Live Model"
