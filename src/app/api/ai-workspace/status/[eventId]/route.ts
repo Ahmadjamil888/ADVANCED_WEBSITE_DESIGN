@@ -63,7 +63,7 @@ export async function GET(
       status.currentStage = 'Completed';
       status.accuracy = 0.94;
       status.trainingTime = '30 seconds';
-      status.e2bUrl = `https://fallback-${eventId.slice(-8)}.zehanxtech.com`;
+      status.e2bUrl = `/e2b-fallback/${eventId.slice(-8)}`;
       status.appUrl = status.e2bUrl;
       status.message = `🎉 **Your AI model is now LIVE!**
 
@@ -111,7 +111,7 @@ export async function PUT(
     status.progress = 100;
     status.accuracy = 0.91;
     status.trainingTime = 'timeout - completed';
-    status.e2bUrl = `https://fallback-${eventId.slice(-8)}.zehanxtech.com`;
+    status.e2bUrl = `/e2b-fallback/${eventId.slice(-8)}`;
     status.message = "Training completed successfully!";
     
     trainingStatus.set(eventId, status);
