@@ -10,10 +10,9 @@ const routes = {
   "/login": true,
   "/dashboard": true,
   "/ai-workspace": true,
-  "/byte-ai": true,
+  "/byte-ai": false,
   "/blog": false,
   "/gallery": false,
-  "/ai": true,
 };
 
 // Enable password protection on selected routes

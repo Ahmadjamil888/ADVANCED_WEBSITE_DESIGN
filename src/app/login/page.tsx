@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/ai')
+      router.push('/ai-workspace')
     }
   }, [user, router])
 

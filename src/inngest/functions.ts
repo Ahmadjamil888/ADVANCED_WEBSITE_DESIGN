@@ -1,4 +1,61 @@
 import { inngest } from "./client";
+import { createClient } from '@supabase/supabase-js';
+import { Database } from '@/lib/supabase';
+import { randomUUID } from 'crypto';
+
+type MessageRole = 'user' | 'assistant' | 'system';
+
+interface MessageMetadata {
+  deploymentUrl?: string;
+  downloadUrl?: string;
+  files?: string[];
+  type?: string;
+  modelType?: string;
+  baseModel?: string;
+}
+
+interface MessageInsert {
+  chat_id: string;
+  role: MessageRole;
+  content: string;
+  metadata?: MessageMetadata;
+  created_at?: string;
+}
+
+interface AIModelInsert {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string;
+  model_type: string;
+  framework: string;
+  base_model: string;
+  training_status: string;
+  model_config: {
+    input_shape: number[];
+    output_shape: number[];
+    architecture: string;
+  };
+  training_config: {
+    epochs: number;
+    batch_size: number;
+    learning_rate: number;
+    dataset: string;
+    training_time: string;
+  };
+  performance_metrics: Record<string, any>;
+  file_structure: {
+    model_path: string;
+    files: string[];
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+// Initialize Supabase client with proper typing
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // ============================================================================
 // TEST FUNCTION TO VERIFY INNGEST IS WORKING
@@ -49,49 +106,68 @@ export const generateModelCode = inngest.createFunction(
 
     // Step 1: Analyze Prompt and Detect Model Type
     const modelAnalysis = await step.run("analyze-prompt", async () => {
-      console.log(`📝 Analyzing prompt: ${prompt}`);
+      console.log("🔍 Analyzing prompt to determine model type...");
       
+      // Get previous messages for context using Supabase
+      const { data: previousMessages, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('chat_id', chatId)
+        .order('created_at', { ascending: false })
+        .limit(5) as { data: Array<{ role: string; content: string }> | null, error: any };
+
+      if (error) {
+        console.error('Error fetching messages:', error);
+        throw new Error('Failed to fetch chat history');
+      }
+
+      // Prepare messages for the AI
+      const messages = [
+        {
+          role: "system" as const,
+          content: `You are an expert AI model architect. Analyze the following user prompt and determine the best type of machine learning model to build.`,
+        },
+        ...(previousMessages || []).reverse().map((msg) => ({
+          role: msg.role.toLowerCase() as "user" | "assistant",
+          content: msg.content,
+        })),
+        { role: "user" as const, content: prompt },
+      ];
+
+      // Analyze the prompt directly in this step
       const lowerPrompt = prompt.toLowerCase();
       
-      if (lowerPrompt.includes('sentiment') || lowerPrompt.includes('emotion') || lowerPrompt.includes('feeling')) {
+      // Simple prompt analysis to determine model type
+      if (lowerPrompt.includes('sentiment') || lowerPrompt.includes('emotion')) {
         return {
-          type: 'text-classification',
-          task: 'Sentiment Analysis',
-          baseModel: 'cardiffnlp/twitter-roberta-base-sentiment-latest',
-          dataset: 'imdb',
-          kaggleDataset: 'lakshmi25npathi/imdb-dataset-of-50k-movie-reviews',
-          hfDataset: 'imdb',
-          response: "Perfect! I'll build you a sentiment analysis model using RoBERTa. Great for analyzing customer feedback and social media!"
-        };
-      } else if (lowerPrompt.includes('image') || lowerPrompt.includes('photo') || lowerPrompt.includes('picture')) {
-        return {
-          type: 'image-classification',
-          task: 'Image Classification',
-          baseModel: 'google/vit-base-patch16-224',
-          dataset: 'cifar10',
-          kaggleDataset: 'c/cifar-10',
-          hfDataset: 'cifar10',
-          response: "Awesome! Building an image classification model with Vision Transformer!"
-        };
-      } else if (lowerPrompt.includes('text') || lowerPrompt.includes('classify') || lowerPrompt.includes('category')) {
-        return {
-          type: 'text-classification',
-          task: 'Text Classification',
+          task: 'sentiment-analysis',
+          type: 'nlp',
           baseModel: 'distilbert-base-uncased',
-          dataset: 'ag_news',
-          kaggleDataset: 'amananandrai/ag-news-classification-dataset',
-          hfDataset: 'ag_news',
-          response: "I'll create a text classification model using DistilBERT - fast and accurate!"
+          response: 'I\'ll create a sentiment analysis model for your task.',
+          dataset: 'imdb',
+          kaggleDataset: null,
+          hfDataset: 'imdb'
+        };
+      } else if (lowerPrompt.includes('image') || lowerPrompt.includes('photo')) {
+        return {
+          task: 'image-classification',
+          type: 'cv',
+          baseModel: 'resnet-50',
+          response: 'I\'ll create an image classification model for your task.',
+          dataset: 'cifar10',
+          kaggleDataset: 'cifar-10',
+          hfDataset: 'cifar10'
         };
       } else {
+        // Default to text classification
         return {
-          type: 'text-classification',
-          task: 'Custom AI Model',
+          task: 'text-classification',
+          type: 'nlp',
           baseModel: 'distilbert-base-uncased',
-          dataset: 'custom',
-          kaggleDataset: null as string | null,
-          hfDataset: null as string | null,
-          response: "I'll create a custom AI model tailored to your specific needs!"
+          response: 'I\'ll create a text classification model for your task.',
+          dataset: 'ag_news',
+          kaggleDataset: null,
+          hfDataset: 'ag_news'
         };
       }
     });
@@ -167,7 +243,7 @@ export const generateModelCode = inngest.createFunction(
       console.log(`🐍 Generating complete ML pipeline code`);
       
       const files = {
-        'main.py': generateFastAPIApp(modelAnalysis, datasetSelection),
+        'app.py': generateFastAPIApp(modelAnalysis, datasetSelection),
         'train.py': generateE2BTrainingScript(modelAnalysis, datasetSelection),
         'model.py': generateModelArchitecture(modelAnalysis),
         'dataset.py': generateDatasetLoader(modelAnalysis, datasetSelection),
@@ -385,6 +461,81 @@ export const generateModelCode = inngest.createFunction(
     const e2bDeployment = await step.run("finalize-deployment", async () => {
       console.log(`🚀 Finalizing deployment for ${modelAnalysis.task}`);
       
+      // Save the generated code and configuration to Supabase with proper typing
+      // Create message data with proper typing
+      const messageData = {
+        chat_id: chatId,
+        role: 'assistant',
+        content: `I've generated the model code for ${modelAnalysis.task}. Starting training process...`,
+        metadata: {
+          type: 'ai_model',
+          modelType: modelAnalysis.type,
+          baseModel: modelAnalysis.baseModel,
+          files: Object.keys(codeGeneration.files || {})
+        },
+        created_at: new Date().toISOString()
+      };
+
+      // Use type assertion to match the expected database types
+      const { error: messageError } = await supabase
+        .from('messages')
+        .insert([messageData] as unknown as any);
+
+      if (messageError) {
+        console.error('Error saving message:', messageError);
+        throw new Error('Failed to save model generation message');
+      }
+
+      // Save model metadata to Supabase with proper typing
+      const modelId = crypto.randomUUID();
+      const modelMetrics = {
+        accuracy: e2bTraining.finalAccuracy,
+        loss: e2bTraining.finalLoss,
+        epochs: e2bTraining.epochs || 10,
+        training_time: e2bTraining.trainingTime
+      };
+
+      // Create model data with proper typing for Supabase
+      const modelData = {
+        id: modelId,
+        user_id: userId,
+        name: String(modelAnalysis.task),
+        description: `AI model for ${modelAnalysis.task}`,
+        model_type: String(modelAnalysis.type),
+        framework: "pytorch",
+        base_model: String(modelAnalysis.baseModel),
+        training_status: "completed",
+        model_config: {
+          input_shape: [1],
+          output_shape: [1],
+          architecture: "CustomModel"
+        } as const,
+        training_config: {
+          epochs: e2bTraining.epochs || 10,
+          batch_size: 32,
+          learning_rate: 0.001,
+          dataset: datasetSelection.name,
+          training_time: e2bTraining.trainingTime
+        } as const,
+        performance_metrics: modelMetrics,
+        file_structure: {
+          model_path: `models/${modelId}.pth`,
+          files: Object.keys(codeGeneration.files || {})
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Insert the model data into Supabase
+      const { error: modelSaveError } = await supabase
+        .from('ai_models')
+        .insert([modelData] as any); // Type assertion to handle Supabase types
+
+      if (modelSaveError) {
+        console.error('Error saving model metadata:', modelSaveError);
+        throw new Error('Failed to save model metadata');
+      }
+
       // Create download package
       const downloadPackage = {
         files: codeGeneration.files,
@@ -406,6 +557,60 @@ export const generateModelCode = inngest.createFunction(
       // Store the package for download (in a real implementation, you'd save this to a database or file storage)
       console.log(`📦 Created download package with ${Object.keys(codeGeneration.files).length} files`);
       
+      // Save the deployment information to Supabase with proper typing
+      const deploymentMessage: Database['public']['Tables']['messages']['Insert'] = {
+        id: randomUUID(),
+        chat_id: modelId, // Using modelId as chat_id if no specific chatId is available
+        role: 'assistant',
+        content: `Model deployment completed successfully. ${cleanResponse}`,
+        metadata: {
+          deploymentUrl: e2bTraining.e2bUrl,
+          downloadUrl: e2bTraining.e2bUrl,
+          files: Object.keys(codeGeneration.files || {}),
+          modelType: modelAnalysis?.type,
+          baseModel: modelAnalysis?.baseModel,
+          modelId: modelId,
+          type: modelAnalysis?.type
+        },
+        created_at: new Date().toISOString()
+      };
+
+      // Create a properly typed message object for the messages table
+      const messageToInsert = {
+        id: randomUUID(),
+        chat_id: modelId,
+        role: 'assistant',
+        content: `Model deployment completed successfully. ${cleanResponse}`,
+        metadata: {
+          deploymentUrl: e2bTraining.e2bUrl,
+          downloadUrl: e2bTraining.e2bUrl,
+          files: Object.keys(codeGeneration.files || {}),
+          modelType: modelAnalysis?.type,
+          baseModel: modelAnalysis?.baseModel,
+          modelId: modelId,
+          type: modelAnalysis?.type
+        },
+        created_at: new Date().toISOString()
+      };
+
+      // Insert the deployment message into the messages table
+      // Using type assertion to bypass TypeScript's strict type checking for Supabase
+      const { error: deploymentError } = await (supabase as any)
+        .from('messages')
+        .insert([{
+          id: messageToInsert.id,
+          chat_id: messageToInsert.chat_id,
+          role: messageToInsert.role,
+          content: messageToInsert.content,
+          metadata: messageToInsert.metadata,
+          created_at: messageToInsert.created_at
+        }]);
+
+      if (deploymentError) {
+        console.error('Error saving deployment info:', deploymentError);
+        throw new Error('Failed to save deployment information');
+      }
+
       return {
         success: true,
         e2bUrl: e2bTraining.e2bUrl,
@@ -445,21 +650,24 @@ export const generateModelCode = inngest.createFunction(
       console.log('⚠️ Failed to update status with real E2B URL:', updateErr);
     }
 
-    // Generate completion message
-    const completionMessage = `🎉 **Your ${modelAnalysis.task} model is now LIVE!**
+    // Clean up the response message by removing emojis and formatting
+    const cleanResponse = modelAnalysis.response.replace(/\*\*\*/g, '').replace(/[🚀📊💬🌐]/g, '');
+    
+    // Generate completion message with clean formatting
+    const completionMessage = `Your ${modelAnalysis.task} model is now LIVE!
 
-${modelAnalysis.response}
+${cleanResponse}
 
-**🌐 Live E2B App**: ${e2bDeployment.e2bUrl}
+Live E2B App: ${e2bDeployment.e2bUrl}
 
-**📊 Training Results:**
-- **Accuracy**: ${(e2bTraining.finalAccuracy * 100).toFixed(1)}%
-- **Training Time**: ${e2bTraining.trainingTime}
-- **GPU Usage**: ${e2bTraining.gpuUsage}
-- **Status**: 🟢 Live in E2B Sandbox
+Training Results:
+- Accuracy: ${(e2bTraining.finalAccuracy * 100).toFixed(1)}%
+- Training Time: ${e2bTraining.trainingTime}
+- GPU Usage: ${e2bTraining.gpuUsage}
+- Status: Live in E2B Sandbox
 
-**💬 What's next?**
-1. **🚀 Test your model** → Click the E2B link above
+What's next?
+1. Test your model: Click the E2B link above
 2. **📁 Download files** → Get complete source code
 3. **💬 Ask questions** → I can explain or modify anything!
 
@@ -956,7 +1164,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 # Enhanced model with real-time confidence visualization
-print("🚀 Loading enhanced ${modelConfig?.task || 'AI'} model...")
+print("🚀 Loading enhanced ${modelConfig.task} model...")
 
 # Your enhanced model code here with new features
 # This would include the improvements requested by the user
@@ -971,7 +1179,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import wandb  # Added experiment tracking
 
 # Enhanced training with better performance
-print("🏋️ Starting improved training for ${modelConfig?.task || 'AI model'}...")
+print("🏋️ Starting improved training for ${modelConfig.task}...")
 
 # Your improved training code here
 `;
@@ -2293,7 +2501,7 @@ class E2BTrainer:
             callbacks=[EarlyStoppingCallback(early_stopping_patience=2)]
         )
         
-        # Train model
+        # Run training
         logger.info("🏋️ Training model...")
         train_result = trainer.train()
         
@@ -2303,15 +2511,31 @@ class E2BTrainer:
         
         # Save model
         logger.info("💾 Saving trained model...")
-        os.makedirs('./trained_model', exist_ok=True)
-        trainer.save_model('./trained_model')
-        self.tokenizer.save_pretrained('./trained_model')
-        # Also save as classic PyTorch state dict (.pth)
+        model_save_dir = './trained_model'
+        os.makedirs(model_save_dir, exist_ok=True)
+        
+        # Save model and tokenizer
+        trainer.save_model(model_save_dir)
+        self.tokenizer.save_pretrained(model_save_dir)
+        
+        # Save as PyTorch .pth file
         try:
             import torch
-            torch.save(self.model.state_dict(), './trained_model/model.pth')
+            model_path = os.path.join(model_save_dir, 'model.pth')
+            torch.save({
+                'model_state_dict': self.model.state_dict(),
+                'training_args': training_args,
+                'model_config': self.model.config.to_dict()
+            }, model_path)
+            logger.info(f"✅ Model saved as {model_path}")
+            
+            # Also save the model architecture
+            with open(os.path.join(model_save_dir, 'model_architecture.txt'), 'w') as f:
+                f.write(str(self.model))
+                
         except Exception as e:
-            logger.warning(f"⚠️ Failed to save model.pth: {e}")
+            logger.error(f"❌ Failed to save model.pth: {e}")
+            raise
         
         # Save training info
         training_info = {

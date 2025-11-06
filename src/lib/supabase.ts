@@ -1,15 +1,58 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
-
 export type Database = {
   public: {
     Tables: {
+      messages: {
+        Row: {
+          id: string
+          chat_id: string
+          role: string
+          content: string
+          metadata?: {
+            deploymentUrl?: string
+            downloadUrl?: string
+            files?: string[]
+            type?: string
+            modelType?: string
+            baseModel?: string
+            modelId?: string
+          } | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          chat_id: string
+          role: string
+          content: string
+          metadata?: {
+            deploymentUrl?: string
+            downloadUrl?: string
+            files?: string[]
+            type?: string
+            modelType?: string
+            baseModel?: string
+            modelId?: string
+          } | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          chat_id?: string
+          role?: string
+          content?: string
+          metadata?: {
+            deploymentUrl?: string
+            downloadUrl?: string
+            files?: string[]
+            type?: string
+            modelType?: string
+            baseModel?: string
+            modelId?: string
+          } | null
+          created_at?: string
+        }
+      }
       users: {
         Row: {
           id: string
@@ -110,3 +153,22 @@ export type Database = {
     }
   }
 }
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+
+export const supabase = (() => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Missing Supabase URL or Anon Key')
+    return null
+  }
+  
+  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    db: {
+      schema: 'public'
+    },
+    auth: {
+      persistSession: true
+    }
+  })
+})()
