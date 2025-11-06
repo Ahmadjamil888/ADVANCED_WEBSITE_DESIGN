@@ -1,5 +1,5 @@
 // IMPORTANT: Replace with your own domain address - it's used for SEO in meta tags and schema
-const baseURL = "https://zehanxtech.vercel.app/";
+const baseURL = "https://zehanxtech.com/";
 
 const routes = {
   "/": true,
@@ -10,8 +10,10 @@ const routes = {
   "/login": true,
   "/dashboard": true,
   "/ai-workspace": true,
+  "/byte-ai": true,
   "/blog": false,
   "/gallery": false,
+  "/ai": true,
 };
 
 // Enable password protection on selected routes
@@ -44,9 +46,9 @@ const font = {
 
 const style = {
   theme: "dark", // theme is not necessary when using ThemeProvider (default)
-  neutral: "gray", // sand | gray | slate
-  brand: "cyan", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-  accent: "red", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+  neutral: "slate", // sand | gray | slate
+  brand: "violet", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+  accent: "violet", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
   solid: "contrast", // color | contrast
   solidStyle: "flat", // flat | plastic
   border: "playful", // rounded | playful | conservative

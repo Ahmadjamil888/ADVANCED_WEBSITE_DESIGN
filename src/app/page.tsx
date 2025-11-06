@@ -118,7 +118,7 @@ export default function Home() {
           </RevealFx>
           <RevealFx translateY="4" fillWidth horizontal="start" paddingBottom="16" className="mobile-text-center">
             <Heading wrap="balance" variant="display-strong-l" className="mobile-display-sm">
-              World's first AI that generates other AI
+              World's first multi agent platform
             </Heading>
           </RevealFx>
           <RevealFx translateY="8" delay={0.2} fillWidth horizontal="start" paddingBottom="32" className="mobile-text-center">

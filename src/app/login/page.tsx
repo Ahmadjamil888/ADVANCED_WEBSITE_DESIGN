@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/ai-workspace')
+      router.push('/ai')
     }
   }, [user, router])
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/ai-workspace`
+        redirectTo: `${window.location.origin}/ai`
       }
     })
     if (error) alert(error.message)
