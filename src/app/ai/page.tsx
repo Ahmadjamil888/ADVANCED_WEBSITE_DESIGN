@@ -33,7 +33,7 @@ export default function AISelectionPage() {
 
         <Flex gap="16" wrap horizontal="center">
           <Card>
-            <Column gap="m" padding="16" minWidth="280">
+            <Column gap="m" padding="16" minWidth={280}>
               <Heading as="h2" variant="heading-default-m">Byte AI</Heading>
               <Text onBackground="neutral-weak">
                 Build AI-powered web apps in a sandbox. This opens the Byte‑AI (vibe) experience.
@@ -45,7 +45,7 @@ export default function AISelectionPage() {
           </Card>
 
           <Card>
-            <Column gap="m" padding="16" minWidth="280">
+            <Column gap="m" padding="16" minWidth={280}>
               <Heading as="h2" variant="heading-default-m">Zeh‑AI</Heading>
               <Text onBackground="neutral-weak">
                 Create and manage your own AI models in the AI workspace.
