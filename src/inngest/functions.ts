@@ -36,7 +36,7 @@ export interface ModelConfig {
 // ----------------------------------------------------------------------------
 // Prompt analysis -> pick task/base model/dataset
 // ----------------------------------------------------------------------------
-function analyzePrompt(prompt: string): ModelConfig {
+export function analyzePrompt(prompt: string): ModelConfig {
   const p = (prompt || '').toLowerCase();
 
   // Computer Vision
@@ -167,6 +167,23 @@ export function genTrainPy(cfg: ModelConfig): string {
 export function genFastAPIPy(cfg: ModelConfig): string {
   // For simplicity serve a text-classification API; extend as needed per task
   return `# FastAPI inference server\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\nfrom transformers import pipeline\nimport uvicorn, os\n\napp = FastAPI(title='${cfg.task}')\nclf = None\n\nclass Req(BaseModel):\n    text: str\n\n@app.on_event('startup')\nasync def load():\n    global clf\n    if os.path.exists('./trained_model'):\n        try:\n            clf = pipeline('text-classification', model='./trained_model')\n        except Exception:\n            clf = pipeline('text-classification', model='${cfg.baseModel}')\n    else:\n        clf = pipeline('text-classification', model='${cfg.baseModel}')\n\n@app.post('/predict')\nasync def predict(r: Req):\n    res = clf(r.text)[0]\n    return {'prediction': res['label'], 'confidence': float(res['score'])}\n\nif __name__ == '__main__':\n    uvicorn.run('main:app', host='0.0.0.0', port=8000)\n`;
+}
+
+// ----------------------------------------------------------------------------
+// Compatibility helpers for routes importing these utilities
+// ----------------------------------------------------------------------------
+export async function handleFollowUpConversation(input: { prompt: string; context?: any }) {
+  const lower = (input.prompt || '').toLowerCase();
+  let intent: 'feature_addition' | 'code_modification' | 'explanation' | 'optimization' | 'general' = 'general';
+  if (/(add|include|feature)/.test(lower)) intent = 'feature_addition';
+  else if (/(change|modify|edit)/.test(lower)) intent = 'code_modification';
+  else if (/(explain|how|why)/.test(lower)) intent = 'explanation';
+  else if (/(improve|optimize|better)/.test(lower)) intent = 'optimization';
+  return { intent, message: `Handled follow-up intent: ${intent}` };
+}
+
+export async function findDataset(cfg: ModelConfig): Promise<{ name: string; source: string; url: string | null }> {
+  return selectDataset(cfg);
 }
 
 // ----------------------------------------------------------------------------
