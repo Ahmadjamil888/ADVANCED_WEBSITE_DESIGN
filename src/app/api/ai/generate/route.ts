@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         total: 7 
       });
 
-      const sandbox = await Sandbox.create('python3');
+      const sandbox = await Sandbox.create();
       await sandbox.setTimeout(1800000); // 30 minutes
       const sandboxId = sandbox.sandboxId;
 

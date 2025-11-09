@@ -5,8 +5,11 @@ import { ModelSelector } from './components/ModelSelector';
 import { SandboxPreview } from './components/SandboxPreview';
 import { ChatMessage } from './components/ChatMessage';
 import { StatusIndicator } from './components/StatusIndicator';
+import { ThemeToggle } from './components/ThemeToggle';
+import { SignOutButton } from './components/SignOutButton';
 import { DEFAULT_MODEL } from '@/lib/ai/models';
 import styles from './page.module.css';
+import './theme.css';
 
 interface Message {
   id: string;
@@ -170,6 +173,8 @@ export default function AIWorkspacePage() {
               </span>
             )}
           </div>
+          <ThemeToggle />
+          <SignOutButton />
         </div>
       </div>
 

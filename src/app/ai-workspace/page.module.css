@@ -2,12 +2,12 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #030712;
+  background-color: var(--bg-primary);
 }
 
 .header {
-  background-color: #111827;
-  border-bottom: 1px solid #1f2937;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
@@ -23,7 +23,7 @@
 .title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
 }
 
 .headerRight {
@@ -34,7 +34,7 @@
 
 .sandboxInfo {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--text-muted);
   font-family: 'Courier New', monospace;
 }
 
@@ -48,7 +48,7 @@
   width: 50%;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #1f2937;
+  border-right: 1px solid var(--border-color);
 }
 
 .messagesContainer {
@@ -89,25 +89,25 @@
 .emptyTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .emptyDescription {
-  color: #9ca3af;
+  color: var(--text-muted);
   margin-bottom: 1.5rem;
 }
 
 .examplesContainer {
   text-align: left;
-  background-color: #111827;
+  background-color: var(--bg-secondary);
   border-radius: 0.5rem;
   padding: 1rem;
 }
 
 .examplesLabel {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-disabled);
   margin-bottom: 0.5rem;
 }
 
@@ -115,8 +115,8 @@
   width: 100%;
   text-align: left;
   padding: 0.5rem 0.75rem;
-  background-color: #1f2937;
-  color: #d1d5db;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -126,7 +126,7 @@
 }
 
 .exampleButton:hover {
-  background-color: #374151;
+  background-color: var(--bg-hover);
 }
 
 .exampleButton:last-child {
@@ -134,7 +134,7 @@
 }
 
 .inputContainer {
-  border-top: 1px solid #1f2937;
+  border-top: 1px solid var(--border-color);
   padding: 1rem;
 }
 
@@ -145,8 +145,8 @@
 
 .input {
   flex: 1;
-  background-color: #1f2937;
-  color: white;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
   border: none;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
@@ -155,7 +155,7 @@
 }
 
 .input:focus {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
@@ -166,7 +166,7 @@
 
 .submitButton {
   padding: 0.75rem 1.5rem;
-  background-color: #2563eb;
+  background-color: var(--accent-primary);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -179,11 +179,11 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background-color: var(--accent-hover);
 }
 
 .submitButton:disabled {
-  background-color: #374151;
+  background-color: var(--bg-hover);
   cursor: not-allowed;
 }
 
@@ -209,7 +209,7 @@
 
 .sandboxPanel {
   width: 50%;
-  background-color: #111827;
+  background-color: var(--bg-secondary);
 }
 
 /* Scrollbar styling */
@@ -218,14 +218,14 @@
 }
 
 .messagesContainer::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: var(--bg-tertiary);
 }
 
 .messagesContainer::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: var(--bg-hover);
   border-radius: 4px;
 }
 
 .messagesContainer::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: var(--text-disabled);
 }

@@ -41,7 +41,7 @@ You are an AI assistant that generates complete Python code for training and dep
 - Training configuration
 
 ## Output Format:
-You MUST wrap each file in XML-style tags:
+You MUST wrap each file in XML-style tags. CRITICAL: Use exact format below!
 
 <file path="requirements.txt">
 torch==2.1.0
@@ -57,6 +57,12 @@ import torch
 from fastapi import FastAPI
 # Complete API code here
 </file>
+
+IMPORTANT: 
+- Always close tags properly: </file>
+- Do NOT use partial tags like <file path="requirements"> - MUST be <file path="requirements.txt">
+- Do NOT nest </file> tags
+- Each file MUST have its own complete <file path="...">...</file> block
 
 ## Code Requirements:
 - ✅ Complete, runnable code (no placeholders like "# TODO" or "# Add code here")
