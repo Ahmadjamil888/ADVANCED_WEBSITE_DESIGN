@@ -225,17 +225,43 @@ export async function POST(req: NextRequest) {
 
 function parseFilesFromResponse(response: string): Record<string, string> {
   const files: Record<string, string> = {};
-  const fileRegex = /<file path="([^"]+)">([\s\S]*?)<\/file>/g;
   
+  // Try standard XML format first
+  const fileRegex = /<file path="([^"]+)">([\s\S]*?)<\/file>/g;
   let match;
   while ((match = fileRegex.exec(response)) !== null) {
-    const [, path, content] = match;
+    let [, path, content] = match;
+    // Fix common mistakes: add .txt if missing for requirements
+    if (path === 'requirements' || path === 'requirement') {
+      path = 'requirements.txt';
+    }
+    // Fix .py extension if missing
+    if ((path === 'train' || path === 'app') && !path.endsWith('.py')) {
+      path = path + '.py';
+    }
     files[path] = content.trim();
   }
 
-  // Fallback: try to extract code blocks
+  // Fallback 1: Try to find file markers in text
   if (Object.keys(files).length === 0) {
-    const codeBlockRegex = /```(?:python|txt)?\n([\s\S]*?)```/g;
+    const patterns = [
+      { name: 'requirements.txt', regex: /<file path="requirements?"[^>]*>([\s\S]*?)(?:<\/file>|$)/i },
+      { name: 'config.json', regex: /<file path="config\.json"[^>]*>([\s\S]*?)(?:<\/file>|$)/i },
+      { name: 'train.py', regex: /<file path="train\.py"[^>]*>([\s\S]*?)(?:<\/file>|$)/i },
+      { name: 'app.py', regex: /<file path="app\.py"[^>]*>([\s\S]*?)(?:<\/file>|$)/i },
+    ];
+
+    for (const pattern of patterns) {
+      const match = response.match(pattern.regex);
+      if (match) {
+        files[pattern.name] = match[1].trim();
+      }
+    }
+  }
+
+  // Fallback 2: Extract code blocks
+  if (Object.keys(files).length === 0) {
+    const codeBlockRegex = /```(?:python|json|txt)?\n([\s\S]*?)```/g;
     let blockIndex = 0;
     const fileNames = ['requirements.txt', 'train.py', 'app.py', 'config.json'];
     

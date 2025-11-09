@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ModelSelector } from './components/ModelSelector';
-import { SandboxPreview } from './components/SandboxPreview';
+import { RightPanel } from './components/RightPanel';
 import { ChatMessage } from './components/ChatMessage';
 import { StatusIndicator } from './components/StatusIndicator';
 import { ThemeToggle } from './components/ThemeToggle';
@@ -34,6 +34,7 @@ export default function AIWorkspacePage() {
   const [sandboxUrl, setSandboxUrl] = useState<string>();
   const [sandboxId, setSandboxId] = useState<string>();
   const [streamingContent, setStreamingContent] = useState('');
+  const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -45,6 +46,27 @@ export default function AIWorkspacePage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, currentStatus, streamingContent]);
+
+  // Parse files from AI response in real-time
+  const parseFilesFromContent = (content: string): Record<string, string> => {
+    const files: Record<string, string> = {};
+    const fileRegex = /<file path="([^"]+)">([\s\S]*?)(?:<\/file>|$)/g;
+    let match;
+    
+    while ((match = fileRegex.exec(content)) !== null) {
+      let [, path, fileContent] = match;
+      // Fix common mistakes
+      if (path === 'requirements' || path === 'requirement') {
+        path = 'requirements.txt';
+      }
+      if ((path === 'train' || path === 'app') && !path.endsWith('.py')) {
+        path = path + '.py';
+      }
+      files[path] = fileContent.trim();
+    }
+    
+    return files;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +102,8 @@ export default function AIWorkspacePage() {
       if (!reader) throw new Error('No reader available');
 
       let fullResponse = '';
-      let generatedFiles: string[] = [];
+      let filesList: string[] = [];
+      let filesContent: Record<string, string> = {};
 
       while (true) {
         const { done, value } = await reader.read();
@@ -106,10 +129,15 @@ export default function AIWorkspacePage() {
               case 'ai-stream':
                 fullResponse += data.data.content;
                 setStreamingContent(fullResponse);
+                // Parse files from streaming content in real-time
+                const parsedFiles = parseFilesFromContent(fullResponse);
+                if (Object.keys(parsedFiles).length > 0) {
+                  setGeneratedFiles(parsedFiles);
+                }
                 break;
 
               case 'files':
-                generatedFiles = data.data.files;
+                filesList = data.data.files;
                 break;
 
               case 'sandbox':
@@ -289,9 +317,14 @@ export default function AIWorkspacePage() {
           </div>
         </div>
 
-        {/* Right Side - Sandbox Preview */}
+        {/* Right Side - Code & Sandbox Panel */}
         <div className={styles.sandboxPanel}>
-          <SandboxPreview sandboxUrl={sandboxUrl} sandboxId={sandboxId} />
+          <RightPanel 
+            files={generatedFiles} 
+            sandboxUrl={sandboxUrl} 
+            sandboxId={sandboxId}
+            isGenerating={isGenerating}
+          />
         </div>
       </div>
     </div>
