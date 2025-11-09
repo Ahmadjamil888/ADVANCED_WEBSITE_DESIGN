@@ -96,7 +96,7 @@ Your frontend is **100% ready** and properly configured!
 
 ## 🧪 Test on Your Site
 
-### Visit: https://zehanxtec.com/ai-workspace
+### Visit: https://zehanxtech.com/ai-workspace
 
 ### Try this prompt:
 ```
@@ -228,7 +228,7 @@ When your app runs:
 
 Your frontend is ready. Just test on your live site:
 
-1. Go to: https://zehanxtec.com/ai-workspace
+1. Go to: https://zehanxtech.com/ai-workspace
 2. Enter a prompt
 3. Watch it work!
 

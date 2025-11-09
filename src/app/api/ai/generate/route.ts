@@ -225,8 +225,11 @@ export async function POST(req: NextRequest) {
       });
 
     } catch (error: any) {
+      console.error('❌ API Route Error:', error);
+      console.error('Error stack:', error.stack);
       await sendUpdate('error', { 
-        message: error.message || 'An unexpected error occurred' 
+        message: `Error: ${error.message || 'An unexpected error occurred'}`,
+        details: error.stack
       });
     } finally {
       await writer.close();

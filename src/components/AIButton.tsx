@@ -2,7 +2,7 @@ import React from 'react';
 
 export const AIButton: React.FC = () => {
   const handleClick = () => {
-    window.open('/ai-workspace', '_self');
+    window.open('/login', '_self');
   };
 
   return (
