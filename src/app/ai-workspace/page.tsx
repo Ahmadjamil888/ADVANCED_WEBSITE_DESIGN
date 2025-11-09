@@ -33,7 +33,6 @@ export default function AIWorkspacePage() {
   const [currentStatus, setCurrentStatus] = useState<Status | null>(null);
   const [sandboxUrl, setSandboxUrl] = useState<string>();
   const [sandboxId, setSandboxId] = useState<string>();
-  const [streamingContent, setStreamingContent] = useState('');
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,7 +44,7 @@ export default function AIWorkspacePage() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, currentStatus, streamingContent]);
+  }, [messages, currentStatus]);
 
   // Parse files from AI response in real-time
   const parseFilesFromContent = (content: string): Record<string, string> => {
@@ -81,7 +80,6 @@ export default function AIWorkspacePage() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsGenerating(true);
-    setStreamingContent('');
     setCurrentStatus(null);
 
     try {
@@ -128,8 +126,7 @@ export default function AIWorkspacePage() {
 
               case 'ai-stream':
                 fullResponse += data.data.content;
-                setStreamingContent(fullResponse);
-                // Parse files from streaming content in real-time
+                // DON'T show code in chat - only parse files for Code tab
                 const parsedFiles = parseFilesFromContent(fullResponse);
                 if (Object.keys(parsedFiles).length > 0) {
                   setGeneratedFiles(parsedFiles);
@@ -162,7 +159,6 @@ export default function AIWorkspacePage() {
                   files: data.data.files,
                 };
                 setMessages(prev => [...prev, assistantMessage]);
-                setStreamingContent('');
                 break;
 
               case 'error':
@@ -263,13 +259,6 @@ export default function AIWorkspacePage() {
               />
             ))}
 
-            {streamingContent && (
-              <ChatMessage
-                role="assistant"
-                content={streamingContent}
-                isStreaming={true}
-              />
-            )}
 
             {currentStatus && (
               <StatusIndicator
