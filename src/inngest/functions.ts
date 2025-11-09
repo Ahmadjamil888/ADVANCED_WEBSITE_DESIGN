@@ -4,6 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase";
 // E2B sandbox SDK (JS/TS v2)
 import { Sandbox, SandboxInfo } from "@e2b/code-interpreter";
+import { getSandbox } from "./utils";
+import { SANDBOX_TIMEOUT } from "./types";
 
 // ---------------------------------------------------------------------------
 // Supabase setup
@@ -437,9 +439,8 @@ export const generateModelCode = inngest.createFunction(
     });
     const cfg: ModelConfig = { ...analysis, dataset: dataset.name, epochs: 3, batchSize: 16 };
 
-    // Step 3: Create E2B sandbox
-    const secure = process.env.E2B_SECURE === "false" ? false : true;
-    const sandboxHandle = await step.run("e2b-create-sandbox", async () => {
+    // Step 3: Create E2B sandbox (using vibe project pattern)
+    const sandboxId = await step.run("e2b-create-sandbox", async () => {
       if (chatId) {
         await (supabase.from as any)("messages").insert({
           chat_id: chatId,
@@ -447,11 +448,11 @@ export const generateModelCode = inngest.createFunction(
           content: `⚡ **Step 3/7**: Creating E2B sandbox environment...\n\nSetting up isolated Python environment with GPU acceleration for training.`,
         } as any);
       }
-      const sb = await Sandbox.create({ secure, timeoutMs: 600000 }); // 10 min timeout
-      return sb;
+      // Create sandbox with custom template (like vibe uses "vibe-nextjs-ajay-test")
+      const sandbox = await Sandbox.create("python3");
+      await sandbox.setTimeout(SANDBOX_TIMEOUT);
+      return sandbox.sandboxId;
     });
-
-    const sandboxId = (sandboxHandle as any).sandboxId || (sandboxHandle as any).id;
 
     // Step 4: Generate complete training code
     const trainingCode = generateTrainingCode(cfg);
@@ -476,11 +477,12 @@ export const generateModelCode = inngest.createFunction(
           content: `📝 **Step 5/7**: Writing files to sandbox...\n\n✅ requirements.txt\n✅ train.py\n✅ app.py (FastAPI server)\n✅ model_config.json`,
         } as any);
       }
-      // E2B v2 API: write files individually
-      await (sandboxHandle as any).files.write("/workspace/requirements.txt", genRequirements());
-      await (sandboxHandle as any).files.write("/workspace/train.py", trainingCode);
-      await (sandboxHandle as any).files.write("/workspace/app.py", deploymentCode);
-      await (sandboxHandle as any).files.write("/workspace/model_config.json", JSON.stringify(cfg, null, 2));
+      // E2B v2 API: write files individually (vibe project pattern)
+      const sandbox = await getSandbox(sandboxId);
+      await sandbox.files.write("/workspace/requirements.txt", genRequirements());
+      await sandbox.files.write("/workspace/train.py", trainingCode);
+      await sandbox.files.write("/workspace/app.py", deploymentCode);
+      await sandbox.files.write("/workspace/model_config.json", JSON.stringify(cfg, null, 2));
       return true;
     });
 
@@ -493,9 +495,9 @@ export const generateModelCode = inngest.createFunction(
           content: `📦 **Step 6/7**: Installing dependencies...\n\nInstalling PyTorch, Transformers, FastAPI, and other required packages. This may take 2-3 minutes...`,
         } as any);
       }
-      const result = await (sandboxHandle as any).commands.run(
-        "cd /workspace && pip install -r requirements.txt",
-        { timeout: 300000 } // 5 min timeout
+      const sandbox = await getSandbox(sandboxId);
+      const result = await sandbox.commands.run(
+        "cd /workspace && pip install -r requirements.txt"
       );
       console.log(`[${sandboxId}] Dependencies installed:`, result.stdout);
       return { success: true, output: result.stdout };
@@ -510,10 +512,10 @@ export const generateModelCode = inngest.createFunction(
           content: `🏋️ **Step 7/7**: Training your model...\n\n⚡ Loading **${cfg.baseModel}** base model\n📊 Training on **${cfg.dataset}** dataset\n🔥 Running for **${cfg.epochs}** epochs\n\nThis will take 3-5 minutes. Training in progress...`,
         } as any);
       }
-      const result = await (sandboxHandle as any).commands.run(
+      const sandbox = await getSandbox(sandboxId);
+      const result = await sandbox.commands.run(
         "cd /workspace && python train.py",
         { 
-          timeout: 600000, // 10 min timeout
           onStdout: (data: string) => console.log(`[${sandboxId}] Training:`, data),
           onStderr: (data: string) => console.error(`[${sandboxId}] Error:`, data),
         }
@@ -528,7 +530,8 @@ export const generateModelCode = inngest.createFunction(
     // Step 8: Start FastAPI server in background
     const deploymentUrl = await step.run("e2b-deploy-api", async () => {
       // Start FastAPI server in background
-      const command = await (sandboxHandle as any).commands.run(
+      const sandbox = await getSandbox(sandboxId);
+      const command = await sandbox.commands.run(
         "cd /workspace && python -m uvicorn app:app --host 0.0.0.0 --port 8000",
         {
           background: true,
@@ -539,8 +542,9 @@ export const generateModelCode = inngest.createFunction(
       // Wait for server to start
       await step.sleep("wait-for-server", "5s");
 
-      // Get the public URL
-      const url = `https://${sandboxId}.e2b.dev`;
+      // Get the public URL (vibe project pattern)
+      const host = sandbox.getHost(8000);
+      const url = `http://${host}`;
       return url;
     });
 

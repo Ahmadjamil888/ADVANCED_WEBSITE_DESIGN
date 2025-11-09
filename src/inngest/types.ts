@@ -1,4 +1,5 @@
-export const SANDBOX_TIMEOUT = 60_000 * 10 * 3; // 30 minutes
+// 30 minutes timeout (same as vibe project)
+export const SANDBOX_TIMEOUT = 60_000 * 30; // 30 minutes
 export const MODEL_TRAINING_TIMEOUT = 60_000 * 30; // 30 minutes
 export const MAX_TRAINING_STEPS = 1000;
 
