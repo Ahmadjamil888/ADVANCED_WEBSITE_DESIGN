@@ -24,6 +24,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "classnames": "^2.5.1",
     "cookie": "^1.0.2",
+    "dotenv": "^17.2.3",
     "e2b": "^2.6.3",
     "gray-matter": "^4.0.3",
     "jszip": "^3.10.1",

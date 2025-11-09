@@ -29,6 +29,15 @@ export async function POST(req: NextRequest) {
     try {
       const { prompt, modelKey, chatId, userId } = await req.json();
 
+      // Check E2B API key
+      if (!process.env.E2B_API_KEY) {
+        await sendUpdate('error', { 
+          message: '❌ E2B_API_KEY not found in environment variables. Please add it to .env.local' 
+        });
+        await writer.close();
+        return;
+      }
+
       // Get model config
       const model = AI_MODELS[modelKey];
       if (!model) {
@@ -89,11 +98,28 @@ export async function POST(req: NextRequest) {
         total: 7 
       });
 
-      const e2b = new E2BManager();
-      await e2b.createSandbox();
-      const sandboxId = e2b.getSandboxId();
-
-      await sendUpdate('sandbox', { sandboxId });
+      let e2b: E2BManager;
+      let sandboxId: string | null;
+      
+      try {
+        e2b = new E2BManager();
+        await e2b.createSandbox();
+        sandboxId = e2b.getSandboxId();
+        
+        if (!sandboxId) {
+          throw new Error('Failed to get sandbox ID');
+        }
+        
+        await sendUpdate('sandbox', { sandboxId });
+        console.log('✅ E2B Sandbox created:', sandboxId);
+      } catch (error: any) {
+        console.error('❌ E2B Sandbox creation failed:', error);
+        await sendUpdate('error', { 
+          message: `Failed to create E2B sandbox: ${error.message}. Please check your E2B_API_KEY.` 
+        });
+        await writer.close();
+        return;
+      }
 
       // Step 4: Write files to sandbox
       await sendUpdate('status', { 
@@ -102,9 +128,19 @@ export async function POST(req: NextRequest) {
         total: 7 
       });
 
-      await e2b.writeFiles(files);
-      for (const path of Object.keys(files)) {
-        await sendUpdate('file-written', { path });
+      try {
+        await e2b.writeFiles(files);
+        for (const path of Object.keys(files)) {
+          await sendUpdate('file-written', { path });
+          console.log('✅ File written:', path);
+        }
+      } catch (error: any) {
+        console.error('❌ File writing failed:', error);
+        await sendUpdate('error', { 
+          message: `Failed to write files: ${error.message}` 
+        });
+        await writer.close();
+        return;
       }
 
       // Step 5: Install dependencies
