@@ -59,7 +59,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/ai`
+        redirectTo: `${window.location.origin}/ai-workspace`
       }
     })
     if (error) alert(error.message)

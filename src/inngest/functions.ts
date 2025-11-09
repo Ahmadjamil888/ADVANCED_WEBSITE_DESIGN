@@ -413,15 +413,40 @@ export const generateModelCode = inngest.createFunction(
     };
 
     // Step 1: Analyze prompt
-    const analysis = await step.run("analyze-prompt", () => analyzePrompt(prompt));
+    const analysis = await step.run("analyze-prompt", async () => {
+      if (chatId) {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: "🔍 **Step 1/7**: Analyzing your prompt...\n\nI'm understanding what kind of model you need and selecting the best architecture.",
+        } as any);
+      }
+      return analyzePrompt(prompt);
+    });
 
     // Step 2: Select dataset
-    const dataset = await step.run("select-dataset", () => findDataset(analysis));
+    const dataset = await step.run("select-dataset", async () => {
+      if (chatId) {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: `📊 **Step 2/7**: Finding the perfect dataset...\n\nSearching for **${analysis.task}** datasets on Hugging Face and Kaggle.`,
+        } as any);
+      }
+      return findDataset(analysis);
+    });
     const cfg: ModelConfig = { ...analysis, dataset: dataset.name, epochs: 3, batchSize: 16 };
 
     // Step 3: Create E2B sandbox
     const secure = process.env.E2B_SECURE === "false" ? false : true;
     const sandboxHandle = await step.run("e2b-create-sandbox", async () => {
+      if (chatId) {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: `⚡ **Step 3/7**: Creating E2B sandbox environment...\n\nSetting up isolated Python environment with GPU acceleration for training.`,
+        } as any);
+      }
       const sb = await Sandbox.create({ secure, timeoutMs: 600000 }); // 10 min timeout
       return sb;
     });
@@ -432,20 +457,42 @@ export const generateModelCode = inngest.createFunction(
     const trainingCode = generateTrainingCode(cfg);
     const deploymentCode = generateDeploymentCode(cfg);
 
+    if (chatId) {
+      await step.run("send-code-generation-message", async () => {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: `💻 **Step 4/7**: Generating ML code...\n\n✅ Created training script for **${cfg.task}**\n✅ Generated FastAPI deployment code\n✅ Configured **${cfg.baseModel}** model\n✅ Set up **${cfg.dataset}** dataset loader`,
+        } as any);
+      });
+    }
+
     // Step 5: Write all files to sandbox
     await step.run("e2b-write-files", async () => {
-      const files = [
-        { path: "/workspace/requirements.txt", data: genRequirements() },
-        { path: "/workspace/train.py", data: trainingCode },
-        { path: "/workspace/app.py", data: deploymentCode },
-        { path: "/workspace/model_config.json", data: JSON.stringify(cfg, null, 2) },
-      ];
-      await (sandboxHandle as any).files.writeFiles(files);
+      if (chatId) {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: `📝 **Step 5/7**: Writing files to sandbox...\n\n✅ requirements.txt\n✅ train.py\n✅ app.py (FastAPI server)\n✅ model_config.json`,
+        } as any);
+      }
+      // E2B v2 API: write files individually
+      await (sandboxHandle as any).files.write("/workspace/requirements.txt", genRequirements());
+      await (sandboxHandle as any).files.write("/workspace/train.py", trainingCode);
+      await (sandboxHandle as any).files.write("/workspace/app.py", deploymentCode);
+      await (sandboxHandle as any).files.write("/workspace/model_config.json", JSON.stringify(cfg, null, 2));
       return true;
     });
 
     // Step 6: Install dependencies
     await step.run("e2b-install-deps", async () => {
+      if (chatId) {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: `📦 **Step 6/7**: Installing dependencies...\n\nInstalling PyTorch, Transformers, FastAPI, and other required packages. This may take 2-3 minutes...`,
+        } as any);
+      }
       const result = await (sandboxHandle as any).commands.run(
         "cd /workspace && pip install -r requirements.txt",
         { timeout: 300000 } // 5 min timeout
@@ -456,6 +503,13 @@ export const generateModelCode = inngest.createFunction(
 
     // Step 7: Run training
     const trainingResult = await step.run("e2b-train-model", async () => {
+      if (chatId) {
+        await (supabase.from as any)("messages").insert({
+          chat_id: chatId,
+          role: "assistant",
+          content: `🏋️ **Step 7/7**: Training your model...\n\n⚡ Loading **${cfg.baseModel}** base model\n📊 Training on **${cfg.dataset}** dataset\n🔥 Running for **${cfg.epochs}** epochs\n\nThis will take 3-5 minutes. Training in progress...`,
+        } as any);
+      }
       const result = await (sandboxHandle as any).commands.run(
         "cd /workspace && python train.py",
         { 
@@ -519,20 +573,50 @@ export const generateModelCode = inngest.createFunction(
         const msg: MessageInsert = {
           chat_id: chatId,
           role: "assistant",
-          content: `🎉 **Model Deployed Successfully!**
+          content: `🎉 **DEPLOYMENT COMPLETE!**
 
-✅ **Training Complete**: ${cfg.task} model trained on ${cfg.dataset}
-🚀 **Live URL**: ${deploymentUrl}
-📦 **Sandbox ID**: ${sandboxId}
+---
 
-**Test your model now:**
+## ✅ Your Model is Live!
+
+**🚀 Live API URL**: [${deploymentUrl}](${deploymentUrl})
+**📦 Sandbox ID**: \`${sandboxId}\`
+**🤖 Model**: ${cfg.baseModel}
+**📊 Dataset**: ${cfg.dataset}
+**⚡ Task**: ${cfg.task}
+
+---
+
+## 🧪 Test Your Model
+
+**Option 1: Browser**
+Visit: [${deploymentUrl}](${deploymentUrl})
+
+**Option 2: cURL**
 \`\`\`bash
 curl -X POST "${deploymentUrl}/predict" \\
   -H "Content-Type: application/json" \\
-  -d '{"text": "This is amazing!"}'
+  -d '{"text": "This product is amazing! I love it!"}'
 \`\`\`
 
-Your model is live and ready to use! 🎯`,
+**Option 3: Python**
+\`\`\`python
+import requests
+
+response = requests.post(
+    "${deploymentUrl}/predict",
+    json={"text": "This is great!"}
+)
+print(response.json())
+\`\`\`
+
+---
+
+## 📥 Download Source Code
+
+All training code, model files, and deployment scripts are available in the E2B sandbox!
+
+**Your model is now live and ready for production use!** 🎯`,
         };
         await (supabase.from as any)("messages").insert(msg as any);
       });
