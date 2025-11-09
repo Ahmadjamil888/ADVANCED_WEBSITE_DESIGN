@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Sandbox } from '@e2b/code-interpreter';
+import { E2BManager } from '@/lib/e2b';
 import { AIClient } from '@/lib/ai/client';
 import { AI_MODELS } from '@/lib/ai/models';
 import { CODE_AGENT_SYSTEM_PROMPT } from '@/lib/ai/prompts';
 import { createClient } from '@supabase/supabase-js';
+import { db } from '@/lib/db';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -88,9 +89,9 @@ export async function POST(req: NextRequest) {
         total: 7 
       });
 
-      const sandbox = await Sandbox.create();
-      await sandbox.setTimeout(1800000); // 30 minutes
-      const sandboxId = sandbox.sandboxId;
+      const e2b = new E2BManager();
+      await e2b.createSandbox();
+      const sandboxId = e2b.getSandboxId();
 
       await sendUpdate('sandbox', { sandboxId });
 
@@ -101,8 +102,8 @@ export async function POST(req: NextRequest) {
         total: 7 
       });
 
-      for (const [path, content] of Object.entries(files)) {
-        await sandbox.files.write(`/home/user/${path}`, content);
+      await e2b.writeFiles(files);
+      for (const path of Object.keys(files)) {
         await sendUpdate('file-written', { path });
       }
 
@@ -114,15 +115,13 @@ export async function POST(req: NextRequest) {
           total: 7 
         });
 
-        const installResult = await sandbox.commands.run(
-          'cd /home/user && pip install -r requirements.txt',
-          {
-            onStdout: async (data) => {
-              await sendUpdate('terminal', { output: data, type: 'stdout' });
-            },
-            onStderr: async (data) => {
-              await sendUpdate('terminal', { output: data, type: 'stderr' });
-            },
+        const installResult = await e2b.runCommand(
+          'pip install -r /home/user/requirements.txt',
+          async (data: string) => {
+            await sendUpdate('terminal', { output: data, type: 'stdout' });
+          },
+          async (data: string) => {
+            await sendUpdate('terminal', { output: data, type: 'stderr' });
           }
         );
 
@@ -141,15 +140,13 @@ export async function POST(req: NextRequest) {
           total: 7 
         });
 
-        const trainResult = await sandbox.commands.run(
-          'cd /home/user && python train.py',
-          {
-            onStdout: async (data) => {
-              await sendUpdate('training', { output: data });
-            },
-            onStderr: async (data) => {
-              await sendUpdate('training', { output: data, isError: true });
-            },
+        const trainResult = await e2b.runCommand(
+          'python /home/user/train.py',
+          async (data: string) => {
+            await sendUpdate('training', { output: data });
+          },
+          async (data: string) => {
+            await sendUpdate('training', { output: data, isError: true });
           }
         );
 
@@ -169,21 +166,7 @@ export async function POST(req: NextRequest) {
           total: 7 
         });
 
-        await sandbox.commands.run(
-          'cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port 8000',
-          {
-            background: true,
-            onStdout: async (data) => {
-              await sendUpdate('deployment', { output: data });
-            },
-          }
-        );
-
-        // Wait for server to start
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        const host = sandbox.getHost(8000);
-        deploymentUrl = `http://${host}`;
+        deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000);
 
         await sendUpdate('deployment-url', { url: deploymentUrl });
       }
