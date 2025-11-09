@@ -1,3 +1,5 @@
+import './animations.css';
+
 export default function AIWorkspaceLayout({
   children,
 }: {
@@ -11,7 +13,7 @@ export default function AIWorkspaceLayout({
       right: 0,
       bottom: 0,
       zIndex: 9999,
-      backgroundColor: 'white'
+      backgroundColor: '#030712'
     }}>
       {children}
     </div>
