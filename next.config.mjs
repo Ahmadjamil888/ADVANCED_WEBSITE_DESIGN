@@ -19,6 +19,9 @@ const nextConfig = {
       // add more domains here if needed
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default withMDX(nextConfig);

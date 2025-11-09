@@ -116,7 +116,7 @@ export default function AIWorkspace() {
   const [e2bUrls, setE2bUrls] = useState<Record<string, string>>({});
   
   // New states for enhanced features
-  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [thinkingState, setThinkingState] = useState<{
     isThinking: boolean;
     stage: 'thinking' | 'analyzing' | 'generating' | 'training' | 'completed';
@@ -162,7 +162,6 @@ export default function AIWorkspace() {
           
           const completionMessage: Message = {
             id: `completion-${eventId}`,
-            chat_id: currentChat?.id || '',
             role: 'assistant',
             content: `🎉 **Amazing! Your AI model is now LIVE!** 
 
@@ -182,8 +181,6 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
 4. **🔧 Request changes** → Want to modify the model? Just ask!
 
 **Want me to explain how any part works or make some improvements? I'm here to help!** 💡`,
-            model_used: null,
-            metadata: null,
             created_at: new Date().toISOString(),
             eventId: eventId
           };
@@ -227,12 +224,9 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
                 if (liveUrl) setE2bUrls(prev => ({ ...prev, [eventId]: liveUrl! }));
                 const completionMessage: Message = {
                   id: `completion-${eventId}`,
-            chat_id: currentChat?.id || '',
                   role: 'assistant',
                   content: `🎉 **Amazing! Your AI model is now LIVE!** \n\n${forced.message || `I've successfully built and deployed your sentiment analysis model! It achieved ${Math.round((forced.accuracy || 0.91) * 100)}% accuracy during training.`}\n\n${liveUrl ? `**🌐 Your Live Model**: ${liveUrl}\n\n` : ''}**📊 Training Results:**\n- **Accuracy**: ${Math.round((forced.accuracy || 0.91) * 100)}% ⚡\n- **Training Time**: ${forced.trainingTime || 'timeout - completed'} \n- **Status**: 🟢 ${liveUrl ? 'Live in E2B Sandbox' : 'Completed'}\n- **GPU Acceleration**: ✅ NVIDIA T4`,
-                  model_used: null,
-            metadata: null,
-            created_at: new Date().toISOString(),
+                  created_at: new Date().toISOString(),
                   eventId: eventId
                 };
                 setMessages(prev => {
@@ -261,11 +255,8 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
           setThinkingState(prev => ({ ...prev, isThinking: false }));
           const completionMessage: Message = {
             id: `completion-${eventId}`,
-            chat_id: currentChat?.id || '',
             role: 'assistant',
             content: `🎉 **Amazing! Your AI model is now LIVE!** \n\n**📊 Training Results:**\n- **Accuracy**: 91% ⚡\n- **Training Time**: timeout - completed\n- **Status**: 🟢 Completed\n- **GPU Acceleration**: ✅ NVIDIA T4`,
-            model_used: null,
-            metadata: null,
             created_at: new Date().toISOString(),
             eventId: eventId
           };
@@ -293,7 +284,6 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
         
         const progressMessage: Message = {
           id: `progress-${eventId}-${attempts}`,
-          chat_id: currentChat?.id || '',
           role: 'assistant',
           content: `🔄 **BERT Training in Progress** (${currentProgress}%)
 
@@ -307,9 +297,7 @@ ${liveUrl ? '1. **🚀 Test your model** → Click the link above to interact wi
 📊 **Target Accuracy**: 94%+
 
 Training your BERT model on customer review data...`,
-          model_used: null,
-            metadata: null,
-            created_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
           eventId: eventId
         };
         
@@ -383,9 +371,9 @@ Training your BERT model on customer review data...`,
     if (!mounted) return;
 
     // If we have a user, load chats immediately
-    if (user) {
+    if (user && supabase) {
       console.log('AI Workspace: User authenticated, loading chats');
-      loadChatsData();
+      loadChats();
       return;
     }
 
@@ -394,46 +382,59 @@ Training your BERT model on customer review data...`,
       console.log('AI Workspace: No user found, redirecting to login');
       router.replace("/login");
     }
-  }, [user, loading, router, mounted]);
+  }, [user, loading, router, mounted, supabase]);
 
-  // Add escape key handler to exit full-screen if needed
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && e.ctrlKey) {
-        router.push('/');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [router]);
-
-  const loadChatsData = async () => {
-    if (!user) return;
+  const loadChats = async () => {
+    if (!supabase || !user) return;
 
     try {
-      const data = await loadChats(user.id);
-      setChats(data);
+      const { data, error } = await supabase
+        .from('chats')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
+
+      if (data && !error) {
+        setChats(data);
+      }
     } catch (err) {
       console.error('Error loading chats:', err);
     }
   };
 
-  const loadMessagesData = async (chatId: string) => {
+  const loadMessages = async (chatId: string) => {
+    if (!supabase) return;
+
     try {
-      const data = await loadMessages(chatId);
-      setMessages(data as Message[]);
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('chat_id', chatId)
+        .order('created_at', { ascending: true });
+
+      if (data && !error) {
+        setMessages(data);
+      }
     } catch (err) {
       console.error('Error loading messages:', err);
     }
   };
 
-  const createNewChatHandler = async () => {
-    if (!user) return;
+  const createNewChat = async () => {
+    if (!supabase || !user) return;
 
     try {
-      const data = await createNewChat(user.id);
-      if (data) {
+      const { data, error } = await supabase
+        .from('chats')
+        .insert({
+          user_id: user.id,
+          title: 'New Chat',
+          mode: 'models'
+        })
+        .select()
+        .single();
+
+      if (data && !error) {
         setChats(prev => [data, ...prev]);
         setCurrentChat(data);
         setMessages([]);
@@ -444,17 +445,23 @@ Training your BERT model on customer review data...`,
     }
   };
 
-  const deleteChatHandler = async (chatId: string, e?: React.MouseEvent) => {
+  const deleteChat = async (chatId: string, e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
 
-    if (!user) return;
+    if (!supabase || !user) return;
 
     try {
-      const success = await deleteChat(chatId);
-      if (success) {
+      await supabase.from('messages').delete().eq('chat_id', chatId);
+      const { error: chatError } = await supabase
+        .from('chats')
+        .delete()
+        .eq('id', chatId)
+        .eq('user_id', user.id);
+
+      if (!chatError) {
         setChats(prev => prev.filter(chat => chat.id !== chatId));
         if (currentChat?.id === chatId) {
           setCurrentChat(null);
@@ -572,15 +579,14 @@ Training your BERT model on customer review data...`,
     let currentStageMessage: Message | null = null;
 
     for (let i = 0; i < stages.length; i++) {
-    const stage = stages[i];
-    setDeploymentStage(stage.name);
-    
-    // Create or update stage message
-    const stageMessage: Message = {
-      id: `stage-${eventId}`,
-      chat_id: currentChat?.id || '',
-      role: 'assistant',
-      content: `**🔄 AI MODEL PIPELINE - STEP ${i + 1}/${stages.length}**
+      const stage = stages[i];
+      setDeploymentStage(stage.name);
+      
+      // Create or update stage message
+      const stageMessage: Message = {
+        id: `stage-${eventId}`,
+        role: 'assistant',
+        content: `**🔄 AI MODEL PIPELINE - STEP ${i + 1}/${stages.length}**
 
 **${stage.name}**
 
@@ -594,34 +600,31 @@ ${stage.description}
 ⏳ **Estimated Time**: ${Math.ceil(stage.duration / 1000)} seconds
 
 *Please keep this page open while your model is being created and trained...*`,
-      model_used: null,
-      metadata: null,
-      created_at: new Date().toISOString(),
-      eventId: eventId
-    };
+        created_at: new Date().toISOString(),
+        eventId: eventId
+      };
 
-    if (currentStageMessage) {
-      // Update existing message
-      setMessages(prev => prev.map(msg => 
-        msg.id === `stage-${eventId}` ? stageMessage : msg
-      ));
-    } else {
-      // Add new message
-      setMessages(prev => [...prev, stageMessage]);
-      currentStageMessage = stageMessage;
-    }
+      if (currentStageMessage) {
+        // Update existing message
+        setMessages(prev => prev.map(msg => 
+          msg.id === `stage-${eventId}` ? stageMessage : msg
+        ));
+      } else {
+        // Add new message
+        setMessages(prev => [...prev, stageMessage]);
+        currentStageMessage = stageMessage;
+      }
 
-    // Show intermediate progress updates during longer stages
-    if (stage.duration > 5000) {
-      const progressUpdates = Math.floor(stage.duration / 3000);
-      for (let j = 1; j <= progressUpdates; j++) {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        
-        const progressMessage: Message = {
-          id: `stage-${eventId}`,
-          chat_id: currentChat?.id || '',
-          role: 'assistant',
-          content: `**🔄 AI MODEL PIPELINE - STEP ${i + 1}/${stages.length}**
+      // Show intermediate progress updates during longer stages
+      if (stage.duration > 5000) {
+        const progressUpdates = Math.floor(stage.duration / 3000);
+        for (let j = 1; j <= progressUpdates; j++) {
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+          const progressMessage: Message = {
+            id: `stage-${eventId}`,
+            role: 'assistant',
+            content: `**🔄 AI MODEL PIPELINE - STEP ${i + 1}/${stages.length}**
 
 **${stage.name}**
 
@@ -635,15 +638,13 @@ ${stage.description}
 ⏳ **Time Remaining**: ~${Math.ceil((stage.duration - (j * 3000)) / 1000)} seconds
 
 *Please keep this page open while your model is being created and trained...*`,
-          model_used: null,
-          metadata: null,
-          created_at: new Date().toISOString(),
-          eventId: eventId
-        };
+            created_at: new Date().toISOString(),
+            eventId: eventId
+          };
 
-        setMessages(prev => prev.map(msg => 
-          msg.id === `stage-${eventId}` ? progressMessage : msg
-        ));
+          setMessages(prev => prev.map(msg => 
+            msg.id === `stage-${eventId}` ? progressMessage : msg
+          ));
         }
       } else {
         await new Promise(resolve => setTimeout(resolve, stage.duration));
@@ -690,7 +691,6 @@ ${stage.description}
               const progressPercent = Math.round(statusData.progress || (attempts / maxAttempts) * 100);
               const progressMessage: Message = {
                 id: `progress-${eventId}-${attempts}`,
-                chat_id: currentChat?.id || '',
                 role: 'assistant',
                 content: `🔄 **Fast Training in Progress** (${progressPercent}%)
 
@@ -702,8 +702,6 @@ ${stage.description}
 🎯 **Target**: High accuracy with minimal training time
 
 Please wait while your model is being trained...`,
-                model_used: null,
-                metadata: null,
                 created_at: new Date().toISOString(),
                 eventId: eventId
               };
@@ -735,15 +733,14 @@ Please wait while your model is being trained...`,
       
       if (deployData && deployData.success) {
         // Store model info in database
-        if (user) {
-          await saveAIModel({
+        if (supabase && user) {
+          await supabase.from('ai_models').insert({
             user_id: user.id,
             name: modelConfig?.task || 'AI Model',
             description: originalPrompt,
             model_type: modelConfig?.type || 'text-classification',
             framework: 'pytorch',
             base_model: modelConfig?.baseModel,
-            dataset_source: 'huggingface',
             dataset_name: modelConfig?.dataset,
             training_status: 'completed',
             huggingface_repo: deployData.spaceName,
@@ -782,7 +779,6 @@ Please wait while your model is being trained...`,
 
         const completionMessage: Message = {
           id: `completion-${eventId}`,
-            chat_id: currentChat?.id || '',
           role: 'assistant',
           content: deployData.message || `🎉 **Lightning Fast Training Complete!** 
 
@@ -808,9 +804,7 @@ Your AI model is now **LIVE** and ready to use! ⚡
 3. **Customize** → Tell me what to change!
 
 Your model achieved excellent accuracy in record time! Want to try it out? 🚀`,
-          model_used: null,
-            metadata: null,
-            created_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
           eventId: eventId
         };
         
@@ -819,8 +813,8 @@ Your model achieved excellent accuracy in record time! Want to try it out? 🚀`
         // Mark model as completed and ready for download
         setCompletedModels(prev => new Set(prev).add(eventId));
 
-        if (currentChat) {
-          await insertMessage({
+        if (supabase && currentChat) {
+          await supabase.from('messages').insert({
             chat_id: currentChat.id,
             role: 'assistant',
             content: completionMessage.content,
@@ -831,7 +825,6 @@ Your model achieved excellent accuracy in record time! Want to try it out? 🚀`
         // Handle deployment failure
         const errorMessage: Message = {
           id: `error-${eventId}`,
-          chat_id: currentChat?.id || '',
           role: 'assistant',
           content: `**DEPLOYMENT FAILED**
 
@@ -841,8 +834,6 @@ There was an issue deploying your model to HuggingFace Spaces.
 ${deployData?.error || 'Unknown deployment error'}
 
 Please try again or contact support if the issue persists.`,
-          model_used: null,
-          metadata: null,
           created_at: new Date().toISOString(),
           eventId: eventId
         };
@@ -854,7 +845,6 @@ Please try again or contact support if the issue persists.`,
       
       const errorMessage: Message = {
         id: `error-${eventId}`,
-        chat_id: currentChat?.id || '',
         role: 'assistant',
         content: `**DEPLOYMENT ERROR**
 
@@ -863,8 +853,6 @@ Failed to deploy model to HuggingFace Spaces.
 **Error:** ${error instanceof Error ? error.message : 'Unknown error'}
 
 Please try again or contact support.`,
-        model_used: null,
-        metadata: null,
         created_at: new Date().toISOString(),
         eventId: eventId
       };
@@ -881,18 +869,29 @@ Please try again or contact support.`,
   };
 
   const sendMessage = async (content: string) => {
-    if (!user || isLoading || !content.trim()) return;
+    if (!supabase || !user || isLoading || !content.trim()) return;
 
     let chatToUse = currentChat;
     if (!chatToUse) {
       try {
-        const newChatData = createChatObject(user.id, content.slice(0, 50) + (content.length > 50 ? '...' : ''), 'models');
-        const data = await createNewChat(user.id);
-        if (!data) throw new Error('Failed to create chat');
-        
-        chatToUse = data;
-        setChats(prev => [data, ...prev]);
-        setCurrentChat(data);
+        const { data, error } = await supabase
+          .from('chats')
+          .insert({
+            user_id: user.id,
+            title: content.slice(0, 50) + (content.length > 50 ? '...' : ''),
+            mode: 'models'
+          })
+          .select()
+          .single();
+
+        if (data && !error) {
+          chatToUse = data;
+          setChats(prev => [data, ...prev]);
+          setCurrentChat(data);
+        } else {
+          console.error('Error creating chat for message:', error);
+          return;
+        }
       } catch (error) {
         console.error('Error creating new chat:', error);
         return;
@@ -912,11 +911,8 @@ Please try again or contact support.`,
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      chat_id: activeChat.id,
       role: 'user',
       content,
-      model_used: null,
-      metadata: null,
       created_at: new Date().toISOString()
     };
     setMessages(prev => [...prev, userMessage]);
@@ -963,7 +959,7 @@ Please try again or contact support.`,
     setAiThoughts(generateThoughts(content));
 
     try {
-      await insertMessage({
+      await supabase.from('messages').insert({
         chat_id: activeChat.id,
         role: 'user',
         content
@@ -973,7 +969,6 @@ Please try again or contact support.`,
       const naturalResponse = generateNaturalResponse(content);
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        chat_id: activeChat.id,
         role: 'assistant',
         content: `${naturalResponse}
 
@@ -985,8 +980,6 @@ I'll build this step by step:
 5. 🚀 **Deploy** to live E2B environment for testing
 
 You'll get a live web app plus all the source code to download. Let's get started! 🎯`,
-        model_used: null,
-        metadata: null,
         created_at: new Date().toISOString(),
         eventId
       };
@@ -1005,17 +998,20 @@ You'll get a live web app plus all the source code to download. Let's get starte
       // Wait 6 seconds then start training
       setTimeout(() => {
         setThinkingState(prev => ({ ...prev, stage: 'training' }));
-        startTrainingProcess(eventId, content, activeChat.id, user.id);
+        startTrainingProcess(eventId, content, activeChat);
       }, 6000);
 
-      await insertMessage({
+      await supabase.from('messages').insert({
         chat_id: activeChat.id,
         role: 'assistant',
         content: naturalResponse,
         model_used: 'zehanx-ai-builder'
       });
 
-      await updateChat(activeChat.id, { updated_at: new Date().toISOString() });
+      await supabase
+        .from('chats')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', activeChat.id);
 
       // The training process is already started in the setTimeout above
       // No additional pipeline needed here
@@ -1024,11 +1020,8 @@ You'll get a live web app plus all the source code to download. Let's get starte
       console.error('Error sending message:', error);
       const errorMessage: Message = {
         id: (Date.now() + 2).toString(),
-        chat_id: activeChat.id,
         role: 'assistant',
         content: `Error: ${error.message}`,
-        model_used: null,
-        metadata: null,
         created_at: new Date().toISOString()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -1080,7 +1073,6 @@ You'll get a live web app plus all the source code to download. Let's get starte
 
             const completionMessage: Message = {
               id: `completion-${eventId}`,
-            chat_id: currentChat?.id || '',
               role: 'assistant',
               content: `🎉 **${data.model.name} - Ready & Deployed!**
 
@@ -1104,16 +1096,14 @@ Your AI model has been successfully generated and deployed to Hugging Face!
 ${deployData.modelType !== 'image-classification' ? '- ✅ Tokenizer Files' : '- ✅ Image Processor Config'}
 
 Your model is now accessible worldwide and ready for production use!`,
-              model_used: null,
-            metadata: null,
-            created_at: new Date().toISOString(),
+              created_at: new Date().toISOString(),
               eventId: eventId
             };
 
             setMessages(prev => [...prev, completionMessage]);
 
-            if (currentChat) {
-              await insertMessage({
+            if (supabase && currentChat) {
+              await supabase.from('messages').insert({
                 chat_id: currentChat.id,
                 role: 'assistant',
                 content: completionMessage.content,
@@ -1166,15 +1156,14 @@ Your model is now accessible worldwide and ready for production use!`,
       a.download = `ai-model-${eventId.slice(-8)}.zip`;
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
       // Show success message
       const successMessage: Message = {
-      id: `download-success-${Date.now()}`,
-      chat_id: currentChat?.id || '',
-      role: 'assistant',
-      content: `✅ **Download Complete!** 
+        id: `download-success-${Date.now()}`,
+        role: 'assistant',
+        content: `✅ **Download Complete!** 
 
 I've prepared your complete ML pipeline as a ZIP file. Here's what's included:
 
@@ -1196,34 +1185,41 @@ I've prepared your complete ML pipeline as a ZIP file. Here's what's included:
 3. Run: \`python app.py\`
 
 Need help setting it up or want to modify anything? Just ask! 💡`,
-      model_used: null,
-      metadata: null,
-      created_at: new Date().toISOString()
-    };
+        created_at: new Date().toISOString()
+      };
 
-    setMessages(prev => [...prev, successMessage]);
-    console.log('Download completed successfully');
-    
-  } catch (error) {
-    console.error('Download error:', error);
-    
-    const errorMessage: Message = {
-      id: `download-error-${Date.now()}`,
-      chat_id: currentChat?.id || '',
-      role: 'assistant',
-      content: `❌ **Download Failed**
+      setMessages(prev => [...prev, successMessage]);
+      console.log('Download completed successfully');
+      
+    } catch (error) {
+      console.error('Download error:', error);
+      
+      const errorMessage: Message = {
+        id: `download-error-${Date.now()}`,
+        role: 'assistant',
+        content: `❌ **Download Failed**
 
 Sorry, there was an issue downloading your files. Please try again or let me know if you need help!
 
 I can also explain how to set up the code manually if needed. 🛠️`,
-      model_used: null,
-      metadata: null,
-      created_at: new Date().toISOString()
-    };
-    
-    setMessages(prev => [...prev, errorMessage]);
-  }
+        created_at: new Date().toISOString()
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
+
+  // Add escape key handler to exit full-screen if needed
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && e.ctrlKey) {
+        router.push('/');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [router]);
 
   // Show loading only if we're still checking auth or not mounted
   if (!mounted || (loading && !user)) {
@@ -1271,7 +1267,7 @@ I can also explain how to set up the code manually if needed. 🛠️`,
     return null;
   }
 
-  if (false) {  // removed supabase check
+  if (!supabase) {
     return (
       <div style={{
         display: 'flex',
@@ -1838,7 +1834,7 @@ I can also explain how to set up the code manually if needed. 🛠️`,
         <div className="sidebar">
           {/* Sidebar Header */}
           <div className="sidebar-header">
-            <button onClick={createNewChatHandler} className="new-chat-btn">
+            <button onClick={createNewChat} className="new-chat-btn">
               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
@@ -1859,7 +1855,7 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                   className={`chat-item ${currentChat?.id === chat.id ? 'active' : ''}`}
                   onClick={() => {
                     setCurrentChat(chat);
-                    loadMessagesData(chat.id);
+                    loadMessages(chat.id);
                   }}
                 >
                   <div className="chat-content">
@@ -1869,7 +1865,7 @@ I can also explain how to set up the code manually if needed. 🛠️`,
                     <span className="chat-title">{chat.title}</span>
                   </div>
                   <button
-                    onClick={(e) => deleteChatHandler(chat.id, e)}
+                    onClick={(e) => deleteChat(chat.id, e)}
                     className="delete-btn"
                     title="Delete chat"
                   >

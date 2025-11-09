@@ -6,22 +6,17 @@ import {
   testFunction,
   generateModelCode,
   trainAIModel,
-  findDataset,
-  analyzePrompt,
   deployToE2B,
-  handleFollowUpConversation,
 } from "../../../inngest/functions";
 
 console.log("🔧 Registering Inngest functions...");
 
+// Only include actual Inngest functions (not helper functions like analyzePrompt and findDataset)
 const functions = [
   testFunction,                // test-function
-  generateModelCode,           // zehanx-ai-workspace-generate-model-code
-  analyzePrompt,               // zehanx-ai-workspace-analyze-prompt
-  findDataset,                 // find-dataset
-  trainAIModel,                // train-ai-model
-  deployToE2B,                 // zehanx-ai-workspace-deploy-e2b
-  handleFollowUpConversation,  // zehanx-ai-workspace-follow-up
+  generateModelCode,           // ai-workspace-generate-model
+  trainAIModel,                // ai-train-model
+  deployToE2B,                 // ai-deploy-e2b
 ];
 
 console.log("📋 Functions to register:", functions.map(f => f.id || f.name));

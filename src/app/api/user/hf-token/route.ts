@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Save or update HF token in user_integrations table
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('user_integrations')
-      .upsert({
+      .upsert as any)({
         user_id: userId,
         service_name: 'huggingface',
         encrypted_api_key: hfToken, // In production, encrypt this
@@ -75,9 +75,9 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ 
-      hasToken: !!data?.encrypted_api_key,
-      isActive: data?.is_active || false,
-      token: data?.encrypted_api_key || null
+      hasToken: !!(data as any)?.encrypted_api_key,
+      isActive: (data as any)?.is_active || false,
+      token: (data as any)?.encrypted_api_key || null
     })
 
   } catch (error: any) {

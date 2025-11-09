@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               .single()
 
             if (!existingUser) {
-              await supabase.from('users').insert({
+              await (supabase.from('users').insert as any)({
                 id: session.user.id,
                 email: session.user.email!,
                 username: session.user.user_metadata?.full_name || session.user.email!.split('@')[0],

@@ -8,10 +8,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
-    const { eventId } = params;
+    const { eventId } = await params;
 
     if (!eventId) {
       return NextResponse.json(
@@ -57,10 +57,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
-    const { eventId } = params;
+    const { eventId } = await params;
     const updates = await request.json();
 
     if (!eventId) {

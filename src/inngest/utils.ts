@@ -138,5 +138,3 @@ if __name__ == '__main__':
     print(f"Model saved to: {model_path}")
 `;
 }
-`;
-}

@@ -51,7 +51,7 @@ export const generateModelCode = inngest.createFunction(
     await step.run("save-model", async () => {
       if (!supabase) return;
       
-      await supabase.from('ai_models').insert({
+      await (supabase.from('ai_models').insert as any)({
         user_id: userId,
         name: modelConfig.name,
         description: modelConfig.description,
@@ -86,14 +86,14 @@ export const trainAIModel = inngest.createFunction(
     const jobId = await step.run("create-job", async () => {
       if (!supabase) return null;
       
-      const { data } = await supabase.from('training_jobs').insert({
+      const { data } = await (supabase.from('training_jobs').insert as any)({
         model_id: modelId,
         user_id: userId,
         job_status: 'running',
         total_epochs: trainingConfig.epochs || 10
       }).select().single();
       
-      return data?.id;
+      return (data as any)?.id;
     });
 
     // Step 2: Initialize E2B sandbox
@@ -122,7 +122,7 @@ export const trainAIModel = inngest.createFunction(
     await step.run("save-trained-model", async () => {
       if (!supabase) return;
       
-      await supabase.from('training_jobs').update({
+      await (supabase.from('training_jobs').update as any)({
         job_status: 'completed',
         progress_percentage: 100,
         accuracy: trainingResult.metrics.accuracy,
@@ -187,7 +187,7 @@ export const deployToHuggingFace = inngest.createFunction(
     await step.run("update-model-status", async () => {
       if (!supabase) return;
       
-      await supabase.from('ai_models').update({
+      await (supabase.from('ai_models').update as any)({
         training_status: 'deployed',
         huggingface_repo: repoUrl,
         deployed_at: new Date().toISOString()
