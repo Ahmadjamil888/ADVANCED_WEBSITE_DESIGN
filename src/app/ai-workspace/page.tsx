@@ -6,6 +6,7 @@ import { SandboxPreview } from './components/SandboxPreview';
 import { ChatMessage } from './components/ChatMessage';
 import { StatusIndicator } from './components/StatusIndicator';
 import { DEFAULT_MODEL } from '@/lib/ai/models';
+import styles from './page.module.css';
 
 interface Message {
   id: string;
@@ -154,17 +155,17 @@ export default function AIWorkspacePage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-950">
+    <div className={styles.container}>
       {/* Header */}
-      <div className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-white">AI Model Training Studio</h1>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>AI Model Training Studio</h1>
           <ModelSelector selectedModel={selectedModel} onModelChange={setSelectedModel} />
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-sm text-gray-400">
+        <div className={styles.headerRight}>
+          <div className={styles.sandboxInfo}>
             {sandboxId && (
-              <span className="font-mono">
+              <span>
                 Sandbox: {sandboxId.slice(0, 8)}...
               </span>
             )}
@@ -173,45 +174,45 @@ export default function AIWorkspacePage() {
       </div>
 
       {/* Main Content - Split View */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className={styles.mainContent}>
         {/* Left Sidebar - Chat */}
-        <div className="w-1/2 flex flex-col border-r border-gray-800">
+        <div className={styles.chatSidebar}>
           {/* Messages */}
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto px-6 py-6 space-y-4"
+            className={styles.messagesContainer}
           >
             {messages.length === 0 && (
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center max-w-md">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={styles.emptyState}>
+                <div className={styles.emptyContent}>
+                  <div className={styles.emptyIcon}>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">
+                  <h2 className={styles.emptyTitle}>
                     Start Training Your AI Model
                   </h2>
-                  <p className="text-gray-400 mb-6">
+                  <p className={styles.emptyDescription}>
                     Describe what you want to build, and I'll generate the code, train the model, and deploy it for you.
                   </p>
-                  <div className="text-left bg-gray-900 rounded-lg p-4 space-y-2">
-                    <div className="text-sm text-gray-500 mb-2">Try examples:</div>
+                  <div className={styles.examplesContainer}>
+                    <div className={styles.examplesLabel}>Try examples:</div>
                     <button
                       onClick={() => setInput('Create a sentiment analysis model using BERT for product reviews')}
-                      className="w-full text-left px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors"
+                      className={styles.exampleButton}
                     >
                       💬 Sentiment analysis with BERT
                     </button>
                     <button
                       onClick={() => setInput('Build an image classifier for cats vs dogs using ResNet')}
-                      className="w-full text-left px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors"
+                      className={styles.exampleButton}
                     >
                       🖼️ Image classification with ResNet
                     </button>
                     <button
                       onClick={() => setInput('Create a text generation model using GPT-2')}
-                      className="w-full text-left px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors"
+                      className={styles.exampleButton}
                     >
                       ✍️ Text generation with GPT-2
                     </button>
@@ -250,29 +251,29 @@ export default function AIWorkspacePage() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-gray-800 p-4">
-            <form onSubmit={handleSubmit} className="flex gap-2">
+          <div className={styles.inputContainer}>
+            <form onSubmit={handleSubmit} className={styles.inputForm}>
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Describe the AI model you want to train..."
                 disabled={isGenerating}
-                className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={styles.input}
               />
               <button
                 type="submit"
                 disabled={isGenerating || !input.trim()}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                className={styles.submitButton}
               >
                 {isGenerating ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className={styles.spinner} />
                     Generating...
                   </>
                 ) : (
                   <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                     Generate
@@ -284,7 +285,7 @@ export default function AIWorkspacePage() {
         </div>
 
         {/* Right Side - Sandbox Preview */}
-        <div className="w-1/2 bg-gray-900">
+        <div className={styles.sandboxPanel}>
           <SandboxPreview sandboxUrl={sandboxUrl} sandboxId={sandboxId} />
         </div>
       </div>

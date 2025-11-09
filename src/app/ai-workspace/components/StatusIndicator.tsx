@@ -1,5 +1,7 @@
 'use client';
 
+import styles from './StatusIndicator.module.css';
+
 interface StatusIndicatorProps {
   message: string;
   step?: number;
@@ -8,11 +10,11 @@ interface StatusIndicatorProps {
 }
 
 export function StatusIndicator({ message, step, total, type = 'info' }: StatusIndicatorProps) {
-  const colors = {
-    info: 'bg-blue-500',
-    success: 'bg-green-500',
-    error: 'bg-red-500',
-    warning: 'bg-yellow-500',
+  const iconStyles = {
+    info: styles.iconInfo,
+    success: styles.iconSuccess,
+    error: styles.iconError,
+    warning: styles.iconWarning,
   };
 
   const icons = {
@@ -39,24 +41,24 @@ export function StatusIndicator({ message, step, total, type = 'info' }: StatusI
   };
 
   return (
-    <div className="flex gap-3 mb-4 animate-fade-in">
-      <div className={`w-8 h-8 rounded-full ${colors[type]} flex items-center justify-center flex-shrink-0 text-white`}>
+    <div className={styles.container}>
+      <div className={`${styles.icon} ${iconStyles[type]}`}>
         {icons[type]}
       </div>
-      <div className="flex-1">
-        <div className="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-gray-300">{message}</p>
+      <div className={styles.content}>
+        <div className={styles.bubble}>
+          <div className={styles.header}>
+            <p className={styles.message}>{message}</p>
             {step && total && (
-              <span className="text-xs text-gray-500 font-mono">
+              <span className={styles.stepCounter}>
                 {step}/{total}
               </span>
             )}
           </div>
           {step && total && (
-            <div className="w-full bg-gray-700 rounded-full h-1.5 overflow-hidden">
+            <div className={styles.progressBar}>
               <div
-                className="bg-blue-500 h-full transition-all duration-500 ease-out"
+                className={styles.progressFill}
                 style={{ width: `${(step / total) * 100}%` }}
               />
             </div>

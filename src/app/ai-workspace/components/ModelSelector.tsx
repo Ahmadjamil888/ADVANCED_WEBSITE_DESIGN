@@ -2,6 +2,7 @@
 
 import { AI_MODELS } from '@/lib/ai/models';
 import { useState } from 'react';
+import styles from './ModelSelector.module.css';
 
 interface ModelSelectorProps {
   selectedModel: string;
@@ -14,17 +15,17 @@ export function ModelSelector({ selectedModel, onModelChange }: ModelSelectorPro
   const currentModel = AI_MODELS[selectedModel];
 
   return (
-    <div className="relative">
+    <div className={styles.container}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-colors"
+        className={styles.button}
       >
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="font-medium text-white">{currentModel.name}</span>
+        <div className={styles.modelInfo}>
+          <div className={styles.statusDot} />
+          <span className={styles.modelName}>{currentModel.name}</span>
         </div>
         <svg
-          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -36,12 +37,12 @@ export function ModelSelector({ selectedModel, onModelChange }: ModelSelectorPro
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-10"
+            className={styles.overlay}
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full mt-2 left-0 w-80 bg-gray-800 rounded-lg border border-gray-700 shadow-xl z-20 overflow-hidden">
-            <div className="p-2">
-              <div className="text-xs font-semibold text-gray-400 px-3 py-2">GROQ MODELS</div>
+          <div className={styles.dropdown}>
+            <div className={styles.dropdownContent}>
+              <div className={styles.categoryLabel}>GROQ MODELS</div>
               {Object.entries(AI_MODELS)
                 .filter(([, model]) => model.provider === 'groq')
                 .map(([key, model]) => (
@@ -51,18 +52,16 @@ export function ModelSelector({ selectedModel, onModelChange }: ModelSelectorPro
                       onModelChange(key);
                       setIsOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                      selectedModel === key
-                        ? 'bg-blue-600 text-white'
-                        : 'hover:bg-gray-700 text-gray-300'
+                    className={`${styles.modelOption} ${
+                      selectedModel === key ? styles.modelOptionSelected : ''
                     }`}
                   >
-                    <div className="font-medium">{model.name}</div>
-                    <div className="text-xs text-gray-400">{model.description}</div>
+                    <div className={styles.modelOptionName}>{model.name}</div>
+                    <div className={styles.modelOptionDescription}>{model.description}</div>
                   </button>
                 ))}
 
-              <div className="text-xs font-semibold text-gray-400 px-3 py-2 mt-2">GEMINI MODELS</div>
+              <div className={styles.categoryLabel}>GEMINI MODELS</div>
               {Object.entries(AI_MODELS)
                 .filter(([, model]) => model.provider === 'gemini')
                 .map(([key, model]) => (
@@ -72,18 +71,16 @@ export function ModelSelector({ selectedModel, onModelChange }: ModelSelectorPro
                       onModelChange(key);
                       setIsOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                      selectedModel === key
-                        ? 'bg-blue-600 text-white'
-                        : 'hover:bg-gray-700 text-gray-300'
+                    className={`${styles.modelOption} ${
+                      selectedModel === key ? styles.modelOptionSelected : ''
                     }`}
                   >
-                    <div className="font-medium">{model.name}</div>
-                    <div className="text-xs text-gray-400">{model.description}</div>
+                    <div className={styles.modelOptionName}>{model.name}</div>
+                    <div className={styles.modelOptionDescription}>{model.description}</div>
                   </button>
                 ))}
 
-              <div className="text-xs font-semibold text-gray-400 px-3 py-2 mt-2">DEEPSEEK MODELS</div>
+              <div className={styles.categoryLabel}>DEEPSEEK MODELS</div>
               {Object.entries(AI_MODELS)
                 .filter(([, model]) => model.provider === 'deepseek')
                 .map(([key, model]) => (
@@ -93,14 +90,12 @@ export function ModelSelector({ selectedModel, onModelChange }: ModelSelectorPro
                       onModelChange(key);
                       setIsOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                      selectedModel === key
-                        ? 'bg-blue-600 text-white'
-                        : 'hover:bg-gray-700 text-gray-300'
+                    className={`${styles.modelOption} ${
+                      selectedModel === key ? styles.modelOptionSelected : ''
                     }`}
                   >
-                    <div className="font-medium">{model.name}</div>
-                    <div className="text-xs text-gray-400">{model.description}</div>
+                    <div className={styles.modelOptionName}>{model.name}</div>
+                    <div className={styles.modelOptionDescription}>{model.description}</div>
                   </button>
                 ))}
             </div>
