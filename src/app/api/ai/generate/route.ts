@@ -151,24 +151,37 @@ export async function POST(req: NextRequest) {
           total: 7 
         });
 
-        const installResult = await e2b.runCommand(
-          'pip install -r /home/user/requirements.txt',
-          async (data: string) => {
-            await sendUpdate('terminal', { output: data, type: 'stdout' });
-          },
-          async (data: string) => {
-            await sendUpdate('terminal', { output: data, type: 'stderr' });
-          }
-        );
+        try {
+          const installResult = await e2b.runCommand(
+            'pip install -r /home/user/requirements.txt',
+            async (data: string) => {
+              await sendUpdate('terminal', { output: data, type: 'stdout' });
+            },
+            async (data: string) => {
+              await sendUpdate('terminal', { output: data, type: 'stderr' });
+            }
+          );
 
-        if (installResult.exitCode !== 0) {
-          await sendUpdate('warning', { 
-            message: 'Some dependencies failed to install, but continuing...' 
+          if (installResult.exitCode !== 0) {
+            console.warn('⚠️ Dependency installation had warnings, but continuing...');
+            await sendUpdate('warning', { 
+              message: 'Some dependencies had warnings, but continuing...' 
+            });
+          } else {
+            console.log('✅ Dependencies installed successfully');
+            await sendUpdate('status', { message: '✅ Dependencies installed' });
+          }
+        } catch (error: any) {
+          console.error('❌ Dependency installation failed:', error);
+          await sendUpdate('error', { 
+            message: `Dependency installation failed: ${error.message}` 
           });
+          await writer.close();
+          return;
         }
       }
 
-      // Step 6: Run training
+      // Step 6: Run training (optional - skip if no train.py)
       if (files['train.py']) {
         await sendUpdate('status', { 
           message: '🏋️ Training model... This may take a few minutes.', 
@@ -176,20 +189,36 @@ export async function POST(req: NextRequest) {
           total: 7 
         });
 
-        const trainResult = await e2b.runCommand(
-          'python /home/user/train.py',
-          async (data: string) => {
-            await sendUpdate('training', { output: data });
-          },
-          async (data: string) => {
-            await sendUpdate('training', { output: data, isError: true });
-          }
-        );
+        try {
+          const trainResult = await e2b.runCommand(
+            'python /home/user/train.py',
+            async (data: string) => {
+              await sendUpdate('training', { output: data });
+            },
+            async (data: string) => {
+              await sendUpdate('training', { output: data, isError: true });
+            }
+          );
 
-        if (trainResult.exitCode !== 0) {
+          if (trainResult.exitCode !== 0) {
+            console.error('❌ Training failed with exit code:', trainResult.exitCode);
+            console.error('Training stderr:', trainResult.stderr);
+            await sendUpdate('error', { 
+              message: `Training failed with exit code ${trainResult.exitCode}. Error: ${trainResult.stderr}` 
+            });
+            await writer.close();
+            return;
+          }
+          
+          console.log('✅ Training completed successfully');
+          await sendUpdate('status', { message: '✅ Training completed' });
+        } catch (error: any) {
+          console.error('❌ Training error:', error);
           await sendUpdate('error', { 
-            message: 'Training failed. Check the logs above for details.' 
+            message: `Training error: ${error.message}` 
           });
+          await writer.close();
+          return;
         }
       }
 
@@ -202,9 +231,19 @@ export async function POST(req: NextRequest) {
           total: 7 
         });
 
-        deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000);
-
-        await sendUpdate('deployment-url', { url: deploymentUrl });
+        try {
+          deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000);
+          console.log('✅ API deployed at:', deploymentUrl);
+          await sendUpdate('deployment-url', { url: deploymentUrl });
+          await sendUpdate('status', { message: '✅ API deployed successfully' });
+        } catch (error: any) {
+          console.error('❌ API deployment failed:', error);
+          await sendUpdate('error', { 
+            message: `API deployment failed: ${error.message}` 
+          });
+          await writer.close();
+          return;
+        }
       }
 
       // Save to database

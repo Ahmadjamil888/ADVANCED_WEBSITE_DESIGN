@@ -23,21 +23,45 @@ export class E2BManager {
    */
   async createSandbox(): Promise<string> {
     try {
-      // Create sandbox without template parameter (uses default)
       this.sandbox = await Sandbox.create();
-      
-      // Set timeout to 30 minutes
-      await this.sandbox.setTimeout(1800000);
-      
+      await this.sandbox.setTimeout(1800000); // 30 minutes
       this.sandboxId = this.sandbox.sandboxId;
-      
       console.log(`✅ E2B Sandbox created: ${this.sandboxId}`);
-      
       return this.sandboxId;
     } catch (error) {
       console.error('❌ Failed to create E2B sandbox:', error);
       throw new Error(`E2B sandbox creation failed: ${error}`);
     }
+  }
+
+  /**
+   * Connect to an existing sandbox
+   */
+  async connectToSandbox(sandboxId: string): Promise<string> {
+    try {
+      console.log(`🔌 Connecting to existing sandbox: ${sandboxId}`);
+      this.sandbox = await Sandbox.connect(sandboxId);
+      this.sandboxId = sandboxId;
+      console.log(`✅ Connected to sandbox: ${this.sandboxId}`);
+      return this.sandboxId;
+    } catch (error) {
+      console.error('❌ Failed to connect to sandbox:', error);
+      throw new Error(`Sandbox connection failed: ${error}`);
+    }
+  }
+
+  /**
+   * Get or create sandbox - reuse if available
+   */
+  async getOrCreateSandbox(existingSandboxId?: string): Promise<string> {
+    if (existingSandboxId) {
+      try {
+        return await this.connectToSandbox(existingSandboxId);
+      } catch (error) {
+        console.warn('⚠️ Failed to connect to existing sandbox, creating new one');
+      }
+    }
+    return await this.createSandbox();
   }
 
   /**
@@ -184,7 +208,8 @@ export class E2BManager {
   }
 
   /**
-   * Deploy FastAPI server
+   * Deploy FastAPI server in background
+   * Following: https://e2b.dev/docs/sandbox/commands#running-commands-in-background
    */
   async deployAPI(appPath: string = '/home/user/app.py', port: number = 8000): Promise<string> {
     if (!this.sandbox) {
@@ -193,20 +218,40 @@ export class E2BManager {
 
     console.log('🚀 Deploying FastAPI server...');
     
-    // Start uvicorn in background
-    await this.runCommand(
-      `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port ${port}`,
-      (data) => console.log(`[uvicorn] ${data}`),
-      (data) => console.error(`[uvicorn error] ${data}`)
-    );
+    try {
+      // Start uvicorn in background - E2B will keep it running
+      const startCmd = `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port ${port}`;
+      
+      // Run in background using E2B's background option
+      await this.sandbox.commands.run(startCmd, {
+        background: true,
+        onStdout: (data) => console.log(`[uvicorn] ${data}`),
+        onStderr: (data) => console.log(`[uvicorn] ${data}`),
+      });
+      
+      console.log('✅ Uvicorn started in background');
 
-    // Wait for server to start
-    await new Promise(resolve => setTimeout(resolve, 3000));
+      // Wait for server to start
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
-    const url = this.getHost(port);
-    console.log(`✅ API deployed at: ${url}`);
-    
-    return url;
+      // Verify server is running
+      const checkCmd = `curl -s http://localhost:${port}/ || echo "Server not ready"`;
+      const checkResult = await this.sandbox.commands.run(checkCmd);
+      
+      if (checkResult.stdout.includes('Server not ready')) {
+        console.warn('⚠️ Server may not be fully ready yet, but URL is available');
+      } else {
+        console.log('✅ Server is responding');
+      }
+
+      const url = this.getHost(port);
+      console.log(`✅ API deployed at: ${url}`);
+      
+      return url;
+    } catch (error: any) {
+      console.error('❌ Failed to deploy API:', error);
+      throw new Error(`API deployment failed: ${error.message}`);
+    }
   }
 
   /**
