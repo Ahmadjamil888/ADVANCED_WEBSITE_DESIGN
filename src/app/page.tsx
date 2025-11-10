@@ -170,88 +170,110 @@ export default function Home() {
 
       {/* Services Section */}
       <RevealFx delay={0.3} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
-        <Column maxWidth="s" gap="m" className="mobile-text-center">
+        <Column maxWidth="s" gap="m" fillWidth className="mobile-text-center">
           <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Revolutionary AI Technology</Heading>
-          <Flex gap="16" wrap className="mobile-card-stack mobile-small-gap">
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-m" className="mobile-font-sm">🤖 AI Model Generation</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">Describe any AI model you need, and our AI will generate, train, and deploy it automatically.</Text>
+          <Column gap="16" fillWidth className="mobile-small-gap">
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-m" className="mobile-font-sm">🤖 AI Model Generation</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Describe any AI model you need, and our AI will generate, train, and deploy it automatically.</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-m" className="mobile-font-sm">🚀 Instant Deployment</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">Deploy your custom AI models to Hugging Face Hub with one click - no coding required.</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-m" className="mobile-font-sm">🚀 Instant Deployment</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Deploy your custom AI models to Hugging Face Hub with one click - no coding required.</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-m" className="mobile-font-sm">🎯 Any Use Case</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">From sentiment analysis to computer vision - create AI models for any business need.</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-m" className="mobile-font-sm">🎯 Any Use Case</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">From sentiment analysis to computer vision - create AI models for any business need.</Text>
+              </Column>
             </Card>
-          </Flex>
+          </Column>
         </Column>
       </RevealFx>
 
       {/* Timeline Section */}
       <RevealFx delay={0.4} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
-        <Column maxWidth="s" gap="m" className="mobile-text-center">
+        <Column maxWidth="s" gap="m" fillWidth className="mobile-text-center">
           <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Our Journey</Heading>
-          <Flex direction="column" gap="12" className="mobile-small-gap">
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-s" className="mobile-font-sm">2024 - Present</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">Founded zehanxtech with a mission to build AI for the betterment of humanity.</Text>
+          <Column gap="16" fillWidth className="mobile-small-gap">
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-s" className="mobile-font-sm">2024 - Present</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Founded zehanxtech with a mission to build AI for the betterment of humanity.</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-s" className="mobile-font-sm">2023 - 2024</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">Research and development in AI technologies and modern web solutions.</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-s" className="mobile-font-sm">2023 - 2024</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Research and development in AI technologies and modern web solutions.</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-s" className="mobile-font-sm">2022 - 2023</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">Building expertise in machine learning, neural networks, and advanced web development.</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-s" className="mobile-font-sm">2022 - 2023</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Building expertise in machine learning, neural networks, and advanced web development.</Text>
+              </Column>
             </Card>
-          </Flex>
+          </Column>
         </Column>
       </RevealFx>
 
       {/* Testimonials Section */}
       <RevealFx delay={0.5} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
-        <Column maxWidth="s" gap="m" className="mobile-text-center">
+        <Column maxWidth="s" gap="m" fillWidth className="mobile-text-center">
           <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Client Testimonials</Heading>
-          <Flex gap="16" wrap className="mobile-card-stack mobile-small-gap">
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Text onBackground="neutral-weak" className="mobile-font-sm">
-                "zehanxtech delivered an exceptional AI solution that transformed our business operations. Highly professional and innovative!"
-              </Text>
-              <Text variant="label-default-s" style={{ marginTop: 8 }} className="mobile-font-sm">— Sarah Johnson, Tech Director</Text>
+          <Column gap="16" fillWidth className="mobile-small-gap">
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Text onBackground="neutral-weak" className="mobile-font-sm">
+                  "zehanxtech delivered an exceptional AI solution that transformed our business operations. Highly professional and innovative!"
+                </Text>
+                <Text variant="label-default-s" className="mobile-font-sm">— Sarah Johnson, Tech Director</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Text onBackground="neutral-weak" className="mobile-font-sm">
-                "Their expertise in both AI and web development is outstanding. They created exactly what we envisioned."
-              </Text>
-              <Text variant="label-default-s" style={{ marginTop: 8 }} className="mobile-font-sm">— Michael Chen, Startup Founder</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Text onBackground="neutral-weak" className="mobile-font-sm">
+                  "Their expertise in both AI and web development is outstanding. They created exactly what we envisioned."
+                </Text>
+                <Text variant="label-default-s" className="mobile-font-sm">— Michael Chen, Startup Founder</Text>
+              </Column>
             </Card>
-          </Flex>
+          </Column>
         </Column>
       </RevealFx>
 
       {/* Contact Section */}
       <RevealFx delay={0.6} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
-        <Column maxWidth="s" gap="m" className="mobile-text-center">
+        <Column maxWidth="s" gap="m" fillWidth className="mobile-text-center">
           <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Get In Touch</Heading>
           <Text onBackground="neutral-weak" className="mobile-font-sm">
             Ready to transform your business with AI? Contact us today.
           </Text>
-          <Flex gap="16" wrap vertical="center" className="mobile-card-stack mobile-small-gap">
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-s" className="mobile-font-sm">Email</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">zehanxtech@gmail.com</Text>
+          <Column gap="16" fillWidth className="mobile-small-gap">
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-s" className="mobile-font-sm">Email</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">zehanxtech@gmail.com</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-s" className="mobile-font-sm">Phone</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">+92 344 2693910</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-s" className="mobile-font-sm">Phone</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">+92 344 2693910</Text>
+              </Column>
             </Card>
-            <Card className="mobile-full-width mobile-padding-sm">
-              <Heading variant="heading-default-s" className="mobile-font-sm">Location</Heading>
-              <Text onBackground="neutral-weak" className="mobile-font-sm">Gujranwala, Pakistan</Text>
+            <Card fillWidth className="mobile-padding-sm">
+              <Column gap="8">
+                <Heading variant="heading-default-s" className="mobile-font-sm">Location</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Gujranwala, Pakistan</Text>
+              </Column>
             </Card>
-          </Flex>
+          </Column>
         </Column>
       </RevealFx>
 
