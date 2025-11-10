@@ -162,8 +162,17 @@ export default function AIWorkspacePage() {
                 break;
 
               case 'error':
+                const errorMessage = data.data.message;
+                const errorDetails = data.data.details;
+                
+                // Log detailed error to console
+                console.error('❌ Error from API:', errorMessage);
+                if (errorDetails) {
+                  console.error('Error details:', errorDetails);
+                }
+                
                 setCurrentStatus({
-                  message: data.data.message,
+                  message: errorMessage + (errorDetails ? `\n\nDetails: ${errorDetails.substring(0, 200)}...` : ''),
                   type: 'error',
                 });
                 break;

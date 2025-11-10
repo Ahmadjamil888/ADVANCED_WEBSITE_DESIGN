@@ -163,18 +163,26 @@ export async function POST(req: NextRequest) {
           );
 
           if (installResult.exitCode !== 0) {
-            console.warn('⚠️ Dependency installation had warnings, but continuing...');
-            await sendUpdate('warning', { 
-              message: 'Some dependencies had warnings, but continuing...' 
+            console.error('❌ Dependency installation failed with exit code:', installResult.exitCode);
+            console.error('Installation stderr:', installResult.stderr);
+            console.error('Installation stdout:', installResult.stdout);
+            
+            // Show detailed error
+            const errorDetails = installResult.stderr || installResult.stdout || 'Unknown error';
+            await sendUpdate('error', { 
+              message: `Dependency installation failed with exit code ${installResult.exitCode}`,
+              details: errorDetails
             });
-          } else {
-            console.log('✅ Dependencies installed successfully');
-            await sendUpdate('status', { message: '✅ Dependencies installed' });
+            await writer.close();
+            return;
           }
+          
+          console.log('✅ Dependencies installed successfully');
+          await sendUpdate('status', { message: '✅ Dependencies installed' });
         } catch (error: any) {
-          console.error('❌ Dependency installation failed:', error);
+          console.error('❌ Dependency installation error:', error);
           await sendUpdate('error', { 
-            message: `Dependency installation failed: ${error.message}` 
+            message: `Dependency installation error: ${error.message}` 
           });
           await writer.close();
           return;
