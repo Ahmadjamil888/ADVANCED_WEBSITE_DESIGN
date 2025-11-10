@@ -6,10 +6,20 @@ import { useUser } from '@clerk/nextjs';
 import { createClient } from '@supabase/supabase-js';
 import styles from './workspace.module.css';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Initialize Supabase client safely
+const getSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing Supabase environment variables');
+    return null;
+  }
+  
+  return createClient(supabaseUrl, supabaseKey);
+};
+
+const supabase = getSupabaseClient();
 
 interface Project {
   id: string;
@@ -33,7 +43,7 @@ export default function AIWorkspaceLanding() {
   }, [isLoaded, user]);
 
   const loadProjects = async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
 
     const { data, error } = await supabase
       .from('Project')
@@ -49,7 +59,7 @@ export default function AIWorkspaceLanding() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !user || isLoading) return;
+    if (!input.trim() || !user || isLoading || !supabase) return;
 
     setIsLoading(true);
 

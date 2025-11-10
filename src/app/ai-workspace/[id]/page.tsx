@@ -6,10 +6,20 @@ import { useUser } from '@clerk/nextjs';
 import { createClient } from '@supabase/supabase-js';
 import styles from './page.module.css';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Initialize Supabase client safely
+const getSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing Supabase environment variables');
+    return null;
+  }
+  
+  return createClient(supabaseUrl, supabaseKey);
+};
+
+const supabase = getSupabaseClient();
 
 interface Message {
   id: string;
@@ -88,6 +98,8 @@ export default function WorkspacePage() {
   };
 
   const loadProject = async () => {
+    if (!supabase) return;
+    
     const { data, error } = await supabase
       .from('Project')
       .select('*')
@@ -100,7 +112,7 @@ export default function WorkspacePage() {
   };
 
   const loadProjects = async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
 
     const { data, error } = await supabase
       .from('Project')
@@ -114,6 +126,8 @@ export default function WorkspacePage() {
   };
 
   const loadMessages = async () => {
+    if (!supabase) return;
+    
     const { data, error } = await supabase
       .from('Message')
       .select('*')
@@ -146,7 +160,7 @@ export default function WorkspacePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isGenerating || !user) return;
+    if (!input.trim() || isGenerating || !user || !supabase) return;
 
     const userMessageContent = input.trim();
     setInput('');
@@ -222,30 +236,34 @@ export default function WorkspacePage() {
                 setSandboxUrl(data.data.deploymentUrl);
                 
                 // Save assistant message
-                await supabase
-                  .from('Message')
-                  .insert({
-                    content: fullResponse || 'Model training completed successfully!',
-                    role: 'ASSISTANT',
-                    type: 'RESULT',
-                    projectId: projectId,
-                  });
+                if (supabase) {
+                  await supabase
+                    .from('Message')
+                    .insert({
+                      content: fullResponse || 'Model training completed successfully!',
+                      role: 'ASSISTANT',
+                      type: 'RESULT',
+                      projectId: projectId,
+                    });
 
-                await loadMessages();
+                  await loadMessages();
+                }
                 break;
 
               case 'error':
                 // Save error message
-                await supabase
-                  .from('Message')
-                  .insert({
-                    content: data.data.message,
-                    role: 'ASSISTANT',
-                    type: 'ERROR',
-                    projectId: projectId,
-                  });
+                if (supabase) {
+                  await supabase
+                    .from('Message')
+                    .insert({
+                      content: data.data.message,
+                      role: 'ASSISTANT',
+                      type: 'ERROR',
+                      projectId: projectId,
+                    });
 
-                await loadMessages();
+                  await loadMessages();
+                }
                 break;
             }
           }
@@ -255,23 +273,25 @@ export default function WorkspacePage() {
       console.error('Error:', error);
       
       // Save error message
-      await supabase
-        .from('Message')
-        .insert({
-          content: `Error: ${error.message}`,
-          role: 'ASSISTANT',
-          type: 'ERROR',
-          projectId: projectId,
-        });
+      if (supabase) {
+        await supabase
+          .from('Message')
+          .insert({
+            content: `Error: ${error.message}`,
+            role: 'ASSISTANT',
+            type: 'ERROR',
+            projectId: projectId,
+          });
 
-      await loadMessages();
+        await loadMessages();
+      }
     } finally {
       setIsGenerating(false);
     }
   };
 
   const handleNewChat = async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
 
     const { data: newProject, error } = await supabase
       .from('Project')
