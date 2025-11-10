@@ -152,8 +152,11 @@ export async function POST(req: NextRequest) {
         });
 
         try {
+          // First, upgrade pip to avoid version issues
+          await e2b.runCommand('pip install --upgrade pip');
+          
           const installResult = await e2b.runCommand(
-            'pip install -r /home/user/requirements.txt',
+            'pip install -r /home/user/requirements.txt --no-cache-dir',
             async (data: string) => {
               await sendUpdate('terminal', { output: data, type: 'stdout' });
             },
@@ -163,29 +166,52 @@ export async function POST(req: NextRequest) {
           );
 
           if (installResult.exitCode !== 0) {
-            console.error('❌ Dependency installation failed with exit code:', installResult.exitCode);
-            console.error('Installation stderr:', installResult.stderr);
-            console.error('Installation stdout:', installResult.stdout);
+            console.warn('⚠️ Some dependencies failed to install');
+            console.warn('Installation stderr:', installResult.stderr);
+            console.warn('Installation stdout:', installResult.stdout);
             
-            // Show detailed error
-            const errorDetails = installResult.stderr || installResult.stdout || 'Unknown error';
-            await sendUpdate('error', { 
-              message: `Dependency installation failed with exit code ${installResult.exitCode}`,
-              details: errorDetails
-            });
-            await writer.close();
-            return;
+            // Try installing dependencies one by one to identify which ones fail
+            const requirements = files['requirements.txt'].split('\n').filter(line => line.trim() && !line.startsWith('#'));
+            const failedPackages: string[] = [];
+            const successPackages: string[] = [];
+            
+            for (const pkg of requirements) {
+              const pkgResult = await e2b.runCommand(`pip install ${pkg.trim()} --no-cache-dir`);
+              if (pkgResult.exitCode === 0) {
+                successPackages.push(pkg.trim());
+              } else {
+                failedPackages.push(pkg.trim());
+              }
+            }
+            
+            if (successPackages.length > 0) {
+              await sendUpdate('status', { 
+                message: `✅ Installed ${successPackages.length}/${requirements.length} packages. ${failedPackages.length > 0 ? `Failed: ${failedPackages.join(', ')}` : ''}` 
+              });
+              console.log('✅ Partial installation successful:', successPackages);
+              if (failedPackages.length > 0) {
+                console.warn('⚠️ Failed packages:', failedPackages);
+              }
+            } else {
+              // All packages failed - this is a real error
+              const errorDetails = installResult.stderr || installResult.stdout || 'Unknown error';
+              await sendUpdate('error', { 
+                message: `All dependencies failed to install. Please check your requirements.txt`,
+                details: errorDetails
+              });
+              await writer.close();
+              return;
+            }
+          } else {
+            console.log('✅ Dependencies installed successfully');
+            await sendUpdate('status', { message: '✅ Dependencies installed' });
           }
-          
-          console.log('✅ Dependencies installed successfully');
-          await sendUpdate('status', { message: '✅ Dependencies installed' });
         } catch (error: any) {
           console.error('❌ Dependency installation error:', error);
-          await sendUpdate('error', { 
-            message: `Dependency installation error: ${error.message}` 
+          // Don't fail completely - continue with what we have
+          await sendUpdate('status', { 
+            message: `⚠️ Dependency installation had issues, continuing anyway: ${error.message}` 
           });
-          await writer.close();
-          return;
         }
       }
 
