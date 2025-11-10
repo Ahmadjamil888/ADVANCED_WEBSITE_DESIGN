@@ -1,25 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { createClient } from '@supabase/supabase-js';
 import styles from './page.module.css';
-
-// Initialize Supabase client safely
-const getSupabaseClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
-  if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing Supabase environment variables');
-    return null;
-  }
-  
-  return createClient(supabaseUrl, supabaseKey);
-};
-
-const supabase = getSupabaseClient();
 
 interface Message {
   id: string;
@@ -58,6 +43,19 @@ export default function WorkspacePage() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Initialize Supabase client inside component
+  const supabase = useMemo(() => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase environment variables');
+      return null;
+    }
+    
+    return createClient(supabaseUrl, supabaseKey);
+  }, []);
 
   useEffect(() => {
     if (isLoaded && user) {
