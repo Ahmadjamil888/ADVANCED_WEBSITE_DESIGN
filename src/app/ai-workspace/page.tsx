@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { createClient } from '@supabase/supabase-js';
-import styles from './workspace.module.css';
+import styles from './page.module.css';
 
 // Initialize Supabase client safely
 const getSupabaseClient = () => {
@@ -217,3 +217,4 @@ export default function AIWorkspaceLanding() {
     </div>
   );
 }
+
