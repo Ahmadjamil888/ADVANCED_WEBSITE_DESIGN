@@ -276,7 +276,7 @@ export async function pollTrainingStatus(_eventId: string): Promise<any> {
 
 // URL validation helpers
 export function isE2bUrl(url: unknown): url is string {
-  return typeof url === 'string' && /\.e2b\.dev(\/?|$)/.test(url);
+  return typeof url === 'string' && /^https?:\/\//i.test(url);
 }
 
 export function isFallbackLocalUrl(url: unknown): url is string {

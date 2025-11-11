@@ -16,6 +16,7 @@ export interface E2BExecutionResult {
 export class E2BManager {
   private sandbox: Sandbox | null = null;
   private sandboxId: string | null = null;
+  private accessToken: string | null = null;
 
   /**
    * Create a new E2B sandbox
@@ -23,10 +24,20 @@ export class E2BManager {
    */
   async createSandbox(): Promise<string> {
     try {
-      this.sandbox = await Sandbox.create();
-      await this.sandbox.setTimeout(1800000); // 30 minutes
+      const secureEnv = (process.env.E2B_SECURE ?? 'true').toLowerCase();
+      const secure = secureEnv === 'true' || secureEnv === '1';
+      const timeoutMs = Number(process.env.E2B_TIMEOUT_MS ?? 1800000);
+      this.sandbox = await Sandbox.create({ secure, timeoutMs });
+      // Access token is available in SDK v2 for secure access
+      // @ts-ignore - token may be internal/private in types
+      this.accessToken = (this.sandbox as any)?.accessToken ?? null;
       this.sandboxId = this.sandbox.sandboxId;
       console.log(`✅ E2B Sandbox created: ${this.sandboxId}`);
+      if (this.accessToken) {
+        console.log('🔑 Secure access token obtained for sandbox controller');
+      } else {
+        console.log('⚠️ No secure access token available (secure access may be disabled)');
+      }
       return this.sandboxId;
     } catch (error) {
       console.error('❌ Failed to create E2B sandbox:', error);
