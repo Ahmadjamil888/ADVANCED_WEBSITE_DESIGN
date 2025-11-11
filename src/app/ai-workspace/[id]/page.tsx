@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { AI_MODELS, DEFAULT_MODEL } from '@/lib/ai/models';
 import { SignOutButton } from '../components/SignOutButton';
+import { DeploymentOptions } from '../components/DeploymentOptions';
 import styles from './page.module.css';
 
 interface Message {
@@ -39,7 +40,7 @@ export default function WorkspacePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState<'code' | 'sandbox'>('code');
+  const [activeTab, setActiveTab] = useState<'code' | 'sandbox' | 'deploy'>('code');
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
   const [sandboxUrl, setSandboxUrl] = useState<string>();
   const [modelKey, setModelKey] = useState<string>(DEFAULT_MODEL);
@@ -484,6 +485,12 @@ export default function WorkspacePage() {
               >
                 Sandbox
               </button>
+              <button
+                className={`${styles.tab} ${activeTab === 'deploy' ? styles.active : ''}`}
+                onClick={() => setActiveTab('deploy')}
+              >
+                Deploy
+              </button>
             </div>
 
             <div className={styles.panelContent}>
@@ -515,6 +522,56 @@ export default function WorkspacePage() {
                       <p>Sandbox preview will appear here once deployed</p>
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeTab === 'deploy' && (
+                <div className={styles.deployView}>
+                  <DeploymentOptions
+                    modelId={projectId}
+                    onDeploy={async (type, awsKeys) => {
+                      try {
+                        let response;
+                        if (type === 'aws' && awsKeys) {
+                          response = await fetch('/api/deploy/aws', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              modelId: projectId,
+                              ...awsKeys,
+                            }),
+                          });
+                        } else if (type === 'e2b') {
+                          response = await fetch('/api/deploy/e2b', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ modelId: projectId }),
+                          });
+                        } else {
+                          // Local download
+                          const downloadRes = await fetch(`/api/models/${projectId}/download`);
+                          const downloadData = await downloadRes.json();
+                          if (downloadData.downloadUrl) {
+                            window.open(downloadData.downloadUrl, '_blank');
+                            alert('Model download started. Check your downloads folder.');
+                            return;
+                          }
+                        }
+
+                        if (response && response.ok) {
+                          const data = await response.json();
+                          if (data.deploymentUrl) {
+                            setSandboxUrl(data.deploymentUrl);
+                            setActiveTab('sandbox');
+                            alert(`Model deployed successfully! URL: ${data.deploymentUrl}`);
+                          }
+                        }
+                      } catch (error: any) {
+                        console.error('Deployment error:', error);
+                        alert(`Deployment failed: ${error.message}`);
+                      }
+                    }}
+                  />
                 </div>
               )}
             </div>

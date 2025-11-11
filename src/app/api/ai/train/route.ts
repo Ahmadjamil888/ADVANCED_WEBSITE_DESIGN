@@ -159,12 +159,54 @@ async function trainModelInBackground(params: {
 }
 
 async function scrapeResources(prompt: string, trainingMode: string): Promise<{ dataset?: string; model?: string }> {
-  // This would integrate with HuggingFace/Kaggle APIs
-  // For now, return placeholder
-  return {
-    dataset: trainingMode === 'from_scratch' ? 'huggingface/datasets/default' : undefined,
-    model: trainingMode === 'fine_tune' ? 'huggingface/models/default' : undefined,
-  };
+  const result: { dataset?: string; model?: string } = {};
+
+  // Scrape dataset if needed
+  if (trainingMode === 'from_scratch') {
+    try {
+      const hfRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/scrape/huggingface`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, type: 'dataset' }),
+      });
+      const hfData = await hfRes.json();
+      if (hfData.success) {
+        result.dataset = hfData.repo;
+      } else {
+        // Try Kaggle
+        const kgRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/scrape/kaggle`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt }),
+        });
+        const kgData = await kgRes.json();
+        if (kgData.success && !kgData.requiresManualSelection) {
+          result.dataset = kgData.repo;
+        }
+      }
+    } catch (error) {
+      console.error('Dataset scraping error:', error);
+    }
+  }
+
+  // Scrape model for fine-tuning
+  if (trainingMode === 'fine_tune') {
+    try {
+      const hfRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/scrape/huggingface`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, type: 'model' }),
+      });
+      const hfData = await hfRes.json();
+      if (hfData.success) {
+        result.model = hfData.repo;
+      }
+    } catch (error) {
+      console.error('Model scraping error:', error);
+    }
+  }
+
+  return result;
 }
 
 function parseFilesFromCode(code: string): Record<string, string> {

@@ -300,7 +300,24 @@ export default function AIDashboard() {
                     <li>10 AI Models</li>
                     <li>Priority Support</li>
                   </ul>
-                  {billingInfo.plan_type === 'pro' && <span className={styles.currentPlan}>Current</span>}
+                  {billingInfo.plan_type === 'pro' ? (
+                    <span className={styles.currentPlan}>Current</span>
+                  ) : (
+                    <button
+                      className={styles.upgradeButton}
+                      onClick={async () => {
+                        const res = await fetch('/api/billing/checkout', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ planType: 'pro' }),
+                        });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                      }}
+                    >
+                      Upgrade to Pro
+                    </button>
+                  )}
                 </div>
                 <div className={styles.planOption}>
                   <h3>Enterprise</h3>
@@ -310,7 +327,24 @@ export default function AIDashboard() {
                     <li>API Access</li>
                     <li>24/7 Support</li>
                   </ul>
-                  {billingInfo.plan_type === 'enterprise' && <span className={styles.currentPlan}>Current</span>}
+                  {billingInfo.plan_type === 'enterprise' ? (
+                    <span className={styles.currentPlan}>Current</span>
+                  ) : (
+                    <button
+                      className={styles.upgradeButton}
+                      onClick={async () => {
+                        const res = await fetch('/api/billing/checkout', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ planType: 'enterprise' }),
+                        });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                      }}
+                    >
+                      Upgrade to Enterprise
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
