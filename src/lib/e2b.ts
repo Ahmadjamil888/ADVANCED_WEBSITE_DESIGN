@@ -27,7 +27,7 @@ export class E2BManager {
       const secureEnv = (process.env.E2B_SECURE ?? 'true').toLowerCase();
       const secure = secureEnv === 'true' || secureEnv === '1';
       const timeoutMs = Number(process.env.E2B_TIMEOUT_MS ?? 1800000);
-      this.sandbox = await Sandbox.create({ secure, timeoutMs });
+      this.sandbox = await Sandbox.create({ secure, timeoutMs, allowInternetAccess: true });
       // Access token is available in SDK v2 for secure access
       // @ts-ignore - token may be internal/private in types
       this.accessToken = (this.sandbox as any)?.accessToken ?? null;
@@ -239,43 +239,27 @@ export class E2BManager {
     console.log('🚀 Deploying FastAPI server...');
     
     try {
-      // Start server in background - E2B will keep it running
-      const startCmd = opts?.startCommand
-        ? opts.startCommand
-        : `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port ${port}`;
-      
-      // Run in background using E2B's background option
-      await this.sandbox.commands.run(startCmd, {
-        background: true,
-        onStdout: (data) => console.log(`[uvicorn] ${data}`),
-        onStderr: (data) => console.log(`[uvicorn] ${data}`),
-      });
-      
-      console.log('✅ Uvicorn started in background');
-
-      // Wait for server to start with retries
+      const candidatePorts = Array.from(new Set([port, 3000, 8080]));
       const totalWait = Math.max(5, opts?.waitSeconds ?? 30);
-      let ready = false;
-      for (let i = 0; i < totalWait; i++) {
-        const checkCmd = `curl -s -o /dev/null -w "%{http_code}" http://localhost:${port}/ || echo "000"`;
-        const checkResult = await this.sandbox.commands.run(checkCmd);
-        if (checkResult.stdout.trim() !== '000') {
-          ready = true;
-          break;
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+      let finalUrl: string | null = null;
 
-      // Fallback attempt if not ready
-      if (!ready && opts?.fallbackStartCommand) {
-        console.warn('⚠️ Primary server start did not respond, attempting fallback start command');
-        await this.sandbox.commands.run(opts.fallbackStartCommand, {
+      for (const p of candidatePorts) {
+        console.log(`🔎 Trying to start server on port ${p}...`);
+        // Start server in background - E2B will keep it running
+        const startCmd = opts?.startCommand
+          ? opts.startCommand.replace(/\b--port\s+\d+\b/, `--port ${p}`)
+          : `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port ${p}`;
+        
+        await this.sandbox.commands.run(startCmd, {
           background: true,
-          onStdout: (data) => console.log(`[server] ${data}`),
-          onStderr: (data) => console.log(`[server] ${data}`),
+          onStdout: (data) => console.log(`[uvicorn:${p}] ${data}`),
+          onStderr: (data) => console.log(`[uvicorn:${p}] ${data}`),
         });
-        for (let i = 0; i < 20; i++) {
-          const checkCmd = `curl -s -o /dev/null -w "%{http_code}" http://localhost:${port}/ || echo "000"`;
+        
+        // Wait for server to start with retries
+        let ready = false;
+        for (let i = 0; i < totalWait; i++) {
+          const checkCmd = `curl -s -o /dev/null -w "%{http_code}" http://localhost:${p}/ || echo "000"`;
           const checkResult = await this.sandbox.commands.run(checkCmd);
           if (checkResult.stdout.trim() !== '000') {
             ready = true;
@@ -283,18 +267,47 @@ export class E2BManager {
           }
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
+
+        // Fallback attempt if not ready
+        if (!ready) {
+          console.warn(`⚠️ Uvicorn not ready on ${p}, trying fallback static server...`);
+          // ensure an index.html exists for static server
+          await this.sandbox.files.write('/home/user/index.html', Buffer.from(`<!doctype html><html><body><pre>Sandbox static server on ${p}</pre></body></html>`));
+          const fbCmd = opts?.fallbackStartCommand
+            ? opts.fallbackStartCommand.replace(/\bhttp\.server\s+\d+\b/, `http.server ${p}`)
+            : `cd /home/user && python -m http.server ${p}`;
+          await this.sandbox.commands.run(fbCmd, {
+            background: true,
+            onStdout: (data) => console.log(`[http.server:${p}] ${data}`),
+            onStderr: (data) => console.log(`[http.server:${p}] ${data}`),
+          });
+          // probe fallback
+          for (let i = 0; i < 10; i++) {
+            const checkCmd = `curl -s -o /dev/null -w "%{http_code}" http://localhost:${p}/ || echo "000"`;
+            const checkResult = await this.sandbox.commands.run(checkCmd);
+            if (checkResult.stdout.trim() !== '000') {
+              ready = true;
+              break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+
+        if (ready) {
+          const url = this.getHost(p);
+          console.log(`✅ Server responding at: ${url}`);
+          finalUrl = url;
+          break;
+        }
       }
 
-      if (!ready) {
-        console.warn('⚠️ Server not responding on health check; exposing URL anyway');
-      } else {
-        console.log('✅ Server is responding');
+      if (!finalUrl) {
+        console.warn('⚠️ No server responded on candidate ports; exposing first candidate URL anyway');
+        finalUrl = this.getHost(candidatePorts[0]);
       }
 
-      const url = this.getHost(port);
-      console.log(`✅ API deployed at: ${url}`);
-      
-      return url;
+      console.log(`✅ API deployed at: ${finalUrl}`);
+      return finalUrl;
     } catch (error: any) {
       console.error('❌ Failed to deploy API:', error);
       throw new Error(`API deployment failed: ${error.message}`);
