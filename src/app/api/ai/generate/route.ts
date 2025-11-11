@@ -269,6 +269,23 @@ def root():
         await e2b.writeFile('/home/user/app.py', minimalApp);
       }
 
+      // Ensure FastAPI and Uvicorn are installed (best effort)
+      try {
+        await sendUpdate('status', { message: '📦 Ensuring FastAPI and Uvicorn are installed...' });
+        const pipResult = await e2b.runCommand(
+          'pip install fastapi uvicorn',
+          async (data: string) => await sendUpdate('install', { output: data }),
+          async (data: string) => await sendUpdate('install', { output: data, isError: true })
+        );
+        if (pipResult.exitCode !== 0) {
+          await sendUpdate('status', { message: '⚠️ pip install reported issues, continuing...' });
+        } else {
+          await sendUpdate('status', { message: '✅ FastAPI and Uvicorn ready' });
+        }
+      } catch (e: any) {
+        await sendUpdate('status', { message: `⚠️ pip install failed (${e.message}), continuing...` });
+      }
+
       // Step 7: Deploy API (with fallback to static server)
       let deploymentUrl = '';
       await sendUpdate('status', { 
