@@ -272,7 +272,7 @@ export class E2BManager {
         if (!ready) {
           console.warn(`⚠️ Uvicorn not ready on ${p}, trying fallback static server...`);
           // ensure an index.html exists for static server
-          await this.sandbox.files.write('/home/user/index.html', Buffer.from(`<!doctype html><html><body><pre>Sandbox static server on ${p}</pre></body></html>`));
+          await this.sandbox.files.write('/home/user/index.html', `<!doctype html><html><body><pre>Sandbox static server on ${p}</pre></body></html>`);
           const fbCmd = opts?.fallbackStartCommand
             ? opts.fallbackStartCommand.replace(/\bhttp\.server\s+\d+\b/, `http.server ${p}`)
             : `cd /home/user && python -m http.server ${p}`;

@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next"
 import classNames from "classnames";
 
 import { Footer, Header, RouteGuard } from "@/components";
+import { Chrome } from "@/components/Chrome";
 import { baseURL, effects, style, font, home } from "@/app/resources";
 
 import { Background, Column, Flex, ThemeProvider, ToastProvider } from "@/once-ui/components";
@@ -258,20 +259,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               }}
             />
             <Flex fillWidth minHeight="16" hide="s"></Flex>
-            <Header />
-            <Flex
-              zIndex={0}
-              fillWidth
-              paddingY="l"
-              paddingX="l"
-              horizontal="center"
-              flex={1}
-            >
-              <Flex horizontal="center" fillWidth minHeight="0">
-                <RouteGuard>{children}</RouteGuard>
-              </Flex>
-            </Flex>
-            <Footer />
+            <Chrome>
+              <RouteGuard>{children}</RouteGuard>
+            </Chrome>
           </Column>
           </AuthProvider>
         </ToastProvider>
