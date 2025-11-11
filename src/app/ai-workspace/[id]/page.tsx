@@ -156,9 +156,9 @@ export default function WorkspacePage() {
 
     try {
       // Save user message
-      const { data: userMessage, error: userError } = await supabase
+      const { data: userMessage, error: userError } = await (supabase
         .from('Message')
-        .insert({
+        .insert as any)({
           content: userMessageContent,
           role: 'USER',
           type: 'RESULT',
@@ -225,14 +225,14 @@ export default function WorkspacePage() {
                 
                 // Save assistant message
                 if (supabase) {
-                  await supabase
+                  await (supabase
                     .from('Message')
-                    .insert({
-                      content: fullResponse || 'Model training completed successfully!',
-                      role: 'ASSISTANT',
-                      type: 'RESULT',
-                      projectId: projectId,
-                    });
+                    .insert as any)({
+                    content: fullResponse || 'Model training completed successfully!',
+                    role: 'ASSISTANT',
+                    type: 'RESULT',
+                    projectId: projectId,
+                  });
 
                   await loadMessages();
                 }
@@ -241,14 +241,14 @@ export default function WorkspacePage() {
               case 'error':
                 // Save error message
                 if (supabase) {
-                  await supabase
+                  await (supabase
                     .from('Message')
-                    .insert({
-                      content: data.data.message,
-                      role: 'ASSISTANT',
-                      type: 'ERROR',
-                      projectId: projectId,
-                    });
+                    .insert as any)({
+                    content: data.data.message,
+                    role: 'ASSISTANT',
+                    type: 'ERROR',
+                    projectId: projectId,
+                  });
 
                   await loadMessages();
                 }
@@ -262,14 +262,14 @@ export default function WorkspacePage() {
       
       // Save error message
       if (supabase) {
-        await supabase
+        await (supabase
           .from('Message')
-          .insert({
-            content: `Error: ${error.message}`,
-            role: 'ASSISTANT',
-            type: 'ERROR',
-            projectId: projectId,
-          });
+          .insert as any)({
+          content: `Error: ${error.message}`,
+          role: 'ASSISTANT',
+          type: 'ERROR',
+          projectId: projectId,
+        });
 
         await loadMessages();
       }
@@ -281,12 +281,12 @@ export default function WorkspacePage() {
   const handleNewChat = async () => {
     if (!user || !supabase) return;
 
-    const { data: newProject, error } = await supabase
+    const { data: newProject, error } = await (supabase
       .from('Project')
-      .insert({
-        name: 'New Project',
-        userId: user.id,
-      })
+      .insert as any)({
+      name: 'New Project',
+      userId: user.id,
+    })
       .select()
       .single();
 
@@ -402,7 +402,7 @@ export default function WorkspacePage() {
                 <div key={message.id} className={styles.message}>
                   <div className={styles.messageHeader}>
                     <div className={styles.avatar}>
-                      {message.role === 'USER' ? user.firstName?.[0] || 'U' : 'AI'}
+                      {message.role === 'USER' ? (user.email?.[0]?.toUpperCase() || 'U') : 'AI'}
                     </div>
                     <div className={styles.messageSender}>
                       {message.role === 'USER' ? 'You' : 'zehanxtech AI'}
