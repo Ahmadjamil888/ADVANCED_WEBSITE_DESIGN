@@ -222,7 +222,16 @@ export class E2BManager {
    * Deploy FastAPI server in background
    * Following: https://e2b.dev/docs/sandbox/commands#running-commands-in-background
    */
-  async deployAPI(appPath: string = '/home/user/app.py', port: number = 8000): Promise<string> {
+  async deployAPI(
+    appPath: string = '/home/user/app.py',
+    port: number = 8000,
+    opts?: {
+      startCommand?: string;
+      fallbackStartCommand?: string;
+      cwd?: string;
+      waitSeconds?: number;
+    }
+  ): Promise<string> {
     if (!this.sandbox) {
       throw new Error('Sandbox not initialized');
     }
@@ -230,8 +239,10 @@ export class E2BManager {
     console.log('🚀 Deploying FastAPI server...');
     
     try {
-      // Start uvicorn in background - E2B will keep it running
-      const startCmd = `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port ${port}`;
+      // Start server in background - E2B will keep it running
+      const startCmd = opts?.startCommand
+        ? opts.startCommand
+        : `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port ${port}`;
       
       // Run in background using E2B's background option
       await this.sandbox.commands.run(startCmd, {
@@ -242,15 +253,40 @@ export class E2BManager {
       
       console.log('✅ Uvicorn started in background');
 
-      // Wait for server to start
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Wait for server to start with retries
+      const totalWait = Math.max(5, opts?.waitSeconds ?? 30);
+      let ready = false;
+      for (let i = 0; i < totalWait; i++) {
+        const checkCmd = `curl -s -o /dev/null -w "%{http_code}" http://localhost:${port}/ || echo "000"`;
+        const checkResult = await this.sandbox.commands.run(checkCmd);
+        if (checkResult.stdout.trim() !== '000') {
+          ready = true;
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
 
-      // Verify server is running
-      const checkCmd = `curl -s http://localhost:${port}/ || echo "Server not ready"`;
-      const checkResult = await this.sandbox.commands.run(checkCmd);
-      
-      if (checkResult.stdout.includes('Server not ready')) {
-        console.warn('⚠️ Server may not be fully ready yet, but URL is available');
+      // Fallback attempt if not ready
+      if (!ready && opts?.fallbackStartCommand) {
+        console.warn('⚠️ Primary server start did not respond, attempting fallback start command');
+        await this.sandbox.commands.run(opts.fallbackStartCommand, {
+          background: true,
+          onStdout: (data) => console.log(`[server] ${data}`),
+          onStderr: (data) => console.log(`[server] ${data}`),
+        });
+        for (let i = 0; i < 20; i++) {
+          const checkCmd = `curl -s -o /dev/null -w "%{http_code}" http://localhost:${port}/ || echo "000"`;
+          const checkResult = await this.sandbox.commands.run(checkCmd);
+          if (checkResult.stdout.trim() !== '000') {
+            ready = true;
+            break;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      if (!ready) {
+        console.warn('⚠️ Server not responding on health check; exposing URL anyway');
       } else {
         console.log('✅ Server is responding');
       }

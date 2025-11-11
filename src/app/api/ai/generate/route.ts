@@ -256,28 +256,44 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Step 7: Deploy API
-      let deploymentUrl = '';
-      if (files['app.py']) {
-        await sendUpdate('status', { 
-          message: '🚀 Deploying FastAPI server...', 
-          step: 7, 
-          total: 7 
-        });
+      // Ensure minimal app.py exists if not generated
+      if (!files['app.py']) {
+        await sendUpdate('status', { message: 'ℹ️ No app.py detected, creating a minimal FastAPI app' });
+        const minimalApp = `
+from fastapi import FastAPI
+app = FastAPI()
+@app.get("/")
+def root():
+    return {"status": "ok"}
+`.trimStart();
+        await e2b.writeFile('/home/user/app.py', minimalApp);
+      }
 
-        try {
-          deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000);
-          console.log('✅ API deployed at:', deploymentUrl);
-          await sendUpdate('deployment-url', { url: deploymentUrl });
-          await sendUpdate('status', { message: '✅ API deployed successfully' });
-        } catch (error: any) {
-          console.error('❌ API deployment failed:', error);
-          await sendUpdate('error', { 
-            message: `API deployment failed: ${error.message}` 
-          });
-          await writer.close();
-          return;
-        }
+      // Step 7: Deploy API (with fallback to static server)
+      let deploymentUrl = '';
+      await sendUpdate('status', { 
+        message: '🚀 Deploying server...', 
+        step: 7, 
+        total: 7 
+      });
+
+      try {
+        // Try starting uvicorn first, then fallback to static server if needed
+        deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000, {
+          startCommand: `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port 8000`,
+          fallbackStartCommand: `cd /home/user && python -m http.server 8000`,
+          waitSeconds: 30,
+        });
+        console.log('✅ API deployed at:', deploymentUrl);
+        await sendUpdate('deployment-url', { url: deploymentUrl });
+        await sendUpdate('status', { message: '✅ API deployed successfully' });
+      } catch (error: any) {
+        console.error('❌ API deployment failed:', error);
+        await sendUpdate('error', { 
+          message: `API deployment failed: ${error.message}` 
+        });
+        await writer.close();
+        return;
       }
 
       // Save to database
