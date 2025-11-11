@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { getSupabaseOrThrow } from "@/lib/supabase";
 import type { Database } from "@/lib/database.types";
 
 // Type definitions
@@ -18,6 +18,7 @@ export type ExtendedMessage = Message & {
 // Chat management functions
 export async function loadChats(userId: string): Promise<Chat[]> {
   try {
+    const supabase = getSupabaseOrThrow();
     const { data: allChats, error } = await supabase.from('chats').select('*');
     if (error) throw error;
     if (allChats) {
@@ -34,6 +35,7 @@ export async function loadChats(userId: string): Promise<Chat[]> {
 
 export async function loadMessages(chatId: string): Promise<Message[]> {
   try {
+    const supabase = getSupabaseOrThrow();
     const { data: allMessages, error } = await supabase.from('messages').select('*');
     if (error) throw error;
     if (allMessages) {
@@ -50,6 +52,7 @@ export async function loadMessages(chatId: string): Promise<Message[]> {
 
 export async function createNewChat(userId: string): Promise<Chat | null> {
   try {
+    const supabase = getSupabaseOrThrow();
     const newChatData: ChatInsert = {
       user_id: userId,
       title: 'New Chat',
@@ -69,6 +72,7 @@ export async function createNewChat(userId: string): Promise<Chat | null> {
 
 export async function deleteChat(chatId: string): Promise<boolean> {
   try {
+    const supabase = getSupabaseOrThrow();
     // Delete all messages for this chat first
     // Delete all messages for this chat first
     const { error: msgError } = await supabase.from('messages').delete().eq('chat_id', chatId);
@@ -86,6 +90,7 @@ export async function deleteChat(chatId: string): Promise<boolean> {
 
 export async function updateChat(chatId: string, updates: Partial<Chat>): Promise<boolean> {
   try {
+    const supabase = getSupabaseOrThrow();
     const updateData = {
       ...updates,
       updated_at: new Date().toISOString()
@@ -102,6 +107,7 @@ export async function updateChat(chatId: string, updates: Partial<Chat>): Promis
 // Message management functions
 export async function insertMessage(messageData: MessageInsert): Promise<Message | null> {
   try {
+    const supabase = getSupabaseOrThrow();
     const { data, error } = await (supabase.from('messages').insert as any)(messageData).select().single();
     if (error) throw error;
     return data as Message;
@@ -113,6 +119,7 @@ export async function insertMessage(messageData: MessageInsert): Promise<Message
 
 export async function updateMessage(messageId: string, updates: Partial<Message>): Promise<boolean> {
   try {
+    const supabase = getSupabaseOrThrow();
     const { error } = await (supabase.from('messages').update as any)(updates).eq('id', messageId);
     if (error) throw error;
     return true;
@@ -125,6 +132,7 @@ export async function updateMessage(messageId: string, updates: Partial<Message>
 // AI Model management functions
 export async function saveAIModel(modelData: AIModelInsert): Promise<AIModel | null> {
   try {
+    const supabase = getSupabaseOrThrow();
     const { data, error } = await (supabase.from('ai_models').insert as any)(modelData).select().single();
     if (error) throw error;
     return data as AIModel;

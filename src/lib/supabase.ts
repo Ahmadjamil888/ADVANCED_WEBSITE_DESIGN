@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export type { Database };
 
@@ -55,3 +56,14 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
       }
     )
   : undefined;
+
+/**
+ * Returns a non-undefined Supabase client or throws with a clear error.
+ * Use this inside functions to satisfy TypeScript and avoid crashing at import time.
+ */
+export function getSupabaseOrThrow(): SupabaseClient<Database> {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+  }
+  return supabase;
+}
