@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase';
 import styles from './page.module.css';
 import { SandboxPreview } from './components/SandboxPreview';
 import { startTrainingWithSSE, isE2bUrl, isFallbackLocalUrl } from './functions';
+import { AI_MODELS, DEFAULT_MODEL } from '@/lib/ai/models';
+import { SignOutButton } from './components/SignOutButton';
 
 interface Project {
   id: string;
@@ -25,6 +27,7 @@ export default function AIWorkspaceLanding() {
   const [status, setStatus] = useState<string>('');
   const [sandboxUrl, setSandboxUrl] = useState<string | undefined>(undefined);
   const [eventId, setEventId] = useState<string>('');
+  const [modelKey, setModelKey] = useState<string>(DEFAULT_MODEL);
 
   useEffect(() => {
     if (!loading && user) {
@@ -90,6 +93,7 @@ export default function AIWorkspaceLanding() {
         projectId,
         user.id,
         {
+          modelKey,
           onStatus: (msg) => setStatus(msg || ''),
           onDeploymentUrl: (url) => {
             if (isE2bUrl(url) || isFallbackLocalUrl(url)) {
@@ -145,6 +149,9 @@ export default function AIWorkspaceLanding() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
+        <div style={{ position: 'absolute', top: 16, right: 16 }}>
+          <SignOutButton />
+        </div>
         <div className={styles.logo}>
           zehanxtech
         </div>
@@ -155,6 +162,27 @@ export default function AIWorkspaceLanding() {
         <p className={styles.subtitle}>
           Describe the AI you want. We generate code, run it in E2B, train and deploy.
         </p>
+
+        {/* Model selector */}
+        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
+          <select
+            value={modelKey}
+            onChange={(e) => setModelKey(e.target.value)}
+            style={{
+              background: '#000',
+              color: '#fff',
+              border: '1px solid #fff',
+              borderRadius: 0,
+              padding: '0.5rem 0.75rem',
+            }}
+          >
+            {Object.entries(AI_MODELS).map(([key, model]) => (
+              <option key={key} value={key} style={{ color: '#000' }}>
+                {model.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className={styles.inputContainer}>
           <form onSubmit={handleSubmit} className={styles.inputWrapper}>
