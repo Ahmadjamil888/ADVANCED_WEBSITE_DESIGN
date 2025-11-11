@@ -38,19 +38,20 @@ export type AIModel = {
 };
 
 /** ✅ Load environment variables safely */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("❌ Missing Supabase environment variables in .env.local");
-}
-
-// Create the Supabase client
-export const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    db: { schema: 'public' },
-    auth: { persistSession: true },
-  }
-);
+/**
+ * Do not throw on missing env in the client bundle.
+ * Many components guard against a null client; throwing here causes a client-side crash.
+ */
+export const supabase = (supabaseUrl && supabaseAnonKey)
+  ? createClient<Database>(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        db: { schema: 'public' },
+        auth: { persistSession: true },
+      }
+    )
+  : undefined;

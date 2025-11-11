@@ -1,9 +1,9 @@
-
+'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
-import { createClient } from '@supabase/supabase-js';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import styles from './page.module.css';
 
 interface Project {
@@ -16,29 +16,16 @@ interface Project {
 
 export default function AIWorkspaceLanding() {
   const router = useRouter();
-  const { user, isLoaded } = useUser();
+  const { user, loading } = useAuth();
   const [input, setInput] = useState('');
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize Supabase client inside component
-  const supabase = useMemo(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
-      return null;
-    }
-    
-    return createClient(supabaseUrl, supabaseKey);
-  }, []);
-
   useEffect(() => {
-    if (isLoaded && user) {
+    if (!loading && user) {
       loadProjects();
     }
-  }, [isLoaded, user]);
+  }, [loading, user]);
 
   const loadProjects = async () => {
     if (!user || !supabase) return;
@@ -51,7 +38,7 @@ export default function AIWorkspaceLanding() {
       .limit(6);
 
     if (!error && data) {
-      setProjects(data);
+      setProjects(data as unknown as Project[]);
     }
   };
 
@@ -63,19 +50,17 @@ export default function AIWorkspaceLanding() {
 
     try {
       // Create new project
-      const { data: project, error } = await supabase
+      const { data: project, error } = await (supabase
         .from('Project')
-        .insert({
-          name: input.slice(0, 50),
-          userId: user.id,
-        })
-        .select()
-        .single();
+        .insert as any)({
+        name: input.slice(0, 50),
+        userId: user.id,
+      }).select().single();
 
       if (error) throw error;
 
       // Redirect to workspace with project ID
-      router.push(`/ai-workspace/${project.id}?prompt=${encodeURIComponent(input)}`);
+      router.push(`/ai-workspace/${(project as any).id}?prompt=${encodeURIComponent(input)}`);
     } catch (error) {
       console.error('Error creating project:', error);
       setIsLoading(false);
@@ -90,7 +75,7 @@ export default function AIWorkspaceLanding() {
     setInput(suggestion);
   };
 
-  if (!isLoaded) {
+  if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.content}>
@@ -103,6 +88,18 @@ export default function AIWorkspaceLanding() {
   if (!user) {
     router.push('/login');
     return null;
+  }
+
+  if (!supabase) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <p style={{ color: '#fff' }}>
+            Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
