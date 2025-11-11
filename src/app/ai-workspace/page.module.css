@@ -1,4 +1,134 @@
 /* Monochrome, square-edge AI Workspace */
+.page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+.heroBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+}
+.brand {
+  font-weight: 700;
+}
+.heroActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.modelSelect {
+  background: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 0;
+  padding: 0.5rem 0.75rem;
+}
+.heroTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+}
+.heroSubtitle {
+  max-width: 900px;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 1.25rem;
+}
+.heroForm {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 0.75rem;
+}
+.heroInput {
+  flex: 1;
+  padding: 0.9rem 0.9rem;
+  border: 1px solid #fff;
+  background: #000;
+  color: #fff;
+  border-radius: 2px;
+}
+.heroInput::placeholder { color: #bbb; }
+.heroButton {
+  padding: 0.9rem 1.25rem;
+  border: 1px solid #fff;
+  background: #000;
+  color: #fff;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.quickRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.quickButton {
+  padding: 0.5rem 0.75rem;
+  background: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 0;
+  cursor: pointer;
+}
+.history {
+  padding: 2rem 1rem;
+}
+.historyHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1100px;
+  margin: 0 auto 1rem auto;
+}
+.historyTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.projectsGrid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+.emptyHistory {
+  text-align: center;
+  color: #aaa;
+}
+.historyCard {
+  text-align: left;
+  background: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 0;
+  padding: 1rem;
+  cursor: pointer;
+}
+.historyName {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.historyDate {
+  font-size: 0.85rem;
+  color: #ccc;
+}
 .container {
   min-height: 100vh;
   background: #000;

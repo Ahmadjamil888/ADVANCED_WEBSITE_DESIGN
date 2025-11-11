@@ -67,43 +67,15 @@ export default function AIWorkspaceLanding() {
     setSandboxUrl(undefined);
 
     try {
-      // Create new project if table exists; otherwise fallback to a local id
-      let projectId = '';
-      try {
-        const { data: project, error } = await (supabase
-          .from('Project')
-          .insert as any)({
-          name: input.slice(0, 50),
-          userId: user.id,
-        }).select().single();
-        if (error) throw error;
-        projectId = (project as any).id;
-      } catch {
-        projectId = crypto.randomUUID();
-      }
-
-      // Start AI training/generation pipeline
-      const newEventId = crypto.randomUUID();
-      setEventId(newEventId);
-      setStatus('Starting training and sandbox...');
-
-      // Stream SSE updates from generator
-      const startRes = await startTrainingWithSSE(
-        input,
-        projectId,
-        user.id,
-        {
-          modelKey,
-          onStatus: (msg) => setStatus(msg || ''),
-          onDeploymentUrl: (url) => {
-            if (isE2bUrl(url) || isFallbackLocalUrl(url)) {
-              setSandboxUrl(url);
-            }
-          },
-          onError: (msg) => setStatus(`Error: ${msg}`),
-        }
-      );
-      if (!startRes.success) throw new Error(startRes.error || 'Failed to start training');
+      // Create a project then redirect to the split-screen workspace
+      const { data: project, error } = await (supabase
+        .from('Project')
+        .insert as any)({
+        name: input.slice(0, 80),
+        userId: user.id,
+      }).select().single();
+      if (error) throw error;
+      router.push(`/ai-workspace/${(project as any).id}?prompt=${encodeURIComponent(input)}`);
     } catch (error) {
       console.error('Error creating project:', error);
       setIsLoading(false);
@@ -147,135 +119,57 @@ export default function AIWorkspaceLanding() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <div style={{ position: 'absolute', top: 16, right: 16 }}>
-          <SignOutButton />
+    <div className={styles.page}>
+      <div className={styles.hero}>
+        <div className={styles.heroBar}>
+          <div className={styles.brand}>zehanxtech</div>
+          <div className={styles.heroActions}>
+            <select value={modelKey} onChange={(e) => setModelKey(e.target.value)} className={styles.modelSelect}>
+              {Object.entries(AI_MODELS).map(([key, model]) => (
+                <option key={key} value={key}>{model.name}</option>
+              ))}
+            </select>
+            <SignOutButton />
+          </div>
         </div>
-        <div className={styles.logo}>
-          zehanxtech
-        </div>
-
-        <h1 className={styles.title}>
-          AI that builds AI
-        </h1>
-        <p className={styles.subtitle}>
-          Describe the AI you want. We generate code, run it in E2B, train and deploy.
-        </p>
-
-        {/* Model selector */}
-        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
-          <select
-            value={modelKey}
-            onChange={(e) => setModelKey(e.target.value)}
-            style={{
-              background: '#000',
-              color: '#fff',
-              border: '1px solid #fff',
-              borderRadius: 0,
-              padding: '0.5rem 0.75rem',
-            }}
-          >
-            {Object.entries(AI_MODELS).map(([key, model]) => (
-              <option key={key} value={key} style={{ color: '#000' }}>
-                {model.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.inputContainer}>
-          <form onSubmit={handleSubmit} className={styles.inputWrapper}>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="e.g., Build an image classifier for cats vs dogs"
-              className={styles.input}
-              disabled={isLoading}
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className={styles.submitButton}
-            >
-              {isLoading ? (
-                <>Working...</>
-              ) : (
-                <>Generate & Run</>
-              )}
-            </button>
-          </form>
-        </div>
-
-        <div className={styles.suggestions}>
-          <button
-            onClick={() => handleSuggestionClick('Create a sentiment analysis model using BERT')}
-            className={styles.suggestionButton}
-          >
-            Sentiment Analysis
+        <h1 className={styles.heroTitle}>Create your own universe</h1>
+        <p className={styles.heroSubtitle}>Describe anything — AI model, Next.js app, scripts — we’ll build and run it live.</p>
+        <form onSubmit={handleSubmit} className={styles.heroForm}>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="e.g., Generate a Next.js SaaS with auth and billing"
+            className={styles.heroInput}
+            disabled={isLoading}
+          />
+          <button type="submit" disabled={!input.trim() || isLoading} className={styles.heroButton}>
+            {isLoading ? 'Working...' : 'Launch'}
           </button>
-          <button
-            onClick={() => handleSuggestionClick('Build an image classifier for cats vs dogs')}
-            className={styles.suggestionButton}
-          >
-            Image Classification
-          </button>
-          <button
-            onClick={() => handleSuggestionClick('Create a text generation model using GPT-2')}
-            className={styles.suggestionButton}
-          >
-            Text Generation
-          </button>
-          <button
-            onClick={() => handleSuggestionClick('Build a recommendation system')}
-            className={styles.suggestionButton}
-          >
-            Recommendation System
-          </button>
+        </form>
+        <div className={styles.quickRow}>
+          <button onClick={() => handleSuggestionClick('Create a sentiment analysis model using BERT')} className={styles.quickButton}>Sentiment Analysis</button>
+          <button onClick={() => handleSuggestionClick('Build an image classifier for cats vs dogs')} className={styles.quickButton}>Image Classification</button>
+          <button onClick={() => handleSuggestionClick('Generate a Next.js blog with MDX and dark mode')} className={styles.quickButton}>Next.js Blog</button>
+          <button onClick={() => handleSuggestionClick('Create a recommendation system API with FastAPI')} className={styles.quickButton}>Recommendation API</button>
         </div>
-
-        <div className={styles.statusPanel}>
-          <div>Status: {status || 'Idle'}</div>
-          {sandboxUrl && (
-            <div style={{ marginTop: '0.5rem' }}>
-              Sandbox URL: <a href={sandboxUrl} target="_blank" rel="noreferrer" style={{ color: '#fff', textDecoration: 'underline' }}>{sandboxUrl}</a>
-            </div>
+      </div>
+      <div className={styles.history}>
+        <div className={styles.historyHead}>
+          <h2 className={styles.historyTitle}>Previous Projects</h2>
+        </div>
+        <div className={styles.projectsGrid}>
+          {projects.length === 0 ? (
+            <div className={styles.emptyHistory}>No projects yet.</div>
+          ) : (
+            projects.map((project) => (
+              <button key={project.id} className={styles.historyCard} onClick={() => handleProjectClick(project.id)}>
+                <div className={styles.historyName}>{project.name}</div>
+                <div className={styles.historyDate}>{new Date(project.updatedAt).toLocaleString()}</div>
+              </button>
+            ))
           )}
         </div>
-
-        <div className={styles.sandboxPanel}>
-          <SandboxPreview sandboxUrl={sandboxUrl} />
-        </div>
-
-        {/* Recent Projects */}
-        {projects.length > 0 && (
-          <div className={styles.projectsSection}>
-            <div className={styles.projectsHeader}>
-              <h2 className={styles.projectsTitle}>My Projects</h2>
-              <button className={styles.createProjectButton}>
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: 16, height: 16 }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                New Project
-              </button>
-            </div>
-            <div className={styles.projectsList}>
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className={styles.projectCard}
-                  onClick={() => handleProjectClick(project.id)}
-                >
-                  <div className={styles.projectName}>{project.name}</div>
-                  <div className={styles.projectDate}>
-                    {new Date(project.updatedAt).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
