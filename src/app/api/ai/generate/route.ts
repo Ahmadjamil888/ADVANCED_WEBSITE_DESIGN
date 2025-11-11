@@ -237,11 +237,12 @@ export async function POST(req: NextRequest) {
           if (trainResult.exitCode !== 0) {
             console.error('❌ Training failed with exit code:', trainResult.exitCode);
             console.error('Training stderr:', trainResult.stderr);
+            const errorDetails = (trainResult.stderr || '').slice(0, 5000);
             await sendUpdate('error', { 
-              message: `Training failed with exit code ${trainResult.exitCode}. Error: ${trainResult.stderr}` 
+              message: `Training failed with exit code ${trainResult.exitCode}.`,
+              details: errorDetails
             });
-            await writer.close();
-            return;
+            // Continue to deployment if possible
           }
           
           console.log('✅ Training completed successfully');
@@ -251,8 +252,7 @@ export async function POST(req: NextRequest) {
           await sendUpdate('error', { 
             message: `Training error: ${error.message}` 
           });
-          await writer.close();
-          return;
+          // Continue to deployment if possible
         }
       }
 
