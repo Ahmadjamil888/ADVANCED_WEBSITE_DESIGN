@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
-import { createClient } from '@supabase/supabase-js';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { AI_MODELS, DEFAULT_MODEL } from '@/lib/ai/models';
+import { SignOutButton } from '../components/SignOutButton';
 import styles from './page.module.css';
 
 interface Message {
@@ -27,7 +29,7 @@ export default function WorkspacePage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user, isLoaded } = useUser();
+  const { user, loading } = useAuth();
   
   const projectId = params.id as string;
   const initialPrompt = searchParams.get('prompt');
@@ -40,30 +42,18 @@ export default function WorkspacePage() {
   const [activeTab, setActiveTab] = useState<'code' | 'sandbox'>('code');
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
   const [sandboxUrl, setSandboxUrl] = useState<string>();
+  const [modelKey, setModelKey] = useState<string>(DEFAULT_MODEL);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialize Supabase client inside component
-  const supabase = useMemo(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
-      return null;
-    }
-    
-    return createClient(supabaseUrl, supabaseKey);
-  }, []);
-
   useEffect(() => {
-    if (isLoaded && user) {
+    if (!loading && user) {
       loadProject();
       loadProjects();
       loadMessages();
     }
-  }, [isLoaded, user, projectId]);
+  }, [loading, user, projectId]);
 
   useEffect(() => {
     if (initialPrompt && messages.length === 0 && !isGenerating) {
@@ -187,7 +177,7 @@ export default function WorkspacePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: userMessageContent,
-          modelKey: 'gemini-flash',
+          modelKey,
           chatId: projectId,
           userId: user.id,
         }),
@@ -305,17 +295,57 @@ export default function WorkspacePage() {
     }
   };
 
-  if (!isLoaded || !user) {
+  const handleDownloadCode = () => {
+    const entries = Object.entries(generatedFiles);
+    if (entries.length === 0) return;
+    for (const [path, content] of entries) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = path.replace(/[\\/]/g, '_');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  if (loading || !user) {
     return <div className={styles.container}>Loading...</div>;
   }
 
   return (
     <div className={styles.container}>
+      {/* Top bar */}
+      <div className={styles.topbar}>
+        <div className={styles.topbarLeft}>
+          <div className={styles.logoText}>zehanxtech</div>
+        </div>
+        <div className={styles.topbarRight}>
+          <select
+            value={modelKey}
+            onChange={(e) => setModelKey(e.target.value)}
+            className={styles.modelSelect}
+            aria-label="Select model"
+          >
+            {Object.entries(AI_MODELS).map(([key, model]) => (
+              <option key={key} value={key}>
+                {model.name}
+              </option>
+            ))}
+          </select>
+          <button className={styles.secondaryButton} onClick={handleDownloadCode}>
+            Download Code
+          </button>
+          <SignOutButton />
+        </div>
+      </div>
+
       {/* Left Sidebar */}
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <div className={styles.logo}>
-            <span style={{ fontSize: '1.5rem' }}>⚡</span>
             zehanxtech
           </div>
           <button onClick={handleNewChat} className={styles.newChatButton}>
