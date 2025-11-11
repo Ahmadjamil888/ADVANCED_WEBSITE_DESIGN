@@ -36,15 +36,19 @@ export default function AIWorkspaceLanding() {
   const loadProjects = async () => {
     if (!user || !supabase) return;
 
-    const { data, error } = await supabase
-      .from('Project')
-      .select('*')
-      .eq('userId', user.id)
-      .order('updatedAt', { ascending: false })
-      .limit(6);
+    try {
+      const { data, error } = await supabase
+        .from('Project')
+        .select('*')
+        .eq('userId', user.id)
+        .order('updatedAt', { ascending: false })
+        .limit(6);
 
-    if (!error && data) {
-      setProjects(data as unknown as Project[]);
+      if (!error && data) {
+        setProjects(data as unknown as Project[]);
+      }
+    } catch {
+      // Table may not exist in this Supabase instance; ignore for now
     }
   };
 
@@ -68,22 +72,27 @@ export default function AIWorkspaceLanding() {
     setSandboxUrl(undefined);
 
     try {
-      // Create new project
-      const { data: project, error } = await (supabase
-        .from('Project')
-        .insert as any)({
-        name: input.slice(0, 50),
-        userId: user.id,
-      }).select().single();
-
-      if (error) throw error;
+      // Create new project if table exists; otherwise fallback to a local id
+      let projectId = '';
+      try {
+        const { data: project, error } = await (supabase
+          .from('Project')
+          .insert as any)({
+          name: input.slice(0, 50),
+          userId: user.id,
+        }).select().single();
+        if (error) throw error;
+        projectId = (project as any).id;
+      } catch {
+        projectId = crypto.randomUUID();
+      }
 
       // Start AI training/generation pipeline
       const newEventId = crypto.randomUUID();
       setEventId(newEventId);
       setStatus('Starting training and sandbox...');
 
-      const startRes = await startTrainingProcess(newEventId, input, (project as any).id, user.id);
+      const startRes = await startTrainingProcess(newEventId, input, projectId, user.id);
       if (!startRes.success) {
         throw new Error(startRes.error || 'Failed to start training');
       }
