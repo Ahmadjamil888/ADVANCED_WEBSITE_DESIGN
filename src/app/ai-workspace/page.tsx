@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import styles from './page.module.css';
+import { SandboxPreview } from './components/SandboxPreview';
+import { startTrainingProcess, pollTrainingStatus, isE2bUrl, isFallbackLocalUrl } from './functions';
 
 interface Project {
   id: string;
@@ -20,6 +22,10 @@ export default function AIWorkspaceLanding() {
   const [input, setInput] = useState('');
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<string>('');
+  const [sandboxUrl, setSandboxUrl] = useState<string | undefined>(undefined);
+  const [eventId, setEventId] = useState<string>('');
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
@@ -42,11 +48,24 @@ export default function AIWorkspaceLanding() {
     }
   };
 
+  const clearPoll = () => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => clearPoll();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !user || isLoading || !supabase) return;
 
     setIsLoading(true);
+    setStatus('Creating project...');
+    setSandboxUrl(undefined);
 
     try {
       // Create new project
@@ -59,11 +78,43 @@ export default function AIWorkspaceLanding() {
 
       if (error) throw error;
 
-      // Redirect to workspace with project ID
-      router.push(`/ai-workspace/${(project as any).id}?prompt=${encodeURIComponent(input)}`);
+      // Start AI training/generation pipeline
+      const newEventId = crypto.randomUUID();
+      setEventId(newEventId);
+      setStatus('Starting training and sandbox...');
+
+      const startRes = await startTrainingProcess(newEventId, input, (project as any).id, user.id);
+      if (!startRes.success) {
+        throw new Error(startRes.error || 'Failed to start training');
+      }
+
+      // Poll for sandbox URL and status
+      clearPoll();
+      pollIntervalRef.current = setInterval(async () => {
+        try {
+          const res = await pollTrainingStatus(newEventId);
+          // Expecting shape to include status and maybe sandboxUrl
+          if (res?.status) {
+            setStatus(String(res.status));
+          }
+          const url = res?.sandboxUrl || res?.url || res?.appUrl;
+          if (isE2bUrl(url) || isFallbackLocalUrl(url)) {
+            setSandboxUrl(url);
+            setStatus('Sandbox ready');
+            clearPoll();
+          }
+          if (res?.done || res?.success === true) {
+            clearPoll();
+          }
+        } catch (err) {
+          // keep polling, but surface a minimal status
+          setStatus('Waiting for sandbox...');
+        }
+      }, 2500);
     } catch (error) {
       console.error('Error creating project:', error);
       setIsLoading(false);
+      setStatus('Error starting training');
     }
   };
 
@@ -105,28 +156,24 @@ export default function AIWorkspaceLanding() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {/* Logo */}
         <div className={styles.logo}>
-          <div className={styles.logoIcon}>⚡</div>
           zehanxtech
         </div>
 
-        {/* Title */}
         <h1 className={styles.title}>
-          Build something <span style={{ background: 'linear-gradient(135deg, #fff 0%, #f0f0f0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lovable</span>
+          AI that builds AI
         </h1>
         <p className={styles.subtitle}>
-          Turn your ideas into AI models. Describe what you want to build, and our AI will create, train, and deploy it for you.
+          Describe the AI you want. We generate code, run it in E2B, train and deploy.
         </p>
 
-        {/* Input */}
         <div className={styles.inputContainer}>
           <form onSubmit={handleSubmit} className={styles.inputWrapper}>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="What do you want to build today?"
+              placeholder="e.g., Build an image classifier for cats vs dogs"
               className={styles.input}
               disabled={isLoading}
             />
@@ -136,48 +183,52 @@ export default function AIWorkspaceLanding() {
               className={styles.submitButton}
             >
               {isLoading ? (
-                <>
-                  <div className={styles.spinner} />
-                  Creating...
-                </>
+                <>Working...</>
               ) : (
-                <>
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  Create
-                </>
+                <>Generate & Run</>
               )}
             </button>
           </form>
         </div>
 
-        {/* Suggestions */}
         <div className={styles.suggestions}>
           <button
             onClick={() => handleSuggestionClick('Create a sentiment analysis model using BERT')}
             className={styles.suggestionButton}
           >
-            💬 Sentiment Analysis
+            Sentiment Analysis
           </button>
           <button
             onClick={() => handleSuggestionClick('Build an image classifier for cats vs dogs')}
             className={styles.suggestionButton}
           >
-            🖼️ Image Classification
+            Image Classification
           </button>
           <button
             onClick={() => handleSuggestionClick('Create a text generation model using GPT-2')}
             className={styles.suggestionButton}
           >
-            ✍️ Text Generation
+            Text Generation
           </button>
           <button
             onClick={() => handleSuggestionClick('Build a recommendation system')}
             className={styles.suggestionButton}
           >
-            🎯 Recommendation System
+            Recommendation System
           </button>
+        </div>
+
+        <div className={styles.statusPanel}>
+          <div>Status: {status || 'Idle'}</div>
+          {sandboxUrl && (
+            <div style={{ marginTop: '0.5rem' }}>
+              Sandbox URL: <a href={sandboxUrl} target="_blank" rel="noreferrer" style={{ color: '#fff', textDecoration: 'underline' }}>{sandboxUrl}</a>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.sandboxPanel}>
+          <SandboxPreview sandboxUrl={sandboxUrl} />
         </div>
 
         {/* Recent Projects */}

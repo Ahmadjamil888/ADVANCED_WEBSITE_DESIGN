@@ -1,7 +1,7 @@
-/* Lovable-style AI Workspace */
+/* Monochrome, square-edge AI Workspace */
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,16 +11,7 @@
   overflow: hidden;
 }
 
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  pointer-events: none;
-}
+.container::before { display: none; }
 
 .content {
   max-width: 800px;
@@ -32,8 +23,8 @@
 .logo {
   font-size: 1.5rem;
   font-weight: 600;
-  color: white;
-  margin-bottom: 4rem;
+  color: #fff;
+  margin-bottom: 2rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -42,8 +33,8 @@
 .logoIcon {
   width: 32px;
   height: 32px;
-  background: white;
-  border-radius: 8px;
+  background: #fff;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,74 +42,69 @@
 }
 
 .title {
-  font-size: 3.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: white;
-  margin-bottom: 1rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
   line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
   line-height: 1.6;
 }
 
 .inputContainer {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  margin-bottom: 2rem;
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 0;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .inputWrapper {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: center;
 }
 
 .input {
   flex: 1;
-  padding: 1rem 1.5rem;
-  border: 2px solid transparent;
-  border-radius: 12px;
+  padding: 0.75rem 0.75rem;
+  border: 1px solid #fff;
+  border-radius: 0;
   font-size: 1rem;
-  background: #f7f7f8;
-  transition: all 0.2s;
+  background: #000;
+  color: #fff;
+  transition: none;
   outline: none;
 }
 
 .input:focus {
-  border-color: #667eea;
-  background: white;
+  border-color: #fff;
+  background: #000;
 }
 
 .input::placeholder {
-  color: #999;
+  color: #ccc;
 }
 
 .submitButton {
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  background: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 0;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
-}
-
-.submitButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
 .submitButton:disabled {
@@ -129,34 +115,30 @@
 .submitButton svg {
   width: 20px;
   height: 20px;
+  color: #fff;
 }
 
 .suggestions {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .suggestionButton {
-  padding: 0.75rem 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 24px;
-  color: white;
+  padding: 0.5rem 0.75rem;
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 0;
+  color: #fff;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.suggestionButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  transition: none;
 }
 
 .projectsSection {
-  margin-top: 4rem;
+  margin-top: 2rem;
   width: 100%;
 }
 
@@ -164,81 +146,85 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .projectsTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: white;
+  color: #fff;
 }
 
 .createProjectButton {
-  padding: 0.75rem 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  color: white;
+  padding: 0.5rem 0.75rem;
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 0;
+  color: #fff;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.createProjectButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 .projectsList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .projectCard {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 0;
+  padding: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: none;
   text-align: left;
-}
-
-.projectCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .projectName {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #fff;
   margin-bottom: 0.5rem;
 }
 
 .projectDate {
   font-size: 0.85rem;
-  color: #666;
+  color: #fff;
 }
 
 .emptyState {
   text-align: center;
   padding: 3rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: #fff;
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
+  border: 3px solid #333;
+  border-top-color: #fff;
+  border-radius: 0;
   animation: spin 0.8s linear infinite;
   margin: 0 auto;
+}
+
+.statusPanel {
+  margin-top: 1rem;
+  text-align: left;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 0.75rem;
+}
+
+.sandboxPanel {
+  margin-top: 1rem;
+  border: 1px solid #fff;
+  padding: 0.5rem;
 }
 
 @keyframes spin {
