@@ -188,56 +188,90 @@ export function generateAIThoughts(prompt: string): string {
 }
 
 // Training and deployment functions
-export async function startTrainingProcess(
-  eventId: string,
+export async function startTrainingWithSSE(
   prompt: string,
   chatId: string,
-  userId: string
+  userId: string,
+  options?: {
+    modelKey?: string;
+    onStatus?: (message: string) => void;
+    onAIStreamChunk?: (content: string) => void;
+    onDeploymentUrl?: (url: string) => void;
+    onComplete?: (payload: any) => void;
+    onError?: (message: string) => void;
+  }
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const response = await fetch('/api/ai-workspace/generate', {
+    const response = await fetch('/api/ai/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chatId,
         prompt,
-        mode: 'models',
         userId,
-        eventId,
-        useE2B: true
-      })
+        modelKey: options?.modelKey,
+      }),
     });
+    if (!response.ok || !response.body) {
+      return { success: false, error: `HTTP ${response.status}` };
+    }
 
-    const data = await response.json();
-    
-    if (data.error) {
-      return { success: false, error: data.error };
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    const flushBuffer = (chunk: string) => {
+      buffer += chunk;
+      const parts = buffer.split('\n\n');
+      // Keep the last incomplete part in buffer
+      buffer = parts.pop() || '';
+      for (const part of parts) {
+        const line = part.trim();
+        if (!line.startsWith('data:')) continue;
+        const jsonStr = line.replace(/^data:\s*/, '');
+        if (!jsonStr) continue;
+        try {
+          const evt = JSON.parse(jsonStr) as { type: string; data: any };
+          switch (evt.type) {
+            case 'status':
+              options?.onStatus?.(evt.data?.message ?? '');
+              break;
+            case 'ai-stream':
+              if (evt.data?.content) options?.onAIStreamChunk?.(evt.data.content);
+              break;
+            case 'deployment-url':
+              if (evt.data?.url) options?.onDeploymentUrl?.(evt.data.url);
+              break;
+            case 'complete':
+              if (evt.data?.deploymentUrl) options?.onDeploymentUrl?.(evt.data.deploymentUrl);
+              options?.onComplete?.(evt.data);
+              break;
+            case 'error':
+              options?.onError?.(evt.data?.message ?? 'Unknown error');
+              break;
+          }
+        } catch (e) {
+          // ignore malformed chunks
+        }
+      }
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      flushBuffer(decoder.decode(value, { stream: true }));
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Training start error:', error);
+    console.error('Training start error (SSE):', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
-export async function pollTrainingStatus(eventId: string): Promise<any> {
-  try {
-    const response = await fetch(`/api/ai-workspace/status/${eventId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-cache'
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Polling error:', error);
-    throw error;
-  }
+// Deprecated: legacy polling API (no endpoint implemented)
+export async function pollTrainingStatus(_eventId: string): Promise<any> {
+  throw new Error('Polling not supported. Use startTrainingWithSSE instead.');
 }
 
 // URL validation helpers

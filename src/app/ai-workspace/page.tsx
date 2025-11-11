@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import styles from './page.module.css';
 import { SandboxPreview } from './components/SandboxPreview';
-import { startTrainingProcess, pollTrainingStatus, isE2bUrl, isFallbackLocalUrl } from './functions';
+import { startTrainingWithSSE, isE2bUrl, isFallbackLocalUrl } from './functions';
 
 interface Project {
   id: string;
@@ -25,7 +25,6 @@ export default function AIWorkspaceLanding() {
   const [status, setStatus] = useState<string>('');
   const [sandboxUrl, setSandboxUrl] = useState<string | undefined>(undefined);
   const [eventId, setEventId] = useState<string>('');
-  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
@@ -52,15 +51,8 @@ export default function AIWorkspaceLanding() {
     }
   };
 
-  const clearPoll = () => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-      pollIntervalRef.current = null;
-    }
-  };
-
   useEffect(() => {
-    return () => clearPoll();
+    return () => {};
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,34 +84,22 @@ export default function AIWorkspaceLanding() {
       setEventId(newEventId);
       setStatus('Starting training and sandbox...');
 
-      const startRes = await startTrainingProcess(newEventId, input, projectId, user.id);
-      if (!startRes.success) {
-        throw new Error(startRes.error || 'Failed to start training');
-      }
-
-      // Poll for sandbox URL and status
-      clearPoll();
-      pollIntervalRef.current = setInterval(async () => {
-        try {
-          const res = await pollTrainingStatus(newEventId);
-          // Expecting shape to include status and maybe sandboxUrl
-          if (res?.status) {
-            setStatus(String(res.status));
-          }
-          const url = res?.sandboxUrl || res?.url || res?.appUrl;
-          if (isE2bUrl(url) || isFallbackLocalUrl(url)) {
-            setSandboxUrl(url);
-            setStatus('Sandbox ready');
-            clearPoll();
-          }
-          if (res?.done || res?.success === true) {
-            clearPoll();
-          }
-        } catch (err) {
-          // keep polling, but surface a minimal status
-          setStatus('Waiting for sandbox...');
+      // Stream SSE updates from generator
+      const startRes = await startTrainingWithSSE(
+        input,
+        projectId,
+        user.id,
+        {
+          onStatus: (msg) => setStatus(msg || ''),
+          onDeploymentUrl: (url) => {
+            if (isE2bUrl(url) || isFallbackLocalUrl(url)) {
+              setSandboxUrl(url);
+            }
+          },
+          onError: (msg) => setStatus(`Error: ${msg}`),
         }
-      }, 2500);
+      );
+      if (!startRes.success) throw new Error(startRes.error || 'Failed to start training');
     } catch (error) {
       console.error('Error creating project:', error);
       setIsLoading(false);
