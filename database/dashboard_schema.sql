@@ -1,7 +1,6 @@
--- Complete AI Workspace Database Schema
--- Run this script to set up all required tables for the AI Model Dashboard
+-- Complete Dashboard Schema for AI Model Training Platform
+-- This includes all tables needed for the full dashboard functionality
 
--- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Users table
@@ -11,16 +10,12 @@ CREATE TABLE IF NOT EXISTS public.users (
   username character varying NOT NULL,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
-  total_tokens_used integer DEFAULT 0,
-  total_requests integer DEFAULT 0,
-  last_activity timestamp with time zone,
-  is_active boolean DEFAULT true,
   subscription_plan character varying DEFAULT 'free' CHECK (subscription_plan IN ('free', 'pro', 'enterprise')),
   subscription_expires_at timestamp with time zone,
   metadata jsonb DEFAULT '{}'::jsonb
 );
 
--- AI Models table
+-- AI Models table (main table for user's trained models)
 CREATE TABLE IF NOT EXISTS public.ai_models (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
@@ -44,7 +39,7 @@ CREATE TABLE IF NOT EXISTS public.ai_models (
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   deployed_at timestamp with time zone,
-  deployment_type character varying CHECK (deployment_type IN ('local', 'e2b', 'aws', 'none')),
+  deployment_type character varying DEFAULT 'none' CHECK (deployment_type IN ('local', 'e2b', 'aws', 'none')),
   deployment_url text,
   metadata jsonb DEFAULT '{}'::jsonb
 );
@@ -71,7 +66,7 @@ CREATE TABLE IF NOT EXISTS public.training_jobs (
   metadata jsonb DEFAULT '{}'::jsonb
 );
 
--- Training Epochs (for real-time stats)
+-- Training Epochs (for real-time stats streaming)
 CREATE TABLE IF NOT EXISTS public.training_epochs (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   training_job_id uuid NOT NULL REFERENCES public.training_jobs(id) ON DELETE CASCADE,
@@ -94,6 +89,8 @@ CREATE TABLE IF NOT EXISTS public.user_datasets (
   file_path text NOT NULL,
   file_size bigint,
   file_type character varying,
+  source_type character varying DEFAULT 'upload' CHECK (source_type IN ('upload', 'huggingface', 'kaggle')),
+  source_url text,
   row_count integer,
   column_count integer,
   created_at timestamp with time zone DEFAULT now(),
@@ -101,7 +98,7 @@ CREATE TABLE IF NOT EXISTS public.user_datasets (
   metadata jsonb DEFAULT '{}'::jsonb
 );
 
--- User Uploaded Models
+-- User Uploaded Models (for fine-tuning)
 CREATE TABLE IF NOT EXISTS public.user_models (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
@@ -112,12 +109,14 @@ CREATE TABLE IF NOT EXISTS public.user_models (
   file_format character varying CHECK (file_format IN ('pth', 'h5', 'pb', 'onnx', 'safetensors')),
   framework character varying,
   base_model_name character varying,
+  source_type character varying DEFAULT 'upload' CHECK (source_type IN ('upload', 'huggingface')),
+  source_url text,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   metadata jsonb DEFAULT '{}'::jsonb
 );
 
--- Billing/Subscriptions table
+-- Billing table
 CREATE TABLE IF NOT EXISTS public.billing (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
@@ -154,7 +153,11 @@ CREATE INDEX IF NOT EXISTS idx_ai_models_user_id ON public.ai_models(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_models_status ON public.ai_models(training_status);
 CREATE INDEX IF NOT EXISTS idx_training_jobs_model_id ON public.training_jobs(model_id);
 CREATE INDEX IF NOT EXISTS idx_training_jobs_user_id ON public.training_jobs(user_id);
+CREATE INDEX IF NOT EXISTS idx_training_jobs_status ON public.training_jobs(job_status);
 CREATE INDEX IF NOT EXISTS idx_training_epochs_job_id ON public.training_epochs(training_job_id);
+CREATE INDEX IF NOT EXISTS idx_user_datasets_user_id ON public.user_datasets(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_models_user_id ON public.user_models(user_id);
+CREATE INDEX IF NOT EXISTS idx_billing_user_id ON public.billing(user_id);
 
 -- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -175,9 +178,20 @@ FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_training_jobs_updated_at BEFORE UPDATE ON public.training_jobs
 FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Initialize billing for existing users (Free plan: 1 model)
-INSERT INTO public.billing (user_id, plan_type, models_limit, has_api_access, billing_cycle_start, billing_cycle_end)
-SELECT id, 'free', 1, false, CURRENT_DATE, CURRENT_DATE + INTERVAL '1 month'
-FROM public.users
-WHERE id NOT IN (SELECT user_id FROM public.billing)
-ON CONFLICT DO NOTHING;
+CREATE TRIGGER update_billing_updated_at BEFORE UPDATE ON public.billing
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Initialize billing for new users (default: free plan with 1 model)
+CREATE OR REPLACE FUNCTION initialize_user_billing()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.billing (user_id, plan_type, models_limit, has_api_access, billing_cycle_start, billing_cycle_end)
+  VALUES (NEW.id, 'free', 1, false, CURRENT_DATE, CURRENT_DATE + INTERVAL '1 month')
+  ON CONFLICT DO NOTHING;
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER on_user_created AFTER INSERT ON public.users
+FOR EACH ROW EXECUTE FUNCTION initialize_user_billing();
+

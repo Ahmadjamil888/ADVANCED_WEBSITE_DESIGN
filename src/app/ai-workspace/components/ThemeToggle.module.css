@@ -1,21 +1,25 @@
-.button {
-  padding: 0.5rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  color: var(--text-primary);
+.toggle {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
-  transition: all 0.2s;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.button:hover {
-  background-color: var(--bg-hover);
-  transform: scale(1.05);
+.toggle:hover {
+  background: #1a1a1a;
 }
 
-.button svg {
-  stroke-width: 2;
+[data-dashboard-theme="light"] .toggle {
+  border-color: #000;
+  color: #000;
+}
+
+[data-dashboard-theme="light"] .toggle:hover {
+  background: #f0f0f0;
 }

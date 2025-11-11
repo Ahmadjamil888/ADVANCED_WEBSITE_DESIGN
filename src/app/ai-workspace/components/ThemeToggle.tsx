@@ -4,40 +4,28 @@ import { useState, useEffect } from 'react';
 import styles from './ThemeToggle.module.css';
 
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   useEffect(() => {
-    const theme = localStorage.getItem('theme') || 'dark';
-    setIsDark(theme === 'dark');
-    document.documentElement.setAttribute('data-theme', theme);
+    const saved = localStorage.getItem('dashboard-theme') as 'dark' | 'light' | null;
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.setAttribute('data-dashboard-theme', saved);
+    } else {
+      document.documentElement.setAttribute('data-dashboard-theme', 'dark');
+    }
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = isDark ? 'light' : 'dark';
-    setIsDark(!isDark);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('dashboard-theme', newTheme);
+    document.documentElement.setAttribute('data-dashboard-theme', newTheme);
   };
 
   return (
-    <button onClick={toggleTheme} className={styles.button} aria-label="Toggle theme">
-      {isDark ? (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="5" />
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
-      ) : (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
-      )}
+    <button className={styles.toggle} onClick={toggleTheme} title="Toggle theme">
+      {theme === 'dark' ? '☀️' : '🌙'}
     </button>
   );
 }
