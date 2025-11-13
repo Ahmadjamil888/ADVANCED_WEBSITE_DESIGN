@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseOrThrow } from '@/lib/supabase';
+import { getSupabaseOrThrow, type Database } from '@/lib/supabase';
+
+type TrainingJobRow = Database['public']['Tables']['training_jobs']['Row'];
 
 export async function GET(
   _req: NextRequest,
@@ -15,13 +17,15 @@ export async function GET(
     }
 
     const supabase = getSupabaseOrThrow();
-    const { data: job, error } = await supabase
+    const { data, error } = await supabase
       .from('training_jobs')
       .select('*')
       .eq('id', jobId)
       .single();
 
-    if (error) {
+    const job = data as TrainingJobRow | null;
+
+    if (error || !job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
 
@@ -32,7 +36,7 @@ export async function GET(
       accuracy: job.accuracy || 0,
       validationLoss: job.validation_loss || 0,
       validationAccuracy: job.validation_accuracy || 0,
-      status: job.job_status,
+      status: job.job_status || 'unknown',
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
