@@ -2,15 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseOrThrow } from '@/lib/supabase';
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  context: { params: Promise<Record<string, string | string[] | undefined>> }
 ) {
   try {
+    const params = await context.params;
+    const idParam = params?.id;
+    const jobId = Array.isArray(idParam) ? idParam[0] : idParam;
+
+    if (!jobId) {
+      return NextResponse.json({ error: 'Job ID is required' }, { status: 400 });
+    }
+
     const supabase = getSupabaseOrThrow();
     const { data: job, error } = await supabase
       .from('training_jobs')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', jobId)
       .single();
 
     if (error) {
