@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getSupabaseOrThrow } from '@/lib/supabase';
+import { getSupabaseOrThrow, type Database } from '@/lib/supabase';
+
+type AIModelRow = Database['public']['Tables']['ai_models']['Row'];
 
 export async function GET(
   _req: NextRequest,
@@ -15,11 +17,13 @@ export async function GET(
     }
 
     const supabase = getSupabaseOrThrow();
-    const { data: model, error } = await supabase
+    const { data, error } = await supabase
       .from('ai_models')
       .select('model_file_path, model_file_format, name')
       .eq('id', modelId)
       .single();
+
+    const model = data as Pick<AIModelRow, 'model_file_path' | 'model_file_format' | 'name'> | null;
 
     if (error || !model?.model_file_path) {
       return NextResponse.json({ error: 'Model not found' }, { status: 404 });
