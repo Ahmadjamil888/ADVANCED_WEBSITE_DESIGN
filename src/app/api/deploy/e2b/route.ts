@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { E2BManager } from '@/lib/e2b';
-import { getSupabaseOrThrow } from '@/lib/supabase';
+import { getSupabaseOrThrow, type Database } from '@/lib/supabase';
+
+type AIModelRow = Database['public']['Tables']['ai_models']['Row'];
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,16 +16,21 @@ export async function POST(req: NextRequest) {
     }
 
     // Get model details
-    const { data: model, error: modelError } = await supabase
+    const modelResponse = await supabase
       .from('ai_models')
       .select('*')
       .eq('id', modelId)
       .eq('user_id', user.id)
       .single();
+    const model = modelResponse.data as AIModelRow | null;
+    const modelError = modelResponse.error;
 
     if (modelError || !model) {
       return NextResponse.json({ error: 'Model not found' }, { status: 404 });
     }
+
+    const modelNameRaw = model.name ?? 'model';
+    const modelName = modelNameRaw.replace(/"/g, '\\"');
 
     // Create E2B sandbox
     const e2b = new E2BManager();
@@ -50,7 +57,7 @@ model = None  # Load your model here
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "model": "${model.name}"}
+    return {"status": "ok", "model": "${modelName}"}
 
 @app.post("/predict")
 async def predict(data: dict):
@@ -71,12 +78,17 @@ async def predict(data: dict):
     });
 
     // Update model with deployment info
+    const metadataRecord =
+      model.metadata && typeof model.metadata === 'object' && !Array.isArray(model.metadata)
+        ? (model.metadata as Record<string, unknown>)
+        : {};
+
     await (supabase.from('ai_models').update as any)({
       deployment_type: 'e2b',
       deployment_url: deploymentUrl,
       deployed_at: new Date().toISOString(),
       metadata: {
-        ...(model.metadata || {}),
+        ...metadataRecord,
         sandboxId,
       },
     }).eq('id', modelId);
