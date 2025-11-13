@@ -128,6 +128,10 @@ export default function AIDashboard() {
         modelPath = uploadData.path;
       }
 
+      // Map UI training mode to DB constraint
+      const trainingModeDb =
+        data.trainingMode === 'fine_tune' ? 'fine_tuning' : 'supervised';
+
       // Create model record
       const { data: model, error } = await (supabase
         .from('ai_models')
@@ -137,7 +141,7 @@ export default function AIDashboard() {
         description: data.extraInstructions,
         model_type: 'custom',
         framework: 'pytorch',
-        training_mode: data.trainingMode,
+        training_mode: trainingModeDb,
         training_status: 'queued',
         dataset_source: datasetPath ? 'upload' : null,
         metadata: {
@@ -145,6 +149,7 @@ export default function AIDashboard() {
           datasetPath,
           modelPath,
           extraInstructions: data.extraInstructions,
+          trainingMode: data.trainingMode,
         },
       }).select().single();
 
