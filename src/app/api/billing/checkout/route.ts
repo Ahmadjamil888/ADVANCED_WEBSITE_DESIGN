@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getSupabaseOrThrow } from '@/lib/supabase';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-10-29.clover',
-});
+const STRIPE_API_VERSION: Stripe.StripeConfig['apiVersion'] = '2025-10-29.clover';
+
+function getStripeClient() {
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    return null;
+  }
+  return new Stripe(secretKey, {
+    apiVersion: STRIPE_API_VERSION,
+  });
+}
 
 const PLAN_PRICES: Record<string, number> = {
   pro: 5000, // $50.00 in cents
@@ -17,6 +25,14 @@ export async function POST(req: NextRequest) {
 
     if (!['pro', 'enterprise'].includes(planType)) {
       return NextResponse.json({ error: 'Invalid plan type' }, { status: 400 });
+    }
+
+    const stripe = getStripeClient();
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured. Missing STRIPE_SECRET_KEY.' },
+        { status: 500 },
+      );
     }
 
     const supabase = getSupabaseOrThrow();

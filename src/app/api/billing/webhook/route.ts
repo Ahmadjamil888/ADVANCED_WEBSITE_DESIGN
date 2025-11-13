@@ -2,13 +2,29 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getSupabaseOrThrow } from '@/lib/supabase';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-10-29.clover',
-});
+const STRIPE_API_VERSION: Stripe.StripeConfig['apiVersion'] = '2025-10-29.clover';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+function getStripeClient() {
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    return null;
+  }
+  return new Stripe(secretKey, {
+    apiVersion: STRIPE_API_VERSION,
+  });
+}
 
 export async function POST(req: NextRequest) {
+  const stripe = getStripeClient();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!stripe || !webhookSecret) {
+    return NextResponse.json(
+      { error: 'Stripe webhook is not configured properly.' },
+      { status: 500 },
+    );
+  }
+
   const body = await req.text();
   const signature = req.headers.get('stripe-signature');
 

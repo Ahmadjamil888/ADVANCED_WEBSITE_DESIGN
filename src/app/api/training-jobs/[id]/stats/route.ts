@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseOrThrow, type Database } from '@/lib/supabase';
+import { getSupabaseOrThrow } from '@/lib/supabase';
 
-type TrainingJobRow = Database['public']['Tables']['training_jobs']['Row'];
+type TrainingJobRecord = {
+  current_epoch: number | null;
+  total_epochs: number | null;
+  loss_value: number | null;
+  accuracy: number | null;
+  validation_loss: number | null;
+  validation_accuracy: number | null;
+  job_status: string | null;
+};
 
 export async function GET(
   _req: NextRequest,
@@ -23,7 +31,7 @@ export async function GET(
       .eq('id', jobId)
       .single();
 
-    const job = data as TrainingJobRow | null;
+    const job = data as TrainingJobRecord | null;
 
     if (error || !job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
