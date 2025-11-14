@@ -175,8 +175,41 @@ export default function AIDashboard() {
         throw new Error(errorData.error || 'Failed to start training');
       }
 
-      // Redirect to model detail page
-      router.push(`/ai-workspace/${model.id}`);
+      const trainingData = await response.json();
+      
+      // Show loading message while training happens
+      alert('✅ Training started! Your model is being trained on E2B.\n\nYou will be redirected to the live deployment URL once ready.\n\nTraining Job ID: ' + trainingData.trainingJobId);
+      
+      // Poll for deployment URL (check training job status)
+      let deploymentUrl = '';
+      let attempts = 0;
+      const maxAttempts = 120; // 2 minutes with 1 second intervals
+      
+      while (!deploymentUrl && attempts < maxAttempts) {
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        
+        try {
+          const statusRes = await fetch(`/api/training-jobs/${trainingData.trainingJobId}/status`);
+          if (statusRes.ok) {
+            const statusData = await statusRes.json();
+            if (statusData.deployment_url) {
+              deploymentUrl = statusData.deployment_url;
+              break;
+            }
+          }
+        } catch (error) {
+          console.log('Polling for deployment URL...');
+        }
+      }
+      
+      if (deploymentUrl) {
+        // Redirect to E2B deployment URL
+        window.location.href = deploymentUrl;
+      } else {
+        // Fallback: show training job page
+        router.push(`/ai-workspace/${model.id}?trainingJobId=${trainingData.trainingJobId}`);
+      }
     } catch (error: any) {
       console.error('Error creating model:', error);
       alert(`Error: ${error.message}`);

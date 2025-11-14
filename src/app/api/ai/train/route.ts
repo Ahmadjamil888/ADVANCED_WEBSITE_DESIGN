@@ -150,16 +150,32 @@ async function trainModelInBackground(params: {
       );
     }
 
-    // Update completion
+    // Deploy the app to E2B and get the deployment URL
+    let deploymentUrl = '';
+    try {
+      deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000, {
+        startCommand: `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port 8000`,
+        fallbackStartCommand: `cd /home/user && python -m http.server 8000`,
+        waitSeconds: 30,
+      });
+      console.log('✅ Model deployed at:', deploymentUrl);
+    } catch (error: any) {
+      console.error('Deployment error:', error);
+      // Continue even if deployment fails
+    }
+
+    // Update completion with deployment URL
     await (supabase.from('training_jobs').update as any)({
       job_status: 'completed',
       completed_at: new Date().toISOString(),
+      deployment_url: deploymentUrl,
     }).eq('id', trainingJobId);
 
     await (supabase.from('ai_models').update as any)({
       training_status: 'completed',
       model_file_path: `/home/user/model.pth`,
       model_file_format: 'pth',
+      deployed_url: deploymentUrl,
     }).eq('id', modelId);
 
     await e2b.close();
@@ -179,48 +195,65 @@ async function trainModelInBackground(params: {
 async function scrapeResources(prompt: string, trainingMode: string): Promise<{ dataset?: string; model?: string }> {
   const result: { dataset?: string; model?: string } = {};
 
-  // Scrape dataset if needed
+  // Scrape dataset if needed (non-blocking - errors are gracefully handled)
   if (trainingMode === 'from_scratch') {
     try {
-      const hfRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/scrape/huggingface`, {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      if (!appUrl) {
+        console.warn('NEXT_PUBLIC_APP_URL not set, skipping dataset scraping');
+        return result;
+      }
+
+      const hfRes = await fetch(`${appUrl}/api/scrape/huggingface`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, type: 'dataset' }),
-      });
+        signal: AbortSignal.timeout(10000), // 10 second timeout
+      } as any);
       const hfData = await hfRes.json();
       if (hfData.success) {
         result.dataset = hfData.repo;
       } else {
         // Try Kaggle
-        const kgRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/scrape/kaggle`, {
+        const kgRes = await fetch(`${appUrl}/api/scrape/kaggle`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt }),
-        });
+          signal: AbortSignal.timeout(10000),
+        } as any);
         const kgData = await kgRes.json();
         if (kgData.success && !kgData.requiresManualSelection) {
           result.dataset = kgData.repo;
         }
       }
     } catch (error) {
-      console.error('Dataset scraping error:', error);
+      console.warn('Dataset scraping failed (non-blocking):', error);
+      // Continue without dataset - training can proceed
     }
   }
 
-  // Scrape model for fine-tuning
+  // Scrape model for fine-tuning (non-blocking)
   if (trainingMode === 'fine_tune') {
     try {
-      const hfRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/scrape/huggingface`, {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      if (!appUrl) {
+        console.warn('NEXT_PUBLIC_APP_URL not set, skipping model scraping');
+        return result;
+      }
+
+      const hfRes = await fetch(`${appUrl}/api/scrape/huggingface`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, type: 'model' }),
-      });
+        signal: AbortSignal.timeout(10000),
+      } as any);
       const hfData = await hfRes.json();
       if (hfData.success) {
         result.model = hfData.repo;
       }
     } catch (error) {
-      console.error('Model scraping error:', error);
+      console.warn('Model scraping failed (non-blocking):', error);
+      // Continue without model - training can proceed
     }
   }
 
