@@ -8,22 +8,24 @@ export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
-    const { modelId, prompt, trainingMode, datasetPath, modelPath, extraInstructions } = await req.json();
+    const { modelId, userId, prompt, trainingMode, datasetPath, modelPath, extraInstructions } = await req.json();
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+
+    if (!modelId) {
+      return NextResponse.json({ error: 'Model ID is required' }, { status: 400 });
+    }
 
     const supabase = getSupabaseOrThrow();
-
-    // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      throw new Error('User not authenticated');
-    }
 
     // Create training job
     const { data: trainingJob, error: jobError } = await (supabase
       .from('training_jobs')
       .insert as any)({
       model_id: modelId,
-      user_id: user.id,
+      user_id: userId,
       job_status: 'queued',
       total_epochs: 10,
     }).select().single();

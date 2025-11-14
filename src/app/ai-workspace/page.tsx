@@ -161,6 +161,7 @@ export default function AIDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           modelId: model.id,
+          userId: user.id,
           prompt: data.prompt,
           trainingMode: data.trainingMode,
           datasetPath,
@@ -169,7 +170,10 @@ export default function AIDashboard() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to start training');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to start training');
+      }
 
       // Redirect to model detail page
       router.push(`/ai-workspace/${model.id}`);
