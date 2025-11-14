@@ -59,17 +59,36 @@ export async function POST(req: NextRequest) {
         total: 7 
       });
 
-      const aiClient = new AIClient(model.provider, model.id);
+      let aiClient: AIClient;
+      try {
+        aiClient = new AIClient(model.provider, model.id);
+      } catch (error: any) {
+        await sendUpdate('error', { 
+          message: error.message || 'Failed to initialize AI client. Please check your API keys in .env.local' 
+        });
+        await writer.close();
+        return;
+      }
+
       let fullResponse = '';
 
-      for await (const chunk of aiClient.streamCompletion([
-        { role: 'system', content: CODE_AGENT_SYSTEM_PROMPT },
-        { role: 'user', content: prompt },
-      ])) {
-        if (!chunk.done) {
-          fullResponse += chunk.content;
-          await sendUpdate('ai-stream', { content: chunk.content });
+      try {
+        for await (const chunk of aiClient.streamCompletion([
+          { role: 'system', content: CODE_AGENT_SYSTEM_PROMPT },
+          { role: 'user', content: prompt },
+        ])) {
+          if (!chunk.done) {
+            fullResponse += chunk.content;
+            await sendUpdate('ai-stream', { content: chunk.content });
+          }
         }
+      } catch (error: any) {
+        console.error('❌ AI generation failed:', error);
+        await sendUpdate('error', { 
+          message: `AI generation failed: ${error.message}` 
+        });
+        await writer.close();
+        return;
       }
 
       // Step 2: Parse generated files

@@ -24,12 +24,21 @@ export class AIClient {
     switch (provider) {
       case 'groq':
         this.apiKey = process.env.GROQ_API_KEY || '';
+        if (!this.apiKey) {
+          throw new Error('GROQ_API_KEY is not configured in environment variables. Please add it to .env.local');
+        }
         break;
       case 'gemini':
         this.apiKey = process.env.GEMINI_API_KEY || '';
+        if (!this.apiKey) {
+          throw new Error('GEMINI_API_KEY is not configured in environment variables. Please add it to .env.local');
+        }
         break;
       case 'deepseek':
         this.apiKey = process.env.DEEPSEEK_API_KEY || '';
+        if (!this.apiKey) {
+          throw new Error('DEEPSEEK_API_KEY is not configured in environment variables. Please add it to .env.local');
+        }
         break;
     }
   }
