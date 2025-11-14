@@ -310,8 +310,53 @@ export default function WorkspacePage() {
     }
   };
 
-  if (loading || !user) {
-    return <div className={styles.container}>Loading...</div>;
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.topbar}>
+          <div className={styles.topbarLeft}>
+            <div className={styles.logoText}>zehanxtech</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '18px', marginBottom: '10px' }}>Loading workspace...</div>
+            <div style={{ fontSize: '14px', color: '#666' }}>Please wait while we initialize your session</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.topbar}>
+          <div className={styles.topbarLeft}>
+            <div className={styles.logoText}>zehanxtech</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '18px', marginBottom: '20px' }}>Please sign in to access this workspace</div>
+            <button 
+              onClick={() => router.push('/login')}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '16px'
+              }}
+            >
+              Go to Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
