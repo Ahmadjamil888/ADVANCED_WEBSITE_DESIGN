@@ -190,13 +190,15 @@ export default function AIDashboard() {
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
         
         try {
-          const statusRes = await fetch(`/api/training-jobs/${trainingData.trainingJobId}/status`);
+          const statusRes = await fetch(`/api/training-jobs/${trainingData.trainingJobId}/stats`);
           if (statusRes.ok) {
             const statusData = await statusRes.json();
             if (statusData.deployment_url) {
               deploymentUrl = statusData.deployment_url;
               break;
             }
+            // Log progress
+            console.log(`Training progress: Epoch ${statusData.currentEpoch}/${statusData.totalEpochs}, Status: ${statusData.status}`);
           }
         } catch (error) {
           console.log('Polling for deployment URL...');
