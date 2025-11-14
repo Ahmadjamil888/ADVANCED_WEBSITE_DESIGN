@@ -12,17 +12,26 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseOrThrow();
 
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      throw new Error('User not authenticated');
+    }
+
     // Create training job
     const { data: trainingJob, error: jobError } = await (supabase
       .from('training_jobs')
       .insert as any)({
       model_id: modelId,
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      user_id: user.id,
       job_status: 'queued',
       total_epochs: 10,
     }).select().single();
 
-    if (jobError) throw jobError;
+    if (jobError) {
+      console.error('Training job creation error:', jobError);
+      throw new Error(`Failed to create training job: ${jobError.message}`);
+    }
 
     // Update model status
     await (supabase.from('ai_models').update as any)({
