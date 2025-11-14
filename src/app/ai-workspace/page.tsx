@@ -292,7 +292,17 @@ export default function AIDashboard() {
                   <ModelCard
                     key={model.id}
                     model={model}
-                    onView={(id) => router.push(`/ai-workspace/${id}`)}
+                    onView={(id) => {
+                      // Find the model to check for deployment URL
+                      const selectedModel = models.find(m => m.id === id);
+                      if (selectedModel?.deployment_url) {
+                        // Redirect to live E2B deployment URL
+                        window.location.href = selectedModel.deployment_url;
+                      } else {
+                        // Fallback to workspace page if no deployment URL
+                        router.push(`/ai-workspace/${id}`);
+                      }
+                    }}
                     onDelete={handleDeleteModel}
                     onEdit={(id) => router.push(`/ai-workspace/${id}?edit=true`)}
                     onDownload={handleDownloadModel}
