@@ -90,13 +90,13 @@ export default function WorkspacePage() {
     if (!supabase) return;
     
     const { data, error } = await supabase
-      .from('Project')
+      .from('ai_models')
       .select('*')
       .eq('id', projectId)
       .single();
 
     if (!error && data) {
-      setProject(data);
+      setProject(data as any);
     }
   };
 
@@ -104,13 +104,13 @@ export default function WorkspacePage() {
     if (!user || !supabase) return;
 
     const { data, error } = await supabase
-      .from('Project')
+      .from('ai_models')
       .select('*')
-      .eq('userId', user.id)
-      .order('updatedAt', { ascending: false });
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false });
 
     if (!error && data) {
-      setProjects(data);
+      setProjects(data as any);
     }
   };
 
@@ -118,13 +118,13 @@ export default function WorkspacePage() {
     if (!supabase) return;
     
     const { data, error } = await supabase
-      .from('Message')
+      .from('messages')
       .select('*')
-      .eq('projectId', projectId)
-      .order('createdAt', { ascending: true });
+      .eq('chat_id', projectId)
+      .order('created_at', { ascending: true });
 
     if (!error && data) {
-      setMessages(data);
+      setMessages(data as any);
     }
   };
 
@@ -158,12 +158,11 @@ export default function WorkspacePage() {
     try {
       // Save user message
       const { data: userMessage, error: userError } = await (supabase
-        .from('Message')
+        .from('messages')
         .insert as any)({
           content: userMessageContent,
           role: 'USER',
-          type: 'RESULT',
-          projectId: projectId,
+          chat_id: projectId,
         })
         .select()
         .single();
@@ -227,12 +226,11 @@ export default function WorkspacePage() {
                 // Save assistant message
                 if (supabase) {
                   await (supabase
-                    .from('Message')
+                    .from('messages')
                     .insert as any)({
                     content: fullResponse || 'Model training completed successfully!',
                     role: 'ASSISTANT',
-                    type: 'RESULT',
-                    projectId: projectId,
+                    chat_id: projectId,
                   });
 
                   await loadMessages();
@@ -243,12 +241,11 @@ export default function WorkspacePage() {
                 // Save error message
                 if (supabase) {
                   await (supabase
-                    .from('Message')
+                    .from('messages')
                     .insert as any)({
                     content: data.data.message,
                     role: 'ASSISTANT',
-                    type: 'ERROR',
-                    projectId: projectId,
+                    chat_id: projectId,
                   });
 
                   await loadMessages();
@@ -264,12 +261,11 @@ export default function WorkspacePage() {
       // Save error message
       if (supabase) {
         await (supabase
-          .from('Message')
+          .from('messages')
           .insert as any)({
           content: `Error: ${error.message}`,
           role: 'ASSISTANT',
-          type: 'ERROR',
-          projectId: projectId,
+          chat_id: projectId,
         });
 
         await loadMessages();
@@ -283,10 +279,12 @@ export default function WorkspacePage() {
     if (!user || !supabase) return;
 
     const { data: newProject, error } = await (supabase
-      .from('Project')
+      .from('ai_models')
       .insert as any)({
-      name: 'New Project',
-      userId: user.id,
+      name: 'New Model',
+      user_id: user.id,
+      model_type: 'custom',
+      framework: 'pytorch',
     })
       .select()
       .single();
