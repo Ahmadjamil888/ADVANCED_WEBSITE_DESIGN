@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { E2BManager } from '@/lib/e2b';
 import { AIClient } from '@/lib/ai/client';
 import { AI_MODELS } from '@/lib/ai/models';
-import { getSupabaseOrThrow } from '@/lib/supabase';
+import { getSupabaseServiceRole } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 
@@ -18,7 +18,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Model ID is required' }, { status: 400 });
     }
 
-    const supabase = getSupabaseOrThrow();
+    let supabase;
+    try {
+      supabase = getSupabaseServiceRole();
+    } catch (error: any) {
+      return NextResponse.json({ 
+        error: 'Service role not configured. Add SUPABASE_SERVICE_ROLE_KEY to environment variables.' 
+      }, { status: 500 });
+    }
 
     // Create training job
     const { data: trainingJob, error: jobError } = await (supabase
@@ -68,7 +75,7 @@ async function trainModelInBackground(params: {
   extraInstructions?: string;
 }) {
   const { modelId, trainingJobId, prompt, trainingMode, datasetPath, modelPath, extraInstructions } = params;
-  const supabase = getSupabaseOrThrow();
+  const supabase = getSupabaseServiceRole();
 
   try {
     // Scrape dataset/model from HF/Kaggle if not provided

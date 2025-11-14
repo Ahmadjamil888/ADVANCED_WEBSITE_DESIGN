@@ -41,6 +41,7 @@ export type AIModel = {
 /** ✅ Load environment variables safely */
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 /**
  * Do not throw on missing env in the client bundle.
@@ -56,6 +57,19 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
       }
     )
   : undefined;
+
+/**
+ * Service role client for backend operations that bypass RLS
+ * Only use this on the server side for trusted operations
+ */
+export function getSupabaseServiceRole(): SupabaseClient<Database> {
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Supabase service role is not configured. Set SUPABASE_SERVICE_ROLE_KEY in environment variables.');
+  }
+  return createClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
+    db: { schema: 'public' },
+  });
+}
 
 /**
  * Returns a non-undefined Supabase client or throws with a clear error.
