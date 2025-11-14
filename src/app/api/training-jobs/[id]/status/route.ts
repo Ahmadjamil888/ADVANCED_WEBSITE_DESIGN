@@ -9,10 +9,11 @@ export const runtime = 'nodejs';
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const trainingJobId = params.id;
+    const { id } = await params;
+    const trainingJobId = id;
 
     if (!trainingJobId) {
       return NextResponse.json(
