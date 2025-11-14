@@ -78,23 +78,29 @@ async function trainModelInBackground(params: {
   const supabase = getSupabaseServiceRole();
 
   try {
+    console.log(`🚀 Starting training for model ${modelId}, job ${trainingJobId}`);
+    
     // Scrape dataset/model from HF/Kaggle if not provided
     let finalDatasetPath = datasetPath;
     let finalModelPath = modelPath;
 
     if (!finalDatasetPath || (trainingMode === 'fine_tune' && !finalModelPath)) {
+      console.log('📦 Scraping resources...');
       const scraped = await scrapeResources(prompt, trainingMode);
       if (!finalDatasetPath && scraped.dataset) finalDatasetPath = scraped.dataset;
       if (!finalModelPath && scraped.model) finalModelPath = scraped.model;
+      console.log('✅ Resources scraped:', { finalDatasetPath, finalModelPath });
     }
 
     // Update job status
+    console.log('📝 Updating job status to running...');
     await (supabase.from('training_jobs').update as any)({
       job_status: 'running',
       started_at: new Date().toISOString(),
     }).eq('id', trainingJobId);
 
     // Generate code using AI
+    console.log('🤖 Generating code with AI...');
     const aiClient = new AIClient('groq', 'llama-3.3-70b-versatile');
     let fullCode = '';
     for await (const chunk of aiClient.streamCompletion([
@@ -108,28 +114,41 @@ async function trainModelInBackground(params: {
         fullCode += chunk.content;
       }
     }
+    console.log('✅ Code generated, length:', fullCode.length);
 
     // Parse and write files to E2B
+    console.log('📝 Creating E2B sandbox...');
     const e2b = new E2BManager();
     const sandboxId = await e2b.createSandbox();
+    console.log('✅ Sandbox created:', sandboxId);
 
+    console.log('📄 Parsing files from generated code...');
     const files = parseFilesFromCode(fullCode);
+    console.log('✅ Files parsed:', Object.keys(files));
+    
+    console.log('💾 Writing files to sandbox...');
     await e2b.writeFiles(files);
+    console.log('✅ Files written');
 
     // Install dependencies
     if (files['requirements.txt']) {
+      console.log('📦 Installing dependencies...');
       await e2b.installDependencies();
+      console.log('✅ Dependencies installed');
     }
 
     // Run training with real-time stats
     if (files['train.py']) {
+      console.log('🏋️ Running training...');
       await e2b.runCommand(
         'python /home/user/train.py',
         async (stdout: string) => {
+          console.log('[training]', stdout);
           // Parse epoch stats from stdout
           const epochMatch = stdout.match(/Epoch (\d+)\/(\d+).*Loss: ([\d.]+).*Accuracy: ([\d.]+)/);
           if (epochMatch) {
             const [, epoch, total, loss, accuracy] = epochMatch;
+            console.log(`📊 Epoch ${epoch}/${total}: Loss=${loss}, Accuracy=${accuracy}`);
             await (supabase.from('training_epochs').insert as any)({
               training_job_id: trainingJobId,
               epoch_number: parseInt(epoch),
@@ -145,14 +164,16 @@ async function trainModelInBackground(params: {
           }
         },
         async (stderr: string) => {
-          console.error('Training error:', stderr);
+          console.error('[training error]', stderr);
         }
       );
+      console.log('✅ Training completed');
     }
 
     // Deploy the app to E2B and get the deployment URL
     let deploymentUrl = '';
     try {
+      console.log('🚀 Deploying app to E2B...');
       deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000, {
         startCommand: `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port 8000`,
         fallbackStartCommand: `cd /home/user && python -m http.server 8000`,
@@ -160,11 +181,12 @@ async function trainModelInBackground(params: {
       });
       console.log('✅ Model deployed at:', deploymentUrl);
     } catch (error: any) {
-      console.error('Deployment error:', error);
+      console.error('❌ Deployment error:', error);
       // Continue even if deployment fails
     }
 
     // Update completion with deployment URL
+    console.log('📝 Updating job status to completed...');
     await (supabase.from('training_jobs').update as any)({
       job_status: 'completed',
       completed_at: new Date().toISOString(),
@@ -178,17 +200,26 @@ async function trainModelInBackground(params: {
       deployed_url: deploymentUrl,
     }).eq('id', modelId);
 
+    console.log('🎉 Training job completed successfully!');
     await e2b.close();
   } catch (error: any) {
-    console.error('Training error:', error);
-    await (supabase.from('training_jobs').update as any)({
-      job_status: 'failed',
-      error_message: error.message,
-      completed_at: new Date().toISOString(),
-    }).eq('id', trainingJobId);
-    await (supabase.from('ai_models').update as any)({
-      training_status: 'failed',
-    }).eq('id', modelId);
+    console.error('❌ Training error:', error);
+    console.error('Error stack:', error.stack);
+    const errorMessage = error.message || 'Unknown error occurred';
+    
+    try {
+      await (supabase.from('training_jobs').update as any)({
+        job_status: 'failed',
+        error_message: errorMessage,
+        completed_at: new Date().toISOString(),
+      }).eq('id', trainingJobId);
+      
+      await (supabase.from('ai_models').update as any)({
+        training_status: 'failed',
+      }).eq('id', modelId);
+    } catch (dbError) {
+      console.error('❌ Failed to update database with error:', dbError);
+    }
   }
 }
 
