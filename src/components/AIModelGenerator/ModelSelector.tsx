@@ -9,22 +9,24 @@ interface ModelSelectorProps {
 
 const AVAILABLE_MODELS = [
   {
-    id: 'mixtral-8x7b-32768',
-    name: 'Mixtral 8x7B',
-    description: 'Fast and efficient, great for code generation',
-    icon: '⚡',
+    id: 'llama3-70b-8192',
+    name: 'Llama 3 70B',
+    description: 'Powerful model for code generation',
   },
   {
-    id: 'llama2-70b-4096',
-    name: 'Llama 2 70B',
-    description: 'Powerful model for complex tasks',
-    icon: '🦙',
+    id: 'llama3-8b-8192',
+    name: 'Llama 3 8B',
+    description: 'Fast and lightweight',
   },
   {
-    id: 'gemma-7b-it',
-    name: 'Gemma 7B',
-    description: 'Lightweight and fast',
-    icon: '💎',
+    id: 'gemma2-9b-it',
+    name: 'Gemma 2 9B',
+    description: 'Balanced performance',
+  },
+  {
+    id: 'llama-3.1-8b-instant',
+    name: 'Llama 3.1 8B Instant',
+    description: 'Ultra-fast responses',
   },
 ];
 
@@ -32,94 +34,107 @@ export default function ModelSelector({ selectedModel, onModelChange }: ModelSel
   return (
     <div style={styles.container}>
       <style>{`
-        .model-selector-label {
-          display: block;
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #d1d5db;
-          margin-bottom: 1rem;
-        }
-
-        .model-selector-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .model-selector-wrapper {
+          display: flex;
+          flex-direction: column;
           gap: 1rem;
         }
 
-        .model-selector-button {
-          padding: 1rem;
-          border-radius: 0.5rem;
-          border: 2px solid;
-          transition: all 0.3s ease;
-          text-align: left;
-          background: #1f2937;
-          border-color: #4b5563;
-          cursor: pointer;
-          font-family: inherit;
-        }
-
-        .model-selector-button:hover {
-          border-color: #6b7280;
-          background: #374151;
-        }
-
-        .model-selector-button.selected {
-          border-color: #3b82f6;
-          background: rgba(59, 130, 246, 0.1);
-        }
-
-        .model-selector-button-content {
-          display: flex;
-          align-items: flex-start;
-          gap: 0.75rem;
-        }
-
-        .model-selector-icon {
-          font-size: 1.5rem;
-          flex-shrink: 0;
-        }
-
-        .model-selector-text {
-          flex: 1;
-        }
-
-        .model-selector-name {
+        .model-selector-label {
+          font-size: 0.875rem;
           font-weight: 600;
           color: #ffffff;
-          margin: 0;
-          margin-bottom: 0.25rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
-        .model-selector-description {
-          font-size: 0.875rem;
-          color: #9ca3af;
+        .model-selector-toggle-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .model-selector-toggle {
+          padding: 0.75rem 1.25rem;
+          background: #1a1a1a;
+          border: 1px solid #333333;
+          color: #999999;
+          cursor: pointer;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+          font-family: inherit;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .model-selector-toggle:hover {
+          background: #222222;
+          border-color: #444444;
+          color: #ffffff;
+        }
+
+        .model-selector-toggle.active {
+          background: #ffffff;
+          border-color: #ffffff;
+          color: #000000;
+        }
+
+        .model-selector-info {
+          padding: 1rem;
+          background: #0a0a0a;
+          border: 1px solid #222222;
+          border-radius: 1px;
+        }
+
+        .model-selector-info-name {
+          font-weight: 600;
+          color: #ffffff;
+          margin: 0 0 0.5rem 0;
+          font-size: 0.95rem;
+        }
+
+        .model-selector-info-desc {
+          color: #999999;
           margin: 0;
+          font-size: 0.85rem;
         }
 
         @media (max-width: 768px) {
-          .model-selector-grid {
-            grid-template-columns: 1fr;
+          .model-selector-toggle-group {
+            flex-direction: column;
+          }
+
+          .model-selector-toggle {
+            width: 100%;
           }
         }
       `}</style>
 
-      <label className="model-selector-label">Select AI Model</label>
-      <div className="model-selector-grid">
-        {AVAILABLE_MODELS.map((model) => (
-          <button
-            key={model.id}
-            onClick={() => onModelChange(model.id)}
-            className={`model-selector-button ${selectedModel === model.id ? 'selected' : ''}`}
-          >
-            <div className="model-selector-button-content">
-              <span className="model-selector-icon">{model.icon}</span>
-              <div className="model-selector-text">
-                <h3 className="model-selector-name">{model.name}</h3>
-                <p className="model-selector-description">{model.description}</p>
-              </div>
-            </div>
-          </button>
-        ))}
+      <div className="model-selector-wrapper">
+        <label className="model-selector-label">Select Model</label>
+        <div className="model-selector-toggle-group">
+          {AVAILABLE_MODELS.map((model) => (
+            <button
+              key={model.id}
+              onClick={() => onModelChange(model.id)}
+              className={`model-selector-toggle ${selectedModel === model.id ? 'active' : ''}`}
+            >
+              {model.name}
+            </button>
+          ))}
+        </div>
+        
+        {/* Show info about selected model */}
+        {AVAILABLE_MODELS.find(m => m.id === selectedModel) && (
+          <div className="model-selector-info">
+            <p className="model-selector-info-name">
+              {AVAILABLE_MODELS.find(m => m.id === selectedModel)?.name}
+            </p>
+            <p className="model-selector-info-desc">
+              {AVAILABLE_MODELS.find(m => m.id === selectedModel)?.description}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
