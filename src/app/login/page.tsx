@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/ai-workspace')
+      router.push('/ai-model-generator')
     }
   }, [user, router])
 
@@ -56,10 +56,15 @@ export default function LoginPage() {
       return
     }
     
+    // Use zehanxtech.com in production, localhost in development
+    const redirectUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://zehanxtech.com/ai-model-generator'
+      : `${window.location.origin}/ai-model-generator`
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/ai-workspace`
+        redirectTo: redirectUrl
       }
     })
     if (error) alert(error.message)

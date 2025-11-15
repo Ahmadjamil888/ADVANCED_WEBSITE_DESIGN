@@ -28,6 +28,7 @@
     "dotenv": "^17.2.3",
     "e2b": "^2.6.3",
     "gray-matter": "^4.0.3",
+    "groq-sdk": "^0.3.0",
     "jszip": "^3.10.1",
     "next": "^15.3.1",
     "next-mdx-remote": "^5.0.0",

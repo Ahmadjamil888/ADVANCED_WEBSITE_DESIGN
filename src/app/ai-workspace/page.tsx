@@ -100,120 +100,62 @@ export default function AIDashboard() {
         return;
       }
 
-      // Upload files if provided
-      let datasetPath = null;
-      let modelPath = null;
+      // Use new orchestrated training endpoint
+      console.log('[handleCreateModel] Starting orchestrated training with prompt:', data.prompt);
+      
+      // Show loading message
+      alert('🚀 Starting AI Model Generation & Training...\n\nThis will:\n1. Generate code with Groq\n2. Create E2B sandbox\n3. Train PyTorch model\n4. Deploy REST API\n\nPlease wait...');
 
-      if (data.datasetFile) {
-        const formData = new FormData();
-        formData.append('file', data.datasetFile);
-        formData.append('type', 'dataset');
-        const uploadRes = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        const uploadData = await uploadRes.json();
-        datasetPath = uploadData.path;
-      }
-
-      if (data.modelFile) {
-        const formData = new FormData();
-        formData.append('file', data.modelFile);
-        formData.append('type', 'model');
-        const uploadRes = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        const uploadData = await uploadRes.json();
-        modelPath = uploadData.path;
-      }
-
-      // Map UI training mode to DB constraint
-      const trainingModeDb =
-        data.trainingMode === 'fine_tune' ? 'fine_tuning' : 'supervised';
-
-      // Create model record
-      const { data: model, error } = await (supabase
-        .from('ai_models')
-        .insert as any)({
-        user_id: user.id,
-        name: data.prompt.slice(0, 100),
-        description: data.extraInstructions,
-        model_type: 'custom',
-        framework: 'pytorch',
-        training_mode: trainingModeDb,
-        training_status: 'queued',
-        dataset_source: datasetPath ? 'upload' : null,
-        metadata: {
-          prompt: data.prompt,
-          datasetPath,
-          modelPath,
-          extraInstructions: data.extraInstructions,
-          trainingMode: data.trainingMode,
-        },
-      }).select().single();
-
-      if (error) throw error;
-
-      // Start training job
-      const response = await fetch('/api/ai/train', {
+      // Call the new orchestration endpoint
+      const response = await fetch('/api/ai/orchestrate-training', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          modelId: model.id,
-          userId: user.id,
           prompt: data.prompt,
-          trainingMode: data.trainingMode,
-          datasetPath,
-          modelPath,
-          extraInstructions: data.extraInstructions,
+          model: 'mixtral-8x7b-32768', // Default to Mixtral
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to start training');
+        throw new Error(errorData.error || 'Failed to generate and train model');
       }
 
-      const trainingData = await response.json();
-      
-      // Show loading message while training happens
-      alert('✅ Training started! Your model is being trained on E2B.\n\nYou will be redirected to the live deployment URL once ready.\n\nTraining Job ID: ' + trainingData.trainingJobId);
-      
-      // Poll for deployment URL (check training job status)
-      let deploymentUrl = '';
-      let attempts = 0;
-      const maxAttempts = 120; // 2 minutes with 1 second intervals
-      
-      while (!deploymentUrl && attempts < maxAttempts) {
-        attempts++;
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-        
-        try {
-          const statusRes = await fetch(`/api/training-jobs/${trainingData.trainingJobId}/stats`);
-          if (statusRes.ok) {
-            const statusData = await statusRes.json();
-            if (statusData.deployment_url) {
-              deploymentUrl = statusData.deployment_url;
-              break;
-            }
-            // Log progress
-            console.log(`Training progress: Epoch ${statusData.currentEpoch}/${statusData.totalEpochs}, Status: ${statusData.status}`);
-          }
-        } catch (error) {
-          console.log('Polling for deployment URL...');
-        }
-      }
-      
-      if (deploymentUrl) {
-        // Redirect to E2B deployment URL
-        window.location.href = deploymentUrl;
-      } else {
-        // Fallback: show training job page
-        router.push(`/ai-workspace/${model.id}?trainingJobId=${trainingData.trainingJobId}`);
-      }
+      const orchestrationData = await response.json();
+      console.log('[handleCreateModel] Orchestration completed:', orchestrationData);
+
+      // Create model record in database
+      const { data: model, error } = await (supabase
+        .from('ai_models')
+        .insert as any)({
+        user_id: user.id,
+        name: data.prompt.slice(0, 100),
+        description: data.extraInstructions || 'Generated with AI Model Generator',
+        model_type: orchestrationData.modelType,
+        framework: 'pytorch',
+        training_mode: 'supervised',
+        training_status: 'completed',
+        deployment_url: orchestrationData.deploymentUrl,
+        metadata: {
+          prompt: data.prompt,
+          sandboxId: orchestrationData.sandboxId,
+          modelType: orchestrationData.modelType,
+          endpoints: orchestrationData.steps.deployment.endpoints,
+          extraInstructions: data.extraInstructions,
+        },
+      }).select().single();
+
+      if (error) throw error;
+
+      console.log('[handleCreateModel] Model record created:', model.id);
+
+      // Show success message with deployment URL
+      alert(`✅ Model Successfully Generated & Deployed!\n\nDeployment URL:\n${orchestrationData.deploymentUrl}\n\nYou will be redirected to the deployment page.`);
+
+      // Redirect to E2B deployment URL
+      window.location.href = orchestrationData.deploymentUrl;
     } catch (error: any) {
-      console.error('Error creating model:', error);
+      console.error('[handleCreateModel] Error:', error);
       alert(`Error: ${error.message}`);
     }
   };

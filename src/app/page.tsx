@@ -181,8 +181,8 @@ export default function Home() {
             </Card>
             <Card fillWidth className="mobile-padding-sm">
               <Column gap="8">
-                <Heading variant="heading-default-m" className="mobile-font-sm">🚀 Instant Deployment</Heading>
-                <Text onBackground="neutral-weak" className="mobile-font-sm">Deploy your custom AI models to Hugging Face Hub with one click - no coding required.</Text>
+                <Heading variant="heading-default-m" className="mobile-font-sm">🚀 E2B Deployment</Heading>
+                <Text onBackground="neutral-weak" className="mobile-font-sm">Deploy your trained PyTorch models to E2B sandboxes with REST API endpoints - production ready.</Text>
               </Column>
             </Card>
             <Card fillWidth className="mobile-padding-sm">
@@ -192,6 +192,15 @@ export default function Home() {
               </Column>
             </Card>
           </Column>
+          <Button
+            href="/ai-model-generator"
+            variant="primary"
+            size="m"
+            arrowIcon
+            className="mobile-full-width"
+          >
+            Try AI Model Generator
+          </Button>
         </Column>
       </RevealFx>
 
