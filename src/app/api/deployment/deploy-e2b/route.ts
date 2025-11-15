@@ -33,13 +33,13 @@ export async function POST(request: NextRequest) {
     console.log('[deploy-e2b] Model type:', modelType);
 
     // Dynamic import for E2B SDK - handle CommonJS
-    let Sandbox: any;
+    let SandboxClass: any;
     try {
-      const e2bModule = await import('@e2b/code-interpreter');
+      const e2bModule: any = await import('@e2b/code-interpreter');
       // Try different export patterns
-      Sandbox = e2bModule.Sandbox || e2bModule.default?.Sandbox || e2bModule.default;
+      SandboxClass = e2bModule.Sandbox || (e2bModule.default && e2bModule.default.Sandbox) || e2bModule.default;
       
-      if (!Sandbox || (typeof Sandbox.create !== 'function' && typeof Sandbox.connect !== 'function')) {
+      if (!SandboxClass || (typeof SandboxClass.create !== 'function' && typeof SandboxClass.connect !== 'function')) {
         throw new Error('Sandbox.create or Sandbox.connect is not available');
       }
     } catch (importError) {
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // If no active sandbox, connect to existing one
     if (!sandbox) {
       console.log('[deploy-e2b] Connecting to existing sandbox...');
-      sandbox = await Sandbox.connect(sandboxId, {
+      sandbox = await SandboxClass.connect(sandboxId, {
         apiKey: process.env.E2B_API_KEY,
       });
       global.activePyTorchSandbox = sandbox;
