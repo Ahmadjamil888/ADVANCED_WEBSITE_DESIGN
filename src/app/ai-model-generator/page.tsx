@@ -16,7 +16,7 @@ interface Step {
 export default function AIModelGeneratorPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'generator' | 'models' | 'billing'>('generator');
-  const [selectedModel, setSelectedModel] = useState('llama3-70b-8192');
+  const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
   const [isLoading, setIsLoading] = useState(false);
   const [steps, setSteps] = useState<Step[]>([
     { name: 'Code Generation', status: 'pending' },

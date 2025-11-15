@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Install PyTorch and dependencies
     console.log('[create-pytorch-sandbox] Installing PyTorch and dependencies...');
 
-    const installResult = await sandbox.runPython(`
+    const installResult = await (sandbox as any).runPython(`
 import subprocess
 import sys
 

@@ -9,24 +9,24 @@ interface ModelSelectorProps {
 
 const AVAILABLE_MODELS = [
   {
-    id: 'llama3-70b-8192',
-    name: 'Llama 3 70B',
-    description: 'Powerful model for code generation',
+    id: 'openai/gpt-oss-120b',
+    name: 'GPT-OSS 120B',
+    description: 'OpenAI flagship model with 120B parameters, browser search and code execution',
   },
   {
-    id: 'llama3-8b-8192',
-    name: 'Llama 3 8B',
-    description: 'Fast and lightweight',
+    id: 'openai/gpt-oss-20b',
+    name: 'GPT-OSS 20B',
+    description: 'Lightweight OpenAI model with exceptional price-performance',
   },
   {
-    id: 'gemma2-9b-it',
-    name: 'Gemma 2 9B',
-    description: 'Balanced performance',
+    id: 'moonshotai/kimi-k2-instruct-0905',
+    name: 'Kimi K2 0905',
+    description: 'Advanced model with 256K context window and agentic coding',
   },
   {
     id: 'llama-3.1-8b-instant',
     name: 'Llama 3.1 8B Instant',
-    description: 'Ultra-fast responses',
+    description: 'Fast and efficient for quick responses',
   },
 ];
 
