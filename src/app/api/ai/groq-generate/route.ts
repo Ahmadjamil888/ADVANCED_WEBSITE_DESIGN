@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, model = 'mixtral-8x7b-32768' } = await request.json();
+    const { prompt, model = 'llama3-70b-8192' } = await request.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
     
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1',
     });
 
     const systemPrompt = `You are an expert AI model architect and Python developer. Your task is to:
