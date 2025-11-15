@@ -46,8 +46,9 @@ export async function POST(request: NextRequest) {
     // If no active sandbox or different sandbox ID, create/connect to sandbox
     if (!sandbox || global.sandboxId !== sandboxId) {
       console.log('[train-model] Creating new sandbox for training...');
-      sandbox = new Sandbox({
+      sandbox = await Sandbox.create({
         apiKey: process.env.E2B_API_KEY,
+        timeoutMs: 60 * 60 * 1000, // 1 hour timeout for training
       });
       global.activePyTorchSandbox = sandbox;
       global.sandboxId = sandbox.sandboxId;
@@ -129,7 +130,7 @@ print(json.dumps(files))
     return NextResponse.json({
       success: true,
       sandboxId: sandbox.sandboxId,
-      output: result.stdout,
+      output: result.logs?.stdout,
       modelFiles,
       message: 'Model training completed successfully',
     });

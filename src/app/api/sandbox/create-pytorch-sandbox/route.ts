@@ -42,8 +42,9 @@ export async function POST(request: NextRequest) {
 
     // Create new E2B sandbox
     console.log('[create-pytorch-sandbox] Creating sandbox...');
-    const sandbox: any = new Sandbox({
+    const sandbox: any = await Sandbox.create({
       apiKey: process.env.E2B_API_KEY,
+      timeoutMs: 30 * 60 * 1000, // 30 minutes timeout
     });
 
     if (!sandbox) {

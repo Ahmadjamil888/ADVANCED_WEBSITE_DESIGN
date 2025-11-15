@@ -51,8 +51,7 @@ export async function POST(request: NextRequest) {
     // If no active sandbox, connect to existing one
     if (!sandbox) {
       console.log('[deploy-e2b] Connecting to existing sandbox...');
-      sandbox = new Sandbox({
-        sandboxId: sandboxId,
+      sandbox = await Sandbox.connect(sandboxId, {
         apiKey: process.env.E2B_API_KEY,
       });
       global.activePyTorchSandbox = sandbox;
