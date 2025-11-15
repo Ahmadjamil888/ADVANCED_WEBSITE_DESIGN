@@ -32,9 +32,20 @@ export async function POST(request: NextRequest) {
     console.log('[deploy-e2b] Model path:', modelPath);
     console.log('[deploy-e2b] Model type:', modelType);
 
-    // Dynamic import for E2B SDK
-    const e2bModule = await import('@e2b/code-interpreter');
-    const Sandbox = e2bModule.Sandbox || e2bModule.default;
+    // Dynamic import for E2B SDK - handle CommonJS
+    let Sandbox: any;
+    try {
+      const e2bModule = await import('@e2b/code-interpreter');
+      // Try different export patterns
+      Sandbox = e2bModule.Sandbox || e2bModule.default?.Sandbox || e2bModule.default;
+      
+      if (!Sandbox || (typeof Sandbox.create !== 'function' && typeof Sandbox.connect !== 'function')) {
+        throw new Error('Sandbox.create or Sandbox.connect is not available');
+      }
+    } catch (importError) {
+      console.error('[deploy-e2b] Import error:', importError);
+      throw new Error(`Failed to import E2B SDK: ${importError instanceof Error ? importError.message : 'Unknown error'}`);
+    }
 
     let sandbox: any = global.activePyTorchSandbox;
 

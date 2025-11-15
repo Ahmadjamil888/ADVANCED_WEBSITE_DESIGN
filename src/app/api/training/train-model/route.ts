@@ -27,9 +27,20 @@ export async function POST(request: NextRequest) {
     console.log('[train-model] Sandbox ID:', sandboxId);
     console.log('[train-model] Requirements:', requirements);
 
-    // Dynamic import for E2B SDK
-    const e2bModule = await import('@e2b/code-interpreter');
-    const Sandbox = e2bModule.Sandbox || e2bModule.default;
+    // Dynamic import for E2B SDK - handle CommonJS
+    let Sandbox: any;
+    try {
+      const e2bModule = await import('@e2b/code-interpreter');
+      // Try different export patterns
+      Sandbox = e2bModule.Sandbox || e2bModule.default?.Sandbox || e2bModule.default;
+      
+      if (!Sandbox || typeof Sandbox.create !== 'function') {
+        throw new Error('Sandbox.create is not available');
+      }
+    } catch (importError) {
+      console.error('[train-model] Import error:', importError);
+      throw new Error(`Failed to import E2B SDK: ${importError instanceof Error ? importError.message : 'Unknown error'}`);
+    }
 
     let sandbox: any = global.activePyTorchSandbox;
 

@@ -20,31 +20,53 @@ export async function POST(request: NextRequest) {
     if (global.activePyTorchSandbox) {
       try {
         console.log('[create-pytorch-sandbox] Stopping existing sandbox...');
-        await global.activePyTorchSandbox.kill();
+        await (global.activePyTorchSandbox as any).kill();
       } catch (e) {
         console.error('[create-pytorch-sandbox] Error stopping existing sandbox:', e);
       }
     }
 
-    // Dynamic import for E2B SDK
-    const e2bModule = await import('@e2b/code-interpreter');
-    const Sandbox = e2bModule.Sandbox || e2bModule.default;
+    // Dynamic import for E2B SDK - handle CommonJS
+    let Sandbox: any;
+    try {
+      const e2bModule = await import('@e2b/code-interpreter');
+      // Try different export patterns
+      Sandbox = e2bModule.Sandbox || e2bModule.default?.Sandbox || e2bModule.default;
+      
+      if (!Sandbox || typeof Sandbox.create !== 'function') {
+        throw new Error('Sandbox.create is not available');
+      }
+    } catch (importError) {
+      console.error('[create-pytorch-sandbox] Import error:', importError);
+      throw new Error(`Failed to import E2B SDK: ${importError instanceof Error ? importError.message : 'Unknown error'}`);
+    }
 
     // Create new E2B sandbox
+    console.log('[create-pytorch-sandbox] Creating sandbox with Sandbox.create...');
     const sandbox: any = await Sandbox.create({
       apiKey: process.env.E2B_API_KEY,
       timeoutMs: 30 * 60 * 1000, // 30 minutes timeout
     });
 
+    if (!sandbox) {
+      throw new Error('Sandbox creation returned null or undefined');
+    }
+
     global.activePyTorchSandbox = sandbox;
     global.sandboxId = sandbox.sandboxId;
 
     console.log('[create-pytorch-sandbox] Sandbox created:', sandbox.sandboxId);
+    console.log('[create-pytorch-sandbox] Sandbox type:', typeof sandbox);
+    console.log('[create-pytorch-sandbox] Sandbox methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(sandbox)));
 
     // Install PyTorch and dependencies
     console.log('[create-pytorch-sandbox] Installing PyTorch and dependencies...');
 
-    const installResult = await (sandbox as any).runPython(`
+    if (typeof sandbox.runPython !== 'function') {
+      throw new Error(`runPython is not a function. Available methods: ${Object.getOwnPropertyNames(Object.getPrototypeOf(sandbox)).join(', ')}`);
+    }
+
+    const installResult = await sandbox.runPython(`
 import subprocess
 import sys
 
