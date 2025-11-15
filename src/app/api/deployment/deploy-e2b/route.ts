@@ -32,15 +32,14 @@ export async function POST(request: NextRequest) {
     console.log('[deploy-e2b] Model path:', modelPath);
     console.log('[deploy-e2b] Model type:', modelType);
 
-    // Dynamic import for E2B SDK - handle CommonJS
-    let SandboxClass: any;
+    // Import E2B SDK
+    let Sandbox: any;
     try {
       const e2bModule: any = await import('@e2b/code-interpreter');
-      // Try different export patterns
-      SandboxClass = e2bModule.Sandbox || (e2bModule.default && e2bModule.default.Sandbox) || e2bModule.default;
+      Sandbox = e2bModule.Sandbox || e2bModule.default;
       
-      if (!SandboxClass || (typeof SandboxClass.create !== 'function' && typeof SandboxClass.connect !== 'function')) {
-        throw new Error('Sandbox.create or Sandbox.connect is not available');
+      if (!Sandbox) {
+        throw new Error('Sandbox class not found');
       }
     } catch (importError) {
       console.error('[deploy-e2b] Import error:', importError);
@@ -52,7 +51,8 @@ export async function POST(request: NextRequest) {
     // If no active sandbox, connect to existing one
     if (!sandbox) {
       console.log('[deploy-e2b] Connecting to existing sandbox...');
-      sandbox = await SandboxClass.connect(sandboxId, {
+      sandbox = new Sandbox({
+        sandboxId: sandboxId,
         apiKey: process.env.E2B_API_KEY,
       });
       global.activePyTorchSandbox = sandbox;
@@ -127,18 +127,18 @@ if __name__ == '__main__':
 
     // Install Flask
     console.log('[deploy-e2b] Installing Flask...');
-    const flaskInstall = await sandbox.runPython(`
+    const flaskInstall = await sandbox.runCode(`
 import subprocess
 import sys
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', 'flask'])
 print('Flask installed')
 `);
 
-    console.log('[deploy-e2b] Flask installation output:', flaskInstall.stdout);
+    console.log('[deploy-e2b] Flask installation output:', flaskInstall.logs?.stdout || flaskInstall);
 
     // Start the Flask server in background
     console.log('[deploy-e2b] Starting Flask server...');
-    const serverStart = await sandbox.runPython(`
+    const serverStart = await sandbox.runCode(`
 import subprocess
 import time
 import sys
@@ -162,7 +162,7 @@ else:
     print(f'Server failed to start: {stderr}')
 `);
 
-    console.log('[deploy-e2b] Server start output:', serverStart.stdout);
+    console.log('[deploy-e2b] Server start output:', serverStart.logs?.stdout || serverStart);
 
     // Get sandbox URL
     const sandboxUrl = `https://${sandboxId}.e2b.dev:8000`;
@@ -189,8 +189,8 @@ for i in range(5):
         time.sleep(1)
 `;
 
-    const verifyResult = await sandbox.runPython(verifyCode);
-    console.log('[deploy-e2b] Verification output:', verifyResult.stdout);
+    const verifyResult = await sandbox.runCode(verifyCode);
+    console.log('[deploy-e2b] Verification output:', verifyResult.logs?.stdout || verifyResult);
 
     return NextResponse.json({
       success: true,

@@ -26,14 +26,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Dynamic import for E2B SDK - handle CommonJS
-    let SandboxClass: any;
+    // Import E2B SDK
+    let Sandbox: any;
     try {
       const e2bModule: any = await import('@e2b/code-interpreter');
-      // Try different export patterns
-      SandboxClass = e2bModule.Sandbox || (e2bModule.default && e2bModule.default.Sandbox) || e2bModule.default;
+      Sandbox = e2bModule.Sandbox || e2bModule.default;
       
-      if (!SandboxClass) {
+      if (!Sandbox) {
         throw new Error('Sandbox class not found in E2B module');
       }
     } catch (importError) {
@@ -43,9 +42,8 @@ export async function POST(request: NextRequest) {
 
     // Create new E2B sandbox
     console.log('[create-pytorch-sandbox] Creating sandbox...');
-    const sandbox: any = await SandboxClass.create({
+    const sandbox: any = new Sandbox({
       apiKey: process.env.E2B_API_KEY,
-      timeoutMs: 30 * 60 * 1000, // 30 minutes timeout
     });
 
     if (!sandbox) {
@@ -62,11 +60,11 @@ export async function POST(request: NextRequest) {
     // Install PyTorch and dependencies
     console.log('[create-pytorch-sandbox] Installing PyTorch and dependencies...');
 
-    if (typeof sandbox.runPython !== 'function') {
-      throw new Error(`runPython is not a function. Available methods: ${Object.getOwnPropertyNames(Object.getPrototypeOf(sandbox)).join(', ')}`);
+    if (typeof sandbox.runCode !== 'function') {
+      throw new Error(`runCode is not a function. Available methods: ${Object.getOwnPropertyNames(Object.getPrototypeOf(sandbox)).join(', ')}`);
     }
 
-    const installResult = await sandbox.runPython(`
+    const installResult = await sandbox.runCode(`
 import subprocess
 import sys
 
@@ -92,7 +90,7 @@ for package in packages:
 print('All packages installed successfully!')
 `);
 
-    console.log('[create-pytorch-sandbox] Installation output:', installResult.stdout);
+    console.log('[create-pytorch-sandbox] Installation output:', installResult.logs?.stdout || installResult);
 
     if (installResult.error) {
       console.error('[create-pytorch-sandbox] Installation error:', installResult.error);

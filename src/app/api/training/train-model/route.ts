@@ -27,15 +27,14 @@ export async function POST(request: NextRequest) {
     console.log('[train-model] Sandbox ID:', sandboxId);
     console.log('[train-model] Requirements:', requirements);
 
-    // Dynamic import for E2B SDK - handle CommonJS
-    let SandboxClass: any;
+    // Import E2B SDK
+    let Sandbox: any;
     try {
       const e2bModule: any = await import('@e2b/code-interpreter');
-      // Try different export patterns
-      SandboxClass = e2bModule.Sandbox || (e2bModule.default && e2bModule.default.Sandbox) || e2bModule.default;
+      Sandbox = e2bModule.Sandbox || e2bModule.default;
       
-      if (!SandboxClass || typeof SandboxClass.create !== 'function') {
-        throw new Error('Sandbox.create is not available');
+      if (!Sandbox) {
+        throw new Error('Sandbox class not found');
       }
     } catch (importError) {
       console.error('[train-model] Import error:', importError);
@@ -47,9 +46,8 @@ export async function POST(request: NextRequest) {
     // If no active sandbox or different sandbox ID, create/connect to sandbox
     if (!sandbox || global.sandboxId !== sandboxId) {
       console.log('[train-model] Creating new sandbox for training...');
-      sandbox = await SandboxClass.create({
+      sandbox = new Sandbox({
         apiKey: process.env.E2B_API_KEY,
-        timeoutMs: 60 * 60 * 1000, // 1 hour timeout for training
       });
       global.activePyTorchSandbox = sandbox;
       global.sandboxId = sandbox.sandboxId;
@@ -73,8 +71,8 @@ for package in packages:
         print(f'[ERROR] Error installing {package}: {e}')
 `;
 
-      const installResult = await sandbox.runPython(installCode);
-      console.log('[train-model] Installation output:', installResult.stdout);
+      const installResult = await sandbox.runCode(installCode);
+      console.log('[train-model] Installation output:', installResult.logs?.stdout || installResult);
       if (installResult.error) {
         console.error('[train-model] Installation error:', installResult.error);
       }
@@ -82,9 +80,9 @@ for package in packages:
 
     // Run the training code
     console.log('[train-model] Running training code...');
-    const result = await sandbox.runPython(code);
+    const result = await sandbox.runCode(code);
 
-    console.log('[train-model] Training output:', result.stdout);
+    console.log('[train-model] Training output:', result.logs?.stdout || result);
 
     if (result.error) {
       console.error('[train-model] Training error:', result.error);
@@ -92,7 +90,7 @@ for package in packages:
         {
           success: false,
           error: result.error,
-          stdout: result.stdout,
+          stdout: result.logs?.stdout,
         },
         { status: 500 }
       );
@@ -100,7 +98,7 @@ for package in packages:
 
     // List files in sandbox to find trained model
     console.log('[train-model] Listing sandbox files...');
-    const filesResult = await sandbox.runPython(`
+    const filesResult = await sandbox.runCode(`
 import os
 import json
 
@@ -117,7 +115,7 @@ print(json.dumps(files))
 
     let modelFiles = [];
     try {
-      const output = filesResult.stdout.trim();
+      const output = (filesResult.logs?.stdout || filesResult).trim();
       const jsonMatch = output.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         modelFiles = JSON.parse(jsonMatch[0]);
