@@ -40,10 +40,15 @@ export default function WorkspacePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState<'code' | 'sandbox' | 'deploy'>('code');
+  const [activeTab, setActiveTab] = useState<'code' | 'sandbox' | 'deploy' | 'training'>('code');
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
   const [sandboxUrl, setSandboxUrl] = useState<string>();
   const [modelKey, setModelKey] = useState<string>(DEFAULT_MODEL);
+  
+  // Training state
+  const [trainingJobId, setTrainingJobId] = useState<string | null>(null);
+  const [trainingStats, setTrainingStats] = useState<any>(null);
+  const [trainingStep, setTrainingStep] = useState<string>('idle');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -53,8 +58,59 @@ export default function WorkspacePage() {
       loadProject();
       loadProjects();
       loadMessages();
+      
+      // Check for training job ID in URL params
+      const jobId = searchParams.get('trainingJobId');
+      if (jobId) {
+        setTrainingJobId(jobId);
+        setActiveTab('training');
+      }
     }
   }, [loading, user, projectId]);
+
+  // Poll training stats
+  useEffect(() => {
+    if (!trainingJobId) return;
+
+    const pollTrainingStats = async () => {
+      try {
+        const response = await fetch(`/api/training-jobs/${trainingJobId}/stats`);
+        if (response.ok) {
+          const data = await response.json();
+          setTrainingStats(data);
+          
+          // Update training step
+          if (data.status === 'queued') {
+            setTrainingStep('Queued - Waiting to start...');
+          } else if (data.status === 'running') {
+            if (data.currentEpoch === 0) {
+              setTrainingStep('🚀 Initializing training...');
+            } else {
+              setTrainingStep(`🏋️ Training Epoch ${data.currentEpoch}/${data.totalEpochs}`);
+            }
+          } else if (data.status === 'completed') {
+            setTrainingStep('✅ Training completed! Redirecting to deployment...');
+            // Redirect to E2B URL if available
+            if (data.deployment_url) {
+              setTimeout(() => {
+                window.location.href = data.deployment_url;
+              }, 2000);
+            }
+          } else if (data.status === 'failed') {
+            setTrainingStep('❌ Training failed');
+          }
+        }
+      } catch (error) {
+        console.error('Error polling training stats:', error);
+      }
+    };
+
+    // Poll immediately and then every 2 seconds
+    pollTrainingStats();
+    const interval = setInterval(pollTrainingStats, 2000);
+
+    return () => clearInterval(interval);
+  }, [trainingJobId]);
 
   useEffect(() => {
     if (initialPrompt && messages.length === 0 && !isGenerating) {
@@ -534,6 +590,14 @@ export default function WorkspacePage() {
               >
                 Deploy
               </button>
+              {trainingJobId && (
+                <button
+                  className={`${styles.tab} ${activeTab === 'training' ? styles.active : ''}`}
+                  onClick={() => setActiveTab('training')}
+                >
+                  🏋️ Training
+                </button>
+              )}
             </div>
 
             <div className={styles.panelContent}>
@@ -615,6 +679,146 @@ export default function WorkspacePage() {
                       }
                     }}
                   />
+                </div>
+              )}
+
+              {activeTab === 'training' && trainingStats && (
+                <div className={styles.trainingView}>
+                  <div style={{ padding: '20px', textAlign: 'center' }}>
+                    {/* Training Step */}
+                    <div style={{ marginBottom: '30px' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
+                        {trainingStep}
+                      </div>
+                      {trainingStats.status === 'running' && (
+                        <div style={{ 
+                          display: 'inline-block',
+                          animation: 'spin 2s linear infinite'
+                        }}>
+                          ⚙️
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                      gap: '15px',
+                      marginBottom: '30px'
+                    }}>
+                      <div style={{ padding: '15px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Epoch</div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                          {trainingStats.currentEpoch} / {trainingStats.totalEpochs}
+                        </div>
+                        <div style={{ 
+                          width: '100%', 
+                          height: '4px', 
+                          backgroundColor: '#ddd', 
+                          borderRadius: '2px',
+                          marginTop: '8px',
+                          overflow: 'hidden'
+                        }}>
+                          <div style={{
+                            height: '100%',
+                            backgroundColor: '#4CAF50',
+                            width: `${(trainingStats.currentEpoch / trainingStats.totalEpochs) * 100}%`,
+                            transition: 'width 0.3s ease'
+                          }} />
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '15px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Loss</div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                          {typeof trainingStats.loss === 'number' ? trainingStats.loss.toFixed(4) : '0.0000'}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '15px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Accuracy</div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                          {typeof trainingStats.accuracy === 'number' ? (trainingStats.accuracy * 100).toFixed(2) : '0.00'}%
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '15px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Val Loss</div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                          {typeof trainingStats.validationLoss === 'number' ? trainingStats.validationLoss.toFixed(4) : '0.0000'}
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '15px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Val Accuracy</div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                          {typeof trainingStats.validationAccuracy === 'number' ? (trainingStats.validationAccuracy * 100).toFixed(2) : '0.00'}%
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status */}
+                    <div style={{ 
+                      padding: '15px', 
+                      backgroundColor: trainingStats.status === 'completed' ? '#d4edda' : 
+                                      trainingStats.status === 'failed' ? '#f8d7da' : '#e7f3ff',
+                      borderRadius: '8px',
+                      marginBottom: '20px'
+                    }}>
+                      <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                        Status: {trainingStats.status.toUpperCase()}
+                      </div>
+                    </div>
+
+                    {/* Error Message */}
+                    {trainingStats.error_message && (
+                      <div style={{ 
+                        padding: '15px', 
+                        backgroundColor: '#f8d7da',
+                        borderRadius: '8px',
+                        color: '#721c24',
+                        marginBottom: '20px'
+                      }}>
+                        ❌ {trainingStats.error_message}
+                      </div>
+                    )}
+
+                    {/* Deployment URL */}
+                    {trainingStats.deployment_url && (
+                      <div style={{ 
+                        padding: '15px', 
+                        backgroundColor: '#d4edda',
+                        borderRadius: '8px',
+                        marginBottom: '20px'
+                      }}>
+                        <div style={{ fontSize: '14px', marginBottom: '10px' }}>✅ Model Deployed Successfully!</div>
+                        <a 
+                          href={trainingStats.deployment_url} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          style={{
+                            display: 'inline-block',
+                            padding: '10px 20px',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            borderRadius: '4px',
+                            textDecoration: 'none',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          🚀 Open Live Deployment
+                        </a>
+                      </div>
+                    )}
+                  </div>
+
+                  <style>{`
+                    @keyframes spin {
+                      from { transform: rotate(0deg); }
+                      to { transform: rotate(360deg); }
+                    }
+                  `}</style>
                 </div>
               )}
             </div>
