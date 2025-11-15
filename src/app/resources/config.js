@@ -13,6 +13,7 @@ const routes = {
   "/byte-ai": false,
   "/blog": false,
   "/gallery": false,
+  "/ai-model-generator": true,
 };
 
 // Enable password protection on selected routes
