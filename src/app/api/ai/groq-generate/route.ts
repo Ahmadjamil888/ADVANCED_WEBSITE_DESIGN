@@ -53,21 +53,21 @@ Format your response as follows:
 [List of pip packages needed]
 </requirements>`;
 
-    // Use the correct API - groq.chat.completions.create instead of groq.messages.create
+    // Use the correct API - groq.chat.completions.create
+    // Note: Groq doesn't support 'system' parameter, so we include it in messages
     const message = await (groq as any).chat.completions.create({
       model: model,
       max_tokens: 4096,
-      system: systemPrompt,
       messages: [
         {
           role: 'user',
-          content: prompt,
+          content: systemPrompt + '\n\n' + prompt,
         },
       ],
     });
 
-    const responseText =
-      message.content[0].type === 'text' ? message.content[0].text : '';
+    // Groq returns choices array with message object
+    const responseText = message.choices?.[0]?.message?.content || '';
 
     // Parse the response
     const codeMatch = responseText.match(/<code>([\s\S]*?)<\/code>/);
