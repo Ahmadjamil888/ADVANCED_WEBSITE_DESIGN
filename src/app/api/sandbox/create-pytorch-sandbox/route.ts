@@ -27,14 +27,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Dynamic import for E2B SDK - handle CommonJS
-    let Sandbox: any;
+    let SandboxClass: any;
     try {
-      const e2bModule = await import('@e2b/code-interpreter');
+      const e2bModule: any = await import('@e2b/code-interpreter');
       // Try different export patterns
-      Sandbox = e2bModule.Sandbox || e2bModule.default?.Sandbox || e2bModule.default;
+      SandboxClass = e2bModule.Sandbox || (e2bModule.default && e2bModule.default.Sandbox) || e2bModule.default;
       
-      if (!Sandbox || typeof Sandbox.create !== 'function') {
-        throw new Error('Sandbox.create is not available');
+      if (!SandboxClass) {
+        throw new Error('Sandbox class not found in E2B module');
       }
     } catch (importError) {
       console.error('[create-pytorch-sandbox] Import error:', importError);
@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new E2B sandbox
-    console.log('[create-pytorch-sandbox] Creating sandbox with Sandbox.create...');
-    const sandbox: any = await Sandbox.create({
+    console.log('[create-pytorch-sandbox] Creating sandbox...');
+    const sandbox: any = await SandboxClass.create({
       apiKey: process.env.E2B_API_KEY,
       timeoutMs: 30 * 60 * 1000, // 30 minutes timeout
     });

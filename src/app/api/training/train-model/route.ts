@@ -28,13 +28,13 @@ export async function POST(request: NextRequest) {
     console.log('[train-model] Requirements:', requirements);
 
     // Dynamic import for E2B SDK - handle CommonJS
-    let Sandbox: any;
+    let SandboxClass: any;
     try {
-      const e2bModule = await import('@e2b/code-interpreter');
+      const e2bModule: any = await import('@e2b/code-interpreter');
       // Try different export patterns
-      Sandbox = e2bModule.Sandbox || e2bModule.default?.Sandbox || e2bModule.default;
+      SandboxClass = e2bModule.Sandbox || (e2bModule.default && e2bModule.default.Sandbox) || e2bModule.default;
       
-      if (!Sandbox || typeof Sandbox.create !== 'function') {
+      if (!SandboxClass || typeof SandboxClass.create !== 'function') {
         throw new Error('Sandbox.create is not available');
       }
     } catch (importError) {
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // If no active sandbox or different sandbox ID, create/connect to sandbox
     if (!sandbox || global.sandboxId !== sandboxId) {
       console.log('[train-model] Creating new sandbox for training...');
-      sandbox = await Sandbox.create({
+      sandbox = await SandboxClass.create({
         apiKey: process.env.E2B_API_KEY,
         timeoutMs: 60 * 60 * 1000, // 1 hour timeout for training
       });
