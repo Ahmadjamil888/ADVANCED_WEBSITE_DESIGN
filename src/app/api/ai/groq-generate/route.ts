@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
-      baseURL: 'https://api.groq.com/openai/v1',
     });
 
     const systemPrompt = `You are an expert AI model architect and Python developer. Your task is to:
