@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-// @ts-ignore - e2b types not available
-import { Sandbox } from '@e2b/code-interpreter';
 
 declare global {
   var activePyTorchSandbox: any;
+  var sandboxId: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -28,12 +27,16 @@ export async function POST(request: NextRequest) {
     console.log('[train-model] Sandbox ID:', sandboxId);
     console.log('[train-model] Requirements:', requirements);
 
+    // Dynamic import for E2B SDK
+    const e2bModule = await import('@e2b/code-interpreter');
+    const Sandbox = e2bModule.Sandbox || e2bModule.default;
+
     let sandbox: any = global.activePyTorchSandbox;
 
     // If no active sandbox or different sandbox ID, create/connect to sandbox
     if (!sandbox || global.sandboxId !== sandboxId) {
       console.log('[train-model] Creating new sandbox for training...');
-      sandbox = await (Sandbox as any).create({
+      sandbox = await Sandbox.create({
         apiKey: process.env.E2B_API_KEY,
         timeoutMs: 60 * 60 * 1000, // 1 hour timeout for training
       });
