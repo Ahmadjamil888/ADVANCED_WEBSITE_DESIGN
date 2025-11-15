@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+// @ts-ignore - e2b types not available
 import { Sandbox } from '@e2b/code-interpreter';
 
 declare global {
@@ -27,12 +28,12 @@ export async function POST(request: NextRequest) {
     console.log('[train-model] Sandbox ID:', sandboxId);
     console.log('[train-model] Requirements:', requirements);
 
-    let sandbox = global.activePyTorchSandbox;
+    let sandbox: any = global.activePyTorchSandbox;
 
     // If no active sandbox or different sandbox ID, create/connect to sandbox
     if (!sandbox || global.sandboxId !== sandboxId) {
       console.log('[train-model] Creating new sandbox for training...');
-      sandbox = await Sandbox.create({
+      sandbox = await (Sandbox as any).create({
         apiKey: process.env.E2B_API_KEY,
         timeoutMs: 60 * 60 * 1000, // 1 hour timeout for training
       });
@@ -53,9 +54,9 @@ for package in packages:
     try:
         print(f'Installing {package}...')
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', package])
-        print(f'✓ {package} installed')
+        print(f'[OK] {package} installed')
     except Exception as e:
-        print(f'✗ Error installing {package}: {e}')
+        print(f'[ERROR] Error installing {package}: {e}')
 `;
 
       const installResult = await sandbox.runPython(installCode);

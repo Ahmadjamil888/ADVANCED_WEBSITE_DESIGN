@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+// @ts-ignore - groq-sdk types not available
 import Groq from 'groq-sdk';
 
-const groq = new Groq({
+const groq: any = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
@@ -77,8 +78,8 @@ Format your response as follows:
     const requirements = requirementsMatch
       ? requirementsMatch[1]
           .split('\n')
-          .map((r) => r.trim())
-          .filter((r) => r && !r.startsWith('#'))
+          .map((r: string) => r.trim())
+          .filter((r: string) => r && !r.startsWith('#'))
       : ['torch', 'torchvision', 'numpy', 'pandas', 'scikit-learn'];
 
     console.log('[groq-generate] Generated code length:', code.length);

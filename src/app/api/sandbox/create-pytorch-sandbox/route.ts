@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+// @ts-ignore - e2b types not available
 import { Sandbox } from '@e2b/code-interpreter';
 
 declare global {
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new E2B sandbox
-    const sandbox = await Sandbox.create({
+    const sandbox: any = await (Sandbox as any).create({
       apiKey: process.env.E2B_API_KEY,
       timeoutMs: 30 * 60 * 1000, // 30 minutes timeout
     });
@@ -56,7 +57,7 @@ packages = [
     'seaborn',
     'requests',
     'tqdm',
-    'jupyter'
+    'jupyter',
     'uvicorn'
 ]
 

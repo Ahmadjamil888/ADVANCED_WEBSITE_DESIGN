@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+// @ts-ignore - e2b types not available
 import { Sandbox } from '@e2b/code-interpreter';
 
 declare global {
@@ -33,12 +34,12 @@ export async function POST(request: NextRequest) {
     console.log('[deploy-e2b] Model path:', modelPath);
     console.log('[deploy-e2b] Model type:', modelType);
 
-    let sandbox = global.activePyTorchSandbox;
+    let sandbox: any = global.activePyTorchSandbox;
 
     // If no active sandbox, connect to existing one
     if (!sandbox) {
       console.log('[deploy-e2b] Connecting to existing sandbox...');
-      sandbox = await Sandbox.connect(sandboxId, {
+      sandbox = await (Sandbox as any).connect(sandboxId, {
         apiKey: process.env.E2B_API_KEY,
       });
       global.activePyTorchSandbox = sandbox;
@@ -168,7 +169,7 @@ for i in range(5):
     try:
         response = requests.get('http://localhost:8000/health', timeout=2)
         if response.status_code == 200:
-            print(f'�u2713 Server is healthy: {response.json()}')
+            print(f'Server is healthy: {response.json()}')
             break
     except Exception as e:
         print(f'Attempt {i+1}: Server not ready - {e}')
