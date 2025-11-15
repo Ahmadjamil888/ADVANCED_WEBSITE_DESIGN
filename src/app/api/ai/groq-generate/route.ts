@@ -1,19 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// @ts-ignore - groq-sdk types not available
-const Groq = require('groq-sdk').default || require('groq-sdk');
-
-let groq: any = null;
-
-function getGroqClient() {
-  if (!groq && process.env.GROQ_API_KEY) {
-    groq = new Groq({
-      apiKey: process.env.GROQ_API_KEY,
-    });
-  }
-  return groq;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { prompt, model = 'mixtral-8x7b-32768' } = await request.json();
@@ -32,16 +18,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const groqClient = getGroqClient();
-    if (!groqClient) {
-      return NextResponse.json(
-        { error: 'Failed to initialize Groq client' },
-        { status: 500 }
-      );
-    }
-
     console.log('[groq-generate] Generating code with model:', model);
     console.log('[groq-generate] Prompt:', prompt);
+
+    // Dynamic import to handle groq-sdk
+    const { default: Groq } = await import('groq-sdk');
+    
+    const groq: any = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
 
     const systemPrompt = `You are an expert AI model architect and Python developer. Your task is to:
 1. Analyze the user's request for an AI model
@@ -67,7 +52,7 @@ Format your response as follows:
 [List of pip packages needed]
 </requirements>`;
 
-    const message = await groqClient.messages.create({
+    const message = await groq.messages.create({
       model: model,
       max_tokens: 4096,
       system: systemPrompt,
