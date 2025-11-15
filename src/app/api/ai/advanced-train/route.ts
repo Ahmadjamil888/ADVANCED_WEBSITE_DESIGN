@@ -4,7 +4,7 @@ import { E2BTrainingService } from '@/lib/e2b-training-service';
 import { getSupabaseServiceRole } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
-export const maxDuration = 3600; // 1 hour timeout
+export const maxDuration = 300; // 5 minutes max (Vercel hobby plan limit)
 
 /**
  * Advanced Training API

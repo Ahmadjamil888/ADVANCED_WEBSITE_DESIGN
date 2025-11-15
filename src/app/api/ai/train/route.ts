@@ -5,7 +5,7 @@ import { AI_MODELS } from '@/lib/ai/models';
 import { getSupabaseServiceRole } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
-export const maxDuration = 600; // 10 minutes max
+export const maxDuration = 300; // 5 minutes max (Vercel hobby plan limit)
 
 export async function POST(req: NextRequest) {
   try {
