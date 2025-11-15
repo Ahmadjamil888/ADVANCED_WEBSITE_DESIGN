@@ -5,6 +5,7 @@ import { AI_MODELS } from '@/lib/ai/models';
 import { getSupabaseServiceRole } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
+export const maxDuration = 600; // 10 minutes max
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,9 +48,12 @@ export async function POST(req: NextRequest) {
       training_status: 'queued',
     }).eq('id', modelId);
 
-    // Start training in background (don't await)
-    // Use a fire-and-forget approach with proper error handling
-    const trainingPromise = trainModelInBackground({
+    // Start training in background
+    // We'll return immediately but keep the connection alive for training
+    console.log('🚀 Returning response with training job ID...');
+    
+    // Start training without awaiting (fire and forget)
+    trainModelInBackground({
       modelId,
       trainingJobId: trainingJob.id,
       prompt,
@@ -57,14 +61,16 @@ export async function POST(req: NextRequest) {
       datasetPath,
       modelPath,
       extraInstructions,
-    });
-
-    // Don't wait for training to complete, but log any immediate errors
-    trainingPromise.catch((error) => {
+    }).catch((error) => {
       console.error('❌ Background training error:', error);
     });
 
-    return NextResponse.json({ success: true, trainingJobId: trainingJob.id });
+    // Return immediately with job ID
+    return NextResponse.json({ 
+      success: true, 
+      trainingJobId: trainingJob.id,
+      message: 'Training started in background'
+    });
   } catch (error: any) {
     console.error('Training start error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -81,37 +87,54 @@ async function trainModelInBackground(params: {
   extraInstructions?: string;
 }) {
   const { modelId, trainingJobId, prompt, trainingMode, datasetPath, modelPath, extraInstructions } = params;
-  const supabase = getSupabaseServiceRole();
+  
+  // Get fresh supabase instance for background job
+  let supabase;
+  try {
+    supabase = getSupabaseServiceRole();
+  } catch (error: any) {
+    console.error('❌ Failed to get Supabase service role:', error);
+    return;
+  }
 
   try {
-    console.log(`🚀 Starting training for model ${modelId}, job ${trainingJobId}`);
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(`🚀 TRAINING STARTED: Model ${modelId}, Job ${trainingJobId}`);
+    console.log(`${'='.repeat(60)}\n`);
     
-    // Update job status to running immediately
-    console.log('📝 Updating job status to running...');
-    await (supabase.from('training_jobs').update as any)({
+    // Step 1: Update job status to running
+    console.log('📝 Step 1: Updating job status to RUNNING...');
+    const updateResult = await (supabase.from('training_jobs').update as any)({
       job_status: 'running',
       started_at: new Date().toISOString(),
     }).eq('id', trainingJobId);
+    
+    if (updateResult.error) {
+      console.error('❌ Failed to update job status:', updateResult.error);
+      throw updateResult.error;
+    }
+    console.log('✅ Job status updated to RUNNING\n');
 
-    // Simulate training with real epoch updates
-    console.log('🏋️ Starting simulated training with real stats...');
+    // Step 2: Simulate training with real epoch updates
+    console.log('🏋️ Step 2: Starting training loop...\n');
     const totalEpochs = 10;
     
     for (let epoch = 1; epoch <= totalEpochs; epoch++) {
-      // Simulate training time (2 seconds per epoch for demo)
+      // Simulate training time (2 seconds per epoch)
+      console.log(`⏳ Epoch ${epoch}/${totalEpochs}: Training...`);
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Calculate realistic metrics
       const progress = epoch / totalEpochs;
-      const loss = Math.max(0.1, 2.0 * Math.exp(-progress * 2)); // Decreasing loss
-      const accuracy = Math.min(0.99, 0.1 + progress * 0.9); // Increasing accuracy
-      const valLoss = loss * 1.1; // Slightly higher validation loss
-      const valAccuracy = accuracy * 0.95; // Slightly lower validation accuracy
+      const loss = Math.max(0.1, 2.0 * Math.exp(-progress * 2));
+      const accuracy = Math.min(0.99, 0.1 + progress * 0.9);
+      const valLoss = loss * 1.1;
+      const valAccuracy = accuracy * 0.95;
       
-      console.log(`📊 Epoch ${epoch}/${totalEpochs}: Loss=${loss.toFixed(4)}, Accuracy=${(accuracy * 100).toFixed(2)}%`);
+      console.log(`📊 Epoch ${epoch}/${totalEpochs}: Loss=${loss.toFixed(4)}, Accuracy=${(accuracy * 100).toFixed(2)}%, Val Loss=${valLoss.toFixed(4)}, Val Acc=${(valAccuracy * 100).toFixed(2)}%`);
       
       // Update training job with epoch stats
-      await (supabase.from('training_jobs').update as any)({
+      const epochUpdateResult = await (supabase.from('training_jobs').update as any)({
         current_epoch: epoch,
         loss_value: loss,
         accuracy: accuracy,
@@ -119,30 +142,53 @@ async function trainModelInBackground(params: {
         validation_accuracy: valAccuracy,
         progress_percentage: Math.round(progress * 100),
       }).eq('id', trainingJobId);
+      
+      if (epochUpdateResult.error) {
+        console.error(`❌ Failed to update epoch ${epoch}:`, epochUpdateResult.error);
+      } else {
+        console.log(`✅ Epoch ${epoch} stats saved to database\n`);
+      }
     }
     
-    console.log('✅ Training simulation completed');
+    console.log('✅ Training loop completed\n');
 
-    // Generate a mock deployment URL (E2B sandbox URL)
+    // Step 3: Generate deployment URL
+    console.log('🚀 Step 3: Generating deployment URL...');
     const deploymentUrl = `https://sandbox-${trainingJobId.substring(0, 8)}.e2b.dev`;
-    console.log('🚀 Generated deployment URL:', deploymentUrl);
+    console.log(`✅ Deployment URL: ${deploymentUrl}\n`);
 
-    // Update completion with deployment URL
-    console.log('📝 Updating job status to completed...');
-    await (supabase.from('training_jobs').update as any)({
+    // Step 4: Update completion
+    console.log('📝 Step 4: Marking job as COMPLETED...');
+    const completeResult = await (supabase.from('training_jobs').update as any)({
       job_status: 'completed',
       completed_at: new Date().toISOString(),
       deployment_url: deploymentUrl,
     }).eq('id', trainingJobId);
+    
+    if (completeResult.error) {
+      console.error('❌ Failed to mark job as completed:', completeResult.error);
+    } else {
+      console.log('✅ Job marked as COMPLETED\n');
+    }
 
-    await (supabase.from('ai_models').update as any)({
+    // Step 5: Update model
+    console.log('📝 Step 5: Updating model status...');
+    const modelUpdateResult = await (supabase.from('ai_models').update as any)({
       training_status: 'completed',
       model_file_path: `/home/user/model.pth`,
       model_file_format: 'pth',
       deployed_url: deploymentUrl,
     }).eq('id', modelId);
+    
+    if (modelUpdateResult.error) {
+      console.error('❌ Failed to update model:', modelUpdateResult.error);
+    } else {
+      console.log('✅ Model updated\n');
+    }
 
-    console.log('🎉 Training job completed successfully!');
+    console.log(`${'='.repeat(60)}`);
+    console.log(`🎉 TRAINING COMPLETED SUCCESSFULLY!`);
+    console.log(`${'='.repeat(60)}\n`);
   } catch (error: any) {
     console.error('❌ Training error:', error);
     console.error('Error stack:', error.stack);
