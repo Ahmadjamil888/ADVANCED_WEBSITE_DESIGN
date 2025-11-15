@@ -22,9 +22,10 @@ export async function POST(request: NextRequest) {
     console.log('[groq-generate] Prompt:', prompt);
 
     // Dynamic import to handle groq-sdk
-    const { default: Groq } = await import('groq-sdk');
+    const GroqModule = await import('groq-sdk');
+    const Groq = GroqModule.default || GroqModule;
     
-    const groq: any = new Groq({
+    const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
     });
 
@@ -52,7 +53,8 @@ Format your response as follows:
 [List of pip packages needed]
 </requirements>`;
 
-    const message = await groq.messages.create({
+    // Use the correct API - groq.chat.completions.create instead of groq.messages.create
+    const message = await (groq as any).chat.completions.create({
       model: model,
       max_tokens: 4096,
       system: systemPrompt,
