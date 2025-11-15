@@ -88,71 +88,196 @@ export default function AIModelGeneratorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            🤖 AI Model Generator
-          </h1>
-          <p className="text-lg text-gray-400">
-            Describe your AI model, and we'll generate, train, and deploy it for you
-          </p>
+    <div>
+      <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body, html {
+          width: 100%;
+          height: 100%;
+        }
+
+        .ai-generator-wrapper {
+          width: 100%;
+          min-height: 100vh;
+          background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111111 100%);
+          padding: 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        }
+
+        .ai-generator-content {
+          width: 100%;
+          max-width: 56rem;
+        }
+
+        .ai-generator-header {
+          margin-bottom: 3rem;
+          text-align: center;
+        }
+
+        .ai-generator-title {
+          font-size: 3rem;
+          font-weight: 700;
+          color: #ffffff;
+          margin-bottom: 1rem;
+          line-height: 1.2;
+        }
+
+        .ai-generator-subtitle {
+          font-size: 1.125rem;
+          color: #9ca3af;
+          line-height: 1.6;
+        }
+
+        .ai-generator-sections {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .ai-generator-card {
+          background: rgba(31, 41, 55, 0.5);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(55, 65, 81, 0.5);
+          border-radius: 0.5rem;
+          padding: 1.5rem;
+          transition: all 0.3s ease;
+        }
+
+        .ai-generator-card:hover {
+          border-color: rgba(55, 65, 81, 0.8);
+          background: rgba(31, 41, 55, 0.7);
+        }
+
+        .ai-generator-error-card {
+          background: rgba(239, 68, 68, 0.1);
+          border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .ai-generator-error-title {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #f87171;
+          margin-bottom: 0.5rem;
+        }
+
+        .ai-generator-error-message {
+          color: #fca5a5;
+          margin-bottom: 1rem;
+          line-height: 1.6;
+        }
+
+        .ai-generator-button {
+          margin-top: 1rem;
+          padding: 0.75rem 1rem;
+          background: #dc2626;
+          color: white;
+          border: none;
+          border-radius: 0.375rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .ai-generator-button:hover {
+          background: #b91c1c;
+          transform: translateY(-2px);
+        }
+
+        .ai-generator-button:active {
+          transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+          .ai-generator-wrapper {
+            padding: 1rem;
+          }
+
+          .ai-generator-title {
+            font-size: 2rem;
+          }
+
+          .ai-generator-subtitle {
+            font-size: 1rem;
+          }
+
+          .ai-generator-card {
+            padding: 1rem;
+          }
+        }
+      `}</style>
+
+      <div className="ai-generator-wrapper">
+        <div className="ai-generator-content">
+          {/* Header */}
+          <div className="ai-generator-header">
+            <h1 className="ai-generator-title">🤖 AI Model Generator</h1>
+            <p className="ai-generator-subtitle">
+              Describe your AI model, and we'll generate, train, and deploy it for you
+            </p>
+          </div>
+
+          {/* Main Content */}
+          {!deploymentResult ? (
+            <div className="ai-generator-sections">
+              {/* Model Selector */}
+              <div className="ai-generator-card">
+                <ModelSelector selectedModel={selectedModel} onModelChange={setSelectedModel} />
+              </div>
+
+              {/* Prompt Input */}
+              <div className="ai-generator-card">
+                <PromptInput onSubmit={handleSubmit} isLoading={isLoading} />
+              </div>
+
+              {/* Progress Display */}
+              {isLoading && (
+                <div className="ai-generator-card">
+                  <ProgressDisplay steps={steps} currentStep={steps.findIndex((s: Step) => s.status === 'in-progress')} error={error || undefined} />
+                </div>
+              )}
+
+              {/* Error Display */}
+              {error && !isLoading && (
+                <div className="ai-generator-card ai-generator-error-card">
+                  <h3 className="ai-generator-error-title">❌ Error</h3>
+                  <p className="ai-generator-error-message">{error}</p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      setSteps([
+                        { name: 'Code Generation', status: 'pending' },
+                        { name: 'Sandbox Creation', status: 'pending' },
+                        { name: 'Model Training', status: 'pending' },
+                        { name: 'E2B Deployment', status: 'pending' },
+                      ]);
+                    }}
+                    className="ai-generator-button"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Deployment Result */
+            <div className="ai-generator-card">
+              <DeploymentResult
+                deploymentUrl={deploymentResult.deploymentUrl}
+                sandboxId={deploymentResult.sandboxId}
+                modelType={deploymentResult.modelType}
+                endpoints={deploymentResult.endpoints}
+              />
+            </div>
+          )}
         </div>
-
-        {/* Main Content */}
-        {!deploymentResult ? (
-          <div className="space-y-8">
-            {/* Model Selector */}
-            <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6">
-              <ModelSelector selectedModel={selectedModel} onModelChange={setSelectedModel} />
-            </div>
-
-            {/* Prompt Input */}
-            <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6">
-              <PromptInput onSubmit={handleSubmit} isLoading={isLoading} />
-            </div>
-
-            {/* Progress Display */}
-            {isLoading && (
-              <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6">
-                <ProgressDisplay steps={steps} currentStep={steps.findIndex((s: Step) => s.status === 'in-progress')} error={error || undefined} />
-              </div>
-            )}
-
-            {/* Error Display */}
-            {error && !isLoading && (
-              <div className="bg-red-500/10 backdrop-blur border border-red-500 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-red-400 mb-2">❌ Error</h3>
-                <p className="text-red-300">{error}</p>
-                <button
-                  onClick={() => {
-                    setError(null);
-                    setSteps([
-                      { name: 'Code Generation', status: 'pending' },
-                      { name: 'Sandbox Creation', status: 'pending' },
-                      { name: 'Model Training', status: 'pending' },
-                      { name: 'E2B Deployment', status: 'pending' },
-                    ]);
-                  }}
-                  className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all"
-                >
-                  Try Again
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          /* Deployment Result */
-          <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6">
-            <DeploymentResult
-              deploymentUrl={deploymentResult.deploymentUrl}
-              sandboxId={deploymentResult.sandboxId}
-              modelType={deploymentResult.modelType}
-              endpoints={deploymentResult.endpoints}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

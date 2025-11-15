@@ -30,26 +30,92 @@ const AVAILABLE_MODELS = [
 
 export default function ModelSelector({ selectedModel, onModelChange }: ModelSelectorProps) {
   return (
-    <div className="w-full">
-      <label className="block text-sm font-semibold text-gray-200 mb-4">
-        Select AI Model
-      </label>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div style={styles.container}>
+      <style>{`
+        .model-selector-label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #d1d5db;
+          margin-bottom: 1rem;
+        }
+
+        .model-selector-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1rem;
+        }
+
+        .model-selector-button {
+          padding: 1rem;
+          border-radius: 0.5rem;
+          border: 2px solid;
+          transition: all 0.3s ease;
+          text-align: left;
+          background: #1f2937;
+          border-color: #4b5563;
+          cursor: pointer;
+          font-family: inherit;
+        }
+
+        .model-selector-button:hover {
+          border-color: #6b7280;
+          background: #374151;
+        }
+
+        .model-selector-button.selected {
+          border-color: #3b82f6;
+          background: rgba(59, 130, 246, 0.1);
+        }
+
+        .model-selector-button-content {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .model-selector-icon {
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .model-selector-text {
+          flex: 1;
+        }
+
+        .model-selector-name {
+          font-weight: 600;
+          color: #ffffff;
+          margin: 0;
+          margin-bottom: 0.25rem;
+        }
+
+        .model-selector-description {
+          font-size: 0.875rem;
+          color: #9ca3af;
+          margin: 0;
+        }
+
+        @media (max-width: 768px) {
+          .model-selector-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+
+      <label className="model-selector-label">Select AI Model</label>
+      <div className="model-selector-grid">
         {AVAILABLE_MODELS.map((model) => (
           <button
             key={model.id}
             onClick={() => onModelChange(model.id)}
-            className={`p-4 rounded-lg border-2 transition-all text-left ${
-              selectedModel === model.id
-                ? 'border-blue-500 bg-blue-500/10'
-                : 'border-gray-600 bg-gray-800 hover:border-gray-500'
-            }`}
+            className={`model-selector-button ${selectedModel === model.id ? 'selected' : ''}`}
           >
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">{model.icon}</span>
-              <div className="flex-1">
-                <h3 className="font-semibold text-white">{model.name}</h3>
-                <p className="text-sm text-gray-400">{model.description}</p>
+            <div className="model-selector-button-content">
+              <span className="model-selector-icon">{model.icon}</span>
+              <div className="model-selector-text">
+                <h3 className="model-selector-name">{model.name}</h3>
+                <p className="model-selector-description">{model.description}</p>
               </div>
             </div>
           </button>
@@ -58,3 +124,9 @@ export default function ModelSelector({ selectedModel, onModelChange }: ModelSel
     </div>
   );
 }
+
+const styles = {
+  container: {
+    width: '100%',
+  },
+};

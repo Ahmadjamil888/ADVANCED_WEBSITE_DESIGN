@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-// @ts-ignore - groq-sdk types not available
-import Groq from 'groq-sdk';
 
-const groq: any = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+// @ts-ignore - groq-sdk types not available
+const Groq = require('groq-sdk').default || require('groq-sdk');
+
+let groq: any = null;
+
+function getGroqClient() {
+  if (!groq && process.env.GROQ_API_KEY) {
+    groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+  }
+  return groq;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +28,14 @@ export async function POST(request: NextRequest) {
     if (!process.env.GROQ_API_KEY) {
       return NextResponse.json(
         { error: 'GROQ_API_KEY is not configured' },
+        { status: 500 }
+      );
+    }
+
+    const groqClient = getGroqClient();
+    if (!groqClient) {
+      return NextResponse.json(
+        { error: 'Failed to initialize Groq client' },
         { status: 500 }
       );
     }
@@ -51,7 +67,7 @@ Format your response as follows:
 [List of pip packages needed]
 </requirements>`;
 
-    const message = await groq.messages.create({
+    const message = await groqClient.messages.create({
       model: model,
       max_tokens: 4096,
       system: systemPrompt,
