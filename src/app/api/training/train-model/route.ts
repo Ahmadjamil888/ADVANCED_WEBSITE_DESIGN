@@ -53,6 +53,104 @@ export async function POST(request: NextRequest) {
       });
       global.activeSandbox = sandbox;
       global.sandboxId = sandbox.sandboxId;
+
+      // Install dependencies immediately after sandbox creation
+      console.log('[train-model] Installing PyTorch and dependencies...');
+      const installDepsCode = `
+import subprocess
+import sys
+
+print("=" * 70)
+print("📦 INSTALLING PYTORCH AND DEPENDENCIES")
+print("=" * 70)
+
+packages = [
+    'torch>=2.0.0',
+    'torchvision>=0.15.0',
+    'torchaudio>=2.0.0',
+    'numpy>=1.24.0',
+    'pandas>=2.0.0',
+    'scipy>=1.10.0',
+    'scikit-learn>=1.3.0',
+    'transformers>=4.30.0',
+    'datasets>=2.13.0',
+    'huggingface-hub>=0.16.0',
+    'kaggle>=1.5.0',
+    'requests>=2.31.0',
+    'matplotlib>=3.7.0',
+    'seaborn>=0.12.0',
+    'tqdm>=4.65.0',
+    'pillow>=9.5.0',
+    'opencv-python>=4.8.0',
+]
+
+print(f"Installing {len(packages)} packages...")
+result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip', 'setuptools', 'wheel'],
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print("✅ Pip upgraded")
+
+# Install all packages at once
+result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install'] + packages,
+    capture_output=True,
+    text=True,
+    timeout=600
+)
+
+if result.returncode == 0:
+    print("✅ All packages installed successfully")
+else:
+    print(f"⚠️  Installation completed with status: {result.returncode}")
+    if result.stderr:
+        print(f"Errors: {result.stderr[:500]}")
+
+# Verify PyTorch
+print("\\n" + "=" * 70)
+print("🔍 VERIFYING PYTORCH")
+print("=" * 70)
+
+try:
+    import torch
+    print(f"✅ PyTorch {torch.__version__} installed")
+    print(f"✅ CUDA available: {torch.cuda.is_available()}")
+except ImportError as e:
+    print(f"❌ PyTorch import failed: {e}")
+    sys.exit(1)
+
+# Verify other critical packages
+try:
+    import numpy
+    print(f"✅ NumPy {numpy.__version__} installed")
+except ImportError:
+    print("❌ NumPy not found")
+
+try:
+    import sklearn
+    print(f"✅ Scikit-learn installed")
+except ImportError:
+    print("❌ Scikit-learn not found")
+
+print("\\n" + "=" * 70)
+print("🎉 DEPENDENCIES READY FOR TRAINING")
+print("=" * 70)
+`;
+
+      try {
+        const installResult = await sandbox.runCode(installDepsCode);
+        console.log('[train-model] Installation output:', installResult.logs?.stdout || installResult);
+        
+        if (installResult.error) {
+          console.error('[train-model] Installation error:', installResult.error);
+          // Continue anyway - some packages might have warnings
+        }
+      } catch (installError) {
+        console.error('[train-model] Failed to install dependencies:', installError);
+        throw new Error(`Failed to install dependencies: ${installError instanceof Error ? installError.message : 'Unknown error'}`);
+      }
     }
 
     // Use PyTorch training code
