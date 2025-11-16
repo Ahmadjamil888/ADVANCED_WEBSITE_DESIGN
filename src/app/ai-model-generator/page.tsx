@@ -216,8 +216,10 @@ export default function AIModelGeneratorPage() {
 
         .dashboard-content {
           flex: 1;
-          padding: 2rem;
+          padding: 0;
           overflow-y: auto;
+          width: 100%;
+          height: 100%;
         }
 
         .dashboard-tabs {
