@@ -119,7 +119,7 @@ export default function AIModelGeneratorPage() {
   };
 
   return (
-    <div>
+    <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }}>
       <style>{`
         * {
           margin: 0;
@@ -130,14 +130,19 @@ export default function AIModelGeneratorPage() {
         body, html {
           width: 100%;
           height: 100%;
+          margin: 0;
+          padding: 0;
         }
 
         .dashboard-wrapper {
-          width: 100%;
+          width: 100vw;
+          height: 100vh;
           min-height: 100vh;
           background: #000000;
           display: flex;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+          margin: 0;
+          padding: 0;
         }
 
         .dashboard-sidebar {

@@ -4,7 +4,7 @@ export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, model = 'llama3-70b-8192' } = await request.json();
+    const { prompt, model = 'llama-3.3-70b-versatile' } = await request.json();
 
     if (!prompt) {
       return NextResponse.json(
