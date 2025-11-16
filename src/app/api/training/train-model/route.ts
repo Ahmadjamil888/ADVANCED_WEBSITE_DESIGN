@@ -55,74 +55,50 @@ export async function POST(request: NextRequest) {
       global.sandboxId = sandbox.sandboxId;
 
       // Install dependencies immediately after sandbox creation
-      console.log('[train-model] Installing PyTorch and dependencies...');
+      console.log('[train-model] Installing PyTorch and minimal dependencies...');
       const installDepsCode = `
 import subprocess
 import sys
+import os
 
 print("=" * 70)
-print("📦 INSTALLING PYTORCH AND DEPENDENCIES")
+print("📦 INSTALLING PYTORCH AND MINIMAL DEPENDENCIES")
 print("=" * 70)
 
-packages = [
-    'pytorch::pytorch',  # Use conda-style pytorch
-    'pytorch::torchvision',
-    'pytorch::torchaudio',
-    'numpy>=1.24.0',
-    'pandas>=2.0.0',
-    'scipy>=1.10.0',
-    'scikit-learn>=1.3.0',
-    'transformers>=4.30.0',
-    'datasets>=2.13.0',
-    'huggingface-hub>=0.16.0',
-    'kaggle>=1.5.0',
-    'requests>=2.31.0',
-    'matplotlib>=3.7.0',
-    'seaborn>=0.12.0',
-    'tqdm>=4.65.0',
-    'pillow>=9.5.0',
-    'opencv-python>=4.8.0',
+# Clean up pip cache to save space
+print("\\n🧹 Cleaning up to save disk space...")
+subprocess.run([sys.executable, '-m', 'pip', 'cache', 'purge'], capture_output=True)
+
+# Minimal essential packages only
+essential_packages = [
+    'numpy',
+    'scikit-learn',
 ]
 
-print(f"Installing {len(packages)} packages...")
+print("\\n📦 Installing minimal packages...")
 result = subprocess.run(
-    [sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip', 'setuptools', 'wheel'],
+    [sys.executable, '-m', 'pip', 'install', '--no-cache-dir', '--no-deps'] + essential_packages,
     capture_output=True,
     text=True,
     timeout=300
 )
-print("✅ Pip upgraded")
+print(f"Minimal packages: {'✅ Success' if result.returncode == 0 else '⚠️  Status: ' + str(result.returncode)}")
 
-# Install PyTorch first (most critical and time-consuming)
-print("\\n📦 Installing PyTorch (this may take a few minutes)...")
+# Install PyTorch CPU version (much smaller than GPU version)
+print("\\n📦 Installing PyTorch CPU version (this may take a few minutes)...")
 pytorch_result = subprocess.run(
-    [sys.executable, '-m', 'pip', 'install', '--no-cache-dir', 'torch', 'torchvision', 'torchaudio'],
+    [sys.executable, '-m', 'pip', 'install', '--no-cache-dir', '--no-deps', 'torch', 'torchvision', 'torchaudio', '--index-url', 'https://download.pytorch.org/whl/cpu'],
     capture_output=True,
     text=True,
     timeout=600
 )
 
 if pytorch_result.returncode == 0:
-    print("✅ PyTorch installed successfully")
+    print("✅ PyTorch CPU installed successfully")
 else:
     print(f"⚠️  PyTorch installation status: {pytorch_result.returncode}")
-
-# Install remaining packages
-print("\\n📦 Installing remaining packages...")
-remaining_packages = [p for p in packages if 'pytorch' not in p.lower() and 'torch' not in p.lower()]
-result = subprocess.run(
-    [sys.executable, '-m', 'pip', 'install', '--no-cache-dir'] + remaining_packages,
-    capture_output=True,
-    text=True,
-    timeout=600
-)
-
-if result.returncode == 0:
-    print("✅ All packages installed successfully")
-else:
-    print(f"⚠️  Installation completed with status: {result.returncode}")
-    if result.stderr:
-        print(f"Errors: {result.stderr[:500]}")
+    if pytorch_result.stderr:
+        print(f"Error: {pytorch_result.stderr[:200]}")
 
 # Verify PyTorch
 print("\\n" + "=" * 70)
@@ -132,18 +108,19 @@ print("=" * 70)
 try:
     import torch
     print(f"✅ PyTorch {torch.__version__} installed")
-    print(f"✅ CUDA available: {torch.cuda.is_available()}")
+    print(f"✅ Device: {torch.device('cpu')}")
 except ImportError as e:
     print(f"❌ PyTorch import failed: {e}")
     sys.exit(1)
 
-# Verify other critical packages
+# Verify numpy
 try:
     import numpy
-    print(f"✅ NumPy {numpy.__version__} installed")
+    print(f"✅ NumPy installed")
 except ImportError:
     print("❌ NumPy not found")
 
+# Verify sklearn
 try:
     import sklearn
     print(f"✅ Scikit-learn installed")
@@ -177,38 +154,25 @@ print("=" * 70)
 print("🚀 PYTORCH MODEL TRAINING")
 print("=" * 70)
 
-# Verify PyTorch is installed
-print("\\n🔍 Verifying PyTorch installation...")
+# Import PyTorch and dependencies
+print("\\n📦 Importing PyTorch...")
 try:
     import torch
-    print(f"✅ PyTorch {torch.__version__} found")
+    import torch.nn as nn
+    import torch.optim as optim
+    from torch.utils.data import DataLoader, TensorDataset
+    import numpy as np
+    from sklearn.datasets import make_classification
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import StandardScaler
+    
+    print(f"✅ PyTorch {torch.__version__} imported successfully")
 except ImportError as e:
-    print(f"❌ PyTorch import failed: {e}")
-    print("Attempting to install PyTorch...")
-    import subprocess
-    result = subprocess.run(
-        [sys.executable, '-m', 'pip', 'install', '--no-cache-dir', 'torch', 'torchvision', 'torchaudio'],
-        capture_output=True,
-        text=True,
-        timeout=600
-    )
-    if result.returncode != 0:
-        print(f"Failed to install PyTorch: {result.stderr}")
-        sys.exit(1)
-    import torch
-    print(f"✅ PyTorch {torch.__version__} installed successfully")
-
-# Import remaining libraries
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import numpy as np
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+    print(f"❌ Import failed: {e}")
+    sys.exit(1)
 
 # Check device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 print(f"Using device: {device}")
 
 # Generate dataset
