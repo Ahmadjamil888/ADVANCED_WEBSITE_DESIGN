@@ -4,6 +4,8 @@ import { getSupabaseOrThrow, type Database } from '@/lib/supabase';
 
 type AIModelRow = Database['public']['Tables']['ai_models']['Row'];
 
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   try {
     const { modelId } = await req.json();

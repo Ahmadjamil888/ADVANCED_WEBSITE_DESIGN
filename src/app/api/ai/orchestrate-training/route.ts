@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
   try {
     const { prompt, model = 'mixtral-8x7b-32768' } = await request.json();

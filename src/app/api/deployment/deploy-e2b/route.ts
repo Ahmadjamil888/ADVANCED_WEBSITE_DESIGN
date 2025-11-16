@@ -9,6 +9,8 @@ if (!global.deploymentUrls) {
   global.deploymentUrls = new Map();
 }
 
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
   try {
     const { sandboxId, modelPath, appCode, modelType = 'custom' } = await request.json();

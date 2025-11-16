@@ -300,13 +300,29 @@ print(json.dumps(files))
 
     let modelFiles = [];
     try {
-      const output = (filesResult.logs?.stdout || filesResult).trim();
+      let output = '';
+      
+      // Handle different response formats
+      if (Array.isArray(filesResult.logs?.stdout)) {
+        output = filesResult.logs.stdout.join('');
+      } else if (typeof filesResult.logs?.stdout === 'string') {
+        output = filesResult.logs.stdout;
+      } else if (typeof filesResult === 'string') {
+        output = filesResult;
+      } else if (Array.isArray(filesResult)) {
+        output = filesResult.join('');
+      }
+      
+      output = output.trim();
+      console.log('[train-model] File listing output:', output);
+      
       const jsonMatch = output.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         modelFiles = JSON.parse(jsonMatch[0]);
       }
     } catch (e) {
       console.error('[train-model] Error parsing model files:', e);
+      console.error('[train-model] filesResult:', filesResult);
     }
 
     console.log('[train-model] Found model files:', modelFiles);
