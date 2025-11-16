@@ -172,8 +172,9 @@ else:
 
     console.log('[deploy-e2b] Server start output:', serverStart.logs?.stdout || serverStart);
 
-    // Get sandbox URL
-    const sandboxUrl = `https://${sandboxId}.e2b.dev:8000`;
+    // Get sandbox URL using proper E2B method
+    const sandboxHost = sandbox.getHost(8000);
+    const sandboxUrl = `https://${sandboxHost}`;
 
     // Store deployment URL
     global.deploymentUrls.set(sandboxId, sandboxUrl);

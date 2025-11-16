@@ -21,10 +21,14 @@ export default function AIModelGeneratorPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'generator' | 'models' | 'deployments' | 'settings'>('generator');
   const [prompt, setPrompt] = useState('');
+  const [modelName, setModelName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [useAWS, setUseAWS] = useState(false);
   const [awsKey, setAwsKey] = useState('');
   const [showAWSOption, setShowAWSOption] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [models, setModels] = useState<any[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
   const [steps, setSteps] = useState<Step[]>([
     { name: 'Code Generation', status: 'pending' },
     { name: 'Sandbox Creation', status: 'pending' },
@@ -34,6 +38,42 @@ export default function AIModelGeneratorPage() {
   const [trainingStats, setTrainingStats] = useState<TrainingStats[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [deploymentResult, setDeploymentResult] = useState<any>(null);
+
+  // Fetch user ID and models on mount
+  useEffect(() => {
+    const fetchUserAndModels = async () => {
+      try {
+        // Get user from session
+        const sessionResponse = await fetch('/api/auth/session');
+        if (sessionResponse.ok) {
+          const sessionData = await sessionResponse.json();
+          if (sessionData.user?.id) {
+            setUserId(sessionData.user.id);
+            // Fetch user's models
+            fetchModels(sessionData.user.id);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching user:', err);
+      }
+    };
+    fetchUserAndModels();
+  }, []);
+
+  const fetchModels = async (uid: string) => {
+    try {
+      setLoadingModels(true);
+      const response = await fetch(`/api/models/get-models?userId=${uid}`);
+      if (response.ok) {
+        const data = await response.json();
+        setModels(data.models || []);
+      }
+    } catch (err) {
+      console.error('Error fetching models:', err);
+    } finally {
+      setLoadingModels(false);
+    }
+  };
 
   const updateStep = (index: number, status: 'pending' | 'in-progress' | 'completed' | 'error', details?: string) => {
     setSteps((prev: Step[]) => {
@@ -72,6 +112,8 @@ export default function AIModelGeneratorPage() {
         body: JSON.stringify({ 
           prompt, 
           deploymentType,
+          userId,
+          modelName: modelName || `Model-${Date.now()}`,
           awsKey: deploymentType === 'aws' ? awsKey : undefined 
         }),
       });
@@ -1206,6 +1248,26 @@ export default function AIModelGeneratorPage() {
                       <p>Tell us what kind of model you want to create</p>
                       
                       <form onSubmit={handleSubmit}>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                          <label style={{ display: 'block', color: '#ffffff', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Model Name (Optional)</label>
+                          <input 
+                            type="text"
+                            placeholder="e.g., Sentiment Analyzer"
+                            value={modelName}
+                            onChange={(e) => setModelName(e.target.value)}
+                            disabled={isLoading}
+                            style={{
+                              width: '100%',
+                              padding: '0.75rem',
+                              background: '#0a0a0a',
+                              border: '1px solid #222222',
+                              borderRadius: '6px',
+                              color: '#ffffff',
+                              fontFamily: 'inherit',
+                              fontSize: '0.9rem'
+                            }}
+                          />
+                        </div>
                         <div id="poda">
                           <div className="glow"></div>
                           <div className="darkBorderBg"></div>
@@ -1374,13 +1436,62 @@ export default function AIModelGeneratorPage() {
 
             {/* My Models Tab */}
             {activeTab === 'models' && (
-              <div>
-                <div className="dashboard-card">
-                  <div className="dashboard-card-title">Your Models</div>
-                  <p style={{ color: '#666666', fontSize: '0.9rem' }}>
-                    No models created yet. Start by generating your first model.
-                  </p>
-                </div>
+              <div style={{ padding: '2rem' }}>
+                {loadingModels ? (
+                  <div className="dashboard-card">
+                    <div className="dashboard-card-title">Loading Models...</div>
+                  </div>
+                ) : models.length === 0 ? (
+                  <div className="dashboard-card">
+                    <div className="dashboard-card-title">Your Models</div>
+                    <p style={{ color: '#666666', fontSize: '0.9rem' }}>
+                      No models created yet. Start by generating your first model.
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ marginBottom: '2rem' }}>
+                      <h3 style={{ color: '#ffffff', marginBottom: '1rem' }}>Your AI Models ({models.length})</h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                        {models.map((model: any) => (
+                          <div key={model.id} className="dashboard-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div className="dashboard-card-title">{model.name}</div>
+                            <div style={{ color: '#999999', fontSize: '0.85rem', marginBottom: '1rem' }}>
+                              <p><strong>Type:</strong> {model.type}</p>
+                              <p><strong>Status:</strong> <span style={{ color: '#10b981' }}>{model.status}</span></p>
+                              <p><strong>Created:</strong> {new Date(model.created_at).toLocaleDateString()}</p>
+                            </div>
+                            {model.deployment_url && (
+                              <div style={{ marginBottom: '1rem', padding: '0.75rem', background: '#111111', borderRadius: '6px' }}>
+                                <p style={{ color: '#999999', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Deployment URL:</p>
+                                <code style={{ color: '#10b981', fontSize: '0.8rem', wordBreak: 'break-all' }}>{model.deployment_url}</code>
+                              </div>
+                            )}
+                            <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem' }}>
+                              <button 
+                                onClick={() => window.open(model.deployment_url, '_blank')}
+                                disabled={!model.deployment_url}
+                                style={{
+                                  flex: 1,
+                                  padding: '0.5rem',
+                                  background: model.deployment_url ? '#10b981' : '#333333',
+                                  color: '#ffffff',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  cursor: model.deployment_url ? 'pointer' : 'not-allowed',
+                                  fontSize: '0.85rem',
+                                  fontFamily: 'inherit'
+                                }}
+                              >
+                                View API
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

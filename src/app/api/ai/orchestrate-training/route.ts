@@ -4,7 +4,7 @@ export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, model = 'llama-3.3-70b-versatile' } = await request.json();
+    const { prompt, model = 'llama-3.3-70b-versatile', userId, modelName } = await request.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -103,6 +103,33 @@ export async function POST(request: NextRequest) {
     const deploymentData = await deploymentResponse.json();
     console.log('[orchestrate-training] Deployment successful');
     console.log('[orchestrate-training] Deployment URL:', deploymentData.deploymentUrl);
+
+    // Step 5: Save model to database
+    if (userId && modelName) {
+      console.log('[orchestrate-training] Step 5: Saving model to database...');
+      const saveModelResponse = await fetch(`${baseUrl}/api/models/save-model`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          modelName,
+          modelType: groqData.modelType,
+          description: prompt,
+          deploymentUrl: deploymentData.deploymentUrl,
+          sandboxId,
+          modelPath: modelFile.path,
+          trainingStats: trainingData.output,
+          prompt,
+        }),
+      });
+
+      if (saveModelResponse.ok) {
+        const saveData = await saveModelResponse.json();
+        console.log('[orchestrate-training] Model saved to database:', saveData.model?.id);
+      } else {
+        console.warn('[orchestrate-training] Failed to save model to database:', await saveModelResponse.text());
+      }
+    }
 
     return NextResponse.json({
       success: true,

@@ -395,26 +395,262 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <RevealFx delay={0.5} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
-        <Column maxWidth="s" gap="m" fillWidth className="mobile-text-center">
+        <style jsx>{`
+          .testimonial-card {
+            position: relative;
+            background: linear-gradient(135deg, #30344c 0%, #2a2d3f 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            transition: all 200ms ease-in-out;
+            border: 1px solid rgba(207, 48, 170, 0.1);
+          }
+
+          .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 8px 30px rgba(207, 48, 170, 0.2);
+            border-color: rgba(207, 48, 170, 0.3);
+          }
+
+          .testimonial-body {
+            display: flex;
+            flex-direction: column;
+          }
+
+          .testimonial-text {
+            color: #c0c3d7;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+          }
+
+          .testimonial-username {
+            color: #C6E1ED;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+
+          .testimonial-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+          }
+
+          .testimonial-stats {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+          }
+
+          .testimonial-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #9fa4aa;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 200ms ease;
+          }
+
+          .testimonial-stat:hover {
+            color: #cf30aa;
+          }
+
+          .testimonial-stat svg {
+            width: 18px;
+            height: 18px;
+            stroke: #9fa4aa;
+            transition: stroke 200ms ease;
+          }
+
+          .testimonial-stat:hover svg {
+            stroke: #cf30aa;
+          }
+
+          .testimonial-viewers {
+            display: flex;
+            align-items: center;
+            gap: -6px;
+          }
+
+          .testimonial-viewer-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #402fb5, #cf30aa);
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #ffffff;
+            font-weight: bold;
+            margin-left: -8px;
+            transition: all 200ms ease;
+          }
+
+          .testimonial-viewer-avatar:first-child {
+            margin-left: 0;
+          }
+
+          .testimonial-viewer-avatar:hover {
+            transform: scale(1.1);
+            z-index: 10;
+          }
+
+          .testimonial-viewer-more {
+            margin-left: 0.5rem;
+            color: #9fa4aa;
+            font-size: 0.85rem;
+            font-weight: 600;
+          }
+
+          .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+          }
+
+          @media (max-width: 768px) {
+            .testimonials-grid {
+              grid-template-columns: 1fr;
+              gap: 1.5rem;
+            }
+
+            .testimonial-card {
+              max-width: 100%;
+            }
+          }
+        `}</style>
+
+        <Column maxWidth="l" gap="m" fillWidth className="mobile-text-center">
           <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Client Testimonials</Heading>
-          <Column gap="16" fillWidth className="mobile-small-gap">
-            <Card fillWidth className="mobile-padding-sm">
-              <Column gap="8">
-                <Text onBackground="neutral-weak" className="mobile-font-sm">
+          
+          <div className="testimonials-grid">
+            {/* Testimonial 1 */}
+            <div className="testimonial-card">
+              <div className="testimonial-body">
+                <p className="testimonial-text">
                   "zehanxtech delivered an exceptional AI solution that transformed our business operations. Highly professional and innovative!"
-                </Text>
-                <Text variant="label-default-s" className="mobile-font-sm">— Sarah Johnson, Tech Director</Text>
-              </Column>
-            </Card>
-            <Card fillWidth className="mobile-padding-sm">
-              <Column gap="8">
-                <Text onBackground="neutral-weak" className="mobile-font-sm">
-                  "Their expertise in both AI and web development is outstanding. They created exactly what we envisioned."
-                </Text>
-                <Text variant="label-default-s" className="mobile-font-sm">— Michael Chen, Startup Founder</Text>
-              </Column>
-            </Card>
-          </Column>
+                </p>
+                <span className="testimonial-username">from: Sarah Johnson, Tech Director</span>
+                
+                <div className="testimonial-footer">
+                  <div className="testimonial-stats">
+                    <div className="testimonial-stat">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <path strokeWidth="1.5" d="M16 10H16.01M12 10H12.01M8 10H8.01M3 10C3 4.64706 5.11765 3 12 3C18.8824 3 21 4.64706 21 10C21 15.3529 18.8824 17 12 17C11.6592 17 11.3301 16.996 11.0124 16.9876L7 21V16.4939C4.0328 15.6692 3 13.7383 3 10Z"></path>
+                      </svg>
+                      24
+                    </div>
+                    <div className="testimonial-stat">
+                      <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="-2.5 0 32 32">
+                        <path fill="#9fa4aa" d="M0 10.284l0.505 0.36c0.089 0.064 0.92 0.621 2.604 0.621 0.27 0 0.55-0.015 0.836-0.044 3.752 4.346 6.411 7.472 7.060 8.299-1.227 2.735-1.42 5.808-0.537 8.686l0.256 0.834 7.63-7.631 8.309 8.309 0.742-0.742-8.309-8.309 7.631-7.631-0.834-0.255c-2.829-0.868-5.986-0.672-8.686 0.537-0.825-0.648-3.942-3.3-8.28-7.044 0.11-0.669 0.23-2.183-0.575-3.441l-0.352-0.549-8.001 8.001z"></path>
+                      </svg>
+                      12
+                    </div>
+                    <div className="testimonial-stat">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.1" d="M21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6Z" fill="#323232"></path>
+                        <path d="M21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6Z" strokeWidth="2"></path>
+                      </svg>
+                      8
+                    </div>
+                  </div>
+                  <div className="testimonial-viewers">
+                    <div className="testimonial-viewer-avatar">SJ</div>
+                    <div className="testimonial-viewer-avatar">MC</div>
+                    <div className="testimonial-viewer-avatar">+18</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="testimonial-card">
+              <div className="testimonial-body">
+                <p className="testimonial-text">
+                  "Their expertise in both AI and web development is outstanding. They created exactly what we envisioned and delivered on time."
+                </p>
+                <span className="testimonial-username">from: Michael Chen, Startup Founder</span>
+                
+                <div className="testimonial-footer">
+                  <div className="testimonial-stats">
+                    <div className="testimonial-stat">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <path strokeWidth="1.5" d="M16 10H16.01M12 10H12.01M8 10H8.01M3 10C3 4.64706 5.11765 3 12 3C18.8824 3 21 4.64706 21 10C21 15.3529 18.8824 17 12 17C11.6592 17 11.3301 16.996 11.0124 16.9876L7 21V16.4939C4.0328 15.6692 3 13.7383 3 10Z"></path>
+                      </svg>
+                      31
+                    </div>
+                    <div className="testimonial-stat">
+                      <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="-2.5 0 32 32">
+                        <path fill="#9fa4aa" d="M0 10.284l0.505 0.36c0.089 0.064 0.92 0.621 2.604 0.621 0.27 0 0.55-0.015 0.836-0.044 3.752 4.346 6.411 7.472 7.060 8.299-1.227 2.735-1.42 5.808-0.537 8.686l0.256 0.834 7.63-7.631 8.309 8.309 0.742-0.742-8.309-8.309 7.631-7.631-0.834-0.255c-2.829-0.868-5.986-0.672-8.686 0.537-0.825-0.648-3.942-3.3-8.28-7.044 0.11-0.669 0.23-2.183-0.575-3.441l-0.352-0.549-8.001 8.001z"></path>
+                      </svg>
+                      19
+                    </div>
+                    <div className="testimonial-stat">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.1" d="M21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6Z" fill="#323232"></path>
+                        <path d="M21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6Z" strokeWidth="2"></path>
+                      </svg>
+                      15
+                    </div>
+                  </div>
+                  <div className="testimonial-viewers">
+                    <div className="testimonial-viewer-avatar">MC</div>
+                    <div className="testimonial-viewer-avatar">AK</div>
+                    <div className="testimonial-viewer-avatar">+22</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="testimonial-card">
+              <div className="testimonial-body">
+                <p className="testimonial-text">
+                  "The AI model generation system is revolutionary. We saved months of development time and got production-ready models instantly!"
+                </p>
+                <span className="testimonial-username">from: Alex Kumar, CTO</span>
+                
+                <div className="testimonial-footer">
+                  <div className="testimonial-stats">
+                    <div className="testimonial-stat">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <path strokeWidth="1.5" d="M16 10H16.01M12 10H12.01M8 10H8.01M3 10C3 4.64706 5.11765 3 12 3C18.8824 3 21 4.64706 21 10C21 15.3529 18.8824 17 12 17C11.6592 17 11.3301 16.996 11.0124 16.9876L7 21V16.4939C4.0328 15.6692 3 13.7383 3 10Z"></path>
+                      </svg>
+                      42
+                    </div>
+                    <div className="testimonial-stat">
+                      <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="-2.5 0 32 32">
+                        <path fill="#9fa4aa" d="M0 10.284l0.505 0.36c0.089 0.064 0.92 0.621 2.604 0.621 0.27 0 0.55-0.015 0.836-0.044 3.752 4.346 6.411 7.472 7.060 8.299-1.227 2.735-1.42 5.808-0.537 8.686l0.256 0.834 7.63-7.631 8.309 8.309 0.742-0.742-8.309-8.309 7.631-7.631-0.834-0.255c-2.829-0.868-5.986-0.672-8.686 0.537-0.825-0.648-3.942-3.3-8.28-7.044 0.11-0.669 0.23-2.183-0.575-3.441l-0.352-0.549-8.001 8.001z"></path>
+                      </svg>
+                      28
+                    </div>
+                    <div className="testimonial-stat">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.1" d="M21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6Z" fill="#323232"></path>
+                        <path d="M21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6Z" strokeWidth="2"></path>
+                      </svg>
+                      21
+                    </div>
+                  </div>
+                  <div className="testimonial-viewers">
+                    <div className="testimonial-viewer-avatar">AK</div>
+                    <div className="testimonial-viewer-avatar">RJ</div>
+                    <div className="testimonial-viewer-avatar">+25</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </Column>
       </RevealFx>
 
