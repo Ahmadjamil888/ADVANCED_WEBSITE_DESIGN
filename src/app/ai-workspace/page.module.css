@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #000;
+  background: linear-gradient(135deg, #0a0a0a 0%, #0f0f1a 100%);
   color: #fff;
   display: flex;
   overflow: hidden;
@@ -42,11 +42,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 [data-dashboard-theme="light"] .header {
   border-color: #000;
+  background: transparent;
 }
 
 .title {
@@ -67,12 +69,14 @@
 
 .createButton {
   padding: 0.75rem 1.5rem;
-  background: #000;
-  border: 1px solid #fff;
+  background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+  border: 1px solid rgba(147, 51, 234, 0.5);
   color: #fff;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 [data-dashboard-theme="light"] .createButton {
@@ -82,7 +86,10 @@
 }
 
 .createButton:hover {
-  background: #1a1a1a;
+  background: linear-gradient(135deg, #2d0052 0%, #4d0099 100%);
+  border-color: rgba(147, 51, 234, 0.8);
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  transform: translateY(-2px);
 }
 
 [data-dashboard-theme="light"] .createButton:hover {
@@ -99,6 +106,18 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .emptyState {
@@ -118,9 +137,17 @@
 }
 
 .jobCard {
-  background: #000;
-  border: 1px solid #fff;
+  background: rgba(20, 10, 40, 0.6);
+  border: 1px solid rgba(147, 51, 234, 0.3);
   padding: 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.jobCard:hover {
+  background: rgba(30, 15, 60, 0.8);
+  border-color: rgba(147, 51, 234, 0.6);
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.2);
 }
 
 [data-dashboard-theme="light"] .jobCard {
@@ -134,10 +161,11 @@
 }
 
 .planCard {
-  background: #000;
-  border: 1px solid #fff;
+  background: rgba(20, 10, 40, 0.5);
+  border: 1px solid rgba(147, 51, 234, 0.3);
   padding: 2rem;
   margin-bottom: 2rem;
+  border-radius: 8px;
 }
 
 [data-dashboard-theme="light"] .planCard {
@@ -161,10 +189,19 @@
 }
 
 .planOption {
-  background: #000;
-  border: 1px solid #fff;
+  background: rgba(15, 8, 35, 0.7);
+  border: 1px solid rgba(147, 51, 234, 0.4);
   padding: 2rem;
   position: relative;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.planOption:hover {
+  background: rgba(25, 12, 50, 0.9);
+  border-color: rgba(147, 51, 234, 0.7);
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.25);
+  transform: translateY(-4px);
 }
 
 [data-dashboard-theme="light"] .planOption {
@@ -224,13 +261,15 @@
 .upgradeButton {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: #000;
-  border: 1px solid #fff;
+  background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+  border: 1px solid rgba(147, 51, 234, 0.5);
   color: #fff;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
   width: 100%;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 [data-dashboard-theme="light"] .upgradeButton {
@@ -240,7 +279,10 @@
 }
 
 .upgradeButton:hover {
-  background: #1a1a1a;
+  background: linear-gradient(135deg, #2d0052 0%, #4d0099 100%);
+  border-color: rgba(147, 51, 234, 0.8);
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+  transform: translateY(-2px);
 }
 
 [data-dashboard-theme="light"] .upgradeButton:hover {

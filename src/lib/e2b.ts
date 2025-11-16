@@ -167,8 +167,9 @@ export class E2BManager {
   /**
    * Get sandbox host for port forwarding
    * Following: https://e2b.dev/docs/sandbox/networking
+   * NOTE: Default port 49999 is the E2B sandbox model backend port
    */
-  getHost(port: number = 8000): string {
+  getHost(port: number = 49999): string {
     if (!this.sandbox) {
       throw new Error('Sandbox not initialized');
     }
@@ -221,10 +222,11 @@ export class E2BManager {
   /**
    * Deploy FastAPI server in background
    * Following: https://e2b.dev/docs/sandbox/commands#running-commands-in-background
+   * NOTE: Default port 49999 is the E2B sandbox model backend port for AI model serving
    */
   async deployAPI(
     appPath: string = '/home/user/app.py',
-    port: number = 8000,
+    port: number = 49999,
     opts?: {
       startCommand?: string;
       fallbackStartCommand?: string;
@@ -239,7 +241,7 @@ export class E2BManager {
     console.log('🚀 Deploying FastAPI server...');
     
     try {
-      const candidatePorts = Array.from(new Set([port, 3000, 8080]));
+      const candidatePorts = Array.from(new Set([port, 49999, 3000, 8080]));
       const totalWait = Math.max(5, opts?.waitSeconds ?? 30);
       let finalUrl: string | null = null;
 
@@ -343,8 +345,11 @@ export class E2BManager {
  * await manager.writeFiles(files);
  * await manager.installDependencies();
  * await manager.runTraining();
- * const url = await manager.deployAPI();
+ * const url = await manager.deployAPI(); // Uses port 49999 by default (E2B model backend port)
  * await manager.close();
+ * 
+ * IMPORTANT: Port 49999 is the standard E2B sandbox model backend port.
+ * This is where your generated AI models will be served from.
  */
 export async function createE2BSandbox(): Promise<E2BManager> {
   const manager = new E2BManager();

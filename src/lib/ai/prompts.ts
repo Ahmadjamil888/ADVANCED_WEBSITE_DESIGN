@@ -132,7 +132,7 @@ transformers==4.35.0
 - If dataset is not specified, use a simple example or mock data
 - Always include print statements for progress tracking
 - Make the API endpoint accept {"text": "..."} and return {"prediction": "...", "confidence": 0.95}
-- Ensure the server binds to 0.0.0.0 and default port 8000
+- Ensure the server binds to 0.0.0.0 and default port 49999 (E2B sandbox model backend port)
 - The generated code will run in an E2B sandbox automatically, so paths should be relative and simple
 
 Remember: The user will run this code in an E2B sandbox. It must work without any manual intervention!`;

@@ -38,6 +38,15 @@ export function DashboardSidebar({ activeSection, onSectionChange }: DashboardSi
           </button>
         ))}
       </div>
+      {isExpanded && (
+        <button
+          className={styles.closeButton}
+          onClick={() => setIsExpanded(false)}
+          title="Collapse sidebar"
+        >
+          ✕
+        </button>
+      )}
     </div>
   );
 }

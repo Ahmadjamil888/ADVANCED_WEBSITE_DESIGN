@@ -315,9 +315,10 @@ def root():
 
       try {
         // Try starting uvicorn first, then fallback to static server if needed
-        deploymentUrl = await e2b.deployAPI('/home/user/app.py', 8000, {
-          startCommand: `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port 8000`,
-          fallbackStartCommand: `cd /home/user && python -m http.server 8000`,
+        // NOTE: Port 49999 is the E2B sandbox model backend port
+        deploymentUrl = await e2b.deployAPI('/home/user/app.py', 49999, {
+          startCommand: `cd /home/user && python -m uvicorn app:app --host 0.0.0.0 --port 49999`,
+          fallbackStartCommand: `cd /home/user && python -m http.server 49999`,
           waitSeconds: 30,
         });
         console.log('✅ API deployed at:', deploymentUrl);

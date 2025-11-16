@@ -119,7 +119,8 @@ def info():
     })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=False)
+    # Port 49999 is the E2B sandbox model backend port
+    app.run(host='0.0.0.0', port=49999, debug=False)
 `;
 
     // Write the deployment app
@@ -176,7 +177,8 @@ else:
     console.log('[deploy-e2b] Server start output:', serverStart.logs?.stdout || serverStart);
 
     // Get sandbox URL using proper E2B method
-    const sandboxHost = sandbox.getHost(8000);
+    // Port 49999 is the E2B sandbox model backend port for AI model serving
+    const sandboxHost = sandbox.getHost(49999);
     const sandboxUrl = `https://${sandboxHost}`;
 
     // Store deployment URL
