@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const { user } = useAuth()
@@ -56,7 +57,6 @@ export default function LoginPage() {
       return
     }
     
-    // Use zehanxtech.com in production, localhost in development
     const redirectUrl = process.env.NODE_ENV === 'production' 
       ? 'https://zehanxtech.com/ai-model-generator'
       : `${window.location.origin}/ai-model-generator`
@@ -73,434 +73,304 @@ export default function LoginPage() {
   return (
     <>
       <style jsx global>{`
-        :root {
-          --bg: #f6f8fb;
-          --card: #ffffff;
-          --muted: #6b7280;
-          --primary: #0b5cff;
-          --accent: #0ea5e9;
-          --border: #e6e9ef;
-          --radius: 12px;
-          --shadow: 0 8px 30px rgba(12,18,27,0.06);
-          --glass: rgba(255,255,255,0.6);
-          font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        }
-
-        html, body {
-          height: 100vh;
+        * {
           margin: 0;
-          background: linear-gradient(180deg, var(--bg), #eef3fb 120%);
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Layout */
-        .split {
-          min-height: 100vh;
-          display: flex;
-          align-items: stretch;
-          justify-content: stretch;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-        }
-
-        .left, .right {
-          flex: 1 1 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        /* Left (form) */
-        .panel {
-          width: 100%;
-          max-width: 520px;
-          padding: 44px;
-          background: var(--card);
-          border-radius: 16px;
-          box-shadow: var(--shadow);
-          border: 1px solid var(--border);
-        }
-
-        .brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 18px;
-        }
-
-        .logo {
-          width: 44px;
-          height: 44px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, var(--primary), var(--accent));
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: 700;
-          box-shadow: 0 6px 18px rgba(11,92,255,0.12);
-        }
-
-        h1 {
-          margin: 0;
-          font-size: 22px;
-          font-weight: 700;
-          color: #0f1724;
-        }
-
-        p.lead {
-          margin: 8px 0 26px 0;
-          color: var(--muted);
-          font-size: 14px;
-        }
-
-        /* OAuth button */
-        .oauth {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          padding: 12px 14px;
-          border-radius: 10px;
-          border: 1px solid var(--border);
-          background: white;
-          cursor: pointer;
-          width: 100%;
-          box-shadow: 0 1px 0 rgba(12,18,27,0.02);
-          transition: transform .12s ease, box-shadow .12s ease;
-          text-decoration: none;
-        }
-
-        .oauth:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 30px rgba(12,18,27,0.06);
-        }
-
-        .oauth img {
-          width: 18px;
-          height: 18px;
-        }
-
-        .oauth span {
-          flex: 1;
-          text-align: center;
-          font-weight: 600;
-          color: #111827;
-          font-size: 14px;
-        }
-
-        .divider {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          margin: 20px 0;
-          color: var(--muted);
-          font-size: 13px;
-        }
-
-        .divider:before, .divider:after {
-          content: "";
-          flex: 1;
-          height: 1px;
-          background: var(--border);
-          border-radius: 2px;
-        }
-
-        form .field {
-          margin-bottom: 14px;
-        }
-
-        label {
-          display: block;
-          font-size: 13px;
-          color: #374151;
-          margin-bottom: 8px;
-          font-weight: 600;
-        }
-
-        input[type="email"], input[type="password"] {
-          width: 100%;
-          padding: 12px 14px;
-          border-radius: 10px;
-          border: 1px solid var(--border);
-          background: #fbfdff;
-          font-size: 14px;
-          outline: none;
-          transition: box-shadow .12s ease, border-color .12s ease;
+          padding: 0;
           box-sizing: border-box;
         }
 
-        input:focus {
-          box-shadow: 0 6px 20px rgba(14,165,233,0.12);
-          border-color: var(--accent);
+        html, body {
+          height: 100%;
+          width: 100%;
+          background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
-        .row {
+        .login-container {
+          min-height: 100vh;
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          font-size: 13px;
-          color: var(--muted);
-          margin-bottom: 18px;
+          justify-content: center;
+          padding: 20px;
         }
 
-        .remember input {
-          width: 16px;
-          height: 16px;
-          accent-color: var(--primary);
-        }
-
-        button.cta {
+        /* Form Styles */
+        .form {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          background-color: #ffffff;
+          padding: 30px;
           width: 100%;
-          padding: 12px 14px;
+          max-width: 450px;
+          border-radius: 20px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .flex-column {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .flex-column > label {
+          color: #151717;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .inputForm {
+          border: 1.5px solid #ecedec;
           border-radius: 10px;
-          background: linear-gradient(90deg, var(--primary), #3d7bff);
-          border: 0;
-          color: white;
-          font-weight: 700;
-          font-size: 15px;
+          height: 50px;
+          display: flex;
+          align-items: center;
+          padding-left: 10px;
+          transition: 0.2s ease-in-out;
+        }
+
+        .inputForm:focus-within {
+          border: 1.5px solid #2d79f3;
+        }
+
+        .inputForm svg {
+          width: 20px;
+          height: 20px;
+          color: #151717;
+        }
+
+        .input {
+          margin-left: 10px;
+          border-radius: 10px;
+          border: none;
+          width: 100%;
+          height: 100%;
+          font-family: inherit;
+          font-size: 14px;
+        }
+
+        .input:focus {
+          outline: none;
+        }
+
+        .input::placeholder {
+          color: #999;
+        }
+
+        .flex-row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+          justify-content: space-between;
+          margin: 10px 0;
+        }
+
+        .flex-row > div {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+
+        .flex-row input[type="radio"] {
+          width: 18px;
+          height: 18px;
           cursor: pointer;
-          box-shadow: 0 10px 30px rgba(11,92,255,0.12);
-          transition: transform .12s ease, opacity .12s ease;
         }
 
-        button.cta:active {
-          transform: translateY(1px);
+        .flex-row label {
+          font-size: 14px;
+          color: black;
+          font-weight: 400;
+          cursor: pointer;
         }
 
-        button.cta:disabled {
-          opacity: 0.7;
+        .span {
+          font-size: 14px;
+          color: #2d79f3;
+          font-weight: 500;
+          cursor: pointer;
+          transition: color 0.2s ease;
+        }
+
+        .span:hover {
+          color: #1e5bc4;
+        }
+
+        .button-submit {
+          margin: 20px 0 10px 0;
+          background-color: #151717;
+          border: none;
+          color: white;
+          font-size: 15px;
+          font-weight: 500;
+          border-radius: 10px;
+          height: 50px;
+          width: 100%;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .button-submit:hover {
+          background-color: #2d2d2f;
+        }
+
+        .button-submit:disabled {
+          opacity: 0.6;
           cursor: not-allowed;
         }
 
-        .muted-note {
-          margin-top: 14px;
-          font-size: 13px;
-          color: var(--muted);
+        .p {
           text-align: center;
+          color: black;
+          font-size: 14px;
+          margin: 5px 0;
         }
 
-        .muted-note a {
-          color: var(--primary);
-          font-weight: 700;
-          text-decoration: none;
-        }
-
-        /* Right (image) */
-        .right {
+        .line {
           position: relative;
-          overflow: hidden;
+          text-align: center;
+          margin: 15px 0;
         }
 
-        .hero {
+        .line::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
           width: 100%;
-          height: 100%;
-          min-height: 420px;
-          background-image: url('https://images.unsplash.com/photo-1531379410503-4a3b6a6f6a4b?auto=format&fit=crop&w=1400&q=80');
-          background-size: cover;
-          background-position: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          height: 1px;
+          background: #ecedec;
+          z-index: 0;
         }
 
-        .overlay {
+        .line span {
+          position: relative;
+          background: white;
+          padding: 0 10px;
+          z-index: 1;
+          color: #999;
+        }
+
+        .btn {
+          margin-top: 10px;
           width: 100%;
-          height: 100%;
-          background: linear-gradient(180deg, rgba(3,7,18,0.18), rgba(2,6,23,0.46));
+          height: 50px;
+          border-radius: 10px;
           display: flex;
-          align-items: center;
           justify-content: center;
-          padding: 32px;
-        }
-
-        .hero-card {
-          max-width: 520px;
-          color: white;
-          text-align: left;
-          border-radius: 12px;
-          padding: 28px;
-          backdrop-filter: blur(6px);
-          background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-          box-shadow: 0 10px 40px rgba(2,6,23,0.35);
-          border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .hero h2 {
-          margin: 0;
-          font-size: 28px;
-          line-height: 1.05;
-          font-weight: 700;
-        }
-
-        .hero p {
-          margin-top: 12px;
-          color: rgba(255,255,255,0.85);
-          font-size: 15px;
-        }
-
-        .hero-tags {
-          margin-top: 18px;
-          display: flex;
+          align-items: center;
+          font-weight: 500;
           gap: 10px;
-          flex-wrap: wrap;
+          border: 1px solid #ededef;
+          background-color: white;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          font-family: inherit;
         }
 
-        .hero-tag {
-          background: rgba(255,255,255,0.06);
-          padding: 8px 12px;
-          border-radius: 8px;
-          font-size: 13px;
+        .btn:hover {
+          border: 1px solid #2d79f3;
+          background-color: #f8f9ff;
         }
 
-        /* Small screens */
-        @media (max-width: 900px) {
-          .right {
-            display: none;
-          }
-          .left {
-            flex: 1 1 100%;
-            padding: 40px 18px;
-            align-items: flex-start;
-            justify-content: flex-start;
-          }
-          .panel {
-            margin-top: 28px;
-            width: 100%;
-            box-shadow: none;
-            border-radius: 10px;
-          }
+        .btn svg {
+          width: 20px;
+          height: 20px;
         }
 
-        @media (max-width: 420px) {
-          .panel {
-            padding: 20px;
-          }
-          .brand h1 {
-            font-size: 18px;
-          }
-          .hero h2 {
-            font-size: 20px;
-          }
+        .btn.google {
+          color: #151717;
+        }
+
+        .btn.apple {
+          color: #151717;
         }
       `}</style>
 
-      <div className="split">
-        {/* LEFT: form */}
-        <div className="left">
-          <div className="panel" role="main">
-            <div className="brand">
-              <div>
-                <h1>{isSignUp ? 'Create Account' : 'Welcome back'}</h1>
-                <p className="lead">
-                  {isSignUp 
-                    ? 'Join zehanxtech — secure, fast, enterprise-ready AI platform.'
-                    : 'Sign in to continue to zehanxtech — secure, fast, enterprise-ready.'
-                  }
-                </p>
-              </div>
-            </div>
+      <div className="login-container">
+        <form className="form" onSubmit={handleEmailAuth}>
+          <div className="flex-column">
+            <label>Email</label>
+          </div>
+          <div className="inputForm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
+              <g data-name="Layer 3" id="Layer_3">
+                <path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path>
+              </g>
+            </svg>
+            <input 
+              placeholder="Enter your Email" 
+              className="input" 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-            {/* GOOGLE OAUTH BUTTON */}
-            <button className="oauth" onClick={handleGoogleAuth} disabled={loading}>
-              <img 
-                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 533.5 544.3'><path fill='%23EA4335' d='M533.5 278.4c0-18.4-1.6-36-4.6-53.1H272v100.6h146.9c-6.3 33.8-25.6 62.5-54.6 81.5l88.1 68.3c51.4-47.5 81.1-117 81.1-197.3z'/><path fill='%234285F4' d='M272 544.3c73.8 0 135.8-24.5 181.1-66.5l-88.1-68.3c-24.5 16.5-56 26.3-93 26.3-71.5 0-132.1-48.2-153.8-113.1l-90.3 69.6c41.7 82.6 128 141.9 244.1 141.9z'/><path fill='%2340C853' d='M118.2 327.9c-11.7-34.9-11.7-72.4 0-107.3l-90.3-69.6C7.5 219 0 244.6 0 272c0 27.4 7.5 53 27.9 121.1l90.3-65.2z'/><path fill='%23FBBC05' d='M272 107.7c39.9 0 75.7 13.7 104 40.6l78-78C401.4 25.6 347.1 0 272 0 155.9 0 69.6 59.3 27.9 141.9l90.3 69.6C139.9 156 200.5 107.7 272 107.7z'/></svg>" 
-                alt="Google" 
+          <div className="flex-column">
+            <label>Password</label>
+          </div>
+          <div className="inputForm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="-64 0 512 512" height="20">
+              <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
+              <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
+            </svg>
+            <input 
+              placeholder="Enter your Password" 
+              className="input" 
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="flex-row">
+            <div>
+              <input 
+                type="checkbox" 
+                id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
               />
-              <span>Continue with Google</span>
-            </button>
-
-            <div className="divider">or sign in with email</div>
-
-            {/* EMAIL / PASSWORD FORM */}
-            <form onSubmit={handleEmailAuth}>
-              <div className="field">
-                <label htmlFor="email">Email address</label>
-                <input 
-                  id="email" 
-                  name="email" 
-                  type="email" 
-                  autoComplete="email" 
-                  required 
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="field">
-                <label htmlFor="password">Password</label>
-                <input 
-                  id="password" 
-                  name="password" 
-                  type="password" 
-                  autoComplete="current-password" 
-                  required 
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                  minLength={6}
-                />
-              </div>
-
-              <div className="row">
-                <label className="remember">
-                  <input type="checkbox" name="remember" /> Remember me
-                </label>
-                <a href="/forgot" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: '600' }}>
-                  Forgot password?
-                </a>
-              </div>
-
-              <button className="cta" type="submit" disabled={loading}>
-                {loading ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign in')}
-              </button>
-
-              <p className="muted-note">
-                {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
-                <button 
-                  type="button"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    color: 'var(--primary)', 
-                    fontWeight: '700', 
-                    textDecoration: 'none',
-                    cursor: 'pointer',
-                    fontSize: 'inherit'
-                  }}
-                  disabled={loading}
-                >
-                  {isSignUp ? 'Sign in' : 'Create one'}
-                </button>
-              </p>
-            </form>
-          </div>
-        </div>
-
-        {/* RIGHT: image/marketing */}
-        <div className="right">
-          <div className="hero">
-            <div className="overlay">
-              <div className="hero-card">
-                <h2>Build intelligent systems<br />for modern enterprises</h2>
-                <p>Create custom AI models with zero coding — from sentiment analysis to computer vision, deployed instantly to production.</p>
-                
-                <div className="hero-tags">
-                  <div className="hero-tag">Auto ML</div>
-                  <div className="hero-tag">Zero Code</div>
-                  <div className="hero-tag">Instant Deploy</div>
-                </div>
-              </div>
+              <label htmlFor="remember">Remember me</label>
             </div>
+            <span className="span">Forgot password?</span>
           </div>
-        </div>
+
+          <button type="submit" className="button-submit" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+
+          <p className="p">
+            Don't have an account? <span className="span" onClick={() => setIsSignUp(!isSignUp)}>
+              {isSignUp ? 'Sign In' : 'Sign Up'}
+            </span>
+          </p>
+
+          <p className="p line"><span>Or With</span></p>
+
+          <div className="flex-row" style={{ gap: '10px' }}>
+            <button type="button" className="btn google" onClick={handleGoogleAuth}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256 c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456 C103.821,274.792,107.225,292.797,113.47,309.408z" fill="#FBBB00"></path>
+                <path d="M507.527,208.176C510.467,223.662,512,239.655,512,256c0,18.328-1.927,36.206-5.598,53.451 c-12.462,58.683-45.025,109.925-90.134,146.187l-0.014-0.014l-73.044-3.727l-10.338-64.535 c29.932-17.554,53.324-45.025,65.646-77.911h-136.89V208.176h138.887L507.527,208.176L507.527,208.176z" fill="#518EF8"></path>
+                <path d="M416.253,455.624l0.014,0.014C372.396,490.901,316.666,512,256,512 c-97.491,0-182.252-54.491-225.491-134.681l82.961-67.91c21.619,57.698,77.278,98.771,142.53,98.771 c28.047,0,54.323-7.582,76.87-20.818L416.253,455.624z" fill="#28B446"></path>
+                <path d="M419.404,58.936l-82.933,67.896c-23.335-14.586-50.919-23.012-80.471-23.012 c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0 C318.115,0,375.068,22.126,419.404,58.936z" fill="#F14336"></path>
+              </svg>
+              Google
+            </button>
+            <button type="button" className="btn apple">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.773 22.773">
+                <path d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573 c-0.108-1.583,0.506-2.694,1.25-3.561C13.292,0.879,14.557,0.16,15.769,0z"></path>
+                <path d="M20.67,16.716c0,0.016,0,0.03,0,0.045c-0.455,1.378-1.104,2.559-1.896,3.655c-0.723,0.995-1.609,2.334-3.191,2.334 c-1.367,0-2.275-0.879-3.676-0.903c-1.482-0.024-2.297,0.735-3.652,0.926c-0.155,0-0.31,0-0.462,0 c-0.995-0.144-1.798-0.932-2.383-1.642c-1.725-2.098-3.058-4.808-3.306-8.276c0-0.34,0-0.679,0-1.019 c0.105-2.482,1.311-4.5,2.914-5.478c0.846-0.52,2.009-0.963,3.304-0.765c0.555,0.086,1.122,0.276,1.619,0.464 c0.471,0.181,1.06,0.502,1.618,0.485c0.378-0.011,0.754-0.208,1.135-0.347c1.116-0.403,2.21-0.865,3.652-0.648 c1.733,0.262,2.963,1.032,3.723,2.22c-1.466,0.933-2.625,2.339-2.427,4.74C17.818,14.688,19.086,15.964,20.67,16.716z"></path>
+              </svg>
+              Apple
+            </button>
+          </div>
+        </form>
       </div>
     </>
   )

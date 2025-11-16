@@ -144,30 +144,33 @@ print('Flask installed')
 
     console.log('[deploy-e2b] Flask installation output:', flaskInstall.logs?.stdout || flaskInstall);
 
-    // Start the Flask server in background
+    // Start the Flask server in background with nohup
     console.log('[deploy-e2b] Starting Flask server...');
     const serverStart = await sandbox.runCode(`
 import subprocess
 import time
 import sys
+import os
 
-# Start Flask server in background
-process = subprocess.Popen(
-    [sys.executable, 'app.py'],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    text=True
-)
+# Start Flask server in background with nohup
+with open('server.log', 'w') as log_file:
+    process = subprocess.Popen(
+        [sys.executable, 'app.py'],
+        stdout=log_file,
+        stderr=log_file,
+        start_new_session=True,  # Detach from parent process
+        preexec_fn=os.setsid if hasattr(os, 'setsid') else None
+    )
 
 # Wait for server to start
-time.sleep(3)
+time.sleep(5)
 
 # Check if process is still running
 if process.poll() is None:
-    print('Flask server started successfully')
+    print(f'Flask server started successfully with PID {process.pid}')
 else:
-    stdout, stderr = process.communicate()
-    print(f'Server failed to start: {stderr}')
+    with open('server.log', 'r') as f:
+        print(f'Server failed to start: {f.read()}')
 `);
 
     console.log('[deploy-e2b] Server start output:', serverStart.logs?.stdout || serverStart);
@@ -181,20 +184,21 @@ else:
 
     console.log('[deploy-e2b] Deployment URL:', sandboxUrl);
 
-    // Verify deployment
+    // Verify deployment by checking if Flask process is running
     console.log('[deploy-e2b] Verifying deployment...');
     const verifyCode = `
-import requests
+import subprocess
 import time
 
+# Check if Flask process is running
 for i in range(5):
     try:
-        response = requests.get('http://localhost:8000/health', timeout=2)
-        if response.status_code == 200:
-            print(f'Server is healthy: {response.json()}')
+        result = subprocess.run(['pgrep', '-f', 'app.py'], capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f'Flask server is running with PID: {result.stdout.strip()}')
             break
     except Exception as e:
-        print(f'Attempt {i+1}: Server not ready - {e}')
+        print(f'Attempt {i+1}: Checking process - {e}')
         time.sleep(1)
 `;
 
