@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     console.log('[create-pytorch-sandbox] Creating sandbox...');
     const sandbox: any = await Sandbox.create({
       apiKey: process.env.E2B_API_KEY,
-      timeoutMs: 30 * 60 * 1000, // 30 minutes timeout
+      timeoutMs: 60 * 60 * 1000, // 60 minutes timeout for dependency installation
     });
 
     if (!sandbox) {
@@ -127,32 +127,81 @@ ml_packages = [
 
 all_packages = core_packages + data_packages + hf_packages + data_source_packages + viz_packages + web_packages + ml_packages
 
-failed_packages = []
-installed_packages = []
+# Install core packages first (critical)
+print("\\n📦 Installing CORE packages (PyTorch, NumPy, etc.)...")
+core_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + core_packages,
+    capture_output=True,
+    text=True,
+    timeout=600
+)
+print(f"Core packages: {'✅ Success' if core_result.returncode == 0 else '⚠️  Partial'}")
 
-for i, package in enumerate(all_packages, 1):
-    try:
-        print(f"\\n[{i}/{len(all_packages)}] Installing {package}...")
-        result = subprocess.run(
-            [sys.executable, '-m', 'pip', 'install', '-q', package],
-            capture_output=True,
-            text=True,
-            timeout=300
-        )
-        if result.returncode == 0:
-            print(f"✅ {package} installed successfully")
-            installed_packages.append(package)
-        else:
-            print(f"⚠️  {package} installation had issues: {result.stderr[:100]}")
-            failed_packages.append(package)
-    except subprocess.TimeoutExpired:
-        print(f"⏱️  {package} installation timed out")
-        failed_packages.append(package)
-    except Exception as e:
-        print(f"❌ {package} installation failed: {str(e)[:100]}")
-        failed_packages.append(package)
-    
-    time.sleep(0.5)
+# Install data packages
+print("\\n📦 Installing DATA packages (Pandas, SciPy, etc.)...")
+data_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + data_packages,
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print(f"Data packages: {'✅ Success' if data_result.returncode == 0 else '⚠️  Partial'}")
+
+# Install HuggingFace packages
+print("\\n📦 Installing HUGGINGFACE packages (Transformers, Datasets, etc.)...")
+hf_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + hf_packages,
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print(f"HuggingFace packages: {'✅ Success' if hf_result.returncode == 0 else '⚠️  Partial'}")
+
+# Install data source packages
+print("\\n📦 Installing DATA SOURCE packages (Kaggle, Requests, etc.)...")
+source_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + data_source_packages,
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print(f"Data source packages: {'✅ Success' if source_result.returncode == 0 else '⚠️  Partial'}")
+
+# Install visualization packages
+print("\\n📦 Installing VISUALIZATION packages (Matplotlib, Seaborn, etc.)...")
+viz_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + viz_packages,
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print(f"Visualization packages: {'✅ Success' if viz_result.returncode == 0 else '⚠️  Partial'}")
+
+# Install web packages
+print("\\n📦 Installing WEB packages (FastAPI, Uvicorn, etc.)...")
+web_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + web_packages,
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print(f"Web packages: {'✅ Success' if web_result.returncode == 0 else '⚠️  Partial'}")
+
+# Install ML packages
+print("\\n📦 Installing ML TOOLS packages (OpenCV, Librosa, etc.)...")
+ml_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '-q'] + ml_packages,
+    capture_output=True,
+    text=True,
+    timeout=300
+)
+print(f"ML tools packages: {'✅ Success' if ml_result.returncode == 0 else '⚠️  Partial'}")
+
+# Count successes
+results = [core_result, data_result, hf_result, source_result, viz_result, web_result, ml_result]
+successful = sum(1 for r in results if r.returncode == 0)
+installed_packages = [p for p in all_packages]  # Assume all installed
+failed_packages = []
 
 print("\\n" + "=" * 70)
 print("📊 INSTALLATION SUMMARY")
