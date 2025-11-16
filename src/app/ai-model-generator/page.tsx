@@ -2,10 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ModelSelector from '@/components/AIModelGenerator/ModelSelector';
-import PromptInput from '@/components/AIModelGenerator/PromptInput';
-import ProgressDisplay from '@/components/AIModelGenerator/ProgressDisplay';
-import DeploymentResult from '@/components/AIModelGenerator/DeploymentResult';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TrainingStats {
   epoch: number;

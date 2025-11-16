@@ -82,7 +82,7 @@ export default function LoginPage() {
         html, body {
           height: 100%;
           width: 100%;
-          background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+          background: #000000;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
@@ -92,6 +92,7 @@ export default function LoginPage() {
           align-items: center;
           justify-content: center;
           padding: 20px;
+          background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
         }
 
         /* Form Styles */
@@ -99,54 +100,75 @@ export default function LoginPage() {
           display: flex;
           flex-direction: column;
           gap: 10px;
-          background-color: #ffffff;
-          padding: 30px;
+          background-color: #0f0f0f;
+          padding: 40px;
           width: 100%;
           max-width: 450px;
-          border-radius: 20px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-title {
+          color: #ffffff;
+          font-size: 28px;
+          font-weight: 700;
+          margin-bottom: 10px;
+          text-align: center;
+        }
+
+        .form-subtitle {
+          color: #888888;
+          font-size: 14px;
+          text-align: center;
+          margin-bottom: 30px;
         }
 
         .flex-column {
           display: flex;
           flex-direction: column;
-          gap: 5px;
+          gap: 8px;
         }
 
         .flex-column > label {
-          color: #151717;
+          color: #ffffff;
           font-weight: 600;
           font-size: 14px;
         }
 
         .inputForm {
-          border: 1.5px solid #ecedec;
-          border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 8px;
           height: 50px;
           display: flex;
           align-items: center;
-          padding-left: 10px;
-          transition: 0.2s ease-in-out;
+          padding-left: 15px;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.02);
         }
 
         .inputForm:focus-within {
-          border: 1.5px solid #2d79f3;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          background: rgba(255, 255, 255, 0.05);
+          box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         .inputForm svg {
           width: 20px;
           height: 20px;
-          color: #151717;
+          color: #888888;
         }
 
         .input {
           margin-left: 10px;
-          border-radius: 10px;
+          border-radius: 8px;
           border: none;
           width: 100%;
           height: 100%;
           font-family: inherit;
           font-size: 14px;
+          background: transparent;
+          color: #ffffff;
         }
 
         .input:focus {
@@ -154,7 +176,7 @@ export default function LoginPage() {
         }
 
         .input::placeholder {
-          color: #999;
+          color: #555555;
         }
 
         .flex-row {
@@ -163,7 +185,7 @@ export default function LoginPage() {
           align-items: center;
           gap: 10px;
           justify-content: space-between;
-          margin: 10px 0;
+          margin: 15px 0;
         }
 
         .flex-row > div {
@@ -172,39 +194,40 @@ export default function LoginPage() {
           gap: 5px;
         }
 
-        .flex-row input[type="radio"] {
+        .flex-row input[type="checkbox"] {
           width: 18px;
           height: 18px;
           cursor: pointer;
+          accent-color: #ffffff;
         }
 
         .flex-row label {
           font-size: 14px;
-          color: black;
+          color: #888888;
           font-weight: 400;
           cursor: pointer;
         }
 
         .span {
           font-size: 14px;
-          color: #2d79f3;
+          color: #ffffff;
           font-weight: 500;
           cursor: pointer;
           transition: color 0.2s ease;
         }
 
         .span:hover {
-          color: #1e5bc4;
+          color: #cccccc;
         }
 
         .button-submit {
-          margin: 20px 0 10px 0;
-          background-color: #151717;
+          margin: 25px 0 15px 0;
+          background-color: #ffffff;
           border: none;
-          color: white;
+          color: #000000;
           font-size: 15px;
-          font-weight: 500;
-          border-radius: 10px;
+          font-weight: 600;
+          border-radius: 8px;
           height: 50px;
           width: 100%;
           cursor: pointer;
@@ -212,17 +235,19 @@ export default function LoginPage() {
         }
 
         .button-submit:hover {
-          background-color: #2d2d2f;
+          background-color: #e0e0e0;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
         }
 
         .button-submit:disabled {
-          opacity: 0.6;
+          opacity: 0.5;
           cursor: not-allowed;
         }
 
         .p {
           text-align: center;
-          color: black;
+          color: #888888;
           font-size: 14px;
           margin: 5px 0;
         }
@@ -230,7 +255,7 @@ export default function LoginPage() {
         .line {
           position: relative;
           text-align: center;
-          margin: 15px 0;
+          margin: 20px 0;
         }
 
         .line::before {
@@ -240,56 +265,53 @@ export default function LoginPage() {
           top: 50%;
           width: 100%;
           height: 1px;
-          background: #ecedec;
+          background: rgba(255, 255, 255, 0.1);
           z-index: 0;
         }
 
         .line span {
           position: relative;
-          background: white;
+          background: #0f0f0f;
           padding: 0 10px;
           z-index: 1;
-          color: #999;
+          color: #666666;
+          font-size: 13px;
         }
 
         .btn {
           margin-top: 10px;
           width: 100%;
           height: 50px;
-          border-radius: 10px;
+          border-radius: 8px;
           display: flex;
           justify-content: center;
           align-items: center;
           font-weight: 500;
           gap: 10px;
-          border: 1px solid #ededef;
-          background-color: white;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background-color: rgba(255, 255, 255, 0.05);
           cursor: pointer;
-          transition: all 0.2s ease-in-out;
+          transition: all 0.3s ease;
           font-family: inherit;
+          color: #ffffff;
         }
 
         .btn:hover {
-          border: 1px solid #2d79f3;
-          background-color: #f8f9ff;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          background-color: rgba(255, 255, 255, 0.1);
+          transform: translateY(-2px);
         }
 
         .btn svg {
           width: 20px;
           height: 20px;
         }
-
-        .btn.google {
-          color: #151717;
-        }
-
-        .btn.apple {
-          color: #151717;
-        }
       `}</style>
 
       <div className="login-container">
         <form className="form" onSubmit={handleEmailAuth}>
+          <div className="form-title">{isSignUp ? 'Create Account' : 'Welcome Back'}</div>
+          <div className="form-subtitle">{isSignUp ? 'Join our AI platform' : 'Sign in to your account'}</div>
           <div className="flex-column">
             <label>Email</label>
           </div>
@@ -341,7 +363,7 @@ export default function LoginPage() {
           </div>
 
           <button type="submit" className="button-submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Create Account' : 'Sign In')}
           </button>
 
           <p className="p">

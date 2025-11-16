@@ -1,17 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { routes, protectedRoutes } from "@/app/resources";
 import { Flex, Spinner, Button, Heading, Column, PasswordInput } from "@/once-ui/components";
 import NotFound from "@/app/not-found";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RouteGuardProps {
 	children: React.ReactNode;
 }
 
+// Routes that require authentication
+const authRequiredRoutes = [
+  "/ai-workspace",
+  "/ai-model-generator",
+  "/dashboard",
+  "/chat"
+];
+
 const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [isRouteEnabled, setIsRouteEnabled] = useState(false);
   const [isPasswordRequired, setIsPasswordRequired] = useState(false);
   const [password, setPassword] = useState("");
@@ -25,6 +36,15 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
       setIsRouteEnabled(false);
       setIsPasswordRequired(false);
       setIsAuthenticated(false);
+
+      // Check if route requires authentication
+      const requiresAuth = authRequiredRoutes.some(route => pathname?.startsWith(route));
+      
+      if (requiresAuth && !user && !authLoading) {
+        // Redirect to login if not authenticated
+        router.push('/login');
+        return;
+      }
 
       const checkRouteEnabled = () => {
         if (!pathname) return false;
@@ -58,8 +78,10 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
       setLoading(false);
     };
 
-    performChecks();
-  }, [pathname]);
+    if (!authLoading) {
+      performChecks();
+    }
+  }, [pathname, user, authLoading, router]);
 
   const handlePasswordSubmit = async () => {
     const response = await fetch("/api/authenticate", {
