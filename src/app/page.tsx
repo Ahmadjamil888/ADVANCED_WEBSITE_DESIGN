@@ -62,6 +62,137 @@ export default function Home() {
             font-size: 13px !important;
           }
         }
+
+        /* Glowing Cards Styles */
+        .glowing-cards-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          width: 100%;
+          max-width: 1200px;
+        }
+
+        .glowing-card {
+          position: relative;
+          width: 100%;
+          padding: 2rem;
+          border-radius: 12px;
+          border: 1px rgba(255, 255, 255, 0.1);
+          background: rgba(40, 40, 40, 0.7);
+          box-shadow: 2px 4px 16px 0px rgba(248, 248, 248, 0.06) inset;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+
+        .glowing-card:hover {
+          border-color: rgba(207, 48, 170, 0.5);
+          background: rgba(64, 47, 181, 0.1);
+          box-shadow: 0 0 30px rgba(207, 48, 170, 0.2), 2px 4px 16px 0px rgba(248, 248, 248, 0.06) inset;
+        }
+
+        .card-image-container {
+          height: 200px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, rgba(64, 47, 181, 0.2), rgba(207, 48, 170, 0.2));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1.5rem;
+          position: relative;
+          overflow: hidden;
+          mask-image: radial-gradient(50% 50% at 50% 50%, white 0%, transparent 100%);
+        }
+
+        .card-icons {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .icon-circle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: rgba(248, 248, 248, 0.01);
+          box-shadow: 0px 0px 8px 0px rgba(248, 248, 248, 0.25) inset, 0px 32px 24px -16px rgba(0, 0, 0, 0.4);
+          font-size: 1.5rem;
+          transition: all 0.3s ease;
+        }
+
+        .icon-circle:hover {
+          transform: scale(1.1);
+          box-shadow: 0px 0px 16px 0px rgba(207, 48, 170, 0.4) inset, 0px 32px 24px -16px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-content h3 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #ffffff;
+          margin-bottom: 0.75rem;
+        }
+
+        .card-content p {
+          font-size: 0.95rem;
+          color: rgba(255, 255, 255, 0.7);
+          line-height: 1.6;
+        }
+
+        .glow-line {
+          position: absolute;
+          height: 40px;
+          width: 1px;
+          top: 20%;
+          left: 50%;
+          background: linear-gradient(to bottom, transparent, #cf30aa, transparent);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          animation: moveGlow 3s ease-in-out infinite;
+        }
+
+        .glowing-card:hover .glow-line {
+          opacity: 1;
+        }
+
+        @keyframes moveGlow {
+          0%, 100% { top: 0%; }
+          50% { top: 80%; }
+        }
+
+        @media (max-width: 768px) {
+          .glowing-cards-container {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+
+          .glowing-card {
+            padding: 1.5rem;
+          }
+
+          .card-image-container {
+            height: 150px;
+          }
+
+          .icon-circle {
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+          }
+
+          .card-content h3 {
+            font-size: 1.1rem;
+          }
+
+          .card-content p {
+            font-size: 0.9rem;
+          }
+        }
       `}</style>
       
       <Column maxWidth="m" gap="xl" horizontal="center" className="mobile-responsive">
@@ -170,138 +301,6 @@ export default function Home() {
 
       {/* Services Section with Glowing Cards */}
       <RevealFx delay={0.3} fillWidth horizontal="center" paddingTop="32" paddingBottom="32" className="mobile-responsive">
-        <style jsx>{`
-          .glowing-cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            width: 100%;
-            max-width: 1200px;
-          }
-
-          .glowing-card {
-            position: relative;
-            width: 100%;
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px rgba(255, 255, 255, 0.1);
-            background: rgba(40, 40, 40, 0.7);
-            box-shadow: 2px 4px 16px 0px rgba(248, 248, 248, 0.06) inset;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-          }
-
-          .glowing-card:hover {
-            border-color: rgba(207, 48, 170, 0.5);
-            background: rgba(64, 47, 181, 0.1);
-            box-shadow: 0 0 30px rgba(207, 48, 170, 0.2), 2px 4px 16px 0px rgba(248, 248, 248, 0.06) inset;
-          }
-
-          .card-image-container {
-            height: 200px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(64, 47, 181, 0.2), rgba(207, 48, 170, 0.2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            mask-image: radial-gradient(50% 50% at 50% 50%, white 0%, transparent 100%);
-          }
-
-          .card-icons {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-          }
-
-          .icon-circle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(248, 248, 248, 0.01);
-            box-shadow: 0px 0px 8px 0px rgba(248, 248, 248, 0.25) inset, 0px 32px 24px -16px rgba(0, 0, 0, 0.4);
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-          }
-
-          .icon-circle:hover {
-            transform: scale(1.1);
-            box-shadow: 0px 0px 16px 0px rgba(207, 48, 170, 0.4) inset, 0px 32px 24px -16px rgba(0, 0, 0, 0.4);
-          }
-
-          .card-content h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 0.75rem;
-          }
-
-          .card-content p {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-          }
-
-          .glow-line {
-            position: absolute;
-            height: 40px;
-            width: 1px;
-            top: 20%;
-            left: 50%;
-            background: linear-gradient(to bottom, transparent, #cf30aa, transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            animation: moveGlow 3s ease-in-out infinite;
-          }
-
-          .glowing-card:hover .glow-line {
-            opacity: 1;
-          }
-
-          @keyframes moveGlow {
-            0%, 100% { top: 0%; }
-            50% { top: 80%; }
-          }
-
-          @media (max-width: 768px) {
-            .glowing-cards-container {
-              grid-template-columns: 1fr;
-              gap: 1.5rem;
-            }
-
-            .glowing-card {
-              padding: 1.5rem;
-            }
-
-            .card-image-container {
-              height: 150px;
-            }
-
-            .icon-circle {
-              width: 40px;
-              height: 40px;
-              font-size: 1.25rem;
-            }
-
-            .card-content h3 {
-              font-size: 1.1rem;
-            }
-
-            .card-content p {
-              font-size: 0.9rem;
-            }
-          }
-        `}</style>
-
         <Column maxWidth="l" gap="m" fillWidth className="mobile-text-center">
           <Heading as="h2" variant="display-strong-s" className="mobile-heading-sm">Revolutionary AI Technology</Heading>
           
