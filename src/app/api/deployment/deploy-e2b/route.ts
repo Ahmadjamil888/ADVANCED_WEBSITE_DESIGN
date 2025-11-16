@@ -124,7 +124,14 @@ if __name__ == '__main__':
 
     // Write the deployment app
     console.log('[deploy-e2b] Writing deployment app...');
-    await sandbox.writeFile('app.py', deploymentAppCode);
+    const writeCode = `
+import os
+with open('app.py', 'w') as f:
+    f.write("""${deploymentAppCode.replace(/"/g, '\\"')}""")
+print('app.py written successfully')
+`;
+    const writeResult = await sandbox.runCode(writeCode);
+    console.log('[deploy-e2b] Write result:', writeResult.logs?.stdout || writeResult);
 
     // Install Flask
     console.log('[deploy-e2b] Installing Flask...');
