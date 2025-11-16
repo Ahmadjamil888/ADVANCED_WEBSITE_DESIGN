@@ -65,9 +65,9 @@ print("📦 INSTALLING PYTORCH AND DEPENDENCIES")
 print("=" * 70)
 
 packages = [
-    'torch>=2.0.0',
-    'torchvision>=0.15.0',
-    'torchaudio>=2.0.0',
+    'pytorch::pytorch',  # Use conda-style pytorch
+    'pytorch::torchvision',
+    'pytorch::torchaudio',
     'numpy>=1.24.0',
     'pandas>=2.0.0',
     'scipy>=1.10.0',
@@ -93,9 +93,25 @@ result = subprocess.run(
 )
 print("✅ Pip upgraded")
 
-# Install all packages at once
+# Install PyTorch first (most critical and time-consuming)
+print("\\n📦 Installing PyTorch (this may take a few minutes)...")
+pytorch_result = subprocess.run(
+    [sys.executable, '-m', 'pip', 'install', '--no-cache-dir', 'torch', 'torchvision', 'torchaudio'],
+    capture_output=True,
+    text=True,
+    timeout=600
+)
+
+if pytorch_result.returncode == 0:
+    print("✅ PyTorch installed successfully")
+else:
+    print(f"⚠️  PyTorch installation status: {pytorch_result.returncode}")
+
+# Install remaining packages
+print("\\n📦 Installing remaining packages...")
+remaining_packages = [p for p in packages if 'pytorch' not in p.lower() and 'torch' not in p.lower()]
 result = subprocess.run(
-    [sys.executable, '-m', 'pip', 'install'] + packages,
+    [sys.executable, '-m', 'pip', 'install', '--no-cache-dir'] + remaining_packages,
     capture_output=True,
     text=True,
     timeout=600
@@ -155,7 +171,34 @@ print("=" * 70)
 
     // Use PyTorch training code
     const pytorchCode = `
-import torch
+import sys
+
+print("=" * 70)
+print("🚀 PYTORCH MODEL TRAINING")
+print("=" * 70)
+
+# Verify PyTorch is installed
+print("\\n🔍 Verifying PyTorch installation...")
+try:
+    import torch
+    print(f"✅ PyTorch {torch.__version__} found")
+except ImportError as e:
+    print(f"❌ PyTorch import failed: {e}")
+    print("Attempting to install PyTorch...")
+    import subprocess
+    result = subprocess.run(
+        [sys.executable, '-m', 'pip', 'install', '--no-cache-dir', 'torch', 'torchvision', 'torchaudio'],
+        capture_output=True,
+        text=True,
+        timeout=600
+    )
+    if result.returncode != 0:
+        print(f"Failed to install PyTorch: {result.stderr}")
+        sys.exit(1)
+    import torch
+    print(f"✅ PyTorch {torch.__version__} installed successfully")
+
+# Import remaining libraries
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
@@ -163,10 +206,6 @@ import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-
-print("=" * 70)
-print("🚀 PYTORCH MODEL TRAINING")
-print("=" * 70)
 
 # Check device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
