@@ -14,6 +14,7 @@ const routes = {
   "/blog": false,
   "/gallery": false,
   "/ai-model-generator": true,
+  "/ai-model-generator/generation": true,
 };
 
 // Enable password protection on selected routes
