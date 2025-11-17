@@ -37,16 +37,18 @@ export default function LoginPage() {
         })
         if (error) throw error
         alert('Check your email for the confirmation link!')
+        setLoading(false)
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         if (error) throw error
+        // Direct redirect after successful login
+        router.push('/ai-model-generator')
       }
     } catch (error: any) {
       alert(error.message)
-    } finally {
       setLoading(false)
     }
   }
@@ -60,8 +62,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const redirectUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://zehanxtech.com/auth/callback'
-        : `${window.location.origin}/auth/callback`
+        ? 'https://zehanxtech.com/ai-model-generator'
+        : `${window.location.origin}/ai-model-generator`
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -89,8 +91,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const redirectUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://zehanxtech.com/auth/callback'
-        : `${window.location.origin}/auth/callback`
+        ? 'https://zehanxtech.com/ai-model-generator'
+        : `${window.location.origin}/ai-model-generator`
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',

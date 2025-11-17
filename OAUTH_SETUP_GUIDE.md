@@ -144,8 +144,8 @@ Make sure these redirect URLs are configured in your Supabase project:
    - **Site URL**: `https://zehanxtech.com`
    - **Redirect URLs**:
      ```
-     http://localhost:3000/auth/callback
-     https://zehanxtech.com/auth/callback
+     http://localhost:3000/ai-model-generator
+     https://zehanxtech.com/ai-model-generator
      ```
 
 ### Email Templates (Optional)
@@ -323,13 +323,11 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    ↓
 4. User authenticates with provider
    ↓
-5. Provider redirects to /auth/callback
+5. Provider redirects directly to /ai-model-generator
    ↓
-6. Callback page establishes session
+6. Session is established by Supabase
    ↓
-7. Redirected to /ai-model-generator
-   ↓
-8. User is logged in and can use dashboard
+7. User is logged in and can use dashboard
 ```
 
 ---
