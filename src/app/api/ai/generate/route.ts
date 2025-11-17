@@ -18,11 +18,29 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
+  let streamClosed = false;
+
+  const closeStream = async () => {
+    if (!streamClosed) {
+      streamClosed = true;
+      try {
+        await writer.close();
+      } catch (e) {
+        // Ignore close errors
+      }
+    }
+  };
 
   const sendUpdate = async (type: string, data: any) => {
-    await writer.write(
-      encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`)
-    );
+    try {
+      if (!streamClosed) {
+        await writer.write(
+          encoder.encode(`data: ${JSON.stringify({ type, data })}\n\n`)
+        );
+      }
+    } catch (e) {
+      console.error('Error sending update:', e);
+    }
   };
 
   (async () => {
@@ -51,7 +69,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: 'Invalid request format. Please ensure you are sending valid data.' 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -62,7 +80,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: 'Prompt is required and cannot be empty.' 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -71,7 +89,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: '❌ E2B_API_KEY not found in environment variables. Please add it to .env.local' 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -79,7 +97,7 @@ export async function POST(req: NextRequest) {
       const model = AI_MODELS[modelKey];
       if (!model) {
         await sendUpdate('error', { message: 'Invalid model selected' });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -103,7 +121,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: error.message || 'Failed to initialize AI client. Please check your API keys in .env.local' 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -124,7 +142,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: `AI generation failed: ${error.message}` 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -141,7 +159,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: 'No files generated. Please try again with a more specific prompt.' 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -173,7 +191,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: `Failed to create E2B sandbox: ${error.message}. Please check your E2B_API_KEY.` 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -195,7 +213,7 @@ export async function POST(req: NextRequest) {
         await sendUpdate('error', { 
           message: `Failed to write files: ${error.message}` 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -255,7 +273,7 @@ export async function POST(req: NextRequest) {
                 message: `All dependencies failed to install. Please check your requirements.txt`,
                 details: errorDetails
               });
-              await writer.close();
+              await closeStream();
               return;
             }
           } else {
@@ -366,7 +384,7 @@ def root():
         await sendUpdate('error', { 
           message: `API deployment failed: ${error.message}` 
         });
-        await writer.close();
+        await closeStream();
         return;
       }
 
@@ -395,7 +413,7 @@ def root():
         details: error.stack
       });
     } finally {
-      await writer.close();
+      await closeStream();
     }
   })();
 
