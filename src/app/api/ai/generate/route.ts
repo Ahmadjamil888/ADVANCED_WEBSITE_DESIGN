@@ -27,7 +27,28 @@ export async function POST(req: NextRequest) {
 
   (async () => {
     try {
-      const { prompt, modelKey, chatId, userId } = await req.json();
+      let requestBody;
+      try {
+        requestBody = await req.json();
+      } catch (parseError: any) {
+        console.error('❌ JSON Parse Error:', parseError);
+        await sendUpdate('error', { 
+          message: 'Invalid request format. Please ensure you are sending valid JSON.' 
+        });
+        await writer.close();
+        return;
+      }
+
+      const { prompt, modelKey, chatId, userId, useAWS, awsKey } = requestBody;
+
+      // Validate required fields
+      if (!prompt || !prompt.trim()) {
+        await sendUpdate('error', { 
+          message: 'Prompt is required and cannot be empty.' 
+        });
+        await writer.close();
+        return;
+      }
 
       // Check E2B API key
       if (!process.env.E2B_API_KEY) {
