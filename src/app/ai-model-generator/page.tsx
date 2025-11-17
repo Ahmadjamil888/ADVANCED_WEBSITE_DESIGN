@@ -3,7 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import styles from './page-new.module.css'; // Using page-new.module.css for tab-based layout with improved error handling
+import styles from './page-new.module.css';
+
+const AVAILABLE_MODELS = [
+  { id: 'gpt-4', name: 'GPT-4', provider: 'OpenAI', speed: 'Fast' },
+  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI', speed: 'Very Fast' },
+  { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'Anthropic', speed: 'Fast' },
+  { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', provider: 'Anthropic', speed: 'Very Fast' },
+  { id: 'llama-2-70b', name: 'Llama 2 70B', provider: 'Meta', speed: 'Medium' },
+];
 
 interface UsageData {
   tokensUsed: number;
@@ -30,6 +38,9 @@ export default function AIModelGeneratorPage() {
   const [datasetName, setDatasetName] = useState('');
   const [modelName, setModelName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('gpt-4');
   const [steps, setSteps] = useState<Step[]>([
     { name: 'Code Generation', status: 'pending' },
     { name: 'Sandbox Creation', status: 'pending' },
@@ -187,7 +198,61 @@ export default function AIModelGeneratorPage() {
 
   return (
     <div className={styles.dashboard}>
+      {/* Sidebar */}
+      <div 
+        className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}
+        onMouseEnter={() => setSidebarOpen(true)}
+        onMouseLeave={() => setSidebarOpen(false)}
+      >
+        <div className={styles.sidebarContent}>
+          <h3>Menu</h3>
+          <nav className={styles.sidebarNav}>
+            <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('generator'); setSidebarOpen(false); }}>Generator</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('usage'); setSidebarOpen(false); }}>Usage</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('billing'); setSidebarOpen(false); }}>Billing</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('settings'); setSidebarOpen(false); }}>Settings</a>
+          </nav>
+          <button className={styles.signOutBtn} onClick={handleSignOut}>Sign Out</button>
+        </div>
+      </div>
+
+      {/* Model Selection Modal */}
+      {showModelModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowModelModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>Select AI Model</h2>
+              <button className={styles.modalClose} onClick={() => setShowModelModal(false)}>✕</button>
+            </div>
+            <div className={styles.modalContent}>
+              {AVAILABLE_MODELS.map((model) => (
+                <div 
+                  key={model.id}
+                  className={`${styles.modelOption} ${selectedModel === model.id ? styles.modelSelected : ''}`}
+                  onClick={() => {
+                    setSelectedModel(model.id);
+                    setShowModelModal(false);
+                  }}
+                >
+                  <div className={styles.modelInfo}>
+                    <div className={styles.modelName}>{model.name}</div>
+                    <div className={styles.modelProvider}>{model.provider} • {model.speed}</div>
+                  </div>
+                  {selectedModel === model.id && <div className={styles.modelCheckmark}>✓</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.header}>
+        <button 
+          className={styles.menuToggle}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          ☰
+        </button>
         <h1>AI Model Generator</h1>
         <div className={styles.headerActions}>
           <span className={styles.userEmail}>{user?.email}</span>
@@ -226,7 +291,16 @@ export default function AIModelGeneratorPage() {
         <div className={styles.content}>
           <div className={styles.generatorContainer}>
             <div className={styles.promptSection}>
-              <h2>Create Your AI Model</h2>
+              <div className={styles.promptHeader}>
+                <h2>Create Your AI Model</h2>
+                <button 
+                  type="button"
+                  className={styles.modelSelectorBtn}
+                  onClick={() => setShowModelModal(true)}
+                >
+                  Model: {AVAILABLE_MODELS.find(m => m.id === selectedModel)?.name || 'Select'}
+                </button>
+              </div>
               <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGroup}>
                   <label>Model Description</label>

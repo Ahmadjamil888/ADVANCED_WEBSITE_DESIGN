@@ -27,13 +27,29 @@ export async function POST(req: NextRequest) {
 
   (async () => {
     try {
-      let requestBody;
+      let requestBody: any = {};
+      const contentType = req.headers.get('content-type') || '';
+
       try {
-        requestBody = await req.json();
+        if (contentType.includes('application/json')) {
+          requestBody = await req.json();
+        } else if (contentType.includes('multipart/form-data')) {
+          const formData = await req.formData();
+          requestBody = {
+            prompt: formData.get('prompt'),
+            modelKey: formData.get('modelKey'),
+            chatId: formData.get('chatId'),
+            userId: formData.get('userId'),
+            useAWS: formData.get('useAWS') === 'true',
+            awsKey: formData.get('awsKey'),
+          };
+        } else {
+          throw new Error('Unsupported content type');
+        }
       } catch (parseError: any) {
-        console.error('❌ JSON Parse Error:', parseError);
+        console.error('❌ Request Parse Error:', parseError);
         await sendUpdate('error', { 
-          message: 'Invalid request format. Please ensure you are sending valid JSON.' 
+          message: 'Invalid request format. Please ensure you are sending valid data.' 
         });
         await writer.close();
         return;
