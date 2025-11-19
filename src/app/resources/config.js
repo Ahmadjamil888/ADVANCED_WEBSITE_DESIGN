@@ -13,7 +13,7 @@ const routes = {
   "/byte-ai": false,
   "/blog": false,
   "/gallery": false,
-  "/ai-model-generator": true,
+  "/zehanx-ai": true,
   "/ai-model-generator/generation": true,
 };
 
