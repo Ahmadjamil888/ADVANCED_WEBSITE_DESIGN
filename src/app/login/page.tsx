@@ -16,7 +16,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/ai-model-generator')
+      router.push('/zehanx-ai')
     }
   }, [user, router])
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
         })
         if (error) throw error
         // Direct redirect after successful login
-        router.push('/ai-model-generator')
+        router.push('/zehanx-ai')
       }
     } catch (error: any) {
       alert(error.message)
@@ -62,8 +62,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const redirectUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://zehanxtech.com/ai-model-generator'
-        : `${window.location.origin}/ai-model-generator`
+        ? 'https://zehanxtech.com/zehanx-ai'
+        : `${window.location.origin}/zehanx-ai`
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -91,8 +91,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const redirectUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://zehanxtech.com/ai-model-generator'
-        : `${window.location.origin}/ai-model-generator`
+        ? 'https://zehanxtech.com/zehanx-ai'
+        : `${window.location.origin}/zehanx-ai`
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',

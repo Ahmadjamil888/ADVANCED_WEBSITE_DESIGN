@@ -492,13 +492,13 @@ export default function Home() {
           </div>
 
           <Button
-            href="/ai-model-generator"
+            href="/zehanx-ai"
             variant="primary"
             size="m"
             arrowIcon
             className="mobile-full-width"
           >
-            Try AI Model Generator
+            Try Our AI
           </Button>
         </Column>
       </RevealFx>
