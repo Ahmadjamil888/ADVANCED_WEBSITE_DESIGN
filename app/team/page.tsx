@@ -181,7 +181,7 @@ export default function Team() {
 								viewport={{ once: true }}>
 								<h3 className="text-[24px] font-bold mb-4">Building Tomorrow, Together</h3>
 								<p className="leading-relaxed mb-4">
-									At Zehanx Technologies, we believe in fostering an environment where innovation thrives and every team member can contribute their best. We're committed to continuous learning, supporting each other's growth, and delivering solutions that make a real difference.
+									At Zehanx Technologies, we believe in fostering an environment where innovation thrives and every team member can contribute their best. We&apos;re committed to continuous learning, supporting each other&apos;s growth, and delivering solutions that make a real difference.
 								</p>
 								<p className="leading-relaxed">
 									Our team is passionate about technology and dedicated to transforming concepts into reality. We work collaboratively to solve complex problems and create value for our clients and ourselves.
@@ -200,7 +200,7 @@ export default function Team() {
 							whileInView="enter"
 							viewport={{ once: true }}>
 							<h2 className="heading font-bold">Want to Join Our Team?</h2>
-							<p className="paragraph text-[#010D3E] mt-4">We're always looking for talented individuals to join us on our journey.</p>
+							<p className="paragraph text-[#010D3E] mt-4">We&apos;re always looking for talented individuals to join us on our journey.</p>
 						</motion.div>
 						<motion.div
 							variants={textAnimation}
