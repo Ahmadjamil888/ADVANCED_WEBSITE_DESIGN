@@ -1,0 +1,175 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #000;
+  border: 1px solid #fff;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 1rem;
+}
+
+.header h2 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.closeButton {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: #fff;
+  color: #000;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label {
+  color: #fff;
+  font-weight: 600;
+}
+
+.textarea {
+  background: #000;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 0.75rem;
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #fff;
+}
+
+.toggleGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toggleButton {
+  flex: 1;
+  padding: 0.75rem;
+  background: #000;
+  border: 1px solid #fff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.toggleButton.active {
+  background: #fff;
+  color: #000;
+}
+
+.hint {
+  color: #ccc;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.uploadButton {
+  flex: 1;
+  padding: 0.75rem;
+  background: #000;
+  border: 1px solid #fff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  min-width: 150px;
+}
+
+.uploadButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uploadButton:hover:not(:disabled) {
+  background: #1a1a1a;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #fff;
+}
+
+.cancelButton,
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.cancelButton {
+  background: #000;
+  color: #fff;
+}
+
+.submitButton {
+  background: #fff;
+  color: #000;
+}
+
+.cancelButton:hover {
+  background: #1a1a1a;
+}
+
+.submitButton:hover {
+  background: #ccc;
+}
+

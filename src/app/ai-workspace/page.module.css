@@ -1,0 +1,319 @@
+.dashboard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #0a0a0a 0%, #0f0f1a 100%);
+  color: #fff;
+  display: flex;
+  overflow: hidden;
+}
+
+[data-dashboard-theme="light"] .dashboard {
+  background: #fff;
+  color: #000;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+[data-dashboard-theme="light"] .loading {
+  color: #000;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 60px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+[data-dashboard-theme="light"] .header {
+  border-color: #000;
+  background: transparent;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+[data-dashboard-theme="light"] .title {
+  color: #000;
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.createButton {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+  border: 1px solid rgba(147, 51, 234, 0.5);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+[data-dashboard-theme="light"] .createButton {
+  background: #fff;
+  border-color: #000;
+  color: #000;
+}
+
+.createButton:hover {
+  background: linear-gradient(135deg, #2d0052 0%, #4d0099 100%);
+  border-color: rgba(147, 51, 234, 0.8);
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  transform: translateY(-2px);
+}
+
+[data-dashboard-theme="light"] .createButton:hover {
+  background: #f0f0f0;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.modelsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+}
+
+[data-dashboard-theme="light"] .emptyState {
+  color: #666;
+}
+
+.inProgressList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.jobCard {
+  background: rgba(20, 10, 40, 0.6);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  padding: 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.jobCard:hover {
+  background: rgba(30, 15, 60, 0.8);
+  border-color: rgba(147, 51, 234, 0.6);
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.2);
+}
+
+[data-dashboard-theme="light"] .jobCard {
+  background: #fff;
+  border-color: #000;
+}
+
+.billingSection {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.planCard {
+  background: rgba(20, 10, 40, 0.5);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+}
+
+[data-dashboard-theme="light"] .planCard {
+  background: #fff;
+  border-color: #000;
+}
+
+.planCard h2 {
+  margin: 0 0 1rem 0;
+  color: #fff;
+}
+
+[data-dashboard-theme="light"] .planCard h2 {
+  color: #000;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.planOption {
+  background: rgba(15, 8, 35, 0.7);
+  border: 1px solid rgba(147, 51, 234, 0.4);
+  padding: 2rem;
+  position: relative;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.planOption:hover {
+  background: rgba(25, 12, 50, 0.9);
+  border-color: rgba(147, 51, 234, 0.7);
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.25);
+  transform: translateY(-4px);
+}
+
+[data-dashboard-theme="light"] .planOption {
+  background: #fff;
+  border-color: #000;
+}
+
+.planOption h3 {
+  margin: 0 0 1rem 0;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+[data-dashboard-theme="light"] .planOption h3 {
+  color: #000;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 1rem 0;
+}
+
+[data-dashboard-theme="light"] .price {
+  color: #000;
+}
+
+.planOption ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.planOption li {
+  padding: 0.5rem 0;
+  color: #ccc;
+  border-bottom: 1px solid #333;
+}
+
+[data-dashboard-theme="light"] .planOption li {
+  color: #666;
+  border-color: #ccc;
+}
+
+.currentPlan {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #00ff00;
+  color: #000;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.upgradeButton {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+  border: 1px solid rgba(147, 51, 234, 0.5);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  width: 100%;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+[data-dashboard-theme="light"] .upgradeButton {
+  background: #fff;
+  border-color: #000;
+  color: #000;
+}
+
+.upgradeButton:hover {
+  background: linear-gradient(135deg, #2d0052 0%, #4d0099 100%);
+  border-color: rgba(147, 51, 234, 0.8);
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+  transform: translateY(-2px);
+}
+
+[data-dashboard-theme="light"] .upgradeButton:hover {
+  background: #f0f0f0;
+}
+
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: #000;
+}
+
+[data-dashboard-theme="light"] .content::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #fff;
+}
+
+[data-dashboard-theme="light"] .content::-webkit-scrollbar-thumb {
+  background: #000;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+[data-dashboard-theme="light"] .content::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}

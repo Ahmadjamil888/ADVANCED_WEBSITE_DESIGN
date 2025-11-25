@@ -1,0 +1,218 @@
+.card {
+  background: #000;
+  border: 1px solid #fff;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+[data-dashboard-theme="light"] .card {
+  background: #fff;
+  border-color: #000;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.name {
+  color: #fff;
+  margin: 0;
+  font-size: 1.2rem;
+  flex: 1;
+}
+
+[data-dashboard-theme="light"] .name {
+  color: #000;
+}
+
+.menuButton {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-dashboard-theme="light"] .menuButton {
+  border-color: #000;
+  color: #000;
+}
+
+.menu {
+  position: absolute;
+  top: 3rem;
+  right: 1rem;
+  background: #000;
+  border: 1px solid #fff;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  min-width: 120px;
+}
+
+[data-dashboard-theme="light"] .menu {
+  background: #fff;
+  border-color: #000;
+}
+
+.menu button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+[data-dashboard-theme="light"] .menu button {
+  color: #000;
+}
+
+.menu button:hover {
+  background: #1a1a1a;
+}
+
+[data-dashboard-theme="light"] .menu button:hover {
+  background: #f0f0f0;
+}
+
+.deleteButton {
+  color: #ff4444 !important;
+}
+
+.description {
+  color: #ccc;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+[data-dashboard-theme="light"] .description {
+  color: #666;
+}
+
+.meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  background: #1a1a1a;
+  border: 1px solid #fff;
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+[data-dashboard-theme="light"] .badge {
+  background: #f0f0f0;
+  border-color: #000;
+  color: #000;
+}
+
+.status {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.status.completed {
+  background: #00ff00;
+  color: #000;
+}
+
+.status.training {
+  background: #ffff00;
+  color: #000;
+}
+
+.status.failed {
+  background: #ff0000;
+  color: #fff;
+}
+
+.metrics {
+  padding-top: 0.5rem;
+  border-top: 1px solid #fff;
+}
+
+[data-dashboard-theme="light"] .metrics {
+  border-color: #000;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+}
+
+[data-dashboard-theme="light"] .metric {
+  color: #000;
+}
+
+.metricLabel {
+  font-size: 0.9rem;
+}
+
+.metricValue {
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.deployButton,
+.downloadButton {
+  flex: 1;
+  padding: 0.5rem;
+  background: #000;
+  border: 1px solid #fff;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+[data-dashboard-theme="light"] .deployButton,
+[data-dashboard-theme="light"] .downloadButton {
+  background: #fff;
+  border-color: #000;
+  color: #000;
+}
+
+.deployButton:hover,
+.downloadButton:hover {
+  background: #1a1a1a;
+}
+
+[data-dashboard-theme="light"] .deployButton:hover,
+[data-dashboard-theme="light"] .downloadButton:hover {
+  background: #f0f0f0;
+}
+
+.footer {
+  color: #999;
+  font-size: 0.85rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #fff;
+}
+
+[data-dashboard-theme="light"] .footer {
+  color: #666;
+  border-color: #000;
+}
+
