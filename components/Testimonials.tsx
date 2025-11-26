@@ -20,7 +20,7 @@ export default function Testimonials() {
 						initial="initial"
 						whileInView="enter"
 						viewport={{ once: true }}>
-						Version 2.0 is here
+						TESTIMONIALS
 					</motion.button>
 				</div>
 				<div>
