@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Updated for Vercel deployment */
 body {
 	font-family: DMSans;
 	background-color: #eaeefe;
