@@ -31,6 +31,7 @@ export default function App() {
 			<Testimonials />
 			<CTA />
 			<Footer />
+			{/* Deployment trigger */}
 		</>
 	);
 }
