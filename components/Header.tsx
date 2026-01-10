@@ -19,17 +19,7 @@ export default function Navbar() {
     setHidden(latest > 0);
   });
 
-  // Products dropdown items
-  const productsLinks = [
-    {
-      title: "Daakkhana",
-      href: "https://daakkhana.up.railway.app",
-    },
-    {
-      title: "Vector",
-      href: "https://vector-e55x.vercel.app",
-    },
-  ];
+
 
   return (
     <>
@@ -105,18 +95,31 @@ export default function Navbar() {
                   </div>
 
                   {productsDropdown && (
-                    <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                      {productsLinks.map((link) => (
-                        <a
-                          key={link.title}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          {link.title}
-                        </a>
-                      ))}
+                    <div className="absolute top-full left-0 mt-0 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 transition-all duration-300 ease-in-out opacity-100 transform translate-y-0">
+                      <div className="px-4 py-2 text-xs text-gray-500 font-semibold">
+                        Our Products
+                      </div>
+                      <div className="px-4 py-2 text-sm text-gray-400 cursor-not-allowed hover:bg-gray-50 transition-colors">
+                        Pipeline AI - Coming Soon
+                      </div>
+                      <a 
+                        href="https://vector-e55x.vercel.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 flex items-center"
+                      >
+                        <span className="font-medium">Vector</span>
+                        <span className="ml-2 text-xs text-gray-500">AI Workspace for Data Scientists</span>
+                      </a>
+                      <a 
+                        href="https://daakkhana.up.railway.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 flex items-center"
+                      >
+                        <span className="font-medium">Daak Khana</span>
+                        <span className="ml-2 text-xs text-gray-500">Courier Marketplace</span>
+                      </a>
                     </div>
                   )}
                 </div>

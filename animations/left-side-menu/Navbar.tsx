@@ -38,12 +38,21 @@ export default function Navbar() {
 										setSelectedIndicator={setSelectedIndicator}></Links>
 									<div className="ml-8 mt-2 text-[30px] md:text-[25px] sm:text-[20px] xm:text-[18px]">
 										<div className="text-[#999999] uppercase text-[10px] mb-[10px]">
-											<p>early acess</p>
+											<p>our products</p>
 										</div>
 										<Link
 											href="https://daakkhana.up.railway.app/"
+											target="_blank"
+											rel="noopener noreferrer"
 											className="block py-2 text-white hover:text-[#cccccc] transition-colors cursor-pointer z-[1000] relative">
-											Daak Khana
+											Daak Khana - Courier Marketplace
+										</Link>
+										<Link
+											href="https://vector-e55x.vercel.app"
+											target="_blank"
+											rel="noopener noreferrer"
+											className="block py-2 text-white hover:text-[#cccccc] transition-colors cursor-pointer z-[1000] relative">
+											Vector - AI Workspace for Data Scientists
 										</Link>
 									</div>
 								</div>
