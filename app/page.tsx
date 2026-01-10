@@ -26,7 +26,6 @@ export default function App() {
 		<>
 			<Hero />
 			<LogoTicker />
-			<ProductShowcase />
 			<Pricing />
 			<Testimonials />
 			<CTA />
