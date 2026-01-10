@@ -53,10 +53,10 @@ export default function Footer() {
 					))}
 				</div>
 				<div className="flex items-center">
-					<p className="text-[#BCBCBC] paragraph font-normal">
-						© 2025 {contactInfo.company}. All rights reserved.
-					</p>
-				</div>
+               <p className="text-[#BCBCBC] paragraph font-normal">
+               © {new Date().getFullYear()} {contactInfo.company}. All rights reserved.
+              </p>
+            </div>
 			</div>
 		</div>
 	);
