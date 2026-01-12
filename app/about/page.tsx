@@ -9,47 +9,47 @@ import { contactInfo } from "@/constants";
 export default function About() {
 	const phares1 = ["About ", "Zehanx Technologies"];
 	const phares2 = [
-		"We are a pioneering AI research company dedicated to developing mindful artificial intelligence and machine learning models that advance technology while maintaining ethical responsibility.",
+		"We are a leading software development company specializing in B2B solutions, AI/ML technologies, cybersecurity, and proprietary software products that transform businesses and drive innovation.",
 	];
 
 	const values = [
 		{
 			id: 1,
-			title: "Mindful AI",
-			description: "We develop AI models that are not just powerful but also ethical, responsible, and beneficial to humanity.",
+			title: "B2B Excellence",
+			description: "We deliver enterprise-grade solutions that optimize business processes and drive operational efficiency.",
 		},
 		{
 			id: 2,
-			title: "Research Excellence",
-			description: "We advance the frontiers of AI/ML through rigorous research and innovative model architectures.",
+			title: "Innovation",
+			description: "We leverage cutting-edge technologies in AI, ML, and cybersecurity to create transformative solutions.",
 		},
 		{
 			id: 3,
-			title: "Ethical Responsibility",
-			description: "We ensure our AI models are developed with fairness, transparency, and accountability at their core.",
+			title: "Quality",
+			description: "We ensure our software products meet the highest standards of performance, security, and reliability.",
 		},
 		{
 			id: 4,
-			title: "Innovation",
-			description: "We push the boundaries of what's possible in AI while maintaining our commitment to responsible development.",
+			title: "Customer Focus",
+			description: "We prioritize our clients' needs and deliver customized solutions that align with their business objectives.",
 		},
 	];
 
-	const team = [
+	const specializations = [
 		{
 			id: 1,
-			name: "AI Research",
-			description: "Our team specializes in cutting-edge AI research, developing novel architectures and algorithms.",
+			name: "B2B & BSC Solutions",
+			description: "We design and implement scalable business solutions that streamline operations and boost productivity.",
 		},
 		{
 			id: 2,
-			name: "Model Development",
-			description: "We create sophisticated machine learning models tailored to solve complex real-world problems.",
+			name: "AI/ML & Gen AI",
+			description: "We develop advanced neural networks, deep learning models, and generative AI systems.",
 		},
 		{
 			id: 3,
-			name: "Ethical AI",
-			description: "We ensure all our models are developed with ethical considerations and responsible AI principles.",
+			name: "Cybersecurity & Software",
+			description: "We provide enterprise security solutions and develop proprietary software products.",
 		},
 	];
 
@@ -99,7 +99,7 @@ export default function About() {
 								viewport={{ once: true }}>
 								<h2 className="heading font-bold mb-4">Our Mission</h2>
 								<p className="paragraph text-[#010D3E] leading-relaxed">
-									To advance the field of artificial intelligence by developing mindful AI models that push the boundaries of innovation while maintaining ethical responsibility. We believe AI should enhance human capabilities and contribute positively to society.
+									To empower businesses with cutting-edge software solutions that drive growth, enhance security, and enable digital transformation. We leverage advanced technologies in AI, ML, and cybersecurity to create solutions that solve real-world challenges.
 								</p>
 							</motion.div>
 							<motion.div
@@ -110,7 +110,7 @@ export default function About() {
 								viewport={{ once: true }}>
 								<h2 className="heading font-bold mb-4">Our Vision</h2>
 								<p className="paragraph text-[#010D3E] leading-relaxed">
-									To become a global leader in responsible AI development, creating models that not only solve complex problems but do so with transparency, fairness, and consideration for their impact on humanity and society.
+									To be the premier provider of innovative B2B software solutions, setting industry standards in AI, ML, cybersecurity, and enterprise systems while delivering exceptional value to our clients worldwide.
 								</p>
 							</motion.div>
 						</div>
@@ -150,15 +150,15 @@ export default function About() {
 					</div>
 				</div>
 
-				{/* Why Choose Us */}
+				{/* Our Expertise */}
 				<div className="w-full padding-x py-20 bg-white xm:py-10 sm:py-10">
 					<div className="w-full flex flex-col gap-10">
 						<div className="w-full flex items-center flex-col gap-3">
-							<h1 className="heading text-center font-bold">Why Choose Us</h1>
+							<h1 className="heading text-center font-bold">Our Expertise</h1>
 						</div>
 
 						<div className="w-full grid grid-cols-3 gap-8 xm:grid-cols-1 sm:grid-cols-1">
-							{team.map((item) => (
+							{specializations.map((item) => (
 								<motion.div
 									key={item.id}
 									className="p-8 rounded-2xl bg-gradient-to-br from-[#183EC2] to-[#001E7F] text-white"
@@ -182,7 +182,7 @@ export default function About() {
 							initial="initial"
 							whileInView="enter"
 							viewport={{ once: true }}>
-							<h2 className="heading font-bold">Ready to Explore Mindful AI Solutions?</h2>
+							<h2 className="heading font-bold">Ready to Transform Your Business with Our Solutions?</h2>
 						</motion.div>
 						<motion.div
 							variants={textAnimation}

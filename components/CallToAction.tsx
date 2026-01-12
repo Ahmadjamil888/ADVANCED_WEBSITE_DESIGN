@@ -6,14 +6,14 @@ import { imageAnimation, textAnimation } from "@/motion";
 import { contactInfo } from "@/constants";
 
 export default function CallToAction() {
-	const phares1 = ["Ready to transform your ideas?"];
+	const phares1 = ["Ready to transform your business?"];
 	const phares2 = [
 		"Get in touch with our team today. We're ready to help",
-		"you bring your concepts to reality with innovative",
+		"you transform your business with cutting-edge software",
 		"solutions.",
 	];
 	const phares3 = [
-		"Get in touch with our team today. We're ready to help you bring your concepts to reality with innovative solutions.",
+		"Get in touch with our team today. We're ready to help you transform your business with cutting-edge software solutions.",
 	];
 	return (
 		<div className="w-full padding-x py-10 relative bg-gradient-to-b from-white to-[#d2dcff]">

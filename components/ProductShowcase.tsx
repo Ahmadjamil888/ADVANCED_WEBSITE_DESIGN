@@ -13,14 +13,14 @@ export default function ProductShowcase() {
 	});
 	const cq = useTransform(scrollYProgress, [0, 1], [0, 200]);
 	const mq = useTransform(scrollYProgress, [0, 1], [0, -200]);
-	const phares1 = ["Our expertise in", "cutting-edge technology"];
+	const phares1 = ["Our expertise in", "enterprise software solutions"];
 	const phares2 = [
-		"We specialize in AI, Machine Learning, Data Science,",
-		"Web Development, and Software Development to deliver",
-		"innovative solutions tailored to your needs.",
+		"We specialize in B2B solutions, AI/ML technologies,",
+		"cybersecurity, and proprietary software products to deliver",
+		"comprehensive solutions tailored to your business needs.",
 	];
 	const phares3 = [
-		"We specialize in AI, Machine Learning, Data Science, Web Development, and Software Development to deliver innovative solutions tailored to your needs.",
+		"We specialize in B2B solutions, AI/ML technologies, cybersecurity, and proprietary software products to deliver comprehensive solutions tailored to your business needs.",
 	];
 	return (
 		<div className="w-full padding-x py-10 bg-gradient-to-b from-white to-[#d2dcff]">
@@ -35,7 +35,7 @@ export default function ProductShowcase() {
 						}}
 						viewport={{ once: true }}>
 						<button className="w-fit py-2 px-3 rounded-full border border-[#2222221A] text-black font-dmSans text-sm font-medium leading-tight tracking-[-0.02188rem]">
-							Our Products
+							Software Solutions
 						</button>
 					</motion.div>
 					<div>

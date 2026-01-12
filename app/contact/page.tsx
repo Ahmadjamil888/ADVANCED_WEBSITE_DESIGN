@@ -63,7 +63,7 @@ export default function Contact() {
 			id: 3,
 			question: "What technologies do you specialize in?",
 			answer:
-				"We specialize in AI, ML, Data Science, Web Development, and Software Development. We work with modern technologies like React, Python, TensorFlow, and cloud platforms.",
+				"We specialize in B2B solutions, AI/ML technologies, cybersecurity, and proprietary software products. We work with modern technologies like React, Python, TensorFlow, PyTorch, and cloud platforms.",
 		},
 		{
 			id: 4,
@@ -233,7 +233,7 @@ export default function Contact() {
 				<div className="w-full padding-x py-20 bg-gradient-to-b from-white to-[#d2dcff] xm:py-10 sm:py-10">
 					<div className="w-full flex flex-col gap-8 items-center justify-center text-center">
 						<motion.div variants={textAnimation} initial="initial" whileInView="enter" viewport={{ once: true }}>
-							<h2 className="heading font-bold">Ready to purchase our AI models?</h2>
+							<h2 className="heading font-bold">Ready to transform your business with our solutions?</h2>
 							<p className="paragraph text-[#010D3E] mt-4">Reach out to us directly - we&apos;re here to help!</p>
 						</motion.div>
 

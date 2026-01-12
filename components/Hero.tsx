@@ -15,9 +15,9 @@ export default function Hero() {
 	const cq = useTransform(scrollYProgress, [0, 1], [0, 200]);
 	const mq = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
-	const phares1 = ["Developing mindful ", "AI models"];
+	const phares1 = ["Empowering businesses with ", "innovative software solutions"];
 	const phares2 = [
-		"At Zehanx Technologies, we create advanced AI and machine learning models that are not just powerful but also ethical and responsible. Our mindful approach to AI development ensures solutions that truly benefit humanity.",
+		"At Zehanx Technologies, we specialize in B2B solutions, AI/ML technologies, cybersecurity, and proprietary software products that transform businesses and drive innovation. Our comprehensive approach ensures solutions that deliver real value.",
 	];
 	return (
 		<div
@@ -33,7 +33,7 @@ export default function Hero() {
 							initial="initial"
 							whileInView="enter"
 							viewport={{ once: true }}>
-							considered by NIC Lahore
+							Trusted by Industry Leaders
 						</motion.button>
 					</div>
 					<div>

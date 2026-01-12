@@ -6,9 +6,9 @@ import { textAnimation } from "@/motion";
 import { contactInfo } from "@/constants";
 
 export default function Services() {
-	const phares1 = ["Our ", "Services"];
+	const phares1 = ["Our ", "Solutions"];
 	const phares2 = [
-		"Comprehensive solutions tailored to transform your business with cutting-edge technology.",
+		"Comprehensive B2B solutions tailored to transform your business with cutting-edge technology in AI/ML, cybersecurity, and enterprise software.",
 	];
 
 	const services = [
@@ -175,7 +175,7 @@ export default function Services() {
 								transition={{ duration: 1, type: "spring" }}
 								viewport={{ once: true }}>
 								<button className="w-fit py-2 px-3 rounded-full border border-[#2222221A] text-black font-dmSans text-sm font-medium leading-tight tracking-[-0.02188rem]">
-									What We Offer
+									Our Core Solutions
 								</button>
 							</motion.div>
 						</div>

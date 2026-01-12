@@ -37,7 +37,7 @@ export default function Navbar() {
         >
           <div className="xm:hidden sm:hidden">
             <h1 className="text-[#FFFFFF99] text-[18px] font-normal leading-tight">
-              Developing mindful AI models for a better future - Zehanx Technologies
+              Innovative B2B software solutions in AI, ML, Cybersecurity and Enterprise Systems - Zehanx Technologies
             </h1>
           </div>
           <div className="flex gap-2 items-center">
