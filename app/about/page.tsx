@@ -9,14 +9,14 @@ import { contactInfo } from "@/constants";
 export default function About() {
 	const phares1 = ["About ", "Zehanx Technologies"];
 	const phares2 = [
-		"We are a leading software development company specializing in B2B solutions, AI/ML technologies, cybersecurity, and proprietary software products that transform businesses and drive innovation.",
+		"We are a leading software company specializing in innovative software solutions, AI/ML technologies, cybersecurity, and enterprise-grade software products that drive innovation.",
 	];
 
 	const values = [
 		{
 			id: 1,
-			title: "B2B Excellence",
-			description: "We deliver enterprise-grade solutions that optimize business processes and drive operational efficiency.",
+			title: "Software Excellence",
+			description: "We deliver enterprise-grade software products that optimize business processes and drive operational efficiency.",
 		},
 		{
 			id: 2,
@@ -38,8 +38,8 @@ export default function About() {
 	const specializations = [
 		{
 			id: 1,
-			name: "B2B & BSC Solutions",
-			description: "We design and implement scalable business solutions that streamline operations and boost productivity.",
+			name: "Enterprise Software Solutions",
+			description: "We design and implement scalable software products that streamline operations and boost productivity.",
 		},
 		{
 			id: 2,
@@ -110,7 +110,7 @@ export default function About() {
 								viewport={{ once: true }}>
 								<h2 className="heading font-bold mb-4">Our Vision</h2>
 								<p className="paragraph text-[#010D3E] leading-relaxed">
-									To be the premier provider of innovative B2B software solutions, setting industry standards in AI, ML, cybersecurity, and enterprise systems while delivering exceptional value to our clients worldwide.
+									To be the premier provider of innovative software solutions, setting industry standards in AI, ML, cybersecurity, and enterprise systems while delivering exceptional value to our clients worldwide.
 								</p>
 							</motion.div>
 						</div>

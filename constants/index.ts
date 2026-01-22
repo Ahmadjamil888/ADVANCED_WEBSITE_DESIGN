@@ -1,4 +1,4 @@
-import { acme, apex, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, celestial, echo, instagram, linkedin, pin, pulse, quantum, x, youtube } from "@/public";
+import { acme, apex, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9, celestial, echo, instagram, linkedin, pin, pulse, quantum, x, youtube, usmanHospital, aurionTech, irtcop, apsacs, nicLahore } from "@/public";
 
 /**
  * An array of navigation items, each with an id, title, and href.
@@ -85,7 +85,7 @@ export const pricingTiers = [
 export const testimonials = [
    {
       id: 1,
-      text: "Zehanx Technologies' B2B solutions have transformed our business operations. The integration and efficiency gains are remarkable.",
+      text: "Zehanx Technologies' software solutions have transformed our business operations. The integration and efficiency gains are remarkable.",
       src: avatar9,
       name: "Ahsan Khalid",
       username: "@ahsan_k",
@@ -127,7 +127,7 @@ export const testimonials = [
    },
    {
       id: 7,
-      text: "The B2B solutions from Zehanx have exceeded our expectations in both performance and scalability. Truly exceptional work.",
+      text: "The software solutions from Zehanx have exceeded our expectations in both performance and scalability. Truly exceptional work.",
       src: avatar6,
       name: "Rehan Malik",
       username: "@rehanm_dev",
@@ -151,27 +151,23 @@ export const testimonials = [
 export const logoMarqueeItems = [
    {
       id: 1,
-      src: apex
+      src: usmanHospital
    },
    {
       id: 2,
-      src: acme
+      src: aurionTech
    },
    {
       id: 3,
-      src: celestial
+      src: irtcop
    },
    {
       id: 4,
-      src: echo
+      src: apsacs
    },
    {
       id: 5,
-      src: pulse
-   },
-   {
-      id: 6,
-      src: quantum
+      src: nicLahore
    }
 ];
 
@@ -212,41 +208,41 @@ export const contactInfo = {
    email: 'zehanxtech@gmail.com',
    phone: '+92 344 2693910',
    company: 'Zehanx Technologies',
-   slogan: 'Innovative B2B software solutions in AI, ML, Cybersecurity and Enterprise Systems'
+   slogan: 'Innovative software solutions in AI, ML, Cybersecurity and Enterprise Systems'
 };
 
 export const footerSocialsItems = [
    {
       id: 1,
       src: instagram,
-      href: "/"
+      href: "https://instagram.com/zehanxtech"
    },
    {
       id: 2,
       src: linkedin,
-      href: "/"
+      href: "https://linkedin.com/company/zehanx-technologies"
    },
    {
       id: 3,
       src: pin,
-      href: "/"
+      href: "https://pinterest.com/zehanxtech"
    },
    {
       id: 4,
       src: x,
-      href: "/"
+      href: "https://x.com/zehanxtech"
    },
    {
       id: 5,
       src: youtube,
-      href: "/"
+      href: "https://youtube.com/@zehanxtech"
    },
 ];
 
 export const pricingItems = [
    {
       id: 1,
-      title: 'B2B & BSC Solutions',
+      title: 'Enterprise Software Solutions',
       price: null,
       btn: "Learn More",
       features: [

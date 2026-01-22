@@ -15,9 +15,9 @@ export default function Hero() {
 	const cq = useTransform(scrollYProgress, [0, 1], [0, 200]);
 	const mq = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
-	const phares1 = ["Empowering businesses with ", "innovative software solutions"];
+	const phares1 = ["Innovative Software", "Solutions & Products"];
 	const phares2 = [
-		"At Zehanx Technologies, we specialize in B2B solutions, AI/ML technologies, cybersecurity, and proprietary software products that transform businesses and drive innovation. Our comprehensive approach ensures solutions that deliver real value.",
+		"We are a software company specializing in AI, ML, cybersecurity, and enterprise-grade software products that drive innovation.",
 	];
 	return (
 		<div
@@ -33,7 +33,7 @@ export default function Hero() {
 							initial="initial"
 							whileInView="enter"
 							viewport={{ once: true }}>
-							Trusted by Industry Leaders
+							Trusted by Industry-Leading Enterprises
 						</motion.button>
 					</div>
 					<div>

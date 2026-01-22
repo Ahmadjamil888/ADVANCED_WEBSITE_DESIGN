@@ -8,12 +8,11 @@ export default function LogoTicker() {
 			<LogoMarquee baseVelocity={1.5}>
 				{logoMarqueeItems.map((item) => (
 					<div
-						className={`w-[200px] flex ${item.id == 6 && "mr-14"}`}
+						className={`w-[250px] flex ${item.id == 5 && "mr-14"}`}
 						key={item.id}>
 						<Image
 							src={item.src}
-							alt="asd"
-							className="w-full"
+							alt="logo"
 						/>
 					</div>
 				))}

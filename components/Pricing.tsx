@@ -5,10 +5,10 @@ import { check, checkwhite } from "@/public";
 import { Heading, Button } from "@/components";
 
 export default function Pricing() {
-	const phares = ["Our Products"];
+	const phares = ["Our Solutions"];
 	const phares1 = [
-		"We offer comprehensive solutions in AI, ML, Data Science,",
-		"Web Development, and Software Development.",
+		"Transform your business with our comprehensive suite of",
+		"enterprise solutions, AI innovations, and cybersecurity services.",
 	];
 	return (
 		<div className="w-full padding-x py-20 bg-white xm:py-10 sm:py-10">
@@ -30,40 +30,36 @@ export default function Pricing() {
 				<div className="w-full flex justify-center items-end gap-10 xm:flex-col sm:flex-col">
 					{pricingItems.map((item) => (
 						<div
-							className={`w-full flex flex-col gap-10 rounded-3xl border border-[#F1F1F1] shadow-[0px_7px_14px_0px_#EAEAEA] p-14 xm:p-8 sm:p-8 ${
-								item.id == 2 ? "bg-black text-white " : "bg-white text-black"
-							}`}
+							className={`w-full flex flex-col gap-10 rounded-3xl border border-[#F1F1F1] shadow-[0px_7px_14px_0px_#EAEAEA] p-14 xm:p-8 sm:p-8 ${item.id == 2 ? "bg-black text-white " : "bg-white text-black"
+								}`}
 							key={item.id}>
 							<div className="w-full flex flex-col gap-10">
 								<h1
-									className={`text-[#00000080] text-[30px] font-bold leading-tight tracking-[-0.9px] ${
-										item.id == 2 ? "text-[#FFFFFF80]" : "text-[#00000080] "
-									}`}>
+									className={`text-[#00000080] text-[30px] font-bold leading-tight tracking-[-0.9px] ${item.id == 2 ? "text-[#FFFFFF80]" : "text-[#00000080] "
+										}`}>
 									{item.title}
 								</h1>
 								{item.price !== null && (
 									<div className="flex gap-3">
 										<h1
-											className={`text-black font-dmSans text-[40px] font-bold leading-tight tracking-[-0.045em] ${
-												item.id == 2 ? "text-white" : "text-black "
-											}`}>
+											className={`text-black font-dmSans text-[40px] font-bold leading-tight tracking-[-0.045em] ${item.id == 2 ? "text-white" : "text-black "
+												}`}>
 											${item.price}
 										</h1>
 										<span
-											className={`text-[20px] font-bold tracking-[-0.9px] ${
-												item.id == 2 ? "text-[#FFFFFF80]" : "text-[#00000080] "
-											}`}>
+											className={`text-[20px] font-bold tracking-[-0.9px] ${item.id == 2 ? "text-[#FFFFFF80]" : "text-[#00000080] "
+												}`}>
 											/month
 										</span>
 									</div>
 								)}
 								<Button
 									title={item.btn}
-									className={`w-full py-3 rounded-lg font-bold ${
-										item.id == 2
+									href="/contact"
+									className={`w-full py-3 rounded-lg font-bold ${item.id == 2
 											? "bg-white text-black"
 											: "bg-black text-white "
-									}`}
+										}`}
 								/>
 							</div>
 							<div className="w-full flex flex-col gap-8">
@@ -89,9 +85,8 @@ export default function Pricing() {
 											/>
 										)}
 										<p
-											className={`leading-tight text-[16px] ${
-												item.id == 2 ? "text-white" : "text-black"
-											}`}>
+											className={`leading-tight text-[16px] ${item.id == 2 ? "text-white" : "text-black"
+												}`}>
 											{feature.feature}
 										</p>
 									</div>

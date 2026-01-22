@@ -6,7 +6,7 @@ export default function Button({ className, title, href }: TbuttonProps) {
 		return (
 			<Link href={href}>
 				<div
-					className={`text-[18px] leading-tight rounded-[8px] font-medium ${className}`}>
+					className={`text-[18px] leading-tight rounded-[8px] font-medium flex items-center justify-center text-center ${className}`}>
 					{title}
 				</div>
 			</Link>
@@ -14,7 +14,7 @@ export default function Button({ className, title, href }: TbuttonProps) {
 	}
 	return (
 		<button
-			className={`text-[18px] leading-tight rounded-[8px] font-medium ${className}`}>
+			className={`text-[18px] leading-tight rounded-[8px] font-medium flex items-center justify-center text-center ${className}`}>
 			{title}
 		</button>
 	);

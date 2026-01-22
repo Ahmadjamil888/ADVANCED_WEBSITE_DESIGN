@@ -95,31 +95,18 @@ export default function Navbar() {
                   </div>
 
                   {productsDropdown && (
-                    <div className="absolute top-full left-0 mt-0 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 transition-all duration-300 ease-in-out opacity-100 transform translate-y-0">
-                      <div className="px-4 py-2 text-xs text-gray-500 font-semibold">
-                        Our Products
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-md shadow-sm border border-gray-100 py-3 z-50">
+                      <div className="px-4 py-2 text-[10px] text-gray-400 uppercase font-semibold tracking-wider">
+                        Software Products
                       </div>
-                      <div className="px-4 py-2 text-sm text-gray-400 cursor-not-allowed hover:bg-gray-50 transition-colors">
-                        Pipeline AI - Coming Soon
+                      <div className="px-4 py-3 flex flex-col gap-1">
+                        <div className="text-black font-medium text-sm">
+                          Daak Khana
+                        </div>
+                        <div className="text-[10px] text-gray-400">
+                          Early Development - Beta Launching Soon
+                        </div>
                       </div>
-                      <a 
-                        href="https://vector-e55x.vercel.app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 flex items-center"
-                      >
-                        <span className="font-medium">Vector</span>
-                        <span className="ml-2 text-xs text-gray-500">AI Workspace for Data Scientists</span>
-                      </a>
-                      <a 
-                        href="https://daakkhana.up.railway.app/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 flex items-center"
-                      >
-                        <span className="font-medium">Daak Khana</span>
-                        <span className="ml-2 text-xs text-gray-500">Courier Marketplace</span>
-                      </a>
                     </div>
                   )}
                 </div>
@@ -134,7 +121,7 @@ export default function Navbar() {
               )
             )}
 
-            <Button className="text-white bg-black px-4 py-2" title="Contact Us" />
+            <Button className="text-white bg-black px-4 py-2" title="Contact Us" href="/contact" />
           </div>
         </motion.div>
       </motion.div>

@@ -8,7 +8,7 @@ import { contactInfo } from "@/constants";
 export default function Services() {
 	const phares1 = ["Our ", "Solutions"];
 	const phares2 = [
-		"Comprehensive B2B solutions tailored to transform your business with cutting-edge technology in AI/ML, cybersecurity, and enterprise software.",
+		"Comprehensive enterprise software solutions tailored to transform your operations with cutting-edge technology in AI/ML, cybersecurity, and software products.",
 	];
 
 	const services = [

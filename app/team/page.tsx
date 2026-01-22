@@ -30,7 +30,7 @@ export default function Team() {
 			id: 3,
 			name: "Ahmad Ibrahim",
 			role: "Co-Founder",
-			description: "Data science and machine learning specialist. Ahmad Ibrahim leads our AI initiatives and ensures cutting-edge solutions for our clients.",
+			description: "Data science and machine learning specialist. Ahmad Ibrahim leads our AI initiatives and ensures cutting-edge software products.",
 			email: "rafaqatyaseen@gmail.com",
 		},
 	];
@@ -181,7 +181,7 @@ export default function Team() {
 								viewport={{ once: true }}>
 								<h3 className="text-[24px] font-bold mb-4">Building Tomorrow, Together</h3>
 								<p className="leading-relaxed mb-4">
-									At Zehanx Technologies, we believe in fostering an environment where innovation thrives and every team member can contribute their best. We&apos;re committed to continuous learning, supporting each other&apos;s growth, and delivering solutions that make a real difference.
+									At Zehanx Technologies, we believe in fostering an environment where innovation thrives and software excellence is our top priority. We&apos;re committed to continuous learning, supporting each other&apos;s growth, and creating products that make a real difference.
 								</p>
 								<p className="leading-relaxed">
 									Our team is passionate about technology and dedicated to transforming concepts into reality. We work collaboratively to solve complex problems and create value for our clients and ourselves.

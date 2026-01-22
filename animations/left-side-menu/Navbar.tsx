@@ -40,20 +40,14 @@ export default function Navbar() {
 										<div className="text-[#999999] uppercase text-[10px] mb-[10px]">
 											<p>our products</p>
 										</div>
-										<Link
-											href="https://daakkhana.up.railway.app/"
-											target="_blank"
-											rel="noopener noreferrer"
-											className="block py-2 text-white hover:text-[#cccccc] transition-colors cursor-pointer z-[1000] relative">
-											Daak Khana - Courier Marketplace
-										</Link>
-										<Link
-											href="https://vector-e55x.vercel.app"
-											target="_blank"
-											rel="noopener noreferrer"
-											className="block py-2 text-white hover:text-[#cccccc] transition-colors cursor-pointer z-[1000] relative">
-											Vector - AI Workspace for Data Scientists
-										</Link>
+										<div className="cursor-not-allowed opacity-70">
+											<div className="py-2 text-white">
+												<div className="font-medium">Daak Khana</div>
+												<div className="text-[14px] text-[#999999] mt-1 flex items-center gap-1">
+													Early Development - Beta Launching Soon
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							);

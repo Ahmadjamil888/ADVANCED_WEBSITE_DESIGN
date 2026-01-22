@@ -6,14 +6,14 @@ import { imageAnimation, textAnimation } from "@/motion";
 import { contactInfo } from "@/constants";
 
 export default function CallToAction() {
-	const phares1 = ["Ready to transform your business?"];
+	const phares1 = ["Let's Build the Future Together"];
 	const phares2 = [
-		"Get in touch with our team today. We're ready to help",
-		"you transform your business with cutting-edge software",
-		"solutions.",
+		"Partner with Zehanx Technologies to unlock enterprise-grade",
+		"solutions tailored to your unique challenges. Our experts are",
+		"ready to accelerate your digital transformation journey.",
 	];
 	const phares3 = [
-		"Get in touch with our team today. We're ready to help you transform your business with cutting-edge software solutions.",
+		"Partner with Zehanx Technologies to unlock enterprise-grade solutions tailored to your unique challenges. Our experts are ready to accelerate your digital transformation journey.",
 	];
 	return (
 		<div className="w-full padding-x py-10 relative bg-gradient-to-b from-white to-[#d2dcff]">

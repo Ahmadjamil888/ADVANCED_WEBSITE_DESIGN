@@ -5,10 +5,10 @@ import { textAnimation } from "@/motion";
 import { testimonials } from "@/constants";
 
 export default function Testimonials() {
-	const phares = ["What our users say"];
+	const phares = ["Client Success Stories"];
 	const phares1 = [
-		"From intuitive design to powerful features, our app has",
-		"become an essential tool for users around the world.",
+		"Discover how leading enterprises leverage our solutions to",
+		"accelerate innovation, enhance security, and drive growth.",
 	];
 	return (
 		<div className="w-full flex flex-col items-center padding-x py-10 gap-20 bg-white xm:gap-10 sm:gap-10">
@@ -20,7 +20,7 @@ export default function Testimonials() {
 						initial="initial"
 						whileInView="enter"
 						viewport={{ once: true }}>
-						TESTIMONIALS
+						CLIENT TESTIMONIALS
 					</motion.button>
 				</div>
 				<div>
