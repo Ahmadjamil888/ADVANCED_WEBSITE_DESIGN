@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { ArrowDownLeft } from 'lucide-react';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { MagneticButton } from '@/components';
 
