@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowDownLeft } from 'lucide-react';
 import Link from 'next/link';
-import { CldImage } from 'next-cloudinary';
+import Image from 'next/image';
 
 import { MagneticButton } from '@/components';
 
@@ -19,14 +19,14 @@ export function UserDetails({ transformX }) {
       <Row>
         <div className='flex items-center gap-8'>
           <ImageWrapper>
-            <CldImage
-              src='Dennis-Portfolio/images/mqtwxh5znybowgaljrbp'
+            <Image
+              src='/Screenshot 2026-02-08 230507.png'
               className='rounded-full object-cover'
               fill={true}
-              alt='Dennis Snellenberg Profile Picture'
+              alt='ZehanX Technologies Logo'
             />
           </ImageWrapper>
-          <MainTitle>Let’s work</MainTitle>
+          <MainTitle>Let&apos;s innovate</MainTitle>
         </div>
         <div className='flex items-center justify-between'>
           <MainTitle>together</MainTitle>
@@ -60,7 +60,7 @@ export function UserDetails({ transformX }) {
                 size='md'
                 className='w-full border-muted-foreground'
               >
-                info@dennissnellenberg.com
+                info@zehanx.com
               </MagneticButton>
             </a>
           </div>
@@ -71,7 +71,7 @@ export function UserDetails({ transformX }) {
                 size='md'
                 className='w-full border-muted-foreground'
               >
-                +31 6 27 84 74 30
+                +1 555 123 4567
               </MagneticButton>
             </a>
           </div>

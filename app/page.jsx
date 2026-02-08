@@ -10,9 +10,9 @@ import {
 
 /** @type {import('next').Metadata} */
 export const metadata = {
-  title: 'Home | Dennis Snellenberg',
+  title: 'ZehanX Technologies - Research in AI/ML/DL, Security & Emerging Tech',
   description:
-    'Helping brands thrive in the digital world. Located in The Netherlands. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis',
+    'ZehanX Technologies - A research-oriented company specializing in Artificial Intelligence, Machine Learning, Deep Learning, tokenization, signal processing, and cybersecurity solutions.',
 };
 
 export default function Home() {

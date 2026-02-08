@@ -1,18 +1,18 @@
 export const socialMedias = [
   {
-    href: 'https://www.awwwards.com/dennissnellenberg/',
-    title: 'Awwwards',
+    href: 'https://github.com/zehanx',
+    title: 'GitHub',
   },
   {
-    href: 'https://www.instagram.com/codebydennis/',
-    title: 'Instagram',
-  },
-  {
-    href: 'https://dribbble.com/dennissnellenberg',
-    title: 'Dribbble',
-  },
-  {
-    href: 'https://www.linkedin.com/in/dennissnellenberg/',
+    href: 'https://www.linkedin.com/company/zehanx-technologies',
     title: 'LinkedIn',
+  },
+  {
+    href: 'https://twitter.com/ZehanXTech',
+    title: 'Twitter',
+  },
+  {
+    href: 'https://www.zehanx.com/contact',
+    title: 'Contact',
   },
 ];

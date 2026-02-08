@@ -1,16 +1,18 @@
 {
-  "name": "dennis-snellenberg-portfolio",
-  "title": "Dennis Snellenberg • Freelance Designer & Developer",
-  "description": "Helping brands thrive in the digital world. Located in The Netherlands. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis",
+  "name": "zehanx-technologies-website",
+  "title": "ZehanX Technologies • Research-Oriented Company",
+  "description": "Advancing technology through research in AI/ML/DL, tokenization, signal processing, and cybersecurity. ZehanX Technologies drives innovation in emerging tech fields.",
   "author": {
-    "name": "Ali Bagheri",
-    "email": "alibagheri2079.dev@gmail.com",
-    "url": "https://www.github.com/alibagheri2079"
+    "name": "ZehanX Technologies",
+    "email": "info@zehanx.com",
+    "url": "https://www.zehanx.com"
   },
   "keywords": [
-    "Design",
-    "Develope",
-    "Freelance"
+    "AI",
+    "Machine Learning",
+    "Research",
+    "Cybersecurity",
+    "Tokenization"
   ],
   "version": "0.1.0",
   "private": true,
@@ -29,7 +31,7 @@
     "gsap": "^3.12.4",
     "lucide-react": "^0.298.0",
     "next": "14.0.4",
-    "next-cloudinary": "^5.13.0",
+
     "react": "^18",
     "react-dom": "^18",
     "react-wrap-balancer": "^1.1.0",

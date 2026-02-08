@@ -1,32 +1,32 @@
 /** @type {import('next').Metadata} */
 export const rootMetadata = {
-  metadataBase: new URL('https://dennis-snellenberg-portfolio.vercel.app/'),
+  metadataBase: new URL('https://www.zehanx.com/'),
   title: {
-    template: '%s | Dennis Snellenberg',
-    default: 'Dennis Snellenberg • Freelance Designer & Developer',
+    template: '%s | ZehanX Technologies',
+    default: 'ZehanX Technologies - Research in AI/ML/DL, Tokenization, Signals, Cybersecurity',
   },
   description:
-    'Helping brands thrive in the digital world. Located in The Netherlands. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis',
-  generator: 'Dennis Snellenberg',
-  applicationName: 'Dennis Snellenberg',
+    'ZehanX Technologies - A research-oriented company specializing in Artificial Intelligence, Machine Learning, Deep Learning, tokenization, signal processing, and cybersecurity solutions.',
+  generator: 'ZehanX Technologies',
+  applicationName: 'ZehanX Technologies',
   referrer: 'origin-when-cross-origin',
-  keywords: ['Design', 'Develope', 'Freelance'],
+  keywords: ['AI', 'Machine Learning', 'Infrastructure', 'API'],
   authors: [
-    { name: 'Ali Bagheri', url: 'https://www.github.com/alibagheri2079' },
+    { name: 'ZehanX Technologies', url: 'https://www.zehanx.com' },
   ],
-  creator: 'Ali Bagheri',
-  publisher: 'Ali Bagheri',
+  creator: 'ZehanX Technologies',
+  publisher: 'ZehanX Technologies',
   twitter: {
     card: 'summary_large_image',
-    title: 'Dennis Snellenberg',
+    title: 'ZehanX Technologies',
     description:
-      'Helping brands thrive in the digital world. Located in The Netherlands. Delivering tailor-made digital designs and building interactive websites from scratch. © Code by Dennis',
+      'ZehanX Technologies - A research-oriented company specializing in Artificial Intelligence, Machine Learning, Deep Learning, tokenization, signal processing, and cybersecurity solutions.',
     siteId: '1467726470533754880',
-    creator: '@AliBagheri2079',
+    creator: '@ZehanXTech',
     creatorId: '1467726470533754880',
     images: {
-      url: 'https://dennis-snellenberg-portfolio.vercel.app/screenshot.png',
-      alt: 'Portfolio Screenshot',
+      url: 'https://www.zehanx.com/logo.png',
+      alt: 'ZehanX Technologies Logo',
     },
   },
   robots: {
