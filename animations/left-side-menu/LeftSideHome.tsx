@@ -1,7 +1,7 @@
 "use client";
 import Navbar from "./Navbar";
 import Image from "next/image";
-import { logo } from "@/public";
+import { logoLight } from "@/public";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,8 +25,8 @@ export default function LeftSideHome() {
 				className="w-full flex items-center justify-between gap-5 padding-x py-[12px] relative z-[999] backdrop-blur-sm">
 				<div>
 					<Image
-						src={logo}
-						alt="logo"
+						src={logoLight}
+						alt="Zehanx Logo"
 						width={40}
 						height={40}
 					/>

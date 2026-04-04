@@ -33,7 +33,7 @@ export default function Navbar() {
 					animate={hidden ? "hidden" : "vissible"}>
 					<div className="xm:hidden sm:hidden">
 						<h1 className="text-[#888] text-[18px] font-normal leading-tight">
-							{companyInfo.tagline} - Let's build something extraordinary.
+							{companyInfo.tagline} - Let&apos;s build something extraordinary.
 						</h1>
 					</div>
 					<div className="flex gap-2 items-center">
