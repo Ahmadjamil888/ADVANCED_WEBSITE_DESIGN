@@ -35,6 +35,7 @@ const team = [
     name: "Ahmad Jamil",
     role: "Founder & CEO",
     bio: "Visionary leader driving innovation and growth at zehanx Technologies with expertise in business strategy and technology.",
+    image: "/avatar-5.png",
     social: {
       linkedin: "#",
     },
@@ -43,6 +44,7 @@ const team = [
     name: "Ahmad Ibrahim",
     role: "Co-founder & COO",
     bio: "Operations expert ensuring seamless delivery of projects and maintaining excellence in client relationships.",
+    image: "/avatar-6.png",
     social: {
       linkedin: "#",
     },
@@ -51,6 +53,7 @@ const team = [
     name: "Umair Amin",
     role: "Co-founder & CMO",
     bio: "Marketing strategist expanding zehanx reach globally and building strong brand presence in the tech industry.",
+    image: "/avatar-7.png",
     social: {
       linkedin: "#",
     },
@@ -125,8 +128,12 @@ export default function Team() {
             >
               <div className="relative p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] hover:border-white/20 transition-all duration-300 text-center">
                 {/* Profile Avatar */}
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-white/10 ring-offset-2 ring-offset-black">
-                  <Avatar name={member.name} className="w-full h-full text-xl sm:text-2xl" />
+                <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-white/10 ring-offset-2 ring-offset-black bg-white/10">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Info */}

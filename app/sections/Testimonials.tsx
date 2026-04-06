@@ -9,28 +9,28 @@ const testimonials = [
     author: "Ahmed Khan",
     role: "CEO, TechVentures",
     rating: 5,
-    image: "/testimonials/male.jpg",
+    image: "/avatar-1.png",
   },
   {
     quote: "The web development team delivered a stunning, high-performance website that exceeded our expectations. Highly recommended!",
     author: "Sarah Ali",
     role: "Founder, StartupHub",
     rating: 5,
-    image: "/testimonials/female.jpg",
+    image: "/avatar-2.png",
   },
   {
     quote: "Working with zehanx on our mobile app was a game-changer. Their attention to detail and technical expertise is world-class.",
     author: "Muhammad Hassan",
     role: "CTO, InnovatePak",
     rating: 5,
-    image: "/testimonials/male2.jpg",
+    image: "/avatar-3.png",
   },
   {
     quote: "Their deep learning solution helped us automate complex processes, saving us thousands of hours annually. Exceptional work!",
     author: "Fatima Rizvi",
     role: "Director, DataSystems",
     rating: 5,
-    image: "/testimonials/female2.jpg",
+    image: "/avatar-4.png",
   },
 ];
 

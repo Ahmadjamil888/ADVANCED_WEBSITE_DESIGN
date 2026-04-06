@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
@@ -24,4 +25,41 @@ export default function Home() {
       <Footer />
     </main>
   );
+=======
+"use client";
+import { useEffect } from "react";
+import Lenis from "@studio-freight/lenis";
+import {
+	CTA,
+	Footer,
+	Hero,
+	LogoTicker,
+	Services,
+	ProductShowcase,
+	Testimonials,
+} from "@/components";
+
+export default function App() {
+	useEffect(() => {
+		const lenis = new Lenis();
+
+		function raf(time: number) {
+			lenis.raf(time);
+			requestAnimationFrame(raf);
+		}
+
+		requestAnimationFrame(raf);
+	}, []);
+	return (
+		<>
+			<Hero />
+			<LogoTicker />
+			<ProductShowcase />
+			<Services />
+			<Testimonials />
+			<CTA />
+			<Footer />
+		</>
+	);
+>>>>>>> 3bc9588be4435e479cd8b5adde3400babe24a484
 }
