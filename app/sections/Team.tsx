@@ -107,11 +107,6 @@ export default function Team() {
               className="group relative"
             >
               <div className="relative p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] hover:border-white/20 transition-all duration-300 text-center">
-                {/* Impact Badge */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
-                  <span className="text-xs text-white/60">{member.impact}</span>
-                </div>
-
                 {/* Info */}
                 <h3 className="text-lg sm:text-xl font-light text-white mb-1">
                   {member.name}

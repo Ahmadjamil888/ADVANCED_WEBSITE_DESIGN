@@ -6,9 +6,9 @@ import { Quote, Star } from "lucide-react";
 const testimonials = [
   {
     quote: "zehanx Technologies transformed our business with their AI-powered solution. The team's expertise in machine learning is unmatched.",
-    author: "Sarah Johnson",
+    author: "Sarah davidson",
     role: "CTO, TechStart Inc.",
-    rating: 5,
+    rating: 4,
     image: "/avatar-1.png",
   },
   {
@@ -27,9 +27,9 @@ const testimonials = [
   },
   {
     quote: "Their deep learning solution helped us automate complex processes, saving us thousands of hours annually. Exceptional work!",
-    author: "Fatima Rizvi",
+    author: "Kim kashans",
     role: "Director, DataSystems",
-    rating: 5,
+    rating: 4,
     image: "/avatar-4.png",
   },
 ];
