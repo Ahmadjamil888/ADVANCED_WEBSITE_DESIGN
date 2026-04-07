@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, Zap, Layers } from "lucide-react";
+import { Zap } from "lucide-react";
 import VideoPlayer from "../components/VideoPlayer";
 import LogoMarquee from "../components/LogoMarquee";
 
@@ -50,16 +50,8 @@ export default function Hero() {
           {/* Badges */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-              <Sparkles className="w-3.5 h-3.5 text-white/70" />
-              <span className="text-xs text-white/80">End-to-End Solutions</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
               <Zap className="w-3.5 h-3.5 text-white/70" />
               <span className="text-xs text-white/80">AI-Powered</span>
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-              <Layers className="w-3.5 h-3.5 text-white/70" />
-              <span className="text-xs text-white/80">From Idea to Deployment</span>
             </div>
           </motion.div>
 

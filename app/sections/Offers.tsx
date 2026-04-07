@@ -164,7 +164,7 @@ export default function Offers() {
           ))}
         </motion.div>
 
-        {/* Target Customers */}
+        {/* Trust Statement */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -172,26 +172,10 @@ export default function Offers() {
           transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
           className="mt-16 sm:mt-20 text-center"
         >
-          <h3 className="text-xl sm:text-2xl font-light text-white mb-8">
-            Best Target Customers
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">🔥</span>
-                <span className="text-sm text-white/50">Recommended</span>
-              </div>
-              <h4 className="text-lg font-light text-white mb-2">Startups / Founders</h4>
-              <p className="text-sm text-white/50">They need EVERYTHING built</p>
-            </div>
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">💼</span>
-              </div>
-              <h4 className="text-lg font-light text-white mb-2">SMEs Going Digital</h4>
-              <p className="text-sm text-white/50">Still using Excel / WhatsApp / manual ops</p>
-            </div>
-          </div>
+          <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto">
+            <span className="text-white/80">6+ years experience</span> building systems for startups and enterprises. 
+            <span className="text-white/80"> Trusted by businesses worldwide</span> to deliver results that move the needle.
+          </p>
         </motion.div>
       </div>
     </section>

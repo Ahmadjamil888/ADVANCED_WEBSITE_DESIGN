@@ -55,7 +55,7 @@ export default function LogoMarquee() {
         {tripledLogos.map((logo, index) => (
           <div
             key={`${logo.name}-${index}`}
-            className="flex-shrink-0 mx-8 sm:mx-12 grayscale opacity-40 hover:opacity-60 transition-opacity duration-300"
+            className="flex-shrink-0 mx-8 sm:mx-12 opacity-70 hover:opacity-100 transition-opacity duration-300"
           >
             <div className="text-white">
               {logo.svg}
