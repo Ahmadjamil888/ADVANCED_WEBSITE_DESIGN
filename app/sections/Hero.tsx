@@ -30,7 +30,7 @@ const itemVariants = {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen w-full bg-black overflow-hidden">
+    <section className="relative min-h-screen w-full bg-black overflow-hidden flex flex-col">
       {/* Background Video - positioned at bottom */}
       <div className="absolute bottom-[20vh] sm:bottom-[35vh] left-0 right-0 h-[50vh] sm:h-[60vh] lg:h-[80vh] w-full z-0">
         <VideoPlayer
@@ -40,7 +40,7 @@ export default function Hero() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-20">
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-4 pt-20 pb-32 sm:pb-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -66,7 +66,7 @@ export default function Hero() {
           {/* Headline */}
           <motion.h1
             variants={itemVariants}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[80px] font-light text-white tracking-tight leading-[1.1] mb-4 sm:mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl font-light text-white tracking-tight leading-[1.1] mb-3 sm:mb-4"
           >
             Engineering the
             <br />
@@ -101,11 +101,11 @@ export default function Hero() {
             </a>
           </motion.div>
         </motion.div>
+      </div>
 
-        {/* Logo Marquee */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <LogoMarquee />
-        </div>
+      {/* Logo Marquee - positioned at bottom with proper spacing */}
+      <div className="relative z-10 w-full mt-auto">
+        <LogoMarquee />
       </div>
     </section>
   );

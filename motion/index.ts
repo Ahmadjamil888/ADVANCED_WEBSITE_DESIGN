@@ -1,10 +1,10 @@
 export const navVariants = {
    initial: {
-      y: "-100%", transition: { ease: "easeInOut", duration: 1 }
+      y: "-100%", transition: { ease: [0.4, 0, 0.2, 1] as const, duration: 1 }
    },
-   enter: { y: 0, transition: { ease: "easeInOut", duration: 1 } },
-   hidden: { y: "-100%", transition: { ease: "easeInOut", duration: 0.5 } },
-   vissible: { y: 0, transition: { ease: "easeInOut", duration: 0.5 }, }
+   enter: { y: 0, transition: { ease: [0.4, 0, 0.2, 1] as const, duration: 1 } },
+   hidden: { y: "-100%", transition: { ease: [0.4, 0, 0.2, 1] as const, duration: 0.5 } },
+   vissible: { y: 0, transition: { ease: [0.4, 0, 0.2, 1] as const, duration: 0.5 }, }
 };
 
 export const textAnimation = {
@@ -12,7 +12,7 @@ export const textAnimation = {
       opacity: 0, y: "100%", transition: {
          duration: 0.8,
          delay: 0.5,
-         ease: [0.33, 1, 0.68, 1],
+         ease: [0.33, 1, 0.68, 1] as const,
       },
    },
    enter: {
@@ -20,7 +20,7 @@ export const textAnimation = {
       transition: {
          duration: 0.8,
          delay: 0.5,
-         ease: [0.33, 1, 0.68, 1],
+         ease: [0.33, 1, 0.68, 1] as const,
       },
    },
 };
@@ -29,14 +29,14 @@ export const imageAnimation = {
    initial: {
       opacity: 0, scale: 0, transition: {
          duration: 0.8,
-         ease: [0.33, 1, 0.68, 1],
+         ease: [0.33, 1, 0.68, 1] as const,
       },
    },
    enter: {
       opacity: 1, scale: 1,
       transition: {
          duration: 0.8,
-         ease: [0.33, 1, 0.68, 1],
+         ease: [0.33, 1, 0.68, 1] as const,
       },
    },
 };
@@ -47,7 +47,7 @@ export const animation = {
       y: "0",
       transition: {
          duration: 0.75,
-         ease: [0.33, 1, 0.68, 1],
+         ease: [0.33, 1, 0.68, 1] as const,
          delay: 0.5,
       },
    }),
@@ -59,13 +59,13 @@ export const scaleAnimation = {
       scale: 1,
       x: "-50%",
       y: "-50%",
-      transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
+      transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] as const },
    },
    closed: {
       scale: 0,
       x: "-50%",
       y: "-50%",
-      transition: { duration: 0.4, ease: [0.32, 0, 0.67, 0] },
+      transition: { duration: 0.4, ease: [0.32, 0, 0.67, 0] as const },
    },
 };
 
@@ -85,17 +85,17 @@ export const slideUp = {
    },
    exit: {
       top: "-100vh",
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const, delay: 0.2 }
    }
 };
 
 // menu
 export const menuSlide = {
    initial: { x: "calc(100% + 100px)" },
-   enter: { x: "0", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } },
+   enter: { x: "0", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const } },
    exit: {
       x: "calc(100% + 100px)",
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const },
    },
 };
 // SLIDE
@@ -103,11 +103,11 @@ export const slide = {
    initial: { x: 80 },
    enter: (i: number) => ({
       x: 0,
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.05 * i },
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const, delay: 0.05 * i },
    }),
    exit: (i: number) => ({
       x: 80,
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.05 * i },
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const, delay: 0.05 * i },
    }),
 };
 
@@ -134,10 +134,10 @@ export const curve = {
    },
    enter: {
       d: targetPath,
-      transition: { duration: 1, ease: [0.76, 0, 0.24, 1] },
+      transition: { duration: 1, ease: [0.76, 0, 0.24, 1] as const },
    },
    exit: {
       d: initialPath,
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const },
    },
 };

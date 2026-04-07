@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -96,22 +95,4 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
-=======
-import "@/styles/globals.css";
-import type { Metadata } from "next";
-export const metadata: Metadata = {
-	title: "Zehanx Technologies | Machine Learning & Software Solutions",
-	description: "Zehanx Technologies provides cutting-edge Machine Learning solutions, custom software development, and digital transformation services.",
-};
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
-	return (
-		<html lang="en">
-			<body className="bg-[#0a0a0a] text-white">{children}</body>
-		</html>
-	);
->>>>>>> 3bc9588be4435e479cd8b5adde3400babe24a484
 }
