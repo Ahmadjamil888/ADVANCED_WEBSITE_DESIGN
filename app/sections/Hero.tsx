@@ -40,7 +40,7 @@ export default function Hero() {
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-4 pt-20 pb-32 sm:pb-24">
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-4 pt-32 sm:pt-28 pb-32 sm:pb-24">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -66,7 +66,7 @@ export default function Hero() {
           {/* Headline */}
           <motion.h1
             variants={itemVariants}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl font-light text-white tracking-tight leading-[1.1] mb-3 sm:mb-4"
+            className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl font-light text-white tracking-tight leading-[1.1] mb-3 sm:mb-4 text-center"
           >
             Engineering the
             <br />

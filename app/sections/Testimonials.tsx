@@ -6,24 +6,24 @@ import { Quote, Star } from "lucide-react";
 const testimonials = [
   {
     quote: "zehanx Technologies transformed our business with their AI-powered solution. The team's expertise in machine learning is unmatched.",
-    author: "Ahmed Khan",
-    role: "CEO, TechVentures",
-    rating: 5,
-    image: "/avatar-1.png",
-  },
-  {
-    quote: "The web development team delivered a stunning, high-performance website that exceeded our expectations. Highly recommended!",
-    author: "Sarah Ali",
-    role: "Founder, StartupHub",
+    author: "Sarah Johnson",
+    role: "CTO, TechStart Inc.",
     rating: 5,
     image: "/avatar-2.png",
   },
   {
-    quote: "Working with zehanx on our mobile app was a game-changer. Their attention to detail and technical expertise is world-class.",
-    author: "Muhammad Hassan",
-    role: "CTO, InnovatePak",
+    quote: "The web development team delivered a stunning, high-performance website that exceeded our expectations. Highly recommended!",
+    author: "Michael Chen",
+    role: "Founder, GrowthLabs",
     rating: 5,
-    image: "/avatar-3.png",
+    image: "/avatar-5.png",
+  },
+  {
+    quote: "Working with zehanx on our mobile app was a game-changer. Their attention to detail and technical expertise is world-class.",
+    author: "David Rodriguez",
+    role: "Data Director, FinanceHub",
+    rating: 5,
+    image: "/avatar-6.png",
   },
   {
     quote: "Their deep learning solution helped us automate complex processes, saving us thousands of hours annually. Exceptional work!",

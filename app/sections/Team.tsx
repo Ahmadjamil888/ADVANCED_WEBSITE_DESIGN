@@ -3,22 +3,44 @@
 import { motion } from "framer-motion";
 import { Users } from "lucide-react";
 
-// Custom avatar component with initials
-const Avatar = ({ name, className }: { name: string; className?: string }) => {
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-
+// Cartoonish Avatar Component with gradient backgrounds
+const CartoonAvatar = ({ name, className }: { name: string; className?: string }) => {
+  // Generate consistent color based on name
+  const colors = [
+    { bg: "from-blue-500/30 to-blue-600/20", accent: "bg-blue-400" },
+    { bg: "from-emerald-500/30 to-emerald-600/20", accent: "bg-emerald-400" },
+    { bg: "from-purple-500/30 to-purple-600/20", accent: "bg-purple-400" },
+    { bg: "from-amber-500/30 to-amber-600/20", accent: "bg-amber-400" },
+    { bg: "from-rose-500/30 to-rose-600/20", accent: "bg-rose-400" },
+    { bg: "from-cyan-500/30 to-cyan-600/20", accent: "bg-cyan-400" },
+  ];
+  
+  const getColorIndex = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % colors.length;
+  };
+  
+  const color = colors[getColorIndex(name)];
+  
   return (
-    <div
-      className={`flex items-center justify-center text-white font-semibold ${className}`}
-      style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-      }}
-    >
-      {initials}
+    <div className={`relative rounded-full overflow-hidden bg-gradient-to-br ${color.bg} ${className}`}>
+      {/* Cartoon face SVG */}
+      <svg viewBox="0 0 100 100" className="w-full h-full">
+        {/* Face base */}
+        <circle cx="50" cy="45" r="35" fill="rgba(255,255,255,0.15)" />
+        {/* Eyes */}
+        <circle cx="38" cy="40" r="5" fill="rgba(255,255,255,0.8)" />
+        <circle cx="62" cy="40" r="5" fill="rgba(255,255,255,0.8)" />
+        {/* Smile */}
+        <path d="M 35 55 Q 50 65 65 55" stroke="rgba(255,255,255,0.6)" strokeWidth="2" fill="none" strokeLinecap="round" />
+        {/* Decorative elements */}
+        <circle cx="20" cy="25" r="3" fill="rgba(255,255,255,0.2)" />
+        <circle cx="80" cy="30" r="2" fill="rgba(255,255,255,0.2)" />
+        <circle cx="75" cy="70" r="4" fill="rgba(255,255,255,0.15)" />
+      </svg>
     </div>
   );
 };
@@ -35,7 +57,6 @@ const team = [
     name: "Ahmad Jamil",
     role: "Founder & CEO",
     bio: "Visionary leader driving innovation and growth at zehanx Technologies with expertise in business strategy and technology.",
-    image: "/avatar-5.png",
     social: {
       linkedin: "#",
     },
@@ -44,7 +65,6 @@ const team = [
     name: "Ahmad Ibrahim",
     role: "Co-founder & COO",
     bio: "Operations expert ensuring seamless delivery of projects and maintaining excellence in client relationships.",
-    image: "/avatar-6.png",
     social: {
       linkedin: "#",
     },
@@ -53,7 +73,6 @@ const team = [
     name: "Umair Amin",
     role: "Co-founder & CMO",
     bio: "Marketing strategist expanding zehanx reach globally and building strong brand presence in the tech industry.",
-    image: "/avatar-7.png",
     social: {
       linkedin: "#",
     },
@@ -127,13 +146,9 @@ export default function Team() {
               className="group relative"
             >
               <div className="relative p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] hover:border-white/20 transition-all duration-300 text-center">
-                {/* Profile Avatar */}
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-white/10 ring-offset-2 ring-offset-black bg-white/10">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover"
-                  />
+                {/* Profile Avatar - Cartoon Style */}
+                <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 rounded-full overflow-hidden ring-2 ring-white/10 ring-offset-2 ring-offset-black">
+                  <CartoonAvatar name={member.name} className="w-full h-full" />
                 </div>
 
                 {/* Info */}
