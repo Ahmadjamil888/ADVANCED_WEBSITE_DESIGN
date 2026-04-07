@@ -72,7 +72,7 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <a
-          href="https://cal.com/zehanx-technologies-official"
+          href="/contact"
           className="hidden md:block px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-sm font-medium text-black bg-gradient-to-b from-white to-gray-200 hover:from-gray-100 hover:to-gray-300 transition-all shadow-lg shadow-white/10"
         >
           Get Started

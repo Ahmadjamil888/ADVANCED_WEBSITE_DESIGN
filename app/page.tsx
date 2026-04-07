@@ -10,6 +10,7 @@ import Services from "./sections/Services";
 import Insights from "./sections/Insights";
 import Portfolio from "./sections/Portfolio";
 import Team from "./sections/Team";
+import Testimonials from "./sections/Testimonials";
 import Contact from "./sections/Contact";
 
 export default function Home() {
@@ -26,6 +27,7 @@ export default function Home() {
       <Insights />
       <Portfolio />
       <Team />
+      <Testimonials />
       <Contact />
       <Footer />
     </main>

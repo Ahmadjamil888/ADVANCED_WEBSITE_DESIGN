@@ -81,7 +81,7 @@ export default function Hero() {
               Book a Call
             </a>
             <a
-              href="https://cal.com/zehanx-technologies-official"
+              href="/contact"
               className="w-full sm:w-auto text-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm text-white font-medium bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
             >
               Let&apos;s Build Together
