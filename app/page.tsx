@@ -1,7 +1,10 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
+import RealResults from "./sections/RealResults";
 import Features from "./sections/Features";
+import Offers from "./sections/Offers";
+import EarlyStageChaos from "./sections/EarlyStageChaos";
 import About from "./sections/About";
 import Services from "./sections/Services";
 import Insights from "./sections/Insights";
@@ -14,7 +17,10 @@ export default function Home() {
     <main className="relative min-h-screen bg-black">
       <Navbar />
       <Hero />
+      <RealResults />
       <Features />
+      <Offers />
+      <EarlyStageChaos />
       <About />
       <Services />
       <Insights />

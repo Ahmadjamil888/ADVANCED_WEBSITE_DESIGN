@@ -160,13 +160,13 @@ export default function Features() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-6">
             <Cpu className="w-4 h-4 text-white/70" />
-            <span className="text-sm text-white/80">Technology Stack</span>
+            <span className="text-sm text-white/80">Built for Results</span>
           </div>
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-white tracking-tight mb-4">
-            Built with cutting-edge technologies
+            Built for speed, scale, and real-world impact
           </h3>
           <p className="text-base sm:text-lg text-white/60 max-w-xl mx-auto">
-            We leverage the latest tools and frameworks to deliver scalable, high-performance solutions.
+            We leverage proven technologies that deliver results — not just code that looks good on paper.
           </p>
         </motion.div>
 
@@ -211,10 +211,10 @@ export default function Features() {
               We combine technical expertise with business acumen to deliver solutions that drive real results for your organization.
             </p>
             <a
-              href="#contact"
+              href="https://cal.com/zehanx-technologies-official"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-black font-medium bg-gradient-to-b from-white to-gray-200 hover:from-gray-100 hover:to-gray-300 transition-all shadow-lg shadow-white/10"
             >
-              Start Your Project
+              Start Your AI Project
               <ArrowRight className="w-4 h-4" />
             </a>
           </motion.div>

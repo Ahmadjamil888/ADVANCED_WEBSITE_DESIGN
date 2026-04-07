@@ -1,44 +1,52 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code, Brain, Bot, Network, Smartphone, Globe, ArrowRight } from "lucide-react";
+import { Code, Brain, Bot, Network, Smartphone, Globe, ArrowRight, Zap, Star, Rocket, Database } from "lucide-react";
 
-const services = [
+const primaryService = {
+  icon: Brain,
+  badge: "Primary Offer",
+  title: "AI-Powered SaaS Development",
+  description: "End-to-end AI-powered platforms — from frontend to backend to infrastructure. Complete business systems that run your operations.",
+  features: ["Website + Marketing", "Admin & User Dashboards", "Auth & Permissions", "Database & APIs", "AI Features", "Deployment & Hosting"],
+};
+
+const secondaryServices = [
+  {
+    icon: Rocket,
+    title: "MVP Development",
+    description: "Rapid prototyping to validate your idea. From concept to live product in weeks, not months.",
+    highlight: "21 days to MVP",
+  },
+  {
+    icon: Database,
+    title: "Data Systems",
+    description: "High-performance dashboards handling millions of records. Real-time analytics and visualization.",
+    highlight: "1M+ records scaled",
+  },
+  {
+    icon: Zap,
+    title: "AI Integration",
+    description: "Add intelligence to existing platforms. Predictive analytics, automation, and intelligent workflows.",
+    highlight: "85% prediction accuracy",
+  },
+];
+
+const otherServices = [
   {
     icon: Code,
     title: "Web Development",
-    description: "Custom websites, web applications, and e-commerce solutions built with modern frameworks like React, Next.js, and Node.js.",
-    tags: ["React", "Next.js", "Node.js", "Full-Stack"],
-  },
-  {
-    icon: Brain,
-    title: "Artificial Intelligence",
-    description: "AI-powered solutions for automation, predictive analytics, natural language processing, and computer vision applications.",
-    tags: ["NLP", "Computer Vision", "Predictive Analytics"],
-  },
-  {
-    icon: Bot,
-    title: "Machine Learning",
-    description: "End-to-end ML solutions from data preprocessing to model deployment, including supervised and unsupervised learning systems.",
-    tags: ["TensorFlow", "PyTorch", "Scikit-learn"],
-  },
-  {
-    icon: Network,
-    title: "Deep Learning & Neural Networks",
-    description: "Advanced neural network architectures for complex pattern recognition, image processing, and deep learning applications.",
-    tags: ["CNN", "RNN", "Transformers", "GANs"],
+    description: "Custom web applications",
   },
   {
     icon: Smartphone,
     title: "App Development",
-    description: "Native and cross-platform mobile applications for iOS and Android with seamless user experiences and robust backend integration.",
-    tags: ["iOS", "Android", "React Native", "Flutter"],
+    description: "Mobile apps for iOS & Android",
   },
   {
     icon: Globe,
-    title: "Software Development",
-    description: "Custom enterprise software, desktop applications, and system integrations tailored to your business requirements.",
-    tags: ["Enterprise", "Desktop", "APIs", "Cloud"],
+    title: "Enterprise Software",
+    description: "Custom business solutions",
   },
 ];
 
@@ -79,56 +87,125 @@ export default function Services() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-6">
             <Code className="w-4 h-4 text-white/70" />
-            <span className="text-sm text-white/80">Our Services</span>
+            <span className="text-sm text-white/80">AI Product Engineering Partner</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white tracking-tight mb-4 sm:mb-6">
-            Comprehensive Technology
+            Built for Speed, Scale,
             <br className="hidden sm:block" />
-            Solutions
+            and Real-World Impact
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            From concept to deployment, we deliver cutting-edge solutions that drive business growth and innovation.
+            Not just code. Complete business platforms that solve real problems and deliver measurable results.
           </p>
         </motion.div>
 
-        {/* Services Grid */}
+        {/* Primary Service - BIG */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+          className="mb-8 sm:mb-12"
+        >
+          <div className="relative p-8 sm:p-12 lg:p-16 rounded-3xl bg-white/[0.03] border border-white/20 hover:border-white/30 transition-all duration-300">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-6">
+              <Star className="w-3.5 h-3.5 text-white/70" />
+              <span className="text-xs text-white/80 font-medium">{primaryService.badge}</span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              {/* Left: Title & Description */}
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    <primaryService.icon className="w-7 h-7 text-white/80" />
+                  </div>
+                </div>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-white mb-4">
+                  {primaryService.title}
+                </h3>
+                <p className="text-base sm:text-lg text-white/60 leading-relaxed mb-6">
+                  {primaryService.description}
+                </p>
+                <a
+                  href="https://cal.com/zehanx-technologies-official"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm text-white font-medium bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
+                >
+                  Start Your AI Project
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+
+              {/* Right: Features Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {primaryService.features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/10"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                    <span className="text-sm text-white/70">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Secondary Services */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
         >
-          {services.map((service) => (
+          {secondaryServices.map((service) => (
             <motion.div
               key={service.title}
               variants={itemVariants}
               className="group relative p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] hover:border-white/20 transition-all duration-300"
             >
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 mb-4 sm:mb-6">
-                <service.icon className="w-6 h-6 text-white/80" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                  <service.icon className="w-5 h-5 text-white/70" />
+                </div>
+                <span className="text-xs text-white/40 px-2 py-1 rounded-full bg-white/5 border border-white/10">
+                  {service.highlight}
+                </span>
               </div>
-              <h3 className="text-lg sm:text-xl font-light text-white mb-2 sm:mb-3">
+              <h3 className="text-lg sm:text-xl font-light text-white mb-2">
                 {service.title}
               </h3>
-              <p className="text-sm sm:text-base text-white/60 leading-relaxed mb-4">
+              <p className="text-sm text-white/50 leading-relaxed">
                 {service.description}
               </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {service.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 text-xs text-white/50 bg-white/5 rounded-full border border-white/10"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 text-white/40 group-hover:text-white/80 transition-colors">
-                <span className="text-sm font-light">Learn more</span>
-                <ArrowRight className="w-4 h-4" />
-              </div>
             </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Other Services - Compact */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+        >
+          {otherServices.map((service) => (
+            <div
+              key={service.title}
+              className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] transition-all duration-300"
+            >
+              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                <service.icon className="w-4 h-4 text-white/50" />
+              </div>
+              <div>
+                <h4 className="text-sm font-light text-white/80">{service.title}</h4>
+                <p className="text-xs text-white/40">{service.description}</p>
+              </div>
+            </div>
           ))}
         </motion.div>
       </div>
