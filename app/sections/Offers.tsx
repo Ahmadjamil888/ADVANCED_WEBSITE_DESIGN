@@ -8,45 +8,48 @@ const offerTiers = [
     icon: Briefcase,
     number: "1",
     title: "Business System Build",
-    subtitle: "Core Offer",
-    description: "Complete business platforms that run your operations",
+    subtitle: "Core Offer — $10k to $35k",
+    description: "You get a complete revenue-ready platform. From idea to deployment in 21 days.",
     features: [
-      "Website (landing + marketing)",
-      "Dashboard (admin + users)",
-      "Auth system (roles, permissions)",
-      "Database design",
-      "APIs + backend",
-      "AI features (optional but powerful)",
-      "Deployment + domain + hosting",
+      "Landing page + marketing site",
+      "Admin & user dashboards",
+      "Auth system with roles/permissions",
+      "Database design & APIs",
+      "AI features (optional add-on)",
+      "Domain, hosting, deployment",
+      "21-day delivery guarantee",
     ],
-    cta: "From idea to live product",
+    cta: "Outcome: Revenue-ready system",
   },
   {
     icon: Brain,
     number: "2",
-    title: "AI Layer",
-    subtitle: "Upsell",
-    description: "Intelligent automation for your platform",
+    title: "AI Intelligence Layer",
+    subtitle: "Upsell — $5k to $25k",
+    description: "Add AI to your existing platform. Make your system think and work for you.",
     features: [
-      "Predictive analytics",
-      "Chatbots / copilots",
+      "Predictive analytics engine",
+      "Custom chatbots / copilots",
       "Automation workflows",
       "Recommendation systems",
+      "ML model training & deployment",
     ],
-    cta: "Add intelligence to your product",
+    cta: "Outcome: AI-powered automation",
   },
   {
     icon: BarChart3,
     number: "3",
-    title: "Data & Optimization",
-    subtitle: "Performance",
-    description: "Data-driven insights and optimization",
+    title: "Optimize & Scale",
+    subtitle: "Retainer — $2k to $10k/mo",
+    description: "Ongoing optimization for founders scaling from 1→10. We grow with you.",
     features: [
-      "Data cleaning pipelines",
-      "Tracking + analytics setup",
-      "Performance dashboards",
+      "Performance optimization",
+      "Analytics & tracking setup",
+      "Feature iteration & updates",
+      "AI model improvements",
+      "Priority support & maintenance",
     ],
-    cta: "Optimize and scale",
+    cta: "Outcome: Continuous growth",
   },
 ];
 
@@ -93,15 +96,15 @@ export default function Offers() {
             <span className="text-sm text-white/80">Our Offer Structure</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white tracking-tight mb-4 sm:mb-6">
-            Product Engineering
+            How We Work
             <br className="hidden sm:block" />
-            Partner
+            Together
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            We build complete AI-powered SaaS platforms and internal business systems — from idea to deployment.
+            Three ways to partner with us. Each designed for different stages of your growth.
           </p>
           <p className="text-sm sm:text-base text-white/40 max-w-xl mx-auto mt-4">
-            You are NOT hiring a dev agency. You ARE partnering with a Product Engineering Partner.
+            You are not buying code. You are buying outcomes.
           </p>
         </motion.div>
 
@@ -173,8 +176,8 @@ export default function Offers() {
           className="mt-16 sm:mt-20 text-center"
         >
           <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto">
-            <span className="text-white/80">6+ years experience</span> building systems for startups and enterprises. 
-            <span className="text-white/80"> Trusted by businesses worldwide</span> to deliver results that move the needle.
+            <span className="text-white/80">Built 3 startups</span> and learned what founders actually need. 
+            <span className="text-white/80"> 50+ systems shipped</span> for founders who value speed and quality.
           </p>
         </motion.div>
       </div>

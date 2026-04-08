@@ -5,32 +5,39 @@ import { Quote, Star } from "lucide-react";
 
 const testimonials = [
   {
-    quote: "zehanx Technologies transformed our business with their AI-powered solution. The team's expertise in machine learning is unmatched.",
-    author: "Sarah davidson",
-    role: "CTO, TechStart Inc.",
-    rating: 4,
+    quote: "We needed a system to manage hospital operations digitally. Zehanx delivered a complete solution that improved efficiency and reduced manual work significantly.",
+    author: "Dr. Saira",
+    role: "CEO, Usman Hospital",
+    rating: 5,
     image: "/avatar-1.png",
   },
   {
-    quote: "The web development team delivered a stunning, high-performance website that exceeded our expectations. Highly recommended!",
-    author: "Michael Chen",
-    role: "Founder, GrowthLabs",
+    quote: "Professional team. Delivered exactly what we needed with clarity and strong technical execution. Our institute management system now handles 500+ students seamlessly.",
+    author: "Rana Asif Khan",
+    role: "CEO, IRTCoP",
     rating: 5,
-    image: "/avatar-2.png",
+    image: "/avatar-9.png",
   },
   {
-    quote: "Working with zehanx on our mobile app was a game-changer. Their attention to detail and technical expertise is world-class.",
-    author: "David Rodriguez",
-    role: "Data Director, FinanceHub",
+    quote: "They digitized our workflow and made our operations much more efficient. What used to take days now happens in hours. The system paid for itself in two months.",
+    author: "Umair Fiaz",
+    role: "CEO, Janjua Tailors",
     rating: 5,
     image: "/avatar-3.png",
   },
   {
-    quote: "Their deep learning solution helped us automate complex processes, saving us thousands of hours annually. Exceptional work!",
-    author: "Kim kashans",
-    role: "Director, DataSystems",
-    rating: 4,
-    image: "/avatar-4.png",
+    quote: "They built a custom platform that streamlined our school operations. What stood out was how fast they shipped — and how well they understood our needs as an institution.",
+    author: "Syeda Eyesha Nadeem",
+    role: "CEO, APS Jinnah",
+    rating: 5,
+    image: "/avatar-8.png",
+  },
+  {
+    quote: "Zehanx built our logistics tracking system in under a month. Now we handle 10,000+ packages monthly with 98% delivery accuracy. Their speed and execution were impressive.",
+    author: "Shazab Jamil",
+    role: "CEO, Daak Khana",
+    rating: 5,
+    image: "/avatar-2.png",
   },
 ];
 
@@ -77,28 +84,28 @@ export default function Testimonials() {
             <span className="text-sm text-white/80">Testimonials</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white tracking-tight mb-4 sm:mb-6">
-            Trusted by Industry
+            Trusted by Founders
             <br className="hidden sm:block" />
-            Leaders
+            & Business Owners
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            Hear from our clients about their experience working with zehanx Technologies.
+            Across hospitals, schools, logistics, and retail — we build systems that real businesses depend on.
           </p>
         </motion.div>
 
-        {/* Testimonials Grid */}
+        {/* Testimonials Grid - 5 testimonials */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
         >
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
-              className="relative p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10"
+              className={`relative p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10 ${index === 4 ? 'md:col-span-2 lg:col-span-1' : ''}`}
             >
               {/* Quote icon */}
               <div className="absolute top-6 right-6 sm:top-8 sm:right-8">

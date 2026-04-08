@@ -5,30 +5,30 @@ import { Code, Brain, Bot, Network, Smartphone, Globe, ArrowRight, Zap, Star, Ro
 
 const primaryService = {
   icon: Brain,
-  badge: "Primary Offer",
+  badge: "Core Offer ($10k–$35k)",
   title: "AI-Powered SaaS Development",
-  description: "End-to-end AI-powered platforms — from frontend to backend to infrastructure. Complete business systems that run your operations.",
-  features: ["Website + Marketing", "Admin & User Dashboards", "Auth & Permissions", "Database & APIs", "AI Features", "Deployment & Hosting"],
+  description: "Complete business systems from idea to deployment. You get a revenue-ready platform with everything needed to start acquiring customers.",
+  features: ["Landing Page & Marketing", "Admin + User Dashboards", "Auth & User Roles", "Database & APIs", "AI Features (Optional)", "Deployment & Domain"],
 };
 
 const secondaryServices = [
   {
     icon: Rocket,
-    title: "MVP Development",
-    description: "Rapid prototyping to validate your idea. From concept to live product in weeks, not months.",
-    highlight: "21 days to MVP",
+    title: "21-Day MVP System",
+    description: "From concept to paying customers. We validate, build, and ship fast so you can test your market quickly.",
+    highlight: "Concept → Live in 21 Days",
   },
   {
     icon: Database,
-    title: "Data Systems",
-    description: "High-performance dashboards handling millions of records. Real-time analytics and visualization.",
-    highlight: "1M+ records scaled",
+    title: "AI Intelligence Layer",
+    description: "Add predictive analytics, automation, and smart features to your existing platform. $5k–$25k add-on.",
+    highlight: "Upsell: $5k–$25k",
   },
   {
     icon: Zap,
-    title: "AI Integration",
-    description: "Add intelligence to existing platforms. Predictive analytics, automation, and intelligent workflows.",
-    highlight: "85% prediction accuracy",
+    title: "Optimize & Scale",
+    description: "Ongoing optimization, analytics setup, and continuous improvement. For founders scaling from 1→10.",
+    highlight: "Retainer: $2k–$10k/mo",
   },
 ];
 
@@ -90,12 +90,12 @@ export default function Services() {
             <span className="text-sm text-white/80">AI Product Engineering Partner</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white tracking-tight mb-4 sm:mb-6">
-            Built for Speed, Scale,
+            Product Engineering
             <br className="hidden sm:block" />
-            and Real-World Impact
+            for SaaS Founders
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            Not just code. Complete business platforms that solve real problems and deliver measurable results.
+            Not a dev shop. A technical partner who ships revenue-ready systems in 21 days. Projects range $10k–$50k.
           </p>
         </motion.div>
 
@@ -132,7 +132,7 @@ export default function Services() {
                   href="https://cal.com/zehanx-technologies-official"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm text-white font-medium bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
                 >
-                  Start Your AI Project
+                  Book Strategy Call
                   <ArrowRight className="w-4 h-4" />
                 </a>
               </div>

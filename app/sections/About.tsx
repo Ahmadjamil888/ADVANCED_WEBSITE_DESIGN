@@ -6,23 +6,23 @@ import { Target, Lightbulb, Users, Award, Eye, Compass, Sparkles } from "lucide-
 const values = [
   {
     icon: Target,
-    title: "6+ Years Experience",
-    description: "Partnered and served clients for more than 6 years with consistent quality and dedication.",
+    title: "Built 3 Startups",
+    description: "Failed, learned, succeeded. We have lived the founder journey and understand what actually matters.",
   },
   {
     icon: Lightbulb,
-    title: "AI & ML Expertise",
-    description: "Deep expertise in Artificial Intelligence, Machine Learning, Deep Learning, and Neural Networks.",
+    title: "AI-First Engineering",
+    description: "Not just AI tools — we architect systems where AI is the core competitive advantage.",
   },
   {
     icon: Users,
-    title: "Full-Stack Solutions",
-    description: "Complete web, software, and app development services from concept to deployment.",
+    title: "Speed to Market",
+    description: "21-day MVP system. Get to revenue faster without sacrificing quality or scalability.",
   },
   {
     icon: Award,
-    title: "Trusted Partnerships",
-    description: "Long-term relationships with clients built on trust, quality, and exceptional results.",
+    title: "Product Partnership",
+    description: "We do not just write code. We think product, business, and user experience with you.",
   },
 ];
 
@@ -64,17 +64,17 @@ export default function About() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-6">
               <Award className="w-4 h-4 text-white/70" />
-              <span className="text-sm text-white/80">About Us</span>
+              <span className="text-sm text-white/80">Founder Story</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight mb-4 sm:mb-6">
-              Delivering excellence
-              <span className="block text-white/60">for 6+ years</span>
+              We Have Been
+              <span className="block text-white/60">Where You Are</span>
             </h2>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed mb-6 sm:mb-8">
-              zehanx Technologies has been at the forefront of innovation, providing comprehensive technology solutions. From web development to advanced AI systems, we have partnered with businesses worldwide for over 6 years.
+              Built 3 startups. Faced the chaos of early-stage funding, technical debt, and the pressure to ship. We spent months building what should have taken weeks.
             </p>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed">
-              Our expertise spans Web Development, AI, Machine Learning, Deep Learning, Neural Networks, Software Development, and App Development. We transform ideas into reality.
+              That is why we created Zehanx — to be the technical partner we wish we had. Someone who moves fast, thinks business-first, and actually ships production-ready systems.
             </p>
           </motion.div>
 
@@ -123,7 +123,7 @@ export default function About() {
               <h3 className="text-xl sm:text-2xl font-light text-white">Our Mission</h3>
             </div>
             <p className="text-sm sm:text-base text-white/60 leading-relaxed">
-              To empower businesses worldwide with cutting-edge technology solutions that drive growth, efficiency, and innovation. We strive to bridge the gap between complex technology and practical business applications.
+              Help SaaS founders escape the build trap. Ship revenue-ready systems in weeks, not quarters. Be the technical co-founder you do not have to hire full-time.
             </p>
           </motion.div>
 
@@ -141,7 +141,7 @@ export default function About() {
               <h3 className="text-xl sm:text-2xl font-light text-white">Our Vision</h3>
             </div>
             <p className="text-sm sm:text-base text-white/60 leading-relaxed">
-              To be a global leader in AI and technology solutions, recognized for innovation, quality, and transformative impact. We envision a future where every business harnesses the power of advanced technology.
+              Every founder deserves a world-class technical team from day one. We are building that reality — one AI-powered system at a time.
             </p>
           </motion.div>
         </div>

@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
 import VideoPlayer from "../components/VideoPlayer";
-import LogoMarquee from "../components/LogoMarquee";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,9 +58,9 @@ export default function Hero() {
             variants={itemVariants}
             className="text-[28px] leading-tight sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[56px] font-light text-white tracking-tight mb-5 sm:mb-6 text-center"
           >
-            <span className="block sm:inline">We Build What</span>{" "}
-            <span className="block sm:inline">We Wish</span>{" "}
-            <span className="block">We Had as Founders</span>
+            <span className="block sm:inline">We Build AI-Powered</span>{" "}
+            <span className="block sm:inline">SaaS Systems</span>{" "}
+            <span className="block">in 21 Days — Not Months</span>
           </motion.h1>
 
           {/* Positioning Statement */}
@@ -69,7 +68,7 @@ export default function Hero() {
             variants={itemVariants}
             className="text-sm sm:text-base lg:text-lg text-white/60 max-w-xl mx-auto mb-5 sm:mb-6 leading-relaxed px-4 sm:px-0"
           >
-            AI-powered SaaS, MVPs, and systems — built by a technical founder with real startup experience.
+            Production-ready business systems for SaaS founders scaling from 0→1 or 1→10. Built by a technical founder who has been there.
           </motion.p>
 
           {/* Buttons */}
@@ -78,13 +77,13 @@ export default function Hero() {
               href="https://cal.com/zehanx-technologies-official"
               className="w-full sm:w-auto text-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm text-white font-medium bg-black border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-white/5"
             >
-              Book a Call
+              Book Strategy Call
             </a>
             <a
               href="/contact"
               className="w-full sm:w-auto text-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm text-white font-medium bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
             >
-              Let&apos;s Build Together
+              View Case Studies
             </a>
           </motion.div>
 
@@ -93,15 +92,11 @@ export default function Hero() {
             variants={itemVariants}
             className="flex flex-col items-center gap-2 sm:gap-3"
           >
-            <p className="text-[10px] sm:text-xs text-white/40 tracking-wider uppercase">Trusted by 50+ Founders & CTOs</p>
+            <p className="text-[10px] sm:text-xs text-white/40 tracking-wider uppercase">AI Product Engineering Partner for 50+ Founders</p>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Logo Marquee - positioned at bottom */}
-      <div className="relative z-10 w-full mt-auto">
-        <LogoMarquee />
-      </div>
     </section>
   );
 }

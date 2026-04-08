@@ -32,25 +32,28 @@ export default function CTA() {
 
           {/* Heading */}
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white tracking-tight mb-6 leading-[1.1]">
-            Ready to Build
+            Ready to Ship
             <br />
-            <span className="text-white/60">Something Amazing?</span>
+            <span className="text-white/60">in 21 Days?</span>
           </h2>
 
           {/* Description */}
-          <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-            Let&apos;s transform your ideas into reality. From AI-powered solutions to cutting-edge web and mobile applications, we&apos;re here to help you succeed.
+          <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-4 font-light leading-relaxed">
+            We build complete AI-powered SaaS systems for founders scaling from 0→1 or 1→10. Projects typically range from $10k–$50k depending on complexity.
+          </p>
+          <p className="text-sm sm:text-base text-white/40 max-w-xl mx-auto mb-10 font-light">
+            Limited onboarding slots this month. Book your strategy call now.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <motion.a
-              href="/contact"
+              href="https://cal.com/zehanx-technologies-official"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="group flex items-center gap-3 px-8 py-4 rounded-full text-black font-light bg-gradient-to-b from-white to-gray-200 hover:from-gray-100 hover:to-gray-300 transition-all shadow-lg shadow-white/10"
             >
-              Get Started Now
+              Book Strategy Call
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </motion.a>
             
@@ -60,7 +63,7 @@ export default function CTA() {
               whileTap={{ scale: 0.98 }}
               className="flex items-center gap-3 px-8 py-4 rounded-full text-white font-light bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
             >
-              View Our Work
+              View Case Studies
             </motion.a>
           </div>
 
@@ -74,15 +77,15 @@ export default function CTA() {
           >
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500" />
-              Available for new projects
+              2 spots available this month
             </span>
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-blue-500" />
-              6+ Years Experience
+              Built 3 startups
             </span>
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-purple-500" />
-              100+ Projects Delivered
+              50+ founders served
             </span>
           </motion.div>
         </motion.div>

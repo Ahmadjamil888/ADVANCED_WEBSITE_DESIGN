@@ -5,44 +5,68 @@ import { ExternalLink, Code, Brain, Bot, Network, Smartphone, Globe } from "luci
 
 const projects = [
   {
-    title: "AI-Powered Analytics Platform",
-    description: "Enterprise-grade analytics dashboard with machine learning predictions and real-time data visualization.",
-    tags: ["AI/ML", "React", "Python"],
+    client: "Dr. Saira",
+    role: "CEO, Usman Hospital",
+    title: "BrainSkills AI",
+    subtitle: "AI Teaching & Learning Platform",
+    description: "Complete learning management system with AI-powered content generation, student progress tracking, and automated assessments. Built for medical education.",
+    outcome: "Reduced course prep time by 60%",
+    tags: ["EdTech", "AI/ML", "LMS"],
     icon: Brain,
     gradient: "from-blue-500/20 via-purple-500/20 to-pink-500/20",
   },
   {
-    title: "E-Commerce Mobile App",
-    description: "Full-featured shopping application with AR product preview and smart recommendation engine.",
-    tags: ["Mobile", "React Native", "Node.js"],
-    icon: Smartphone,
+    client: "Rana Asif Khan",
+    role: "CEO, IRTCoP",
+    title: "Institute Management System",
+    subtitle: "Operations & Student Portal",
+    description: "End-to-end institute management with student enrollment, course scheduling, fee tracking, and certificate generation. Handles 500+ active students.",
+    outcome: "Admin workload reduced by 70%",
+    tags: ["Education", "Full-Stack", "Automation"],
+    icon: Globe,
     gradient: "from-green-500/20 via-teal-500/20 to-cyan-500/20",
   },
   {
-    title: "Neural Network Trading Bot",
-    description: "Deep learning system for automated trading with 99.9% accuracy in pattern recognition.",
-    tags: ["Deep Learning", "TensorFlow", "AWS"],
-    icon: Network,
+    client: "Umair Fiaz",
+    role: "CEO, Janjua Tailors",
+    title: "OrderFlow Pro",
+    subtitle: "Tailoring Business Platform",
+    description: "Custom order management system with measurement tracking, delivery scheduling, and customer notifications. Replaced pen-and-paper workflow.",
+    outcome: "Order processing 3x faster",
+    tags: ["SMB", "Workflow", "Mobile-First"],
+    icon: Smartphone,
     gradient: "from-orange-500/20 via-red-500/20 to-pink-500/20",
   },
   {
-    title: "Healthcare Management System",
-    description: "Comprehensive patient management platform with AI-assisted diagnosis capabilities.",
-    tags: ["Healthcare", "AI", "Full-Stack"],
+    client: "Syeda Eyesha Nadeem",
+    role: "CEO, APS Jinnah",
+    title: "SchoolSync",
+    subtitle: "School Administration System",
+    description: "Comprehensive school management with attendance, gradebooks, parent portal, and automated reporting. Serves 800+ students and staff.",
+    outcome: "Parent communication improved 80%",
+    tags: ["Education", "SaaS", "Portal"],
     icon: Bot,
     gradient: "from-cyan-500/20 via-blue-500/20 to-indigo-500/20",
   },
   {
-    title: "Social Media Dashboard",
-    description: "Unified analytics platform for managing multiple social accounts with sentiment analysis.",
-    tags: ["Web App", "NLP", "React"],
-    icon: Globe,
+    client: "Shazab Jamil",
+    role: "CEO, Daak Khana",
+    title: "LogiTrack",
+    subtitle: "Logistics & Delivery Platform",
+    description: "Real-time package tracking with route optimization, delivery confirmations, and customer notifications. 10,000+ packages tracked monthly.",
+    outcome: "Delivery accuracy up to 98%",
+    tags: ["Logistics", "Tracking", "Real-time"],
+    icon: Network,
     gradient: "from-purple-500/20 via-pink-500/20 to-rose-500/20",
   },
   {
-    title: "IoT Smart Home Platform",
-    description: "Connected device ecosystem with voice control and predictive automation algorithms.",
-    tags: ["IoT", "AI", "Embedded"],
+    client: "Internal Product",
+    role: "Zehanx Labs",
+    title: "DataFlow Analytics",
+    subtitle: "Business Intelligence Dashboard",
+    description: "Enterprise analytics processing 1M+ records with predictive forecasting and automated reporting. Sub-second query response times.",
+    outcome: "Decision-making speed +40%",
+    tags: ["Analytics", "Predictive", "SaaS"],
     icon: Code,
     gradient: "from-emerald-500/20 via-green-500/20 to-lime-500/20",
   },
@@ -106,12 +130,12 @@ export default function Portfolio() {
             <span className="text-sm text-white/80">Portfolio</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white tracking-tight mb-4 sm:mb-6">
-            Our Recent
+            Trusted by Founders
             <br className="hidden sm:block" />
-            Projects
+            & Business Owners
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            Explore our latest work across web development, AI, machine learning, and mobile applications.
+            Real systems built for real businesses. From hospitals to schools to logistics — we build what moves the needle.
           </p>
         </motion.div>
 
@@ -182,13 +206,23 @@ export default function Portfolio() {
                   </div>
                 </div>
 
+                {/* Client Badge */}
+                <div className="relative z-10 mb-4">
+                  <p className="text-xs text-white/40 uppercase tracking-wider">{project.client}</p>
+                  <p className="text-xs text-white/30">{project.role}</p>
+                </div>
+
                 {/* Content */}
                 <div className="relative z-10">
-                  <h3 className="text-lg font-light text-white mb-2 group-hover:text-white/90 transition-colors">
+                  <h3 className="text-lg font-light text-white mb-1 group-hover:text-white/90 transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-sm text-white/50 mb-4 leading-relaxed">
+                  <p className="text-sm text-white/60 mb-2">{project.subtitle}</p>
+                  <p className="text-sm text-white/50 mb-3 leading-relaxed">
                     {project.description}
+                  </p>
+                  <p className="text-sm text-white/80 font-medium mb-4">
+                    {project.outcome}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag) => (
@@ -206,6 +240,63 @@ export default function Portfolio() {
           ))}
         </motion.div>
 
+        {/* SaaS-Style Case Study Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
+          className="mt-16 sm:mt-24"
+        >
+          <div className="p-8 sm:p-12 rounded-3xl bg-white/[0.02] border border-white/10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
+                  <span className="text-xs text-white/60">SaaS Case Study</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-light text-white mb-4">
+                  AI-Powered Analytics Platform
+                </h3>
+                <p className="text-sm sm:text-base text-white/60 mb-6 leading-relaxed">
+                  Built a complete SaaS analytics platform for a fintech startup. From concept to 100 paying customers in 45 days. System processes 1M+ records with sub-second response times.
+                </p>
+                <div className="flex flex-wrap gap-4 mb-6">
+                  <div>
+                    <p className="text-2xl font-light text-white">21 Days</p>
+                    <p className="text-xs text-white/40">To MVP</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-light text-white">100+</p>
+                    <p className="text-xs text-white/40">Paying Customers</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-light text-white">$25k</p>
+                    <p className="text-xs text-white/40">Project Value</p>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10">
+                  <p className="text-sm text-white/80 mb-1">Problem</p>
+                  <p className="text-xs text-white/50">Manual reporting taking 40 hours/week</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10">
+                  <p className="text-sm text-white/80 mb-1">Solution</p>
+                  <p className="text-xs text-white/50">Automated real-time analytics dashboard</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10">
+                  <p className="text-sm text-white/80 mb-1">Tech Stack</p>
+                  <p className="text-xs text-white/50">React, Node.js, PostgreSQL, AWS</p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10">
+                  <p className="text-sm text-white/80 mb-1">Result</p>
+                  <p className="text-xs text-white/50">Reporting time reduced to 2 hours/week</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -215,10 +306,10 @@ export default function Portfolio() {
           className="mt-12 sm:mt-16 text-center"
         >
           <a
-            href="#contact"
+            href="https://cal.com/zehanx-technologies-official"
             className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-white font-light bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
           >
-            Start Your Project
+            Build Your System
             <ExternalLink className="w-4 h-4" />
           </a>
         </motion.div>
