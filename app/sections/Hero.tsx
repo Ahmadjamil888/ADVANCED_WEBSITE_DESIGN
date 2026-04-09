@@ -58,9 +58,9 @@ export default function Hero() {
             variants={itemVariants}
             className="text-[28px] leading-tight sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[56px] font-light text-white tracking-tight mb-5 sm:mb-6 text-center"
           >
-            <span className="block sm:inline">We Build AI-Powered</span>{" "}
-            <span className="block sm:inline">SaaS Systems</span>{" "}
-            <span className="block">in 21 Days — Not Months</span>
+            <span className="block sm:inline">We Build</span>{" "}
+            <span className="block sm:inline">AI-Powered SaaS</span>{" "}
+            <span className="block">Systems in 21 Days</span>
           </motion.h1>
 
           {/* Positioning Statement */}
@@ -68,7 +68,7 @@ export default function Hero() {
             variants={itemVariants}
             className="text-sm sm:text-base lg:text-lg text-white/60 max-w-xl mx-auto mb-5 sm:mb-6 leading-relaxed px-4 sm:px-0"
           >
-            Production-ready business systems for SaaS founders scaling from 0→1 or 1→10. Built by a technical founder who has been there.
+            Production-ready business systems for SaaS founders scaling from pre-seed to series-c. Built by a technical founder who has been there.
           </motion.p>
 
           {/* Buttons */}

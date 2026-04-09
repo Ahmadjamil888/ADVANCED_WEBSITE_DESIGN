@@ -39,6 +39,13 @@ const testimonials = [
     rating: 5,
     image: "/avatar-2.png",
   },
+  {
+    quote: "Zehanx Technologies built our PSX ledger and now it has over 900k users and a handful cash flow, I highly recommend purchasing their saas development plan.",
+    author: "Zain shafeeq",
+    role: "CEO, mrowldesign",
+    rating: 5,
+    image: "/avatar-7.png",
+  },
 ];
 
 const containerVariants = {

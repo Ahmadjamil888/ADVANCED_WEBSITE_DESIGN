@@ -13,14 +13,8 @@ const contactInfo = [
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "+92 333 8188722",
-    href: "https://wa.me/923338188722",
-  },
-  {
-    icon: Phone,
-    label: "Phone",
-    value: "+92 333 8188722",
-    href: "tel:+923338188722",
+    value: "0333 8188722",
+    href: "https://wa.me/03338188722",
   },
   {
     icon: MapPin,
@@ -111,7 +105,7 @@ export default function Contact() {
                 <ArrowUpRight className="w-4 h-4" />
               </a>
               <p className="text-xs text-white/40 mt-4">
-                Powered by Cal.com · Free 30-minute consultation
+                Discuss with one of our experts · Free 30-minute consultation
               </p>
             </div>
           </motion.div>

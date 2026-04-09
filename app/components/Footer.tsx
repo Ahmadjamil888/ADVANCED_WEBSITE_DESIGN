@@ -30,13 +30,13 @@ const YoutubeIcon = () => (
 const footerLinks = {
   Product: [
     { label: "Features", href: "/features" },
-    { label: "Pricing", href: "#" },
-    { label: "Changelog", href: "#" },
-    { label: "Documentation", href: "#" },
+    { label: "Insights", href: "/insights" },
+    { label: "Services", href: "/services" },
+    { label: "Contact", href: "/contact" },
   ],
   Company: [
     { label: "About", href: "/about" },
-    { label: "Blog", href: "#" },
+    { label: "Projects", href: "#" },
     { label: "Careers", href: "#" },
     { label: "Press", href: "#" },
   ],
