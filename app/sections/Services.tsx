@@ -5,7 +5,7 @@ import { Code, Brain, Bot, Network, Smartphone, Globe, ArrowRight, Zap, Star, Ro
 
 const primaryService = {
   icon: Brain,
-  badge: "Core Offer ($10k–$35k)",
+  badge: "Core Offer ($5k–$25k+)",
   title: "AI-Powered SaaS Development",
   description: "Complete business systems from idea to deployment. You get a revenue-ready platform with everything needed to start acquiring customers.",
   features: ["Landing Page & Marketing", "Admin + User Dashboards", "Auth & User Roles", "Database & APIs", "AI Features (Optional)", "Deployment & Domain"],
@@ -95,7 +95,7 @@ export default function Services() {
             for SaaS Founders
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            Not a dev shop. A technical partner who ships revenue-ready systems in 21 days. Projects range $10k–$50k.
+            Not a dev shop. A technical partner who ships revenue-ready systems in 21 days. Projects range $5k–$25k+ depending on scope.
           </p>
         </motion.div>
 

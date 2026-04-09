@@ -31,7 +31,7 @@ const reasons = [
   },
   {
     icon: Shield,
-    title: "$10k–$50k Predictable Pricing",
+    title: "$5k–$25k+ Predictable Pricing",
     description: "No hourly billing surprises. Fixed-price projects with clear deliverables. You know exactly what you are paying for.",
   },
 ];

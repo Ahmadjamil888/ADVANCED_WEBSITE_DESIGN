@@ -8,7 +8,7 @@ const offerTiers = [
     icon: Briefcase,
     number: "1",
     title: "Business System Build",
-    subtitle: "Core Offer — $10k to $35k",
+    subtitle: "Core Offer — $5k to $25k+",
     description: "You get a complete revenue-ready platform. From idea to deployment in 21 days.",
     features: [
       "Landing page + marketing site",

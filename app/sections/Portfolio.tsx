@@ -270,7 +270,7 @@ export default function Portfolio() {
                     <p className="text-xs text-white/40">Paying Customers</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-light text-white">$25k</p>
+                    <p className="text-2xl font-light text-white">$5k–$25k+</p>
                     <p className="text-xs text-white/40">Project Value</p>
                   </div>
                 </div>
