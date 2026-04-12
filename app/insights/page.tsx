@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import { Footer } from "@/components";
 import Insights from "../sections/Insights";
 
 export const metadata = {

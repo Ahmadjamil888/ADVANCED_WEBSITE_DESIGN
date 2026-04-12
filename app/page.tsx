@@ -1,5 +1,5 @@
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { Footer } from "@/components";
 import Hero from "./sections/Hero";
 import TrustedBy from "./sections/TrustedBy";
 import RealResults from "./sections/RealResults";
