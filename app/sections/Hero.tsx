@@ -49,18 +49,18 @@ export default function Hero() {
           {/* Badges */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-              <span className="text-xs text-white/80">AI-Powered infrastructure</span>
+              <span className="text-xs text-white/80">E-Commerce Growth Partner</span>
             </div>
           </motion.div>
 
           {/* Headline - Mobile: 3 lines, larger text */}
           <motion.h1
             variants={itemVariants}
-            className="text-[28px] leading-tight sm:text-4xl md:text-5xl lg:text-[52px] xl:text-[56px] font-light text-white tracking-tight mb-5 sm:mb-6 text-center"
+            className="text-[28px] leading-tight sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[50px] font-light text-white tracking-tight mb-5 sm:mb-6 text-center"
           >
-            <span className="block sm:inline">We Build</span>{" "}
-            <span className="block sm:inline">AI-Powered SaaS</span>{" "}
-            <span className="block">Systems in 21 Days</span>
+            <span className="block sm:inline">We Fix 2–3 Conversion Leaks</span>{" "}
+            <span className="block sm:inline">in Your Shopify Store in 5 Days</span>{" "}
+            <span className="block">to Recover Lost Revenue</span>
           </motion.h1>
 
           {/* Positioning Statement */}
@@ -68,7 +68,7 @@ export default function Hero() {
             variants={itemVariants}
             className="text-sm sm:text-base lg:text-lg text-white/60 max-w-xl mx-auto mb-5 sm:mb-6 leading-relaxed px-4 sm:px-0"
           >
-            Production-ready business systems for SaaS founders scaling from pre-seed to series-c. Built by a technical founder who has been there.
+            We increase your store conversion rate by fixing checkout & retention leaks. Stop leaving 10–30% of your revenue on the table.
           </motion.p>
 
           {/* Buttons */}
@@ -92,7 +92,7 @@ export default function Hero() {
             variants={itemVariants}
             className="flex flex-col items-center gap-2 sm:gap-3"
           >
-            <p className="text-[10px] sm:text-xs text-white/40 tracking-wider uppercase">AI Product Engineering Partner for 50+ Founders</p>
+            <p className="text-[10px] sm:text-xs text-white/40 tracking-wider uppercase">Conversion Partner for 50+ E-Commerce Brands</p>
           </motion.div>
         </motion.div>
       </div>
