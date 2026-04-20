@@ -31,18 +31,18 @@ const caseStudies = [
   {
     icon: TrendingUp,
     metric: "3x",
-    metricLabel: "Faster Order Processing",
-    title: "OrderFlow Pro for Janjua Tailors",
-    description: "Digital transformation of tailoring business",
-    detail: "Replaced pen-and-paper with complete order tracking and customer notifications",
+    metricLabel: "Lead Response Velocity",
+    title: "Sales Agent for Janjua Global",
+    description: "Autonomous AI sales bot integration",
+    detail: "Replaced manual follow-ups with an AI agent that handles queries 24/7 with human-level accuracy.",
   },
   {
     icon: BarChart3,
     metric: "98%",
-    metricLabel: "Delivery Accuracy",
-    title: "LogiTrack for Daak Khana",
-    description: "Logistics tracking platform",
-    detail: "Real-time tracking handling 10,000+ packages monthly with route optimization",
+    metricLabel: "Data Extraction Accuracy",
+    title: "DocuSense AI for Daak Khana",
+    description: "Vision-AI processing platform",
+    detail: "Automated extraction from 10,000+ hand-written logs monthly using custom fine-tuned Vision LLMs.",
   },
   {
     icon: Clock,
@@ -161,25 +161,25 @@ export default function RealResults() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
-                  <span className="text-xs text-white/60">SaaS Case Study</span>
+                  <span className="text-xs text-white/60">AI Systems Case Study</span>
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-light text-white mb-4">
-                  Fintech Analytics Platform
+                  Autonomous Marketing Engine
                 </h3>
                 <p className="text-sm sm:text-base text-white/60 mb-6 leading-relaxed">
-                  A fintech startup needed to turn raw transaction data into actionable insights for their SMB customers. We built a complete analytics platform in 21 days.
+                  A high-growth startup needed to scale content and outreach without hiring a massive team. We built a custom multi-agent system that researches, writes, and distributes content autonomously.
                 </p>
                 <div className="flex flex-wrap gap-6 mb-6">
                   <div>
-                    <p className="text-3xl font-light text-white">21</p>
-                    <p className="text-xs text-white/40">Days to MVP</p>
+                    <p className="text-3xl font-light text-white">14</p>
+                    <p className="text-xs text-white/40">Days to Deploy</p>
                   </div>
                   <div>
-                    <p className="text-3xl font-light text-white">100+</p>
-                    <p className="text-xs text-white/40">Paying Customers</p>
+                    <p className="text-3xl font-light text-white">400%</p>
+                    <p className="text-xs text-white/40">Content Volume Increase</p>
                   </div>
                   <div>
-                    <p className="text-3xl font-light text-white">$5k–$25k+</p>
+                    <p className="text-3xl font-light text-white">$15k+</p>
                     <p className="text-xs text-white/40">Project Value</p>
                   </div>
                 </div>

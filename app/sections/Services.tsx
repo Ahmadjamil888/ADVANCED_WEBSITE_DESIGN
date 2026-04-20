@@ -5,30 +5,30 @@ import { Code, Brain, Bot, Network, Smartphone, Globe, ArrowRight, Zap, Star, Ro
 
 const primaryService = {
   icon: Brain,
-  badge: "Core Offer ($5k–$25k+)",
-  title: "AI-Powered SaaS Development",
-  description: "Complete business systems from idea to deployment. You get a revenue-ready platform with everything needed to start acquiring customers.",
-  features: ["Landing Page & Marketing", "Admin + User Dashboards", "Auth & User Roles", "Database & APIs", "AI Features (Optional)", "Deployment & Domain"],
+  badge: "Core Offer ($15k–$50k+)",
+  title: "Enterprise AI & LLM Systems",
+  description: "Complete autonomous business systems. Custom fine-tuned LLMs, multi-agent orchestration, and production-ready AI infrastructure built for scale.",
+  features: ["Custom LLM Fine-tuning", "Multi-Agent Systems", "Vector DB & RAG Infra", "Autonomous Sales/Ops Agents", "AI Dashboard & Admin", "Secure Enterprise Integration"],
 };
 
 const secondaryServices = [
   {
-    icon: Rocket,
-    title: "21-Day MVP System",
-    description: "From concept to paying customers. We validate, build, and ship fast so you can test your market quickly.",
-    highlight: "Concept → Live in 21 Days",
+    icon: Zap,
+    title: "AI Automation Starter",
+    description: "We automate ONE revenue-draining friction point in your business in 7 days. Our high-velocity proof-of-utility sprint.",
+    highlight: "Wedge: $499–$999",
   },
   {
     icon: Database,
     title: "AI Intelligence Layer",
-    description: "Add predictive analytics, automation, and smart features to your existing platform. $5k–$25k add-on.",
-    highlight: "Upsell: $5k–$25k",
+    description: "Inject predictive models and smart logic into your existing platform. Upgrade your tech stack with cognitive capabilities.",
+    highlight: "Expansion: $5k–$25k",
   },
   {
-    icon: Zap,
-    title: "Optimize & Scale",
-    description: "Ongoing optimization, analytics setup, and continuous improvement. For founders scaling from 1→10.",
-    highlight: "Retainer: $2k–$10k/mo",
+    icon: Bot,
+    title: "AI Fleet Management",
+    description: "Ongoing optimization of your AI models, agent performance monitoring, and continuous prompt engineering updates.",
+    highlight: "Retainer: $3k–$10k/mo",
   },
 ];
 
@@ -90,9 +90,9 @@ export default function Services() {
             <span className="text-sm text-white/80">AI Product Engineering Partner</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white tracking-tight mb-4 sm:mb-6">
-            Product Engineering
+            AI Systems Engineering
             <br className="hidden sm:block" />
-            for SaaS Founders
+            for Modern Enterprises
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
             Not a dev shop. A technical partner who ships revenue-ready systems in 21 days. Projects range $5k–$25k+ depending on scope.

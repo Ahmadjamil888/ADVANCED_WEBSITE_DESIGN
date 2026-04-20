@@ -49,7 +49,7 @@ export default function Hero() {
           {/* Badges */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-              <span className="text-xs text-white/80">E-Commerce Growth Partner</span>
+              <span className="text-xs text-white/80">Custom AI & LLM Systems</span>
             </div>
           </motion.div>
 
@@ -58,9 +58,9 @@ export default function Hero() {
             variants={itemVariants}
             className="text-[28px] leading-tight sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[50px] font-light text-white tracking-tight mb-5 sm:mb-6 text-center"
           >
-            <span className="block sm:inline">We Fix 2–3 Conversion Leaks</span>{" "}
-            <span className="block sm:inline">in Your Shopify Store in 5 Days</span>{" "}
-            <span className="block">to Recover Lost Revenue</span>
+            <span className="block sm:inline">We Replace Manual Business Work</span>{" "}
+            <span className="block sm:inline">With AI Automation Systems</span>{" "}
+            <span className="block">in 7–21 Days</span>
           </motion.h1>
 
           {/* Positioning Statement */}
@@ -68,7 +68,7 @@ export default function Hero() {
             variants={itemVariants}
             className="text-sm sm:text-base lg:text-lg text-white/60 max-w-xl mx-auto mb-5 sm:mb-6 leading-relaxed px-4 sm:px-0"
           >
-            We increase your store conversion rate by fixing checkout & retention leaks. Stop leaving 10–30% of your revenue on the table.
+            From custom LLMs to autonomous sales agents—we build the AI infrastructure that saves 20+ hours/week and automates your core revenue processes.
           </motion.p>
 
           {/* Buttons */}
@@ -92,7 +92,7 @@ export default function Hero() {
             variants={itemVariants}
             className="flex flex-col items-center gap-2 sm:gap-3"
           >
-            <p className="text-[10px] sm:text-xs text-white/40 tracking-wider uppercase">Conversion Partner for 50+ E-Commerce Brands</p>
+            <p className="text-[10px] sm:text-xs text-white/40 tracking-wider uppercase">AI Engineering Partner for 50+ Founders & Enterprises</p>
           </motion.div>
         </motion.div>
       </div>

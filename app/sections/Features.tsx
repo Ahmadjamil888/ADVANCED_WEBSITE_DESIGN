@@ -19,34 +19,34 @@ import {
 
 const features = [
   {
+    icon: Brain,
+    title: "Custom LLM Infrastructure",
+    description: "End-to-end development of custom-trained and fine-tuned LLMs tailored to your proprietary datasets.",
+  },
+  {
     icon: Zap,
-    title: "Web Development",
-    description: "Custom websites and web applications built with modern technologies tailored to your business needs.",
+    title: "Autonomous AI Agents",
+    description: "Self-correcting AI agents that handle sales, support, and internal operations without human intervention.",
   },
   {
-    icon: Shield,
-    title: "Artificial Intelligence",
-    description: "AI-powered solutions including machine learning models, deep learning, and neural networks for smart automation.",
-  },
-  {
-    icon: Rocket,
-    title: "Machine Learning",
-    description: "End-to-end ML solutions from data preprocessing to model deployment and continuous learning systems.",
+    icon: Database,
+    title: "Enterprise RAG Systems",
+    description: "Production-ready Vector DB architectures that allow your business to chat with its data in real-time.",
   },
   {
     icon: BarChart3,
-    title: "Deep Learning",
-    description: "Advanced deep learning architectures for computer vision, NLP, and complex pattern recognition tasks.",
+    title: "Workflow Automation",
+    description: "Replacing manual business processes with 24/7 autonomous loops that save 20+ hours per week.",
   },
   {
-    icon: Globe,
-    title: "Software Development",
-    description: "Custom software solutions for enterprises, from desktop applications to complex system integrations.",
+    icon: Shield,
+    title: "AI Security & Guardrails",
+    description: "Enterprise-grade safety layers, data privacy controls, and prompt injection protection for your AI assets.",
   },
   {
-    icon: Lock,
-    title: "App Development",
-    description: "Native and cross-platform mobile applications for iOS and Android with seamless user experiences.",
+    icon: Rocket,
+    title: "High-Velocity Deployment",
+    description: "We ship revenue-generating AI systems in 7–21 days using our high-velocity engineering framework.",
   },
 ];
 
@@ -110,12 +110,12 @@ export default function Features() {
             <span className="text-sm text-white/80">Features</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-white tracking-tight mb-4 sm:mb-6">
-            Comprehensive tech solutions
+            Everything you need to
             <br className="hidden sm:block" />
-            for your business
+            automate your world
           </h2>
           <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto px-4 sm:px-0">
-            From web development to AI and machine learning, we deliver cutting-edge solutions tailored to your needs.
+            From custom LLMs to autonomous agent networks, we build the technical infrastructure that enables exponential growth.
           </p>
         </motion.div>
 

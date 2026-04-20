@@ -29,12 +29,12 @@ const projects = [
   {
     client: "Umair Fiaz",
     role: "CEO, Janjua Tailors",
-    title: "OrderFlow Pro",
-    subtitle: "Tailoring Business Platform",
-    description: "Custom order management system with measurement tracking, delivery scheduling, and customer notifications. Replaced pen-and-paper workflow.",
+    title: "OrderFlow AI",
+    subtitle: "Autonomous Fulfillment Engine",
+    description: "Custom AI-driven fulfillment system with autonomous measurement extraction, automated delivery scheduling, and AI customer notifications.",
     outcome: "Order processing 3x faster",
-    tags: ["SMB", "Workflow", "Mobile-First"],
-    icon: Smartphone,
+    tags: ["AI Ops", "Automation", "Workflow"],
+    icon: Zap,
     gradient: "from-orange-500/20 via-red-500/20 to-pink-500/20",
   },
   {
@@ -51,11 +51,11 @@ const projects = [
   {
     client: "Shazab Jamil",
     role: "CEO, Daak Khana",
-    title: "LogiTrack",
-    subtitle: "Logistics & Delivery Platform",
-    description: "Real-time package tracking with route optimization, delivery confirmations, and customer notifications. 10,000+ packages tracked monthly.",
-    outcome: "Delivery accuracy up to 98%",
-    tags: ["Logistics", "Tracking", "Real-time"],
+    title: "DocuSense AI",
+    subtitle: "Vision-AI Sorting Platform",
+    description: "Real-time package recognition with route optimization and autonomous document processing. Processes 10,000+ packages monthly with custom fine-tuned models.",
+    outcome: "Data accuracy up to 98%",
+    tags: ["Vision-AI", "Logistics", "LLM"],
     icon: Network,
     gradient: "from-purple-500/20 via-pink-500/20 to-rose-500/20",
   },
@@ -255,10 +255,10 @@ export default function Portfolio() {
                   <span className="text-xs text-white/60">SaaS Case Study</span>
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-light text-white mb-4">
-                  AI-Powered Analytics Platform
+                  Multi-Agent Marketing Engine
                 </h3>
                 <p className="text-sm sm:text-base text-white/60 mb-6 leading-relaxed">
-                  Built a complete SaaS analytics platform for a fintech startup. From concept to 100 paying customers in 45 days. System processes 1M+ records with sub-second response times.
+                  Built a complete autonomous marketing SaaS that researches, writes, and distributes content across 5 channels without human intervention.
                 </p>
                 <div className="flex flex-wrap gap-4 mb-6">
                   <div>
