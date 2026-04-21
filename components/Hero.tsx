@@ -18,11 +18,12 @@ export default function Hero() {
 	const cq = useTransform(scrollYProgress, [0, 1], [0, 200]);
 	const mq = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
-	const phares1 = ["Intelligent Solutions"];
-	const phares2 = ["for the Digital Age"];
+	const phares1 = ["Build Your Startup MVP"];
+	const phares2 = ["in Just 21 Days"];
 	const phares3 = [
-		"We craft cutting-edge Machine Learning models and robust software systems that drive innovation and transform businesses.",
+		"We design and develop complete, production-ready MVPs that help you validate your idea, launch faster, and gain real user traction.",
 	];
+
 	return (
 		<div
 			ref={container}
@@ -37,7 +38,7 @@ export default function Hero() {
 							initial="initial"
 							whileInView="enter"
 							viewport={{ once: true }}>
-							<span className="terminal-green">&gt;</span> {companyInfo.tagline}
+							<span className="terminal-green">&gt;</span> Build Fast. Launch Smarter.
 						</motion.div>
 					</div>
 					<div>
@@ -65,12 +66,12 @@ export default function Hero() {
 							viewport={{ once: true }}>
 							<Button
 								className="text-[#0a0a0a] bg-[#00ff88] py-2 px-4 font-mono font-semibold hover:bg-[#00cc6a] transition-colors"
-								title="Start Your Project"
+								title="Start Your MVP"
 							/>
 							<div className="flex items-center gap-2">
 								<Button
 									className="text-[#00ff88] hover:text-white transition-colors"
-									title="View Our Work"
+									title="See MVPs We Built"
 								/>
 								<Image
 									src={ArrowRight}
@@ -95,7 +96,7 @@ export default function Hero() {
 						className="w-full flex items-center justify-center">
 						<Image
 							src={cog}
-							alt="AI and ML Visualization"
+							alt="MVP Development Visualization"
 							width={800}
 							height={400}
 							className="w-[70%] xm:w-full sm:w-full h-auto object-cover opacity-80"
@@ -110,7 +111,7 @@ export default function Hero() {
 						style={{ y: mq }}>
 						<Image
 							src={noodle}
-							alt="Code visualization"
+							alt="Rapid development process"
 							width={200}
 							height={200}
 							className="opacity-60"
@@ -125,7 +126,7 @@ export default function Hero() {
 						style={{ y: cq }}>
 						<Image
 							src={cylinder}
-							alt="Data flow"
+							alt="Product scaling"
 							width={200}
 							height={200}
 							className="opacity-60"
