@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { 
+  Brain,
   Zap, 
   Shield, 
   Rocket, 
