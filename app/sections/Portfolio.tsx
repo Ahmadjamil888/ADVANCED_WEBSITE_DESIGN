@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Code, Brain, Bot, Network, Smartphone, Globe } from "lucide-react";
+import { Zap, ExternalLink, Code, Brain, Bot, Network, Smartphone, Globe } from "lucide-react";
 
 const projects = [
   {
