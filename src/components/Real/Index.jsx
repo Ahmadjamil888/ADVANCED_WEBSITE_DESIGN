@@ -47,6 +47,7 @@ function Real() {
         data-color="salmon" 
         ref={container} 
         className="real section sm:w-full  px-8 sm:px-8 mt-32"
+        id="about"
     >
       <div 
         className="cont h-[400vh] relative"
