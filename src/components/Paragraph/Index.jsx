@@ -38,12 +38,9 @@ function Para() {
                 <hr className='bg-zinc-400 w-[20%] h-[.3vh]' />
             </div>    
             <h3 className='textpara sm:w-[50%] text-cyan-400 font-[Sansita] tracking-wide text-[2.4vh] sm:text-[3.5vh] font-medium text-center leading-[5vh] mb-10'>The team at Zehanx delivered our entire AI-powered LMS — BrainSkills — in record time. Course prep for our medical faculty dropped by 60%, and the AI content generation is genuinely impressive. They didn't just build software; they understood our clinical education needs deeply and shipped a product that our 200+ students actually love using every day.</h3>
-            <div className="pers w-[50%] flex flex-col items-center justify-center gap-2 ">
-                <div className="image w-24 h-24 overflow-hidden rounded-full bg-gradient-to-br from-violet-700 to-cyan-500 flex items-center justify-center">
-                    <span className="text-white font-[SansitaBold] text-[4vh]">DR</span>
-                </div>
+            <div className="pers w-full sm:w-[50%] flex flex-col items-center justify-center gap-2">
                 <h1 className=' text-[2.8vh] sm:text-[3.8vh] font-medium'>Dr. Rehan Siddiqui</h1>
-                <h3 className='text-zinc-400 text-[2.4vh] whitespace-nowrap'>Director of Medical Education @ Usman Hospital</h3>
+                <h3 className='text-zinc-400 text-[2.4vh]'>Director of Medical Education @ Usman Hospital</h3>
             </div>
         </div>  
     </div>

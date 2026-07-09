@@ -55,16 +55,16 @@ function Card() {
     ]
 
   return (
-        <div className="card-container flex sm:flex-col gap-10 mt-20">
+        <div className="card-container flex sm:flex-col gap-8 mt-16 overflow-x-auto sm:overflow-visible">
             {items.map((item, index) => {
                 return (
-                    <div key={index} className="card min-w-[40vh] sm:w-[30vw] sm:flex items-center gap-6
-                    border-[1px] border-[--black]  py-8 px-8 ">
-                        <div className="rightdata w-[10vh] h-[10vh] sm:w-[28vh]  sm:h-[10vh] "
+                    <div key={index} className="card w-full min-w-0 sm:w-[85vw] flex flex-col sm:flex-row items-start gap-4 sm:gap-6
+                    border-[1px] border-[--black]  py-8 px-6 sm:px-8 ">
+                        <div className="rightdata w-28 h-28 sm:w-28 sm:h-28 flex-shrink-0 "
                             dangerouslySetInnerHTML={{ __html: item.image }}/>
                         <div className=" font-[Sansita]  leftdata">
-                            <h1 key={index} className="text-[3vh] font-bold whitespace-nowrap sm:text-[2.8vh] sm:font-bold mb-2">{item.title}</h1>
-                            <p className="text-[2.2vh]  sm:text-[2vh] font-medium">{item.description}</p>
+                            <h1 key={index} className="text-[2.8vh] font-bold sm:text-[2.8vh] sm:font-bold mb-2 leading-tight">{item.title}</h1>
+                            <p className="text-[2vh]  sm:text-[2vh] font-medium leading-snug">{item.description}</p>
                         </div>                       
                     </div>
                 )

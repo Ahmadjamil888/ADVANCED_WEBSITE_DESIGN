@@ -99,11 +99,10 @@ function Real() {
                         className="w-full h-full object-contain rounded-full"
                     />
                 </div>
-                <div className='w-[60%] text-center font-[SansitaReg] relative'>
+                <div className='w-[90%] sm:w-[60%] text-center font-[SansitaReg] relative'>
                     <h3 
-                        className='font-[Sansita] sm:w-1/3 text-left font-semibold 
-                        tracking-tight text-[2.2vh] sm:absolute top-0 left-0 z-[3]  -translate-y-2/3 
-                        sm:-translate-y-1/2 -translate-x-1/3 text-white'
+                        className='font-[Sansita] w-full text-left font-semibold 
+                        tracking-tight text-[2.5vh] sm:w-1/3 font-medium text-white'
                     >
                         We build software that scales to optimize workflows and processes for users globally.
                     </h3>
@@ -161,19 +160,17 @@ function Real() {
                         className="w-full h-full object-contain rounded-full"
                     />
                 </div>
-                <div className='w-[60%] text-center font-[SansitaReg] relative'>
+                <div className='w-[90%] sm:w-[60%] text-center font-[SansitaReg] relative'>
                     <h3 
-                        className='font-[Sansita] sm:w-1/3 text-left font-semibold tracking-tight 
-                        text-[2vh]
-                        sm:text-[2.5vh] absolute sm:top-0 sm:left-0 -translate-x-1/2 -translate-y-[30vh] z-[3] 
-                        sm:-translate-y-1/2 sm:-translate-x-1/3 text-white'
+                        className='font-[Sansita] w-full text-left font-semibold tracking-tight 
+                        text-[2vh] sm:text-[2.5vh] font-medium text-white'
                     >
                         We build tools that automate admin tasks and reduce operations workload.
                     </h3>
                     <h1 className=' font-semibold text-[10vh] sm:text-[20vh] leading-none text-white'>
                         70%
                     </h1>
-                    <h3 className='text-[3.5vh] whitespace-nowrap sm:text-[6vh] font-semibold sm:leading-[6vh]'>
+                    <h3 className='text-[3.5vh] leading-[4vh] sm:text-[6vh] font-semibold sm:leading-[6vh]'>
                         Workload Reduction in Administration.
                     </h3>    
                 </div>
@@ -212,11 +209,11 @@ function Real() {
                         className="w-full h-full object-contain rounded-full"
                     />
                 </div>
-                <div className='w-[60%] text-center font-[SansitaReg] relative'>                   
+                <div className='w-[90%] sm:w-[60%] text-center font-[SansitaReg] relative'>                   
                     <h1 className=' font-semibold text-[10vh] sm:text-[20vh] leading-none text-white'>
                         3x
                     </h1>
-                    <h3 className='text-[3.1vh] leading-[3.4vh] sm:text-[6vh] font-semibold sm:leading-[8vh]'>
+                    <h3 className='text-[2.5vh] leading-[3vh] sm:text-[6vh] font-semibold sm:leading-[8vh]'>
                         Faster Lead Response Times via <br/> Autonomous AI Agents.
                     </h3>    
                 </div>
