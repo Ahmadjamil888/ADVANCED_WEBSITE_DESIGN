@@ -102,15 +102,15 @@ function Real() {
                     <h3 
                         className='font-[Sansita] sm:w-1/3 text-left font-semibold 
                         tracking-tight text-[2.2vh] sm:absolute top-0 left-0 z-[3]  -translate-y-2/3 
-                        sm:-translate-y-1/2 -translate-x-1/3'
+                        sm:-translate-y-1/2 -translate-x-1/3 text-white'
                     >
-                        We’re on a mission to impact as many lives as possible and build a better company while we do it. Here’s our progress.
+                        We build software that scales to optimize workflows and processes for users globally.
                     </h3>
                     <h1 className=' font-semibold text-[10vh] sm:text-[20vh] leading-none text-white '>
-                        20.4M
+                        10K+
                     </h1>
                     <h3 className=' text-[2vh] sm:text-[5vh] font-semibold sm:leading-[7vh]'>
-                        Real people — real lives — we have built products and solutions for.
+                        Hand-written logs processed monthly via custom fine-tuned Vision LLMs.
                     </h3>    
                 </div>
                 <div 
@@ -165,15 +165,15 @@ function Real() {
                         className='font-[Sansita] sm:w-1/3 text-left font-semibold tracking-tight 
                         text-[2vh]
                         sm:text-[2.5vh] absolute sm:top-0 sm:left-0 -translate-x-1/2 -translate-y-[30vh] z-[3] 
-                        sm:-translate-y-1/2 sm:-translate-x-1/3'
+                        sm:-translate-y-1/2 sm:-translate-x-1/3 text-white'
                     >
-                        Our team is global and diverse, because our individual experiences make us stronger.
+                        We build tools that automate admin tasks and reduce operations workload.
                     </h3>
                     <h1 className=' font-semibold text-[10vh] sm:text-[20vh] leading-none text-white'>
-                        49%
+                        70%
                     </h1>
                     <h3 className='text-[3.5vh] whitespace-nowrap sm:text-[6vh] font-semibold sm:leading-[6vh]'>
-                        Expert Women in Tech.
+                        Workload Reduction in Administration.
                     </h3>    
                 </div>
                 <div 
@@ -213,10 +213,10 @@ function Real() {
                 </div>
                 <div className='w-[60%] text-center font-[SansitaReg] relative'>                   
                     <h1 className=' font-semibold text-[10vh] sm:text-[20vh] leading-none text-white'>
-                        13
+                        3x
                     </h1>
                     <h3 className='text-[3.1vh] leading-[3.4vh] sm:text-[6vh] font-semibold sm:leading-[8vh]'>
-                        Nationalities Represented on Our <br/> Team.
+                        Faster Lead Response Times via <br/> Autonomous AI Agents.
                     </h3>    
                 </div>
                 <div 

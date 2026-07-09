@@ -92,12 +92,12 @@ function Craft() {
                 className="ptag font-[Sansita] text-[2.6vh] sm:text-[2.9vh] 
                 font-medium leading-[4.4vh] sm:leading-[4.2vh] "
             >
-                Significo is a custom health software developer founded on the belief
-                that technology can transform healthcare to put people first. We put
-                humanity back at the center of healthcare by simplifying complexity,
-                accelerating capacity, and improving outcomes.
+                Zehanx Technologies is a premier custom software and AI engineering agency.
+                We build secure, robust enterprise systems, government platforms, and advanced 
+                machine learning models. By simplifying complexity, we accelerate digital capacity 
+                and drive substantial real-world outcomes.
             </p>
-            <h1 className="texthead font-[SansitaReg] text-[5vh] leading-[6vh] sm:text-[9.8vh] sm:leading-[12vh] mt-10 mb-10">We Craft Human-Centric Health Software</h1>
+            <h1 className="texthead font-[SansitaReg] text-[5vh] leading-[6vh] sm:text-[9.8vh] sm:leading-[12vh] mt-10 mb-10">We Craft Intelligent Enterprise Software</h1>
             {/* button */}
             <Button  bgColor="bg-none" text="OUR SOLUTIONS" />
         </div>

@@ -1,10 +1,18 @@
 :root {
-    --salmon: #EF9D71;
-    --black: #000;
-    --light: #fff;
-    --cyan:  #aedee0;
-    --dcyan: #141b1b;
-    --dsalmon: #1e130e;
+    --bg-black: #030712;
+    --bg-slate: #0b0f19;
+    --bg-indigo: #0f1026;
+    --bg-charcoal: #161824;
+    
+    --text-light: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-violet: #8b5cf6;
+    --accent-cyan: #06b6d4;
+    
+    /* Compatibility variables */
+    --black: #030712;
+    --light: #f8fafc;
+    --salmon: #8b5cf6;
 }
 
 
@@ -13,42 +21,43 @@ body {
 }
 
 *::selection {
-    background-color: var(--salmon);
+    background-color: var(--accent-violet);
+    color: #fff;
 }
 
 
 body[theme="black"] {
-    background-color: var(--black);
+    background-color: var(--bg-black);
     
 }
 
 body[theme="black"] .section {
-    color: var(--light);
+    color: var(--text-light);
 }
 body[theme="white"] {
-    background-color: var(--light);
+    background-color: var(--bg-slate);
     
 }
 
 body[theme="white"] .section {
-    color: var(--black);
+    color: var(--text-light);
 }
 
 body[theme="cyan"] {
-    background-color: var(--cyan);
+    background-color: var(--bg-indigo);
     
 }
 
 body[theme="cyan"] .section {
-    color: var(--dcyan);
+    color: var(--text-light);
 }
 
 body[theme="salmon"] {
-    background-color: var(--salmon);  
+    background-color: var(--bg-charcoal);  
 }
 
 body[theme="salmon"] .section {
-    color: var(--dsalmon);
+    color: var(--text-light);
 }
 
 @font-face {

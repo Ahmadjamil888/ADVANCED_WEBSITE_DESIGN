@@ -45,39 +45,38 @@ gsap.registerPlugin(ScrollTrigger);
             </h1>
             <div className="heading">
                 <h1 className="font-[SansitaReg] text-[5vh] leading-[6.5vh] sm:text-[8vh] py-5 sm:leading-[9vh]">Explore <br/> Our Insights</h1>
-                <Button bgColor="bg-[#f5f19c]" text="VIEW ALL ARTICLES" />
+                <Button bgColor="bg-[#06b6d4]" text="VIEW ALL ARTICLES" />
             </div>
         </div>
         <div className=" right font-[SansitaReg] mt-10 sm:w-2/3 space-y-10 h-full sm:flex items-start justify-start sm:gap-20  ">
             {/* 1st capsule */}
             <div   
                 className="capsule flex flex-col items-center gap-4 p-6 sm:-rotate-[16deg] sm:translate-y-10
-                rounded-full border-[1px] border-black">
+                rounded-full border-[1px] border-zinc-800">
                 <div className="image w-[74vw] h-[74vw] sm:w-[40vh] sm:h-[40vh]  rounded-full overflow-hidden">
                     <img className="h-full w-full object-cover" src={cap1} />
                 </div>
                 <div className="text text-center text-[6vw] sm:text-[3.2vh] font-semibold mt-10 leading-[4.8vh]">
-                    <h3>Equity in Tech: An <br/>
-                        Internation Women&apos;s <br/> Day Conversation Wi <br/>Caroline 
-                        Nieto, <br/> Significo&apos;s CPO
+                    <h3>AI Solutions: An <br/>
+                        Operations Discussion <br/> With Ahmad Ibrahim, <br/> 
+                        Zehanx COO
                     </h3>
                 </div>
-                <button className="bg-[#e9bbff] text-black px-4 rounded-full text-medium py-3 mb-10 mt-10 font-semibold">Thought Leadership</button>
+                <button className="bg-[#8b5cf6] text-white px-4 rounded-full text-medium py-3 mb-10 mt-10 font-semibold">Thought Leadership</button>
 
             </div>
             {/* 2nd capsule */}
             <div   
                 className="capsule flex flex-col items-center gap-4 p-6 sm:-rotate-[16deg] sm:translate-y-40
-                rounded-full border-[1px] border-black"
+                rounded-full border-[1px] border-zinc-800"
             >
-                    <button className="bg-[#e9bbff] text-black px-4 rounded-full text-medium py-3 mb-6 mt-10 font-semibold">Thought Leadership</button>
+                    <button className="bg-[#8b5cf6] text-white px-4 rounded-full text-medium py-3 mb-6 mt-10 font-semibold">Thought Leadership</button>
                 
                 <div className="text text-center text-[3.2vh] flex flex-col gap-6 mb-6 font-semibold leading-[4.8vh]">
-                    <h3>How to Use Digital <br/>
-                        Health Interventions&apos;s <br/>to Align Employee & <br/>Organizational Goals
+                    <h3>How to Use Custom <br/>
+                        Enterprise Software <br/>to Align Employee & <br/>Organizational Goals
                     </h3>
-                    <h4 className="font-[Sansita] text-[1.9vh] font-medium leading-[2.8vh] text-zinc-500">How to use personalized digital health <br/> interventions to empower employees while <br/>
-                        achieving your organization&apos;s goals 
+                    <h4 className="font-[Sansita] text-[1.9vh] font-medium leading-[2.8vh] text-zinc-400">How to use tailored enterprise tools to empower employees while achieving your organization&apos;s goals 
                     </h4>
                 </div>
                 <div className="image w-[74vw] h-[74vw] sm:w-[40vh] sm:h-[40vh]  rounded-full overflow-hidden">
