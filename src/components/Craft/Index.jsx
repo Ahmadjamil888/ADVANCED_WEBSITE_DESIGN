@@ -1,116 +1,183 @@
-
 import Card from "../Card";
 import Button from "../Button";
-import {useRef, useEffect, useState} from 'react';
-
+import { useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Power4, } from 'gsap/gsap-core';
-import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(ScrollTrigger);
 
+// Framer navbar-style reveal variants
+const fadeUp = {
+  hidden: { opacity: 0, y: 28, filter: "blur(4px)" },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1], delay },
+  }),
+};
+
+const lineDraw = {
+  hidden: { scaleX: 0, originX: 0 },
+  visible: {
+    scaleX: 1,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 },
+  },
+};
+
 function Craft() {
+  const headingRef = useRef(null);
+  const sectionRef = useRef(null);
 
-    // const [isMobile, setIsMobile] = useState(false);
-    const container = useRef(null);
-    const textRef = useRef();
+  useEffect(() => {
+    const para = headingRef.current;
+    if (!para) return;
 
-    // useEffect(() => {
-    //     const handleResize = () => {
-    //       setIsMobile(window.innerWidth <= 768);
-    //     };
-    
-    //     // Attach the event listener
-    //     window.addEventListener("resize", handleResize);
-    
-    //     // Clean up the event listener when the component unmounts
-    //     return () => {
-    //       window.removeEventListener("resize", handleResize);
-    //     };
-    //   }, [isMobile]);
+    // character-split GSAP heading animation
+    let clutter = "";
+    para.textContent.split("").forEach((char) => {
+      clutter += char === " "
+        ? `<span style="display:inline-block">&nbsp;</span>`
+        : `<span style="display:inline-block">${char}</span>`;
+    });
+    para.innerHTML = clutter;
 
-    useEffect(() => {
-        var clutter = "";
-        const para = document.querySelector(".texthead")
-        const characters = para.textContent.split("")
-        characters.forEach(function(e) {
-            if(e === " ") clutter += `<span>&nbsp;</span>`
-            clutter += `<span>${e}</span>`
-        })
-        para.innerHTML = clutter;
-        gsap.set('.texthead span', {display: 'inline-block'});
-        const tl = gsap.timeline({
-            scrollTrigger: {
-            trigger: ".ltext",
-            start: "top 100%",
-            end: "bottom 50%",
-            scrub: .5,
-            
-            }
-        });
-        tl.from('.texthead span', {
-            y: 100,
-            opacity: 0,
-            duration: 0.5,
-            stagger: .1, 
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        end: "top 30%",
+        scrub: 0.5,
+      },
+    });
+    tl.from(para.querySelectorAll("span"), {
+      y: 60,
+      opacity: 0,
+      duration: 0.4,
+      stagger: 0.06,
+    });
 
-        }) 
-    },[]);
+    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  }, []);
 
-    useGSAP(() => {
-        let mm = gsap.matchMedia();
-        mm.add("(min-width: 768px)", () => {
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                trigger: ".cards",
-                start: "top 10%",
-                scrub: 1,   
-                }
-            });
-            tl.fromTo('.card', {
-                y: 600,
-                scale: .9,
-            }, {
-                y: 0,
-                scale: 1.1,
-                duration: .5,
-                ease: Power4,
-                transformOrigin: "bottom 50% -50",
-            });
-        })                           
-    }, container );
-
-   
   return (
-    <div 
-        data-color="cyan" id="solutions"
-        className="craft section w-full sm:flex gap-x-40 justify-between 
-          items-center px-8 py-8 sm:px-10 relative "
+    <section
+      ref={sectionRef}
+      data-color="cyan"
+      id="solutions"
+      className="craft section w-full"
     >
-        <div className="ltext sm:sticky sm:top-[10%] left-0 sm:w-1/2 ">
-            <p 
-                className="ptag font-[Sansita] text-[2.6vh] sm:text-[2.9vh] 
-                font-medium leading-[4.4vh] sm:leading-[4.2vh] "
+      {/* ── top label bar ── */}
+      <motion.div
+        className="w-full px-5 sm:px-10 lg:px-16 pt-16 sm:pt-20 lg:pt-28 pb-8"
+        variants={fadeUp}
+        custom={0}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <div className="max-w-[1400px] mx-auto flex items-center gap-4">
+          <motion.div
+            className="h-px flex-1 bg-white/10"
+            variants={lineDraw}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          />
+          <span className="font-[Sansita] text-[11px] tracking-[0.25em] uppercase
+            text-[var(--accent-cyan)] font-semibold">
+            Our Solutions
+          </span>
+          <motion.div
+            className="h-px flex-1 bg-white/10"
+            variants={lineDraw}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          />
+        </div>
+      </motion.div>
+
+      {/* ── main content wrapper ── */}
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-10 lg:px-16
+        pb-16 sm:pb-20 lg:pb-28 flex flex-col gap-10 lg:gap-0 lg:grid lg:grid-cols-[1fr_1.1fr] lg:gap-x-20 xl:gap-x-28"
+      >
+        {/* ── LEFT: text block — NOT sticky, prevents overlap ── */}
+        <div className="ltext flex flex-col gap-6 lg:pt-2">
+          {/* paragraph */}
+          <motion.p
+            className="font-[Sansita] text-[0.95rem] sm:text-[1rem]
+              font-medium leading-relaxed text-[var(--text-muted)] max-w-[520px]"
+            variants={fadeUp}
+            custom={0.05}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            Zehanx Technologies is a premier custom software and AI engineering
+            agency. We build secure, robust enterprise systems, government
+            platforms, and advanced machine learning models. By simplifying
+            complexity, we accelerate digital capacity and drive substantial
+            real-world outcomes.
+          </motion.p>
+
+          {/* heading — character animation via GSAP */}
+          <div className="overflow-hidden">
+            <h1
+              ref={headingRef}
+              className="texthead font-[SansitaReg]
+                text-[clamp(2.4rem,6vw,5rem)]
+                leading-[1.1] text-[var(--text-light)]"
             >
-                Zehanx Technologies is a premier custom software and AI engineering agency.
-                We build secure, robust enterprise systems, government platforms, and advanced 
-                machine learning models. By simplifying complexity, we accelerate digital capacity 
-                and drive substantial real-world outcomes.
-            </p>
-            <h1 className="texthead font-[SansitaReg] text-[5vh] leading-[6vh] sm:text-[9.8vh] sm:leading-[12vh] mt-10 mb-10">We Craft Intelligent Enterprise Software</h1>
-            {/* button */}
-            <Button  bgColor="bg-none" text="OUR SOLUTIONS" />
+              We Craft Intelligent Enterprise Software
+            </h1>
+          </div>
+
+          {/* stats row */}
+          <motion.div
+            className="flex flex-wrap gap-6 sm:gap-10 py-2"
+            variants={fadeUp}
+            custom={0.2}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            {[
+              { value: "50+", label: "Projects Delivered" },
+              { value: "99%", label: "Client Satisfaction" },
+              { value: "8+", label: "Years Experience" },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-0.5">
+                <span className="font-[SansitaBold] text-[1.8rem] sm:text-[2.2rem]
+                  leading-none text-[var(--text-light)]">
+                  {stat.value}
+                </span>
+                <span className="font-[Sansita] text-[0.78rem] text-[var(--text-muted)] tracking-wide">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div
+            variants={fadeUp}
+            custom={0.3}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <Button bgColor="bg-none" text="OUR SOLUTIONS" />
+          </motion.div>
         </div>
-        <div
-            ref={container} 
-            className="right cards sm:w-1/2  flex items-center justify-center">                
-            <Card />
+
+        {/* ── RIGHT: cards grid ── */}
+        <div className="w-full">
+          <Card />
         </div>
-    </div>
-  )
+      </div>
+    </section>
+  );
 }
 
-export default Craft
-
-
-
+export default Craft;
